@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../css/common.css" rel="stylesheet"/>
+		<link rel="stylesheet" href="myoffer.css">
+		<style type="text/css">
+			.offer_success_body .mui-bar-nav .mui-action-back,.offer_success_body .mui-bar-nav .mui-title {
+				color: #323232!important;
+				font-size: 17px!important;
+			}
+		</style>
+	</head>
+
+	<body class="offer_success_body">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">报价成功</h1>
+		</header>
+		<div class="mui-content offerSuccess">
+			<div class="offer_success">
+				<img src="../../images/myoffer/offer_success.png" />
+				<p>报价成功</p>
+			</div>
+			<button type="button" class="mui-btn mui-btn-primary" id="backOffer">返回报价列表</button>
+			<a href="javascript:;" class="contactBtn" id="contactBtn">立即联系需求方</a>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/flexible.min.js"></script>
+	<script type="text/javascript">
+		mui.init();
+		mui.plusReady(
+			function() {
+				var comp_id = query("compId");
+				var demand_id = query("demandId");
+				var opener = plus.webview.currentWebview().opener();
+				opener.close('none');
+				document.getElementById("backOffer").addEventListener('tap', function() {
+			
+    				var mydemandView0 = plus.webview.getWebviewById('sub0');
+    				mui.fire(mydemandView0, "refreshpage");
+    				var mydemandView1 = plus.webview.getWebviewById('sub1');
+    				mui.fire(mydemandView1, "refreshpage");
+    				
+					var newPage = openWindow("demand.html?demandId="+demand_id );
+					newPage.addEventListener('show', function() {
+									newPage.opener().close("none");
+								}, false);
+
+				})
+				document.getElementById("contactBtn").addEventListener('tap', function() {
+					if(comp_id == 0){
+						mui.toast("需求方为个人用户，无法立即联系！");
+						return;
+					}
+					openWindow("../complib/index.html?compid=" + comp_id);
+				})
+			}
+
+		)
+	</script>
+
+</html>

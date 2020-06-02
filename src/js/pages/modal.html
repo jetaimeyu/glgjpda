@@ -1,0 +1,431 @@
+<div class='md-mask' ng-click="model.maskClose()"></div>
+<div class='md-modal-body' ng-class="model.options.footer===false?'hidden-footer':''">
+	<div class="md-modal-header" ng-if="model.options.title">
+		<div class="md-modal-title" ng-bind="model.options.title"></div>
+	</div>
+	<div class="md-modal-content" ng-transclude></div>
+	<div class="md-modal-footer">
+		<div ng-click="model.close()">
+			取消
+		</div>
+		<div class="active" ng-click="model.success()">
+			确定
+		</div>
+	</div>
+</div>
+
+<style>
+	.md-modal .md-mask,
+	.md-modal .md-modal-body,
+	.md-modal.large .md-modal-body .md-modal-content,
+	.md-modal.large .md-modal-body .md-modal-footer,
+	.md-modal {
+		margin: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		top: 0;
+	}
+	
+	.md-modal .md-mask,
+	.md-modal .md-modal-body,
+	.md-modal.large .md-modal-body .md-modal-content,
+	.md-modal.large .md-modal-body .md-modal-footer {
+		position: absolute;
+	}
+	
+	.md-modal {
+		position: fixed;
+	}
+	
+	.md-modal.small.middle .md-modal-body {
+		position: absolute;
+		top: 50%;
+		right: initial;
+		bottom: initial;
+		left: 50%;
+		-webkit-transform: translate(-50%, -50%);
+		transform: translate(-50%, -50%);
+		overflow: hidden;
+		margin: 0;
+	}
+	
+	.md-modal .md-modal-body .md-modal-footer {
+		display: flex;
+		display: -webkit-flex;
+	}
+	
+	.md-modal .md-mask,
+	.md-modal .md-modal-body,
+	.md-modal.large .md-modal-body .md-modal-content,
+	.md-modal.large .md-modal-body .md-modal-footer,
+	.md-modal {
+		margin: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		top: 0;
+	}
+	
+	.md-modal .md-mask,
+	.md-modal .md-modal-body,
+	.md-modal.large .md-modal-body .md-modal-content,
+	.md-modal.large .md-modal-body .md-modal-footer {
+		position: absolute;
+	}
+	
+	.md-modal {
+		position: fixed;
+	}
+	
+	.md-modal.small.middle .md-modal-body {
+		position: absolute;
+		top: 50%;
+		right: initial;
+		bottom: initial;
+		left: 50%;
+		-webkit-transform: translate(-50%, -50%);
+		transform: translate(-50%, -50%);
+		overflow: hidden;
+		margin: 0;
+	}
+	
+	.md-modal .md-modal-body .md-modal-footer {
+		display: flex;
+		display: -webkit-flex;
+	}
+	
+	.md-modal .md-mask {
+		z-index: 1;
+		background: rgba(0, 0, 0, 0.3);
+	}
+	
+	.md-modal .md-modal-body {
+		position: absolute;
+		z-index: 2;
+	}
+	
+	.md-modal .md-modal-body .md-modal-content {
+		background: #ffffff;
+	}
+	
+	.md-modal .md-modal-body .md-modal-content .md-confirm-content {
+		padding: 0 20px;
+	}
+	
+	.md-modal .md-modal-body .md-modal-footer {
+		background: #ffffff;
+		font-size: 1.4rem;
+		border-top: 1px solid #EEEEEE;
+	}
+	
+	.md-modal .md-modal-body .md-modal-footer>div {
+		color: #666666;
+		text-align: center;
+	}
+	
+	md-notify {
+		z-index: 10000;
+	}
+	
+	md-notify .md-notify {
+		position: absolute;
+		color: #ffffff;
+		font-size: 1.4rem;
+		top: 30%;
+		left: 50%;
+		transform: translate(-50%, -30%);
+		text-align: center;
+		background-color: rgba(0, 0, 0, 0.6);
+		padding: 20px;
+	}
+	
+	md-notify .md-notify.error {
+		background-color: #ff3333;
+	}
+	
+	.md-modal {
+		transition: transform 200ms ease-out;
+	}
+	
+	.md-modal .md-modal-body {
+		top: initial;
+	}
+	
+	.md-modal .md-modal-body .md-modal-header {
+		display: none;
+	}
+	
+	.md-modal .md-modal-body .md-modal-content {
+		width: 100%;
+		padding: 20px 10px;
+	}
+	
+	.md-modal .md-modal-body .md-modal-footer>div {
+		flex: 1 1 0;
+		height: 40px;
+		line-height: 40px;
+	}
+	
+	.md-modal .md-modal-body .md-modal-footer>div.active {
+		color: #00AAEE;
+	}
+	
+	.md-modal .md-modal-body .md-modal-footer>div+div {
+		border-left: 1px solid #EEEEEE;
+	}
+	
+	.md-modal.large {
+		transform: translateX(100%);
+	}
+	
+	.md-modal.large.show {
+		transform: translateX(0);
+	}
+	
+	.md-modal.large .md-modal-body {
+		top: 0;
+	}
+	
+	.md-modal.large .md-modal-body .md-modal-content {
+		bottom: 40px;
+		overflow: auto;
+	}
+	
+	.md-modal.large .md-modal-body .md-modal-footer {
+		top: initial;
+		height: 40px;
+	}
+	
+	.md-modal .md-modal-body.hidden-footer .md-modal-content {
+		bottom: 0;
+	}
+	
+	.md-modal .md-modal-body.hidden-footer .md-modal-footer {
+		display: none;
+	}
+	
+	.md-modal.small {
+		display: none;
+	}
+	
+	.md-modal.small.show {
+		display: block;
+	}
+	
+	.md-modal.small.top .md-modal-body {
+		top: 0;
+		bottom: initial;
+	}
+	
+	.md-modal.small.middle .md-modal-body .md-modal-footer {
+		display: none;
+	}
+	
+	md-confirm .md-modal-content {
+		min-height: 100px;
+	}
+	
+	md-notify.md-modal.large {
+		display: none;
+		transform: translateX(0);
+	}
+	
+	md-notify.md-modal.large.show {
+		display: block;
+	}
+	
+	@charset "UTF-8";
+	.md-modal .md-modal-body,
+	.md-modal.large .md-modal-body .md-modal-content,
+	.md-modal.large .md-modal-body .md-modal-footer {
+		margin: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		top: 0;
+		/*防止设置了高度宽度后对叠加效果产生影响*/
+	}
+	
+	.md-modal .md-modal-body,
+	.md-modal.large .md-modal-body .md-modal-content,
+	.md-modal.large .md-modal-body .md-modal-footer {
+		position: absolute;
+	}
+	
+	.md-modal.small.middle .md-modal-body {
+		position: absolute;
+		top: 50%;
+		right: initial;
+		bottom: initial;
+		left: 50%;
+		-webkit-transform: translate(-50%, -50%);
+		transform: translate(-50%, -50%);
+		overflow: hidden;
+		margin: 0;
+	}
+	
+	.md-modal .md-modal-body .md-modal-footer {
+		display: flex;
+		display: -webkit-flex;
+	}
+	
+	.md-modal {
+		transition: transform 200ms ease-out;
+	}
+	
+	.md-modal .md-modal-body {
+		top: initial;
+	}
+	
+	.md-modal .md-modal-body .md-modal-header {
+		display: none;
+	}
+	
+	.md-modal .md-modal-body .md-modal-content {
+		width: 100%;
+		padding: 20px 10px;
+	}
+	
+	.md-modal .md-modal-body .md-modal-footer>div {
+		flex: 1 1 0;
+		height: 40px;
+		line-height: 40px;
+	}
+	
+	.md-modal .md-modal-body .md-modal-footer>div.active {
+		color: #00AAEE;
+	}
+	
+	.md-modal .md-modal-body .md-modal-footer>div+div {
+		border-left: 1px solid #EEEEEE;
+	}
+	
+	.md-modal.large {
+		transform: translateX(100%);
+	}
+	
+	.md-modal.large.show {
+		transform: translateX(0);
+	}
+	
+	.md-modal.large .md-modal-body {
+		top: 0;
+	}
+	
+	.md-modal.large .md-modal-body .md-modal-content {
+		bottom: 40px;
+		overflow: auto;
+	}
+	
+	.md-modal.large .md-modal-body .md-modal-footer {
+		top: initial;
+		height: 40px;
+	}
+	
+	.md-modal .md-modal-body.hidden-footer .md-modal-content {
+		bottom: 0;
+	}
+	
+	.md-modal .md-modal-body.hidden-footer .md-modal-footer {
+		display: none;
+	}
+	
+	.md-modal.small {
+		display: none;
+	}
+	
+	.md-modal.small.show {
+		display: block;
+	}
+	
+	.md-modal.small.top .md-modal-body {
+		top: 0;
+		bottom: initial;
+	}
+	
+	.md-modal.small.middle .md-modal-body .md-modal-footer {
+		display: none;
+	}
+	
+	md-confirm .md-modal-content {
+		min-height: 100px;
+	}
+	
+	md-notify.md-modal.large {
+		display: none;
+		transform: translateX(0);
+	}
+	
+	md-notify.md-modal.large.show {
+		display: block;
+	}
+	
+	@charset "UTF-8";
+	.md-modal .md-mask,
+	.md-modal {
+		margin: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		top: 0;
+		/*防止设置了高度宽度后对叠加效果产生影响*/
+	}
+	
+	.md-modal .md-mask {
+		position: absolute;
+	}
+	
+	.md-modal {
+		position: fixed;
+	}
+	
+	.md-modal .md-mask {
+		z-index: 1;
+		background: rgba(0, 0, 0, 0.3);
+	}
+	
+	.md-modal .md-modal-body {
+		position: absolute;
+		z-index: 2;
+	}
+	
+	.md-modal .md-modal-body .md-modal-content {
+		background: #ffffff;
+	}
+	
+	.md-modal .md-modal-body .md-modal-content .md-confirm-content {
+		padding: 0 20px;
+	}
+	
+	.md-modal .md-modal-body .md-modal-footer {
+		background: #ffffff;
+		font-size: 1.4rem;
+		border-top: 1px solid #EEEEEE;
+	}
+	
+	.md-modal .md-modal-body .md-modal-footer>div {
+		color: #666666;
+		text-align: center;
+	}
+	
+	md-notify {
+		z-index: 10000;
+	}
+	
+	md-notify .md-notify {
+		position: absolute;
+		color: #ffffff;
+		font-size: 1.4rem;
+		top: 30%;
+		left: 50%;
+		transform: translate(-50%, -30%);
+		text-align: center;
+		background-color: rgba(0, 0, 0, 0.6);
+		padding: 20px;
+	}
+	
+	md-notify .md-notify.error {
+		background-color: #ff3333;
+	}
+</style>

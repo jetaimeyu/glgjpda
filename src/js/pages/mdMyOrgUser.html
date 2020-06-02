@@ -1,0 +1,55 @@
+<ul class="data-group">
+	<li class="data-row mui-table-view-cell acc-row" ng-repeat="u in userList" ng-click="select(u)">
+		<!--	<img ng-src="{{u.UserID|getUserLogo:40:40}}" />-->
+		<div class="div-img" ng-style="{'background-image':'url('+ (u.UserID|getUserLogo:40:0) +')'}"></div>
+		<div>
+			<span class="name">{{u.RealName}}</span>
+		</div>
+		<i class="{{u.selected?'icon-roundcheckfill color-blue' : 'icon-round color-gray'}}"></i>
+	</li>
+</ul>
+<style>
+	.acc-row {
+		height: 60px;
+		line-height: 60px;
+	}
+	
+	.acc-row div {
+		margin-left: 50px;
+	}
+	
+	.acc-row img {
+		width: 40px;
+		position: absolute;
+	}
+	
+	.acc-row .div-img {
+		width: 40px;
+		height: 40px;
+		background-size: cover;
+		border-radius: 50%;
+		margin-left: 0px;
+	}
+	
+	.acc-row .name {
+		display: block;
+		font-size: 1.5rem;
+		line-height: 40px;
+		margin-right: 30px;
+	}
+	
+	.acc-row .account {
+		display: block;
+		font-size: 1.2rem;
+		color: #999999;
+	}
+	
+	.acc-row i {
+		position: absolute;
+		right: 10px;
+		top: 50%;
+		transform: translateY(-50%);
+		font-size: 2rem;
+		font-weight: bold;
+	}
+</style>

@@ -1,0 +1,42 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	</head>
+
+	<body ng-controller="partAllController">
+		<div id="pullrefresh" ng-controller="pullrefreshController" class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<div class="mui-content">
+				<md-co-processing ng-model="data"></md-co-processing>
+				<md-no-data ng-show="data && data.length==0">暂无数据</md-no-data>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script>
+			app.controller("partAllController", ["$scope", "UtilsService", "ApiService", "RPCObserver", function($scope, UtilsService, ApiService, RPCObserver) {
+				$scope.pageIndex = 0;
+				$scope.pageSize = 20;
+				var url = ApiService.Api50 + "/api/v1/Extetnal/GetCompInPagedExtetnalReleaseList";
+				$scope.url = url;
+
+				$scope.$on("refresh_pageindex", function() {
+					$scope.url = url + "?extType=1&pageIndex=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize;
+				});
+
+			}]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

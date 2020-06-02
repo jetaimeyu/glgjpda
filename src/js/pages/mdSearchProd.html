@@ -1,0 +1,49 @@
+<ul class="data-group data-title" ng-if="model.length>0">
+	<li class="data-row mui-table-view-cell" ng-repeat="item in model" ng-click="ProdDetails(item.ProdID)">
+		<p class="opt md-icon font-15">
+			<span class="icon-right"></span>
+		</p>
+		<div class="body">
+			<img class="mui-media-object imgslist" ng-src="{{item  | getProdLogo:48:0}}">
+			<label class="prodnames mui-ellipsis font-16" ng-bind="item.ProdName"></label>
+			<p class='productType mui-ellipsis' ng-show="item.Count==1" ng-bind="'型号：'+item.SkuInfo.SkuName"></p>
+			<p class='productType mui-ellipsis' ng-show="item.Count!=1" ng-bind="item.Count+'个型号'"></p>
+		</div>
+
+	</li>
+</ul>
+<style>
+	.data-group .data-row:after {
+		right: 0px;
+	}
+
+
+	.data-group .data-row .body {
+		padding: 9px 10px 10px 16px;
+	}
+
+	label.prodnames {
+		display: inline-block;
+		left: 80px !important;
+		color: #323232 !important;
+		width: 70% !important;
+		margin-top: 5px;
+	}
+
+	.search-title {
+		color: #888888 !important;
+		font-size: 1.4rem !important;
+		left: 15px !important;
+	}
+
+	p.productType
+	{
+		padding-left: 17px;
+	}
+
+	.imgslist {
+		height: 48px;
+		width: 48px;
+		background-size: cover !important;
+	}
+</style>

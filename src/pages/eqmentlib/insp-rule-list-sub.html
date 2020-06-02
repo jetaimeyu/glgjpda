@@ -1,0 +1,164 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<style type="text/css">
+			.data-group .data-row .name {
+				margin-left: 16px;
+				margin-right: 20px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="InspRuleListController">
+		<div id="pullrefresh" class="mui-scroll-wrapper" style="display:none;" ng-class="{'mui-block':isLoad}">
+			<div>
+				<ul class="data-group mt0">
+					<li class="data-row mui-table-view-cell" ng-repeat="row in data" ng-click="view(row.ID)">
+						<span class="name mui-ellipsis" ng-bind="row.Name"></span>
+						<p class="opt md-icon font-15">
+							<span class="icon-right"></span>
+						</p>
+					</li>
+				</ul>
+				<md-no-data ng-show="data&&data.length==0">暂无数据</md-no-data>
+			</div>
+		</div>
+		<script src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script>
+			app.controller("InspRuleListController", ["$scope", "ApiService", "DataService", "Loading", "RPCObserver", "UtilsService", function($scope, ApiService, DataService, Loading, RPCObserver, UtilsService) {
+				$scope.data = null;
+				$scope.Network = true;
+				$scope.isEnd = false;
+				var pageIndex = 0;
+				var pageSize = 20;
+				setTimeout(function() {
+					mui.init({
+						pullRefresh: {
+							container: '#pullrefresh',
+							up: {
+								auto: true,
+								callback: pullupRefresh
+							},
+							down: {
+								callback: pulldownRefresh
+							}
+						}
+					});
+				});
+
+				Loading.show();
+
+				//下拉刷新
+				function pulldownRefresh() {
+					pageIndex = 1;
+					getPagedEqOverhaulStandardList("down");
+				}
+
+				//上拉加载
+				function pullupRefresh() {
+					$scope.Network && pageIndex++;
+					//加载数据
+					getPagedEqOverhaulStandardList();
+				}
+
+				//获取巡检标准列表
+				function getPagedEqOverhaulStandardList(type) {
+					var url = ApiService.Api50 + "/api/v1/Equipment/GetPagedEqOverhaulStandardList?pageIndex=" + pageIndex + "&pageSize=" + pageSize;
+					DataService.get(url).then(function(res) {
+						$scope.Network = true;
+						Loading.hide();
+						$scope.isLoad = true;
+						if(res) {
+							if(type == "down") {
+								
+								$scope.data = null;
+							}
+							
+							$scope.data == null && ($scope.data = []);
+							$scope.data = $scope.data.concat(res.DataRows);
+
+							$scope.isEnd = $scope.data.length >= res.TotalCount;
+							if(mui("#pullrefresh").pullRefresh()) {
+								
+								if(type == "down") {
+									
+									mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
+									mui('#pullrefresh').pullRefresh().refresh(true);
+									mui("#pullrefresh").pullRefresh().endPullupToRefresh($scope.isEnd);
+								} else {
+									mui("#pullrefresh").pullRefresh().endPullupToRefresh($scope.isEnd);
+								}
+							}
+							hideUpData();
+						}
+					}, function(error) {
+						$scope.Network = false;
+						$scope.isLoad = true;
+						if($scope.data == null) {
+							$scope.data = [];
+						}
+						if(mui("#pullrefresh").pullRefresh()) {
+							mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
+							mui("#pullrefresh").pullRefresh().endPullupToRefresh($scope.isEnd);
+						}
+						hideUpData();
+					})
+				};
+
+				//当数据为空时，隐藏上拉的提示
+				function hideUpData() {
+					var tip = document.querySelector('.mui-pull-bottom-pocket');
+					if(tip) {
+						if($scope.data.length == 0) {
+							tip.classList.contains('mui-visibility') && tip.classList.remove('mui-visibility');
+							tip.classList.contains('mui-block') && tip.classList.remove('mui-block');
+						} else {
+							!tip.classList.contains('mui-visibility') && tip.classList.add('mui-visibility');
+							!tip.classList.contains('mui-block') && tip.classList.add('mui-block');
+						}
+					}
+				}
+
+				//查看
+				$scope.view = function(id) {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'insp-rule-info.html',
+						url: 'insp-rule-info.html?id=' + id
+					});
+				};
+
+				RPCObserver.on('refresh_insp_rule_list', 'refresh_insp_rule_list');
+				window.refresh_insp_rule_list = reload;
+
+				function reload() {
+					mui("#pullrefresh").pullRefresh() && mui('#pullrefresh').pullRefresh().refresh(true);
+					
+		            //ios上拉加载后刷新，会出现界面无数据的情况，所以加上下面一句代码
+		          mui("#pullrefresh").pullRefresh() && mui('#pullrefresh').pullRefresh().scrollTo(0, 0);
+					$scope.data = null;
+					pageIndex = 0; 
+					pullupRefresh();
+				}
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

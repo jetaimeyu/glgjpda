@@ -1,0 +1,1211 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link href="../../css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	<link rel="stylesheet" href="../../css/mui.pullrefresh.css" />
+	<link rel="stylesheet" href="../../css/mui.loading.css" />
+</head>
+
+<body ng-controller="bodyCtl">
+
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left">详情</a>
+	</header>
+	<div class="mui-content ">
+		<div class="mui-card" style="float: left;background: RGBA(4, 67, 125, 0.8);color: white;height: 110px;margin-top: 10px;padding: 0 20px;max-width: 50%;min-width: 45%;">
+			<div class="mui-card-content">
+				<div class="mui-card-content-inner" style="font-size: 18px;text-align: center;">
+					故障监测
+				</div>
+				<p class="mui-text-center" style="color: green !important;font-weight: bold;" ng-bind="modelTop.length+modelMiddle.length+modelBottom.length+'个正常运行'"></p>
+				<p class="mui-text-center" style="color: #EA3535 !important;font-weight: bold;">0个异常运行</p>
+			</div>
+		</div>
+		<div class="mui-card" style="background-color: green;color: white;height: 110px;">
+			<div class="mui-card-content">
+				<div class="mui-card-content-inner" style="font-size: 18px;text-align: center;">
+					累计运行时间
+				</div>
+				<p class="mui-text-center" style="color: white;font-weight: bold;" ng-bind='data.showWorkingTime.split("-")[0]+"天"+data.showWorkingTime.split("-")[1]+"时"+data.showWorkingTime.split("-")[2]+"分"+data.showWorkingTime.split("-")[3]+"秒"'></p>
+			</div>
+		</div>
+		<p class="data-group-tip " style="padding-top:10px;">设备详情</p>
+		<ul class="data-group">
+			<li class="data-row">
+				<label>设备名称</label>
+				<div class="body" ng-bind="data.name"></div>
+			</li>
+			<li class="data-row">
+				<label>设备状态</label>
+				<div class="body">
+					<div style="color:red;" ng-if="data.onlineState==1">下线</div>
+					<div style="color:greenyellow" ng-if="data.onlineState==0">在线</div>
+				</div>
+			</li>
+			<li class="data-row">
+				<label>所在城市</label>
+				<div class="body" ng-bind="data.province | locationfilter:data.city:data.district:data.address:data.street"></div>
+			</li>
+			<li class="data-row">
+				<label>运行时间</label>
+				<div class="body" ng-bind='data.showWorkingTime.split("-")[0]+"天"+data.showWorkingTime.split("-")[1]+"时"+data.showWorkingTime.split("-")[2]+"分"+data.showWorkingTime.split("-")[3]+"秒"'></div>
+			</li>
+			<li class="data-row" ng-click="event.showRight()">
+				<label>正常运转</label>
+				<p class="opt md-icon icon-down"></p>
+				<div class="body" ng-bind="modelTop.length+modelMiddle.length+modelBottom.length"></div>
+			</li>
+			<li class="data-row" style="display:none" ng-class="{'mui-block':isShowRight}">
+				<div class="body" style="padding-left: 20px;margin-top: -9px;margin-bottom: -9px;">
+					<ul class="data-group" style="margin-top:0px;">
+						<li class="data-row mui-table-view-cell" ng-repeat="item in modelBottom" ng-click="tap(item,$index)">
+							<label ng-bind="item.name"></label>
+							<p class="opt md-icon font-15">
+								<span class="icon-right"></span>
+							</p>
+							<div class="body" style="color:green">运行正常</div>
+						</li>
+						<li class="data-row mui-table-view-cell" ng-repeat="item in modelMiddle">
+							<label ng-bind="item.name"></label>
+
+							<div class="body" style="color:green">运行正常</div>
+						</li>
+						<li class="data-row mui-table-view-cell" ng-repeat="item in modelTop">
+							<label ng-bind="item.name"></label>
+
+							<div class="body" style="color:green">运行正常</div>
+						</li>
+
+
+					</ul>
+				</div>
+			</li>
+			<li class="data-row">
+				<label>异常运转</label>
+				<div class="body">0</div>
+			</li>
+		</ul>
+	</div>
+
+	<script src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/angular.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/mui.loading.js"></script>
+	<script type="text/javascript">
+		//生物质蒸汽设备
+		var coaltSteamTop = [{
+				"dataName": "sLeadWind",
+				"name": "引风机"
+			},
+			{
+				"dataName": "sPromoteWind",
+				"name": "鼓风机"
+			},
+			{
+				"dataName": "sDischarge",
+				"name": "炉排"
+			},
+			{
+				"dataName": "sWaterPump",
+				"name": "水泵1"
+			},
+			{
+				"dataName": "sWaterPumpt",
+				"name": "水泵2"
+			},
+			{
+				"dataName": "sWaterCyclePump",
+				"name": "热水循环泵"
+			},
+			{
+				"dataName": "sAddCoal",
+				"name": "上煤机"
+			},
+			{
+				"dataName": "sDeslag",
+				"name": "出渣机"
+			},
+			{
+				"dataName": "sPushMat",
+				"name": "给料机"
+			},
+			{
+				"dataName": "sSteamPressureHigh",
+				"name": "蒸汽压力超高"
+			},
+			{
+				"dataName": "sLeadWindIst",
+				"name": "引风机故障指示"
+			},
+			{
+				"dataName": "sPromoteWindInstruction",
+				"name": "鼓风机故障指示"
+			},
+			{
+				"dataName": "sDischargeInstruction",
+				"name": "炉排故障指示"
+			},
+			{
+				"dataName": "sWaterPumpInstruction",
+				"name": "水泵1故障指示"
+			},
+			{
+				"dataName": "sWaterPumptInstruction",
+				"name": "水泵2故障指示"
+			},
+			{
+				"dataName": "sAddCoalInstruction",
+				"name": "上煤机故障指示"
+			},
+			{
+				"dataName": "sDeslagInstruction",
+				"name": "出渣机故障指示"
+			},
+			{
+				"dataName": "sPushMatInstruction",
+				"name": "给料机故障指示"
+			},
+		];
+		var coaltSteamMiddle = [{
+			"dataName": "sWaterCyclePump",
+			"name": "热水循环泵"
+		}, ];
+		var coaltSteamBottom = [{
+				"dataName": "cLeadWindFreq",
+				"name": "引风机频率",
+				"state": "sLeadWind",
+				"type": "HZ"
+			},
+			{
+				"dataName": "cPromoteWindFreq",
+				"name": "鼓风机频率",
+				"state": "sPromoteWind",
+				"type": "HZ"
+			},
+			{
+				"dataName": "cDischargeFreq",
+				"name": "炉排频率",
+				"state": "sDischarge",
+				"type": "HZ"
+			},
+			{
+				"dataName": "cWaterPumpFreq",
+				"name": "水泵1频率",
+				"state": "sWaterPump",
+				"type": "HZ"
+			},
+			{
+				"dataName": "cWaterPumptFreq",
+				"name": "水泵2频率",
+				"state": "sWaterPumpt",
+				"type": "HZ"
+			},
+			{
+				"dataName": "cPushMatIstFreq",
+				"name": "给料机频率",
+				"state": "sPushMat",
+				"type": "HZ"
+			},
+			{
+				"dataName": "cSteamPressure",
+				"name": "蒸汽压力",
+				"type": "Mpa"
+			},
+			{
+				"dataName": "cSteamFlow",
+				"name": "蒸汽流量",
+				"type": "m³"
+			},
+			{
+				"dataName": "cHearthPressure",
+				"name": "炉膛压力",
+				"type": "Kpa"
+			},
+			{
+				"dataName": "cLeadWindPressure",
+				"name": "引风压力",
+				"type": "Kpa"
+			},
+			{
+				"dataName": "cPromoteWindPressure",
+				"name": "鼓风压力",
+				"type": "Kpa"
+			},
+			{
+				"dataName": "cHearthTemp",
+				"name": "炉膛温度",
+				"type": "℃"
+			},
+			{
+				"dataName": "cHearthExitTemp",
+				"name": "炉膛出口温度",
+				"type": "℃"
+			},
+			{
+				"dataName": "cEnergyEntranceTemp",
+				"name": "节能器进口温",
+				"type": "℃"
+			},
+			{
+				"dataName": "cEnergyExitTemp",
+				"name": "节能器出口温",
+				"type": "℃"
+			},
+			{
+				"dataName": "cPreheaterEntranceTemp",
+				"name": "空气预热器进口温",
+				"type": "℃"
+			},
+			{
+				"dataName": "cPreheaterExitTemp",
+				"name": "空气预热器出口温",
+				"type": "℃"
+			},
+			{
+				"dataName": "cWaterTankTemp",
+				"name": "水箱温度",
+				"type": "℃"
+			},
+			{
+				"dataName": "cSmokeTemp",
+				"name": "排烟温度",
+				"type": "℃"
+			},
+			{
+				"dataName": "cFeedWaterTemp",
+				"name": "给水温度",
+				"type": "℃"
+			},
+			{
+				"dataName": "cDrumWaterLevel",
+				"name": "汽包水位一",
+				"type": "%"
+			},
+			{
+				"dataName": "cDrumLevelt",
+				"name": "汽包液位二",
+				"type": "%"
+			},
+			{
+				"dataName": "cFeedWaterPressure",
+				"name": "给水压力",
+				"type": "Mpa"
+			},
+			{
+				"dataName": "cOxygenGasAmount",
+				"name": "烟气氧量",
+				"type": "%"
+			},
+		];
+
+		//生物质热水设备
+		var coaltWaterTop = [{
+				"dataName": "sLeadWind",
+				"name": "引风机"
+			},
+			{
+				"dataName": "sPromoteWind",
+				"name": "鼓风机"
+			},
+			{
+				"dataName": "sDischarge",
+				"name": "炉排"
+			},
+			{
+				"dataName": "sCycleMainPump",
+				"name": "循环主泵"
+			},
+			{
+				"dataName": "sCycleStandbyPump",
+				"name": "循环备泵"
+			},
+			{
+				"dataName": "sAddCoal",
+				"name": "上煤机"
+			},
+			{
+				"dataName": "sDeslag",
+				"name": "出渣机"
+			},
+			{
+				"dataName": "sPushMat",
+				"name": "给料机"
+			},
+			{
+				"dataName": "sLeadWindIst",
+				"name": "引风机故障指示"
+			},
+			{
+				"dataName": "sPromoteWindInstruction",
+				"name": "鼓风机故障指示"
+			},
+			{
+				"dataName": "sDischargeInstruction",
+				"name": "炉排故障指示"
+			},
+			{
+				"dataName": "sAddCoalInstruction",
+				"name": "上煤机故障指示"
+			},
+			{
+				"dataName": "sDeslagInstruction",
+				"name": "出渣机故障指示"
+			},
+			{
+				"dataName": "sPushMatInstruction",
+				"name": "给料机故障指示"
+			},
+		];
+		var coaltWaterMiddle = [{
+				"dataName": "sCycleMainPump",
+				"name": "循环主泵"
+			},
+			{
+				"dataName": "sCycleStandbyPump",
+				"name": "循环备泵"
+			},
+		];
+		var coaltWaterBottom = [{
+				"dataName": "cLeadWindFreq",
+				"name": "引风机频率",
+				"state": "sLeadWind",
+				"type": "HZ"
+			},
+			{
+				"dataName": "cPromoteWindFreq",
+				"name": "鼓风机频率",
+				"state": "sPromoteWind",
+				"type": "HZ"
+			},
+			{
+				"dataName": "cDischargeFreq",
+				"name": "炉排频率",
+				"state": "sDischarge",
+				"type": "HZ"
+			},
+			{
+				"dataName": "cPushMatIstFreq",
+				"name": "给料机频率",
+				"state": "sPushMat",
+				"type": "HZ"
+			},
+			{
+				"dataName": "cOutWaterTemp",
+				"name": "出水温度",
+				"type": "℃"
+			},
+			{
+				"dataName": "cReturnWaterTemp",
+				"name": "回水温度",
+				"type": "℃"
+			},
+			{
+				"dataName": "cHearthPressure",
+				"name": "炉膛压力",
+				"type": "Kpa"
+			},
+			{
+				"dataName": "cLeadWindPressure",
+				"name": "引风压力",
+				"type": "Kpa"
+			},
+			{
+				"dataName": "cPromoteWindPressure",
+				"name": "鼓风压力",
+				"type": "Kpa"
+			},
+			{
+				"dataName": "cHearthTemp",
+				"name": "炉膛温度",
+				"type": "℃"
+			},
+			{
+				"dataName": "cHearthExitTemp",
+				"name": "炉膛出口温度",
+				"type": "℃"
+			},
+			{
+				"dataName": "cEnergyEntranceTemp",
+				"name": "节能器进口温",
+				"type": "℃"
+			},
+			{
+				"dataName": "cEnergyExitTemp",
+				"name": "节能器出口温",
+				"type": "℃"
+			},
+			{
+				"dataName": "cPreheaterEntranceTemp",
+				"name": "空气预热器进口温",
+				"type": "℃"
+			},
+			{
+				"dataName": "cPreheaterExitTemp",
+				"name": "空气预热器出口温",
+				"type": "℃"
+			},
+			{
+				"dataName": "cWaterTankTemp",
+				"name": "水箱温度",
+				"type": "℃"
+			},
+			{
+				"dataName": "cSmokeTemp",
+				"name": "排烟温度",
+				"type": "℃"
+			},
+			{
+				"dataName": "cOxygenGasAmount",
+				"name": "烟气氧量",
+				"type": "%"
+			},
+
+		];
+
+		//生物质导热油设备
+		var coaltOilTop = [{
+				"dataName": "sAddCoal",
+				"name": "上煤机"
+			},
+			{
+				"dataName": "sCycleMainPump",
+				"name": "循环主泵"
+			},
+			{
+				"dataName": "sCycleStandbyPump",
+				"name": "循环备泵"
+			},
+			{
+				"dataName": "sDeslag",
+				"name": "出渣机"
+			},
+			{
+				"dataName": "sDifPressureFault",
+				"name": "压差故障"
+			},
+			{
+				"dataName": "sDischarge",
+				"name": "炉排"
+			},
+			{
+				"dataName": "sFuelLeanFault",
+				"name": "缺油故障"
+			},
+			{
+				"dataName": "sLeadWind",
+				"name": "引风机"
+			},
+			{
+				"dataName": "sOilTempHighFault",
+				"name": "油温高故障"
+			},
+			{
+				"dataName": "sPromoteWind",
+				"name": "鼓风机"
+			},
+			{
+				"dataName": "sPushMat",
+				"name": "给料机"
+			},
+			{
+				"dataName": "sLeadWindIst",
+				"name": "引风机故障指示"
+			},
+			{
+				"dataName": "sPromoteWindInstruction",
+				"name": "鼓风机故障指示"
+			},
+			{
+				"dataName": "sDischargeInstruction",
+				"name": "炉排故障指示"
+			},
+			{
+				"dataName": "sAddCoalInstruction",
+				"name": "上煤机故障指示"
+			},
+			{
+				"dataName": "sDeslagInstruction",
+				"name": "出渣机故障指示"
+			},
+			{
+				"dataName": "sPushMatInstruction",
+				"name": "给料机故障指示"
+			},
+		];
+		var coaltOilMiddle = [{
+				"dataName": "sCycleMainPump",
+				"name": "循环主泵"
+			},
+			{
+				"dataName": "sCycleStandbyPump",
+				"name": "循环备泵"
+			},
+		];
+		var coaltOilBottom = [{
+				"dataName": "cLeadWindFreq",
+				"name": "引风机频率",
+				"state": "sLeadWind",
+				"type": "HZ"
+			},
+			{
+				"dataName": "cPromoteWindFreq",
+				"name": "鼓风机频率",
+				"state": "sPromoteWind",
+				"type": "HZ"
+			},
+			{
+				"dataName": "cDischargeFreq",
+				"name": "炉排频率",
+				"state": "sDischarge",
+				"type": "HZ"
+			},
+			{
+				"dataName": "cPushMatIstFreq",
+				"name": "给料机频率",
+				"state": "sPushMat",
+				"type": "HZ"
+			},
+			{
+				"dataName": "cEnergyEntranceTemp",
+				"name": "节能器进口温",
+				"type": "℃"
+			},
+			{
+				"dataName": "cEnergyExitTemp",
+				"name": "节能器出口温",
+				"type": "℃"
+			},
+			{
+				"dataName": "cHeadTankLiquid",
+				"name": "高位槽液位",
+				"type": "%"
+			},
+			{
+				"dataName": "cHeadTankTemp",
+				"name": "高位槽温度",
+				"type": "℃"
+			},
+			{
+				"dataName": "cHearthExitTemp",
+				"name": "炉膛出口温度",
+				"type": "℃"
+			},
+			{
+				"dataName": "cHearthPressure",
+				"name": "炉膛压力",
+				"type": "Kpa"
+			},
+			{
+				"dataName": "cHearthTemp",
+				"name": "炉膛温度",
+				"type": "℃"
+			},
+			{
+				"dataName": "cInvarPipePressure",
+				"name": "进油管压力",
+				"type": "Mpa"
+			},
+			{
+				"dataName": "cLeadWindPressure",
+				"name": "引风压力",
+				"type": "Kpa"
+			},
+			{
+				"dataName": "cLowTankTemp",
+				"name": "低位槽温度",
+				"type": "℃"
+			},
+			{
+				"dataName": "cOilFlow",
+				"name": "导热油流量",
+				"type": "m³"
+			},
+			{
+				"dataName": "cOutOilTemp",
+				"name": "出油温度",
+				"type": "℃"
+			},
+			{
+				"dataName": "cOutvarPipePressure",
+				"name": "出油管压力",
+				"type": "Mpa"
+			},
+			{
+				"dataName": "cOxygenGasAmount",
+				"name": "烟气氧量",
+				"type": "%"
+			},
+			{
+				"dataName": "cPreheaterEntranceTemp",
+				"name": "空气预热器进口温",
+				"type": "℃"
+			},
+			{
+				"dataName": "cPreheaterExitTemp",
+				"name": "空气预热器出口温",
+				"type": "℃"
+			},
+			{
+				"dataName": "cPromoteWindPressure",
+				"name": "鼓风压力",
+				"type": "Kpa"
+			},
+			{
+				"dataName": "cReturnOilTemp",
+				"name": "回油温度",
+				"type": "℃"
+			},
+			{
+				"dataName": "cSmokeTemp",
+				"name": "排烟温度",
+				"type": "℃"
+			},
+			{
+				"dataName": "cWaterTankTemp",
+				"name": "水箱温度",
+				"type": "℃"
+			},
+		];
+
+		//燃油气蒸汽设备
+		var oilSteamTop = [{
+				"dataName": "sSmallFireSignal",
+				"name": "小火信号"
+			},
+			{
+				"dataName": "sBigFireSignal",
+				"name": "大火信号"
+			},
+			{
+				"dataName": "sFlameoutFault",
+				"name": "熄火故障"
+			},
+			{
+				"dataName": "sBurning",
+				"name": "燃烧运行"
+			},
+			{
+				"dataName": "sFan",
+				"name": "风机"
+			},
+			{
+				"dataName": "sWaterPump",
+				"name": "水泵1"
+			},
+			{
+				"dataName": "sWaterPumpt",
+				"name": "水泵2"
+			},
+			{
+				"dataName": "sWaterCyclePump",
+				"name": "热水循环泵"
+			},
+			{
+				"dataName": "sSteamPressureHigh",
+				"name": "蒸汽压力超高"
+			},
+			{
+				"dataName": "sWaterPumpInstruction",
+				"name": "水泵1故障指示"
+			},
+			{
+				"dataName": "sWaterPumptInstruction",
+				"name": "水泵2故障指示"
+			},
+		];
+		var oilSteamMiddle = [{
+				"dataName": "sSmallFireSignal",
+				"name": "小火信号"
+			},
+			{
+				"dataName": "sBigFireSignal",
+				"name": "大火信号"
+			},
+			{
+				"dataName": "sFlameoutFault",
+				"name": "熄火故障"
+			},
+			{
+				"dataName": "sBurning",
+				"name": "燃烧运行"
+			},
+			{
+				"dataName": "sWaterCyclePump",
+				"name": "热水循环泵"
+			},
+		];
+		var oilSteamBottom = [{
+				"dataName": "cWaterPumpFreq",
+				"name": "水泵1频率",
+				"state": "sWaterPump",
+				"type": "HZ"
+			},
+			{
+				"dataName": "cWaterPumptFreq",
+				"name": "水泵2频率",
+				"state": "sWaterPumpt",
+				"type": "HZ"
+			},
+			{
+				"dataName": "cSteamPressure",
+				"name": "蒸汽压力",
+				"type": "Mpa"
+			},
+			{
+				"dataName": "cSteamFlow",
+				"name": "蒸汽流量",
+				"type": "m³"
+			},
+			{
+				"dataName": "cBoilerBodyTemp",
+				"name": "炉体温度",
+				"type": "℃"
+			},
+			{
+				"dataName": "cEnergyEntranceTemp",
+				"name": "节能器进口温",
+				"type": "℃"
+			},
+			{
+				"dataName": "cEnergyExitTemp",
+				"name": "节能器出口温",
+				"type": "℃"
+			},
+			{
+				"dataName": "cPreheaterEntranceTemp",
+				"name": "空气预热器进口温",
+				"type": "℃"
+			},
+			{
+				"dataName": "cPreheaterExitTemp",
+				"name": "空气预热器出口温",
+				"type": "℃"
+			},
+			{
+				"dataName": "cWaterTankTemp",
+				"name": "水箱温度",
+				"type": "℃"
+			},
+			{
+				"dataName": "cSmokeTemp",
+				"name": "排烟温度",
+				"type": "℃"
+			},
+			{
+				"dataName": "cFeedWaterTemp",
+				"name": "给水温度",
+				"type": "℃"
+			},
+			{
+				"dataName": "cPh",
+				"name": "PH值",
+				"type": ""
+			},
+			{
+				"dataName": "cDrumWaterLevel",
+				"name": "汽包水位一",
+				"type": "%"
+			},
+			{
+				"dataName": "cDrumLevelt",
+				"name": "汽包液位二",
+				"type": "%"
+			},
+			{
+				"dataName": "cFeedWaterPressure",
+				"name": "给水压力",
+				"type": "Mpa"
+			},
+			{
+				"dataName": "cOxygenGasAmount",
+				"name": "烟气氧量",
+				"type": "%"
+			},
+		];
+
+		//燃油气热水设备
+		var oilWaterTop = [{
+				"dataName": "sSmallFireSignal",
+				"name": "小火信号"
+			},
+			{
+				"dataName": "sBigFireSignal",
+				"name": "大火信号"
+			},
+			{
+				"dataName": "sFlameoutFault",
+				"name": "熄火故障"
+			},
+			{
+				"dataName": "sBurning",
+				"name": "燃烧运行"
+			},
+			{
+				"dataName": "sFan",
+				"name": "风机"
+			},
+			{
+				"dataName": "sCycleMainPump",
+				"name": "循环主泵"
+			},
+			{
+				"dataName": "sCycleStandbyPump",
+				"name": "循环备泵"
+			},
+		];
+		var oilWaterMiddle = [{
+				"dataName": "sSmallFireSignal",
+				"name": "小火信号"
+			},
+			{
+				"dataName": "sBigFireSignal",
+				"name": "大火信号"
+			},
+			{
+				"dataName": "sFlameoutFault",
+				"name": "熄火故障"
+			},
+			{
+				"dataName": "sBurning",
+				"name": "燃烧运行"
+			},
+			{
+				"dataName": "sCycleMainPump",
+				"name": "循环主泵"
+			},
+			{
+				"dataName": "sCycleStandbyPump",
+				"name": "循环备泵"
+			},
+		];
+		var oilWaterBottom = [{
+				"dataName": "cBoilerBodyTemp",
+				"name": "炉体温度",
+				"type": "℃"
+			},
+			{
+				"dataName": "cEnergyEntranceTemp",
+				"name": "节能器进口温",
+				"type": "℃"
+			},
+			{
+				"dataName": "cEnergyExitTemp",
+				"name": "节能器出口温",
+				"type": "℃"
+			},
+			{
+				"dataName": "cPreheaterEntranceTemp",
+				"name": "空气预热器进口温",
+				"type": "℃"
+			},
+			{
+				"dataName": "cPreheaterExitTemp",
+				"name": "空气预热器出口温",
+				"type": "℃"
+			},
+			{
+				"dataName": "cWaterTankTemp",
+				"name": "水箱温度",
+				"type": "℃"
+			},
+			{
+				"dataName": "cSmokeTemp",
+				"name": "排烟温度",
+				"type": "℃"
+			},
+			{
+				"dataName": "cOxygenGasAmount",
+				"name": "烟气氧量",
+				"type": "%"
+			},
+		];
+
+		//燃油气导热油设备
+		var oilTransferTop = [{
+				"dataName": "sSmallFireSignal",
+				"name": "小火信号"
+			},
+			{
+				"dataName": "sBigFireSignal",
+				"name": "大火信号"
+			},
+			{
+				"dataName": "sFlameoutFault",
+				"name": "熄火故障"
+			},
+			{
+				"dataName": "sBurning",
+				"name": "燃烧运行"
+			},
+			{
+				"dataName": "sFan",
+				"name": "风机"
+			},
+			{
+				"dataName": "sCycleMainPump",
+				"name": "循环主泵"
+			},
+			{
+				"dataName": "sCycleStandbyPump",
+				"name": "循环备泵"
+			},
+			{
+				"dataName": "sFillingPump",
+				"name": "注油泵"
+			},
+			{
+				"dataName": "sFuelLeanFault",
+				"name": "缺油故障"
+			},
+			{
+				"dataName": "sDifPressureFault",
+				"name": "压差故障"
+			},
+			{
+				"dataName": "sOilTempHighFault",
+				"name": "油温高故障"
+			},
+			{
+				"dataName": "sLeadWind",
+				"name": "引风机"
+			},
+			{
+				"dataName": "sPromoteWind",
+				"name": "鼓风机"
+			},
+			{
+				"dataName": "sDischarge",
+				"name": "炉排"
+			},
+			{
+				"dataName": "sWaterPump",
+				"name": "水泵1"
+			},
+			{
+				"dataName": "sWaterPumpt",
+				"name": "水泵2"
+			},
+			{
+				"dataName": "sWaterCyclePump",
+				"name": "热水循环泵"
+			},
+			{
+				"dataName": "sAddCoal",
+				"name": "上煤机"
+			},
+			{
+				"dataName": "sDeslag",
+				"name": "出渣机"
+			},
+			{
+				"dataName": "sPushMat",
+				"name": "给料机"
+			},
+			{
+				"dataName": "sSteamPressureHigh",
+				"name": "蒸汽压力超高"
+			},
+			{
+				"dataName": "sLeadWindIst",
+				"name": "引风机故障指示"
+			},
+			{
+				"dataName": "sPromoteWindInstruction",
+				"name": "鼓风机故障指示"
+			},
+			{
+				"dataName": "sDischargeInstruction",
+				"name": "炉排故障指示"
+			},
+
+		];
+		var oilTransferMiddle = [{
+				"dataName": "sSmallFireSignal",
+				"name": "小火信号"
+			},
+			{
+				"dataName": "sBigFireSignal",
+				"name": "大火信号"
+			},
+			{
+				"dataName": "sFlameoutFault",
+				"name": "熄火故障"
+			},
+			{
+				"dataName": "sBurning",
+				"name": "燃烧运行"
+			},
+			{
+				"dataName": "sCycleMainPump",
+				"name": "循环主泵"
+			},
+			{
+				"dataName": "sCycleStandbyPump",
+				"name": "循环备泵"
+			},
+			{
+				"dataName": "sFillingPump",
+				"name": "注油泵"
+			},
+		];
+		var oilTransferBottom = [{
+				"dataName": "cOutOilTemp",
+				"name": "出油温度",
+				"type": "℃"
+			},
+			{
+				"dataName": "cReturnOilTemp",
+				"name": "回油温度",
+				"type": "℃"
+			},
+			{
+				"dataName": "cHeadTankTemp",
+				"name": "高位槽温度",
+				"type": "℃"
+			},
+			{
+				"dataName": "cLowTankTemp",
+				"name": "低位槽温度",
+				"type": "℃"
+			},
+			{
+				"dataName": "cOilFlow",
+				"name": "导热油流量",
+				"type": "m³"
+			},
+			{
+				"dataName": "cInvarPipePressure",
+				"name": "进油管压力",
+				"type": "Mpa"
+			},
+			{
+				"dataName": "cOutvarPipePressure",
+				"name": "出油管压力",
+				"type": "Mpa"
+			},
+			{
+				"dataName": "cHeadTankLiquid",
+				"name": "高位槽液位",
+				"type": "%"
+			},
+			{
+				"dataName": "cBoilerBodyTemp",
+				"name": "炉体温度",
+				"type": "℃"
+			},
+			{
+				"dataName": "cEnergyEntranceTemp",
+				"name": "节能器进口温",
+				"type": "℃"
+			},
+			{
+				"dataName": "cEnergyExitTemp",
+				"name": "节能器出口温",
+				"type": "℃"
+			},
+			{
+				"dataName": "cPreheaterEntranceTemp",
+				"name": "空气预热器进口温",
+				"type": "℃"
+			},
+			{
+				"dataName": "cPreheaterExitTemp",
+				"name": "空气预热器出口温",
+				"type": "℃"
+			},
+			{
+				"dataName": "cWaterTankTemp",
+				"name": "水箱温度",
+				"type": "℃"
+			},
+			{
+				"dataName": "cSmokeTemp",
+				"name": "排烟温度",
+				"type": "℃"
+			},
+			{
+				"dataName": "cOxygenGasAmount",
+				"name": "烟气氧量",
+				"type": "%"
+			},
+		];
+
+		app.controller("bodyCtl", ["$scope", "ApiService", "DataService", "DatePickerService", "UtilsService", "CacheService",
+			function ($scope, ApiService, DataService, DatePickerService, UtilsService, CacheService) {
+				var view = plus.webview.currentWebview();
+				$scope.data = view.data;
+				$scope.modelTop = [];
+				$scope.modelMiddle = [];
+				$scope.modelBottom = [];
+				$scope.isShowRight = false;
+				$scope.event = {
+					showRight: function () {
+						$scope.isShowRight = !$scope.isShowRight;
+					}
+				}
+
+				switch ($scope.data.type) {
+					case 1:
+						$scope.modelTop = coaltSteamTop;
+						$scope.modelMiddle = coaltSteamMiddle;
+						$scope.modelBottom = coaltSteamBottom;
+						break;
+					case 2:
+						$scope.modelTop = coaltWaterTop;
+						$scope.modelMiddle = coaltWaterMiddle;
+						$scope.modelBottom = coaltWaterBottom;
+						break;
+					case 3:
+						$scope.modelTop = coaltOilTop;
+						$scope.modelMiddle = coaltOilMiddle;
+						$scope.modelBottom = coaltOilBottom;
+						break;
+					case 4:
+						$scope.modelTop = oilSteamTop;
+						$scope.modelMiddle = oilSteamMiddle;
+						$scope.modelBottom = oilSteamBottom;
+						break;
+					case 5:
+						$scope.modelTop = oilWaterTop;
+						$scope.modelMiddle = oilWaterMiddle;
+						$scope.modelBottom = oilWaterBottom;
+						break;
+					case 6:
+						$scope.modelTop = oilTransferTop;
+						$scope.modelMiddle = oilTransferMiddle;
+						$scope.modelBottom = oilTransferBottom;
+						break;
+				}
+				//跳转
+				$scope.tap = function (obj, index) {
+
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'sitong-boiler-stat-info.html',
+						url: '../customized/sitongBoiler/sitong-boiler-stat-info.html?type=' + $scope.data.type + '&code=' + $scope.data
+							.code,
+						extras: {
+							obj: obj,
+							idx: index
+						}
+					});
+				};
+
+			}
+		]);
+
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+		});
+	</script>
+
+</body>
+
+</html>

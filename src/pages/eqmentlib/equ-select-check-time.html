@@ -1,0 +1,142 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>设备维修</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/common.css">
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<link rel="stylesheet" href="mat-common.css">
+		<link rel="stylesheet" href="mat-repair.css">
+	</head>
+	<style type="text/css">
+		.data-group .equ-fault:after {
+			height: 0px !important;
+		}
+		
+		.mui-content {
+			position: absolute;
+			top: 0px;
+			bottom: 0px;
+			left: 0;
+			right: 0;
+			overflow: auto;
+		}
+		
+		.partDomHead div {
+			font-weight: bold !important;
+			color: #323232 !important;
+		}
+		
+		.padr {
+			padding-right: 20px !important;
+		}
+		
+		.mui-row .signBtn {
+			position: relative;
+			width: 50%;
+			text-align: center;
+			height: 44px;
+			line-height: 44px;
+		}
+		
+		.right-save {
+			font-size: 1.4rem;
+			line-height: 40px;
+			padding: 3px 2px;
+			text-align: center;
+			color: #000000;
+		}
+	</style>
+
+	<body ng-controller="RepairEditController">
+		
+		<header class="mui-bar mui-bar-nav" id="header">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">时间选择</a>
+		</header>
+		<div class="mui-content" id="content">
+			<ul class="data-group">
+				<li class="mui-table-view-cell data-row">
+					<label>盘点时间</label>
+					<p class="opt md-icon font-15" ng-click="chooseDate('ArriveDate')">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" data-options='{}' ng-click="chooseDate('ArriveDate')">
+						<span ng-if="!ArriveDate" class="placeholder">请选择盘点时间</span>
+						<span ng-if="ArriveDate" ng-bind="ArriveDate"></span>
+					</div>
+				</li>
+				<li class="mui-table-view-cell data-row">
+					<label>盘点时间</label>
+					<p class="opt md-icon font-15" ng-click="chooseDate('LeaveDate')">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" data-options='{}' ng-click="chooseDate('LeaveDate')">
+						<span ng-if="!LeaveDate" class="placeholder">请选择盘点时间</span>
+						<span ng-if="LeaveDate" ng-bind="LeaveDate"></span>
+					</div>
+				</li>
+			</ul>
+			<div class="mui-content-padded" style="margin-bottom: 80px;">
+				<button class="mui-btn mui-btn-primary mui-btn-block" ng-click="save()">确定</button>
+				
+			</div>
+</div>
+		
+		<script type="text/javascript" src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("RepairEditController", ["$scope", "ApiService", "DataService", "UtilsService", "AuthService", "Loading", "$Modal", "$q", "$timeout", "ChatUserService", "$filter", "RPCObserver", "CacheService", "DatePickerService",
+	    function($scope, ApiService, DataService, UtilsService, AuthService, Loading, $Modal, $q, $timeout, ChatUserService, $filter, RPCObserver, CacheService, DatePickerService) {
+		$scope.ArriveDate = "";
+		$scope.LeaveDate = "";
+		
+		$scope.chooseDate = function(key) {
+			var selectedDate = key == "LeaveDate" ? $scope.LeaveDate : $scope.ArriveDate;
+			DatePickerService.pickDate({
+				selected: selectedDate
+			}).then(function(res) {
+				key == "LeaveDate" ? ($scope.LeaveDate = res) : ($scope.ArriveDate = res);
+				
+			});
+		}
+		$scope.save =function (){
+			var obj = {
+				'strart':$scope.ArriveDate,
+				'end':$scope.LeaveDate
+			}
+//			alert(JSON.stringify(obj))
+			RPCObserver.broadcast('refresh_equcheck_list',obj);
+			mui.back()
+			
+		}
+		
+
+		
+
+		
+	
+		
+
+	
+	}
+]);
+
+
+
+
+
+
+
+mui.plusReady(function() {
+	angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+});
+		</script>
+		</body>
+
+</html>

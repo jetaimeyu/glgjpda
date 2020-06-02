@@ -1,0 +1,310 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>客户服务详情</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.data-group:first-child {
+				margin-top: 0px!important;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="MatServiceInfoController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left mui-ellipsis" style="max-width: 70vw;">其他服务详情</a>
+			<a class="menu-more icon-more right-menu-icon-detail" href="#popover" id="openPopover" style="display: none;" ng-class="{'mui-block':isLoad}" ng-if="'Q51' | hasAuth:serviceInfoData.CreateUserID:serviceInfoData.CreateUserCompID"></a>
+			<i class="mui-pull-right menu-more-share-mat icon-share" ng-click="goServiceShare()" style="display: none;" ng-class="{'mui-block':isLoad}"></i>
+		</header>
+		<div class="mui-scroll-wrapper md-info-page" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<ul class="data-group">
+				<li class="data-row" ng-if="serviceInfoData .JobContent">
+					<label>工作内容</label>
+					<div class="body">
+						<span ng-bind="serviceInfoData .JobContent"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="audio.FileSize">
+					<label>语音描述</label>
+					<div class="body">
+						<md-audio audio="audio" readonly="true"></md-audio>
+					</div>
+				</li>
+				<li class="data-row" ng-if="imageList.length!=0||videoList.length!=0">
+					<div class="body attach" style="padding-left: 16px;">
+						<md-image ng-if="imageList.length!=0" images="imageList" readonly="true"></md-image>
+						<md-video ng-if="videoList.length!=0" videos="videoList" readonly="true"></md-video>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group" ng-repeat="groupParams in serviceInfoData .DebugParams" style="margin-top: 8px;">
+				<p class="data-group-tip" ng-bind="groupParams[0].ParamName" ng-if="groupParams[0].IsGroup==1&&groupParams[1]"></p>
+				<li class="data-row" ng-repeat="param in groupParams" ng-if="param.IsGroup==0">
+					<label ng-bind="param.ParamName"></label>
+					<div class="body">
+						<span ng-bind="param.ParamDefault"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<p class="data-group-tip">相关客户</p>
+				<li class="data-row mui-table-view-cell">
+					<label>客户</label>
+					<p class="opt md-icon font-15" ng-click="selectCustomerInfo(serviceInfoData.CustomerID)">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body"  ng-click="selectCustomerInfo(serviceInfoData.CustomerID)">
+						<span ng-bind="serviceInfoData .CustomerName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>联系人</label>
+					<div class="body">
+						<span ng-bind="serviceInfoData .LinkName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>联系电话</label>
+					<i class="opt md-icon icon-tel" style="color: #3296FA;" ng-click="call()"></i>
+					<div class="body">
+						<span ng-bind="serviceInfoData.LinkPhone"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="serviceInfoData.Province">
+					<label>客户地址</label>
+					<div class="body">
+						<span ng-bind="serviceInfoData.Province | locationfilter:serviceInfoData.City:serviceInfoData.District:serviceInfoData.Address:serviceInfoData.Street"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<li class="data-row">
+					<label>记录人</label>
+					<p class="opt md-icon" ng-if="serviceInfoData.CreateUserID!=CurUserID" ng-click="sendMsg(serviceInfoData.CreateUserID, serviceInfoData.CreateUserName, serviceInfoData.ULogoIsExist, serviceInfoData.CreateUserCompID)">
+						<span class="icon-chat-single font-15 color-blue"></span>
+					</p>
+					<div class="body">
+						<span ng-bind="serviceInfoData.CreateUserName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>记录日期</label>
+					<div class="body">
+						<span ng-bind="serviceInfoData.CreateDate"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group" ng-if="serviceInfoData .Users.length>0">
+				<li class="data-row">
+					<label>已抄送给</label>
+					<div class="body">
+						<md-chat-user-list ng-model="serviceInfoData .Users"></md-chat-user-list>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<!--无网络或请求失败重试-->
+		<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+		<div id="popover" class="mui-popover menuDivModel">
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell" ng-click="ServiceModify()">
+					<a class="mui-icon icon-edit">
+						<font>修改</font>
+					</a>
+				</li>
+				<li class="mui-table-view-cell" ng-click="ServiceDelect()">
+					<a class="mui-icon icon-dustbin">
+						<font>删除</font>
+					</a>
+				</li>
+			</ul>
+		</div>
+
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../message/transMessage.js"></script>
+		<script type="text/javascript">
+			app.controller("MatServiceInfoController", ["$scope", "AuthService", "ApiService", "DataService", "UtilsService", "ChatUserService", "Loading", "RPCObserver", "$filter", "CacheService", function($scope, AuthService, ApiService, DataService, UtilsService, ChatUserService, Loading, RPCObserver, $filter, CacheService) {
+				$scope.serviceInfoData = null; //安装调试信息
+				//$scope.title = query("title") || "其他服务资料";
+				$scope.audio = {}; // 音频
+				$scope.imageList = []; //图片
+				$scope.videoList = []; //视频
+
+				$scope.users = ""; //人员信息
+				var curUser = CacheService.get("user");
+				$scope.CurUserID = curUser.UserID;
+				$scope.sendMsg = function(userid, userName, hasLogo, compId) {
+					ChatUserService.tap({
+						chatId: userid,
+						chatName: userName,
+						hasLogo: hasLogo,
+						chatCompId: compId
+					});
+				};
+				//无网络或请求失败重试
+				$scope.retryModal = {
+					msg: "其他服务详情",
+					retry: getCustomerServiceInfo,
+					state: ''
+				}
+
+				//获取安装提示详情
+				function getCustomerServiceInfo() {
+					Loading.show();
+					var url = ApiService.Api50 + "/api/v2/Customer/GetCustomerServiceInfo?CustomerServiceId=" + query("id");
+					DataService.get(url).then(function(res) {
+						Loading.hide();
+						$scope.isLoad = true;
+						$scope.retryModal.state = '';
+						if(res) {
+							$scope.serviceInfoData = JSON.parse(JSON.stringify(res));
+							$scope.serviceInfoData.DebugParams = [];
+							res.CustomerServiceParams.forEach(function(item) {
+								if(item.IsGroup == 1) {
+									$scope.serviceInfoData.DebugParams.push([]);
+								}
+								var len = $scope.serviceInfoData.DebugParams.length;
+								len == 0 && $scope.serviceInfoData.DebugParams.push([item]);
+								len > 0 && $scope.serviceInfoData.DebugParams[len - 1].push(item);
+							})
+
+							$scope.audio = res.ArmAttach; //音频
+							$scope.imageList = res.ImgAttach; //图片
+							$scope.videoList = res.VideoAttach; //视频
+						}
+					}, function(error) {
+						$scope.retryModal.state = error.State;
+					});
+				};
+				//设备人员选择
+				AuthService.getAuth().then(function(res) {
+					$scope.equUserData = res;
+					$scope.InnerCodeName = res.InnerCodeName || '出厂编号';
+					getCustomerServiceInfo();
+				});
+				//拨打电话
+				$scope.call = function() {
+					plus.device.dial($scope.serviceInfoData.LinkPhone, false);
+					return false;
+				}
+				//修改 跳转
+				$scope.ServiceModify = function() {
+					$scope.$broadcast("stop_audio");
+					mui('#popover').popover('toggle');
+					UtilsService.openWindow({
+						needLogin: true,
+						id: "service-edit.html",
+						url: "service-edit.html?id=" + $scope.serviceInfoData.ID
+					});
+				};
+				//跳转产品详情
+				$scope.prodInfos = function(id) {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'prodinfo-head.html',
+						url: '../problib/prodinfo-head.html?prodId=' + id
+					});
+				};
+				//跳转客户详情
+				$scope.selectCustomerInfo=function(id) {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'customer-info.html',
+						url: '../customer/customer-info.html?customerid='+id
+					});
+				};
+				$scope.ServiceDelect = function() {
+					mui('#popover').popover('hide');
+					mui.confirm("确认删除吗？", function(e) {
+						if(e.index == 0) {
+							var url = ApiService.Api50 + "/api/v2/Customer/DelCustomerService?CustomerServiceId=" + query("id");
+							DataService.get(url).then(function(res) {
+								//刷新 安装调试搜索
+								RPCObserver.broadcast('refresh_service_search_list');
+								RPCObserver.broadcast("refresh_mat_service_list");
+								// 客户信息刷新
+								RpcClient.invoke("customer-info.html", "RPC_BillViewRefresh", "customer");
+								//刷新客户详情-合计 列表
+								RPCObserver.broadcast("refresh_my_sxun");
+								mui.back();
+							});
+						}
+					});
+				}
+				//刷新页面数据
+				RpcServer.expose("RPC_serviceInfoRefresh", function(params) {
+					getCustomerServiceInfo();
+				});
+				//刷新关闭popover
+				RPCObserver.on('close_popover', 'close_popover');
+				window.close_popover = function() {
+					mui('#popover').popover('hide');
+				};
+				//详情分享
+				$scope.goServiceShare = function() {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: "contact-select.html",
+						url: "../common/contact-select.html?action=select&must=true&multiselect=true&hideself=true",
+						extras: {
+							selectObj: [],
+							callback: 'shareService'
+						}
+					});
+				};
+				$scope.doPickShare = function(sltUsers) {
+					var obj = {
+						id: query("id"),
+						img: ApiService.Down + "/chat/other-service.png",
+						title: "其他服务",
+						desc: $filter("formatFaultInfo")($scope.serviceInfoData.IsHasAudio, $scope.serviceInfoData.AudioLength, $scope.serviceInfoData.JobContent)
+					}
+					UtilsService.shareMsg(obj, sltUsers).then(function() {
+						var userNames = [];
+						sltUsers.forEach(function(user) {
+
+							userNames.push(user.ViewName);
+
+							ChatUserService.send({
+								chatId: user.UserID,
+								chatName: user.ViewName,
+								chatCompId: user.EquipmentID,
+								hasLogo: curUser.ULogoIsExist,
+								chatLogo: user.ULogoIsExist,
+								type: 7,
+								content: {
+									eventName: "other-service",
+									logo: ApiService.Down + "/chat/other-service.png",
+									title: "其他服务",
+									desc: $filter("formatFaultInfo")($scope.serviceInfoData.IsHasAudio, $scope.serviceInfoData.AudioLength, $scope.serviceInfoData.JobContent),
+									params: [query("id")]
+								}
+							});
+						})
+						mui.toast("成功分享给：" + userNames.join("，"));
+					});
+				}
+			}]);
+
+			function shareService(sltObjs) {
+				var appElement = document.querySelector('[ng-controller=MatServiceInfoController]');
+				var $scope = angular.element(appElement).scope();
+				//console.log(JSON.stringify(sltObjs))
+				$scope.doPickShare(angular.copy(sltObjs));
+			}
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,415 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>设备维修</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/common.css">
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<link rel="stylesheet" href="mat-common.css">
+		<link rel="stylesheet" href="mat-repair.css">
+	</head>
+	<style type="text/css">
+		.data-group .equ-fault:after {
+			height: 0px !important;
+		}
+		
+		.mui-content {
+			position: absolute;
+			top: 0px;
+			bottom: 0px;
+			left: 0;
+			right: 0;
+			overflow: auto;
+		}
+		
+		.partDomHead div {
+			font-weight: bold !important;
+			color: #323232 !important;
+		}
+		
+		.padr {
+			padding-right: 20px !important;
+		}
+		
+		.mui-row .signBtn {
+			position: relative;
+			width: 50%;
+			text-align: center;
+			height: 44px;
+			line-height: 44px;
+		}
+		
+		.right-save {
+			font-size: 1.4rem;
+			line-height: 40px;
+			padding: 3px 2px;
+			text-align: center;
+			color: #000000;
+		}
+	</style>
+
+	<body ng-controller="RepairEditController">
+		<div id="signatureparent" style="display: none;margin: 60px 0;">
+			<header class="mui-bar mui-bar-nav">
+				<a class="right-save">客户确认签名</a>
+			</header>
+			<div id="signature"></div>
+			<ul class="mui-table-view mui-row">
+				<li class="signBtn mui-media mui-col-sm-6 mui-col-xs-6" style="background: #FFFFFF;color: #3296FA;" ng-click="signature('clear')">清除签名</li>
+				<li class="signBtn mui-media mui-col-sm-6 mui-col-xs-6" style="background: #3296FA;color: #FFFFFF;" ng-click="signature('save')">保存签名</li>
+			</ul>
+		</div>
+		<header class="mui-bar mui-bar-nav" id="header">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">现场维修</a>
+		</header>
+		<div class="mui-content" id="content" style="display: none;">
+			<ul class="data-group" style="display:none;" ng-class="{'mui-block':queryRepairID || (matRecord && matRecord.ID) }">
+				<p class="data-group-tip mt10">相关产品故障</p>
+				<li class="data-row must equ-fault" ng-show="!matRecord||!matRecord.ID">
+					<label>故障内容</label>
+					<div class="body" ng-click="tap('faultEdit')">
+						<span class="placeholder" ng-show="!faultInfo.content.ID">填写设备故障信息</span>
+						<span ng-show="faultInfo.content.ID>0" ng-bind="faultInfo.content.HasAudio | formatFaultInfo:faultInfo.content.AudioLength:faultInfo.content.Description"></span>
+					</div>
+				</li>
+				<li class="data-row must equ-fault" ng-show="matRecord&&matRecord.ID">
+					<label>故障内容</label>
+					<i class="opt md-icon icon-right" ng-click="tap('faultDetail')"></i>
+					<div class="body" ng-click="tap('faultDetail')">
+						<span class="placeholder" ng-show="!faultInfo.content.ID">填写设备故障信息</span>
+						<span ng-show="faultInfo.content.ID>0" ng-bind="faultInfo.content.HasAudio | formatDeviceFaultInfo:faultInfo.content.AudioLength:faultInfo.content.Description"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-click="tap('faultSelect')" style="max-height: 40px!important; min-height: 0px!important;padding:10px 0 5px 0;" ng-if="!matRecord.ID">
+					<i class="opt md-icon icon-right" ng-click="tap('faultSelect')"></i>
+					<div class="button">
+						请选择故障内容
+					</div>
+				</li>
+				<!--<li class="mui-table-view-cell data-row" ng-if="UserCompID == ProdCompID">
+					<label>故障归类</label>
+					<i class="opt md-icon icon-right" ng-click="tap('faultClass')"></i>
+					<div class="body" ng-click="tap('faultClass')">
+						<span class="placeholder" ng-show="!matFatClass.ID">请选择故障归类</span>
+						<span ng-bind="matFatClass.Name" ng-show="matFatClass.ID"></span>
+					</div>
+				</li>
+				<li class="mui-table-view-cell data-row" ng-if="UserCompID == ProdCompID">
+					<label>责任判定</label>
+					<i class="opt md-icon icon-right" ng-click="tap('responsibility')"></i>
+					<div class="body" ng-click="tap('responsibility')">
+						<span class="placeholder" ng-show="!matResponsibility.ID">请选择责任判定</span>
+						<span ng-bind="matResponsibility.Name" ng-show="matResponsibility.ID"></span>
+					</div>
+				</li>-->
+				<!-- <li class="data-row" ng-show="UserCompID==ProdCompID && UserCompID > 0">
+				<label>故障归类</label>
+
+				<p class="opt select-opt">
+					<md-custom-select data-options="customSelectOptions.faultClass"></md-custom-select>
+				</p>
+				<div class="body">
+					<md-drop-down-list ng-model="matFatClass" data-options="{url:url,labname:'请输入或选择故障归类'}"></md-drop-down-list>
+				</div>
+
+			</li>
+			<li class="data-row" ng-show="UserCompID == ProdCompID && UserCompID > 0">
+				<label>责任判定</label>
+
+				<p class="opt select-opt">
+					<md-custom-select data-options="customSelectOptions.responsibility"></md-custom-select>
+				</p>
+				<div class="body">
+					<md-drop-down-list ng-model="matResponsibility" data-options="{url:resurl,labname:'请输入或选择责任判定'}"></md-drop-down-list>
+				</div>
+
+			</li> -->
+				<!-- <li class="mui-table-view-cell data-row must" ng-if="faultInfo.content.ProdID">
+				<label>故障设备</label>
+				<i class="opt md-icon icon-right" ng-click="tap('prodinfos')"></i>
+				<div class="body" ng-click="tap('prodinfos')">
+					<span ng-bind="faultInfo.content.ProdName | formatProdInfo:faultInfo.content.SkuName"></span>
+				</div>
+			</li> -->
+			</ul>
+			<ul class="data-group" style="display:none;" ng-class="{'mui-block':!queryRepairID && (!matRecord || !matRecord.ProdID) }">
+				<p class="data-group-tip">相关设备</p>
+				<li class="data-row " ng-class="{'must':!ISJJComp}">
+					<label>故障设备</label>
+					<p class="opt md-icon font-15" ng-click="scan('scan')">
+						<span class="icon-saoyisao"></span>
+					</p>
+					<div class="body" ng-click="toProdInfoPage(faultInfo.content.ProdID)">
+						<span class="placeholder" ng-show="!faultInfo.content.ProdID">请扫描设备</span>
+						<span ng-bind="faultInfo.content.ProdName | formatProdInfo:faultInfo.content.SkuName" ng-show="faultInfo.content.ProdID"></span>
+					</div>
+				</li>
+				<!--ng-class="{'must':!(prodInfo.MDCode&&prodInfo.InnerCode)}"-->
+				<li class="data-row"  ng-class="{'must':!ISJJComp}">
+					<label ng-bind="InnerCodeName"></label>
+					<div class="body">
+						<div class="edit" ng-show="!(prodInfo.MDCode&&prodInfo.InnerCode)">
+							<div id="prodInnerCode" class="needsclick" ng-blur="getcuinfo()"  placeholder="{{'请输入'+InnerCodeName}}" contenteditable="true" lenlimit="30" onkeyup="this.innerText=this.innerText.replace(/[\u4e00-\u9fa5]/ig,'');moveEnd(this,true);"></div>
+						</div>
+						<span ng-if="prodInfo.MDCode&&prodInfo.InnerCode" ng-bind="prodInfo.InnerCode"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label ng-bind="CompID==JJCompID?'报修原因':'故障描述'"></label>
+					<p class="opt select-opt" ng-if="CompID>0">
+						<md-custom-select data-options="customSelectOptions.faultdesc"></md-custom-select>
+					</p>
+					<div class="body">
+						<div class="edit">
+							<div id="faultDesc" ng-model-div-text="faultDesc.Name" class="needsclick padr" placeholder="请输入或选择{{CompID==JJCompID?'报修原因':'故障描述'}}" lenlimit="1000"></div>
+						</div>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<li class="data-row" ng-show="UserCompID==ProdCompID && UserCompID > 0 || (!queryRepairID && (!matRecord || !matRecord.ID))">
+					<label>故障归类</label>
+					<p class="opt select-opt">
+						<md-custom-select data-options="customSelectOptions.faultClass"></md-custom-select>
+					</p>
+					<div class="body" id="matFatClass">
+						<md-drop-down-list ng-model="matFatClass" data-options="{url:url,labname:'请输入或选择故障归类'}"></md-drop-down-list>
+					</div>
+
+				</li>
+				<li class="data-row" ng-show="UserCompID == ProdCompID && UserCompID > 0 || (!queryRepairID && (!matRecord || !matRecord.ID))">
+					<label ng-bind="CompID==JJCompID?'故障分析报告':'责任判定'"></label>
+					<p class="opt select-opt">
+						<md-custom-select data-options="customSelectOptions.responsibility"></md-custom-select>
+					</p>
+					<div class="body" id="matResponsibility">
+						<md-drop-down-list ng-model="matResponsibility" data-options="{url:resurl,labname:CompID==JJCompID?'请输入或选择故障分析报告':'请输入或选择责任判定'}"></md-drop-down-list>
+					</div>
+
+				</li>
+			</ul>
+			<md-mat-part-replce-list ng-model="partListData" optant="'write'" style="display: none;" ng-class="{'mui-block':partListData.length!=0}"></md-mat-part-replce-list>
+			<ul class="data-group part-group" style="padding-left: 6px;" ng-style="{'margin-top':partListData.length==0?'8px':'1px'}">
+				<li class="btn-group" ng-click="tap('part')">
+					<a id="addPart" class="btn-col">新增更换配件</a>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<li class="data-row must">
+					<label ng-bind="CompID==JJCompID?'故障解决方法步骤':'维修内容'"></label>
+					<p class="opt select-opt" ng-if="curComId>0">
+						<md-custom-select data-options="customSelectOptions.desc"></md-custom-select>
+					</p>
+					<div class="body">
+						<div class="edit">
+							<div id="repairDesc" ng-model-div-text="repairDesc.Name" class="needsclick padr" placeholder="请输入或选择{{CompID==JJCompID?'故障解决方法步骤':'维修内容'}}" lenlimit="400"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row" ng-if="audio.FileSize&&audio.FileSize!=0">
+					<label>语音描述</label>
+					<div class="body">
+						<md-audio audio="audio"></md-audio>
+					</div>
+				</li>
+				<li class="data-row" ng-if="imageList.length!=0">
+					<label>现场照片</label>
+					<div class="body attach">
+						<md-image style="display: inline;float: left;" images="imageList" readonly="false"></md-image>
+					</div>
+				</li>
+				<li class="data-row" ng-if="videoList.length!=0">
+					<label>现场视频</label>
+					<div class="body attach">
+						<md-video style="display: inline;float: left;" videos="videoList" readonly="false"></md-video>
+					</div>
+				</li>
+				<li class="data-row must">
+					<label ng-bind="CompID==JJCompID?'工作结果':'维修结果'"></label>
+					<p class="opt select-opt" ng-if="curComId>0">
+						<md-custom-select data-options="customSelectOptions.result"></md-custom-select>
+					</p>
+					<div class="body">
+						<div class="edit">
+							<div id="repairResult" ng-model-div-text="repairResult.Name" class="needsclick padr" placeholder="请输入{{CompID==JJCompID?'工作结果':'维修结果'}}" lenlimit="300"></div>
+						</div>
+					</div>
+				</li>
+				<li class=" mui-table-view-cell data-row must" ng-click="tap('selectUser')">
+					<label>维修人员</label>
+					<i class="opt md-icon icon-right" id="repair-personnel" ng-if="curComId>0"></i>
+					<div class="body">
+						<span class="placeholder" ng-show="repairUsers.length==0">请选择维修人员</span>
+						<span ng-show="repairUsers.length>0" ng-repeat="user in repairUsers" ng-bind="$index==0?user.ViewName:'，'+user.ViewName"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+					<li class="data-row must">
+							<label>是否完成</label>
+							<div class="body">
+								<a ng-click="chooseStage(0)">
+									<i class="icon-roundcheckfill  color-red-md left-10 ng-scope font-15" ng-if="Stage!=8"></i>
+									<i class="icon-round color-gray font-15 " ng-if="Stage==8"></i><span>未完毕</span>
+								</a>
+								<a ng-click="chooseStage(8)">
+									<i class="icon-roundcheckfill  color-red-md left-10 ng-scope font-15" ng-if="Stage==8"></i>
+									<i class="icon-round color-gray font-15 " ng-if="Stage!=8"></i><span>已完毕</span>
+								</a>
+							</div>
+						</li>
+				<li class="mui-table-view-cell data-row">
+					<label>到场时间</label>
+					<p class="opt md-icon font-15" ng-click="chooseDate('ArriveDate')">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" data-options='{}' ng-click="chooseDate('ArriveDate')">
+						<span ng-if="!ArriveDate" class="placeholder">请选择到场时间</span>
+						<span ng-if="ArriveDate" ng-bind="ArriveDate"></span>
+					</div>
+				</li>
+				<li class="mui-table-view-cell data-row">
+					<label>离场时间</label>
+					<p class="opt md-icon font-15" ng-click="chooseDate('LeaveDate')">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" data-options='{}' ng-click="chooseDate('LeaveDate')">
+						<span ng-if="!LeaveDate" class="placeholder">请选择离场时间</span>
+						<span ng-if="LeaveDate" ng-bind="LeaveDate"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>预计工时</label>
+					<p class="opt md-icon font-15">
+						<span>小时</span>
+					</p>
+					
+					<div class="body">
+						<div class="edit">
+							<div id="plantime" ng-model-div-text="planTime" class="needsclick" placeholder="请输入预计工时单位为小时" contenteditable="true" lenlimit="12"></div>
+						    
+						</div>
+						
+					</div>
+				</li>
+				<li class="data-row" ng-show="CompID==JJCompID">
+					<label>客户意见及建议</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="CustSuggest" class="needsclick" placeholder="请输入客户意见及建议" contenteditable="true" lenlimit="200"></div>
+						</div>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group" id="tab1">
+				<!--维修参数-->
+				<li ng-if="prop.IsDisabled==0" ng-class="['data-row', (prop.IsRequired=='1'?'must':'')]" ng-repeat="($index, prop) in RepairParams">
+					<label class="mui-ellipsis" ng-bind="prop.ParamName"></label>
+					<div class="body" ng-attr-idx="{{$index}}">
+						<input type="text" class="bg-f2 param" ng-if="prop.ParamType==0" ng-model="prop.ParamDefValue" placeholder="请输入参数值" maxlength="100" />
+						<span class="icon-down"  ng-if="prop.ParamType==1" style="position: absolute;right: 15px;" ng-click="selectRepairParams($index)"></span>
+						<!--<span class="bg-f2 param" ms-if="prop.ParamType==1">{{prop.ParamDefValue | setValue}}</span>-->
+						<!--上面这种写法对判断多选值不能为空的时候有问题 -->
+						<input style="padding-right: 40px;overflow:hidden;text-overflow:ellipsis;max-width: 80vw;" class="icon-down bg-f2 param" readonly="readonly" ng-if="prop.ParamType==1" ng-model="prop.ParamDefValue " placeholder="请选择参数值" />
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group" style="display:none;" ng-class="{'mui-block':!queryRepairID && (!matRecord || !matRecord.ID) }">
+				<p class="data-group-tip">相关客户</p>
+				<!--<li class="data-row must relevant-customer">
+						<label>客户</label>
+						<p class="opt md-icon font-15" ng-click="tap('selectCustomer')">
+							<span class="icon-right"></span>
+						</p>
+						<div class="body" ng-click="tap('selectCustomer')">
+							<span class="placeholder" ng-show="!customer.ID">请选择客户</span>
+							<span ng-show="customer.ID" ng-bind="customer.CustomerName"></span>
+						</div>
+					</li>-->
+				<li class="data-row must relevant-customer">
+					<label>客户</label>
+					<p class="opt select-opt">
+						<md-custom-select data-options="customSelectOptions.select"></md-custom-select>
+					</p>
+					<div class="body">
+						<md-drop-down-list ng-model="customer" data-back="customSelectOptions.dropDownCallback" data-options="{url:customerurl,labname:'请输入或选择客户',type:'debug'}"></md-drop-down-list>
+					</div>
+				</li>
+				<!-- <li class="data-row" ng-click="tap('creatNewCustomer')" style="min-height: auto;"> -->
+				<!-- <div class="button"> -->
+				<!-- 新建客户 -->
+				<!-- </div> -->
+				<!-- </li> -->
+				<li class="data-row must">
+					<label>联系人</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="linkName" class="needsclick" placeholder="请输入联系人" contenteditable="true" lenlimit="20"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row must">
+					<label>联系电话</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="linkPhone" class="needsclick" placeholder="请输入联系电话" contenteditable="true" lenlimit="15"></div>
+						</div>
+					</div>
+				</li>
+			</ul>
+
+			<ul class="data-group">
+				<li class="mui-table-view-cell data-row">
+					<i class="opt md-icon icon-position" style="color: #3296FA;"></i>
+					<label>维修地点</label>
+					<div class="body">
+						<span ng-bind="province | locationfilter:city:district:address:street"></span>
+					</div>
+				</li>
+				<li class="mui-table-view-cell data-row">
+					<label>抄送给</label>
+					<p class="opt md-icon font-15" ng-click="tap('selectCopyingUser')">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="tap('selectCopyingUser')">
+						<span class="placeholder" ng-show="sendUsers.length==0">请选择抄送人</span>
+						<span ng-show="sendUsers.length>0" ng-repeat="user in sendUsers" ng-bind="$index==0?user.ViewName:'，'+user.ViewName"></span>
+					</div>
+				</li>
+			</ul>
+			<!--<ul class="data-group">
+				<li class="mui-table-view-cell data-row" ng-click="signature('show')">
+					<label>客户签名</label>
+					<p class="opt md-icon font-15">
+						<span class="icon-right"></span>
+					</p>
+				</li>
+			</ul>-->
+			<div class="mui-content-padded" style="margin-bottom: 80px;">
+				<button class="mui-btn mui-btn-primary mui-btn-block" ng-click="save()">保存</button>
+				<button class="mui-btn mui-btn-primary mui-btn-block" ng-click="save('print')" ng-if="CompID==JJCompID">保存并下载工单</button>
+				<span class="mui-btn mui-btn-block mui-btn-block-white" ng-click="saveDrafts()">保存到草稿箱</span>
+			</div>
+
+		</div>
+		<!--无网络或请求失败重试-->
+		<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+		<footer id="footer" style="display: none;">
+			<md-record-media videos="videoList" audio="audio" images="imageList" callback="getMediaRes"></md-record-media>
+		</footer>
+		<script type="text/javascript" src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../message/transMessage.js"></script>
+		<script type="text/javascript" src="mat-repair.js"></script>
+
+		<script src="../../js/jSignature/libs/jquery.js"></script>
+		<script src="../../js/jSignature/src/jSignature.js"></script>
+	</body>
+
+</html>

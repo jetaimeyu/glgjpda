@@ -1,0 +1,132 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link href="../../css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	<link rel="stylesheet" href="../../css/mui.loading.css" />
+	<style type="text/css">
+		#slider {
+			padding-top: 0px !important;
+			margin-top: 44px;
+			background: #ffffff;
+			height: 35px;
+		}
+
+		#slider2 {
+			padding-top: 0px !important;
+			margin-top: 80px;
+			background: #ffffff;
+			height: 35px;
+		}
+
+		.mui-slider .mui-scroll-wrapper {
+			padding-right: 15px !important;
+		}
+
+		.mui-slider .mui-segmented-control.mui-scroll-wrapper .mui-scroll {
+			height: 35px;
+			line-height: 35px;
+		}
+
+		.mui-slider .mui-segmented-control.mui-scroll-wrapper .mui-scroll a {
+			margin-left: 15px;
+			font-size: 12px;
+			height: 35px;
+			display: table-cell;
+			line-height: 35px;
+			padding: 0px 0px 0px 15px;
+		}
+
+		.mui-slider .mui-segmented-control.mui-scroll-wrapper .mui-scroll a i.icon-down {
+			font-size: 8px;
+			margin-left: 3px;
+		}
+
+		.mui-table-cell {
+			display: table-cell !important;
+		}
+
+		.mui-slider-indicator .mui-icon {
+			border: none;
+			width: auto;
+			height: auto;
+			margin: 0px;
+			position: relative;
+			top: 2px;
+			left: -2-
+		}
+
+		.right-5 {
+			margin-right: 5px;
+		}
+
+		.countSpan {
+			position: relative;
+			right: 0px;
+			top: -2px;
+			height: 16px;
+			padding: 2px 5px;
+			background: #96D7F0;
+			font-size: 12px;
+			line-height: 12px;
+			color: #fff;
+		}
+	</style>
+</head>
+
+<body ng-controller="bodyCtl">
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left">服务地图</a>
+		<!-- <a class="right-menu-words dev-list" ng-click="event.chooseView()" ng-bind="domData.activeMapView?'列表':'地图'"></a> -->
+	</header>
+	<div id="slider" class="mui-slider mui-content mui-fullscreen" ng-show="isLoad">
+		<div id="sliderSegmentedControl" class="mui-scroll-wrapper  mui-slider-indicator mui-segmented-control mui-segmented-control-inverted"
+		 style="background: #fff; ">
+			<div class="mui-scroll " top="84">
+				<a ng-click="event.chooseLocation()"><span ng-bind="domData.menu.location"></span><i class="icon icon-down"></i></a>
+				<a ng-click="event.chooseDate()"><span ng-bind="domData.curDate.view"></span><i class="icon icon-down"></i></a>
+				<a ng-click="event.chooseProd()" style="display:none" ng-class="{'mui-table-cell':!domData.prodInfo}"><span ng-bind="domData.prodInfo?domData.prodInfo.ProdName:'选择产品'">选择产品</span><i
+					 class="icon icon-down"></i></a>
+				<a ng-click="event.clearProd()" style="display:none;" ng-class="{'mui-table-cell':domData.prodInfo}"><span class="mui-ellipsis"
+					 style="max-width: 100px;" ng-bind="domData.prodInfo.ProdName"></span><i class="mui-icon mui-icon-closeempty"></i></a>
+				<a ng-click="event.chooseType(item.value)" ng-repeat="item in domData.mapTyps">
+					<i class="icon-roundcheckfill font-15 ng-hide" ng-style="{color:'#'+domData.stateColor[item.value]}" ng-show="domData.activeMap.indexOf(item.value)>=0"></i>
+					<i class="icon-round color-gray  font-15 ng-hide" ng-show="domData.activeMap.indexOf(item.value)<0"></i>
+					<span style='position:relative;top:-2px;' ng-bind="item.Label"></span>
+					<span class="countSpan" ng-bind="domData.data?domData.data[item.value].length:0"></span>
+				</a>
+			</div>
+			<div class="md-tab-block-line"></div>
+		</div>
+	</div>
+	<!-- <div id="slider2" class="mui-slider  mui-content mui-fullscreen" ng-show="isLoad">
+			<div id="sliderSegmentedControl" class="mui-scroll-wrapper  mui-slider-indicator mui-segmented-control mui-segmented-control-inverted" style="background: #fff; ">
+				<div class="mui-scroll " top="84">
+					<a ng-click="event.chooseDate(item.value)" ng-repeat="item in domData.dateList"> 
+						<i class="icon-roundcheckfill color-red-md  font-15" ng-if="domData.activeDate== item.value"></i>
+						<i class="icon-round color-gray font-15 ng-hide" ng-show="domData.activeDate != item.value"></i>
+						<span ng-bind="item.Label" style='position:relative;top:-2px;'></span>
+					</a>
+				</div>
+				<div class="md-tab-block-line"></div>
+			</div>
+		</div> -->
+
+	<script src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/angular.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/json.js"></script>
+	<script type="text/javascript" src="../../js/jquery.min.js"></script>
+	<script type="text/javascript" src="../../js/mPicker.min.js"></script>
+	<script type="text/javascript" src="../../js/mui.loading.js"></script>
+	<script type="text/javascript" src="service-map.js"></script>
+
+</body>
+
+</html>

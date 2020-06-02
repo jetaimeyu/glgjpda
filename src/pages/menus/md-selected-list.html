@@ -1,0 +1,118 @@
+<!DOCTYPE HTML>
+<html id="MdTong">
+
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title></title>
+		<link rel="stylesheet" href="../../css/mui.min.css" type="text/css" charset="utf-8" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			html {
+				width: 100%;
+				height: 100%;
+			}
+			
+			body {
+				height: 100%;
+				background-color: transparent;
+			}
+			
+			.mask {
+				display: block;
+				height: 100vh;
+				margin-bottom: 44px;
+				background: url(../../images/mask.png);
+			}
+			
+			.content {
+				background: #FFFFFF;
+				height: 220px;
+				overflow: auto;
+				bottom: 1px;
+				position: fixed;
+				width: 100vw;
+				padding: 6px 16px;
+			}
+			
+			.md-piece {
+				background: #EFEFF4;
+				height: 35px;
+				border-radius: 3px;
+				max-width: 32vw;
+				float: left;
+				margin-right: 10px;
+				margin-bottom: 5px;
+				/*CSS3弹性盒子*/
+				display: -ms-flex;
+				display: -webkit-flex;
+				display: flex;
+				-ms-flex-align: center;
+				-webkit-align-items: center;
+				-webkit-box-align: center;
+				align-items: center;
+			}
+			
+			.md-piece .title {
+				color: #333333;
+				font-size: 1.4rem;
+				padding: 6px;
+			}
+			
+			.md-piece .icon-close {
+				display: inline-block;
+				color: #999999;
+				margin-right: 6px;
+			}
+			.md-piece .title{
+				max-width:16vw;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="MdSelectedListController">
+		<a class="mask" ng-click="tap()"></a>
+		<div class="content" ng-if="type=='user' || type=='file'">
+			<div class="md-piece" ng-repeat="obj in selectObj">
+				<div class="title mui-ellipsis" ng-bind="isView=='false'?obj.RealName:obj.ViewName"></div>
+				<div class="icon-close" ng-click="del($index)"></div>
+			</div>
+		</div>
+	</body>
+	<script src="../../js/mui.min.js"></script>
+	<script src="../../js/angular.min.js"></script>
+	<script src="../../js/common.js"></script>
+	<script src="../../js/utils.js"></script>
+	<script src="../../js/rpc.js"></script>
+	<script type="text/javascript">
+		app.controller("MdSelectedListController", ["$scope", "RPCObserver", function($scope, RPCObserver) {
+			var ws = plus.webview.currentWebview();
+			$scope.selectObj = ws.selectObj || [];
+			$scope.isView = ws.isView;
+			$scope.type = query("type");
+			ws.setStyle({
+				mask: "none"
+			});
+			$scope.tap = function() {
+				ws.hide("fade-out");
+			}
+			$scope.del = function(index) {
+				$scope.selectObj.splice(index, 1);
+				$scope.type == "user" && RpcClient.invoke("contact-select.html", "RPC_SelectUserInfo", $scope.selectObj);
+				$scope.type == "file" && RPCObserver.broadcast('SyncFileSelectedData',$scope.selectObj);;
+				$scope.selectObj.length == 0 && ws.hide();
+			}
+
+			RPCObserver.on("SyncSelectedData", "SyncSelectedData");
+			window.SyncSelectedData = function(selectObj) {
+				$scope.selectObj = selectObj;
+				$scope.$apply();
+			}
+		}]);
+		mui.plusReady(function() {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+		});
+	</script>
+
+</html>

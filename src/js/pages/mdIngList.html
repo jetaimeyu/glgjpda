@@ -1,0 +1,125 @@
+<ul class="mui-table-view mdIngList" ng-repeat="item in model">
+	<li class="mui-table-view-cell" ng-click="tap(item)">
+		<a class="news" ng-if="item.Type==1">
+			<div class="mui-media-object mui-pull-left user-img">
+				<div ng-if="item.QUserInfo.ULogoIsExist" class="div-img" ng-style="{'background-image':'url('+ (item.QUserInfo.UserID|getUserLogo:48:0) +')'}"></div>
+				<div class="md-userCustomLogo" ng-if="!item.QUserInfo.ULogoIsExist" ng-bind="item.QUserInfo.UserName | getUserCustomLogo"></div>
+			</div>
+
+			<div class="mui-media-body">
+				<div class="ex-username mui-ellipsis" ng-bind="item.QUserInfo.UserName"></div>
+				<p class="mui-ellipsis font-12" ng-bind="item.QTime" style="color: #B5B5B5;line-height: 13px;"></p>
+			</div>
+			<div style="margin-top: 7px;">
+				<p class='news-title' ng-bind="item.QTitle"></p>
+			</div>
+		</a>
+		<a class="news" ng-if="item.Type!=1">
+			<div style="display: flex;">
+				<div style="flex-grow: 1;padding-right: 5px;max-width: 100%;">
+					<p class='news-title' ng-bind="item.QTitle"></p>
+					<div ng-if="item.QusPics && item.QusPics.length>1" style="display:flex;max-width: 100%;height: 100px;margin-top:10px;">
+						<div  ng-repeat="src in item.QusPics|limitTo:3" style="background-size: cover;max-height: 100px;flex-grow: 1;background-size: cover;" ng-style="{'background-image':'url('+(src.indexOf('http')!=0?'http:'+src:src)+')'}">
+
+						</div>
+					</div>
+					<p class="news-footer mui-ellipsis">
+						<span ng-bind="item.QUserInfo.UserName" style="margin-right: 7px;"></span><span ng-bind="item.QTime|formatAgo"></span>
+					</p>
+				</div>
+				<div ng-if="item.QusPics && item.QusPics.length==1" style="width: 50px; background-size: cover;" ng-style="{'background-image':'url('+(item.QusPics[0].indexOf('http')!=0?'http:'+item.QusPics[0]:item.QusPics[0])+')'}">
+
+				</div>
+			</div>
+			
+		</a>
+	</li>
+</ul>
+<style>
+	.mdIngList div.md-userCustomLogo {
+		width: 35px;
+		height: 35px;
+		line-height: 35px;
+		font-size: 1.8rem;
+	}
+	
+	.mdIngList .news-title {
+		white-space: normal;
+		color: #323232;
+		font-size: 1.6rem;
+		font-family: MicrosoftYaHei;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		display: -webkit-box;
+		-webkit-line-clamp: 3;
+		-webkit-box-orient: vertical;
+		word-break: break-all;
+		line-height: 16px;
+		padding-top: 5px;
+	}
+	
+	.mdIngList.mui-table-view:before {
+		content: none;
+	}
+	
+	.mdIngList .mui-table-view-cell {
+		padding: 10px 16px;
+	}
+	
+	.mui-table-view .mui-table-view-cell .mui-media-object {
+		line-height: 35px;
+		max-width: 35px;
+		height: 35px;
+		border-radius: 50%;
+		background-color: #FFFFFF;
+		width: 35px;
+		height: 35px;
+		background-size: 30px;
+		border: none;
+	}
+	
+	.user-img {
+		border: none;
+	}
+	
+	.user-img img {
+		border-radius: 50%;
+	}
+	
+	.user-img .div-img {
+		border-radius: 50%;
+		height: 35px;
+		background-size: cover;
+	}
+	
+	.ex-username {
+		font-size: 1.3rem;
+		color: black;
+		/*font-weight: 600;*/
+	}
+	
+	.news-title {
+	white-space: normal;
+	color: #323232;
+	font-size: 1.4rem;
+	font-family: MicrosoftYaHei;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	display: -webkit-box;
+	-webkit-line-clamp: 3;
+	-webkit-box-orient: vertical;
+	word-break: break-all;
+	line-height: 16px;
+	padding-top: 5px;
+}
+.news-footer {
+	color: #B5B5B5;
+	margin-top: 10px;
+	font-size: 1.2rem;
+	overflow: hidden;
+}
+
+.news-footer span {
+	margin-right: 10px;
+}
+</style>

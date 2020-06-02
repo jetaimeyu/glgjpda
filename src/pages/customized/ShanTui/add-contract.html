@@ -1,0 +1,901 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>产品合同</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../../css/common.css" />
+		<link rel="stylesheet" href="../../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.data-group-tip {
+				margin-top: 10px;
+			}
+			
+			.prodLibUl.mui-table-view:after {
+				height: 0px!important;
+			}
+			
+			.prodLibUl .mui-table-view-cell {
+				padding: 8px 16px!important;
+			}
+			
+			.prodLibUl .opt {
+				color: #AEAEAE;
+				position: absolute;
+				top: 50%;
+				right: 10px;
+				-webkit-transform: translateY(-50%);
+				transform: translateY(-50%);
+				overflow: hidden;
+				margin: 0px;
+			}
+			
+			.mui-table-view-cell:after {
+				left: 0px;
+			}
+			
+			.number span {
+				display: inline-block;
+				width: 30px;
+				height: 30px !important;
+				line-height: 30px;
+				border: 1px solid #CCCCCC !important;
+				text-align: center;
+				font-size: 1.3rem !important;
+				float: left;
+			}
+			
+			.number .icon-add {
+				border-right: none !important;
+				border-top-left-radius: 5px;
+				border-bottom-left-radius: 5px;
+			}
+			
+			.number .icon-remove {
+				border-left: none !important;
+				border-top-right-radius: 5px;
+				border-bottom-right-radius: 5px;
+			}
+			
+			.icon-topright-corner-delete {
+				color: red;
+				float: right;
+				margin-right: -16px;
+				margin-top: -4px;
+				font-size: 2.6rem;
+			}
+			
+			.body.drop-down-body .icon-roundclose {
+				right: 45px!important;
+				padding: 9px 5px 10px 5px;
+			}
+			
+			footer {
+				width: 100%;
+				height: 40px;
+				position: fixed;
+				bottom: 0;
+				left: 0;
+				line-height: 40px;
+				text-align: center;
+				background-color: #FFFFFF;
+			}
+			
+			.icon-topright-corner-delete {
+				color: red;
+				float: right;
+				margin-right: -16px;
+				margin-top: -4px;
+				font-size: 2.6rem;
+			}
+			
+			.photo.file .media-del {
+				position: absolute;
+				left: 35px;
+				top: 5px;
+				width: 25px;
+				height: 25px;
+				padding: 5px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="AddContractController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left" ng-bind="title"></a>
+		</header>
+		<div class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}" style="display: none;margin-bottom: 41px;">
+			<ul class="data-group">
+				<li class="data-row must">
+					<label>合同编号</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="data.ContractCode" class="needsclick" placeholder="请输入合同编号" lenlimit="20"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>对外公开</label>
+					<div id="ispublic" class="body md-switch-group">
+						<div class="md-switch-group" style="padding-top: 3px;display: table-cell;font-size: 0;">
+							<span style="padding: 1px 9px;" dataId="1" class="md-switch-button" ng-click="switchTap('IsPublic',1)" ng-class="{'md-active':data.IsPublic==1}" style="border-right:none;">是</span>
+							<span style="padding: 1px 9px;margin-left: -1px;margin-right: -4px;" dataId="0" class="md-switch-button" ng-click="switchTap('IsPublic',0)" ng-class="{'md-active':data.IsPublic==0}">否</span>
+						</div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>用户名称</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="data.ClientName" class="needsclick" placeholder="请输入用户名称" lenlimit="20"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>施工地点</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="data.ConstructionAddress" class="needsclick" placeholder="请输入施工地点" lenlimit="100"></div>
+						</div>
+					</div>
+				</li>
+				<li class="mui-table-view-cell data-row">
+					<label>发货时间</label>
+					<p class="opt md-icon font-15" ng-click="chooseDate('ShipTime',-1)">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="chooseDate('ShipTime',-1)">
+						<span ng-if="!data.ShipTime" class="placeholder">请选择发货时间</span>
+						<span ng-if="data.ShipTime" ng-bind="data.ShipTime"></span>
+					</div>
+				</li>
+				<li class="mui-table-view-cell data-row">
+					<label>验收时间</label>
+					<p class="opt md-icon font-15" ng-click="chooseDate('AcceptingTime',-1)">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="chooseDate('AcceptingTime',-1)">
+						<span ng-if="!data.AcceptingTime" class="placeholder">请选择验收时间</span>
+						<span ng-if="data.AcceptingTime" ng-bind="data.AcceptingTime"></span>
+					</div>
+				</li>
+				<li class="data-row" id="wdateType">
+					<label>无故障运行时</label>
+					<div class="opt md-icon">
+						<div class="md-switch-group float-right">
+							<span style="padding: 1px 9px;" dataId="3" class="md-switch-button" ng-click="switchTap('StirPeriodUnit',3)" ng-class="{'md-active':data.StirPeriodUnit==3}" style="border-right:none;">年</span>
+							<span style="padding: 1px 9px;border-right:none;margin-left: -5px;margin-right: -4px;" dataId="2" class="md-switch-button" ng-click="switchTap('StirPeriodUnit',2)" ng-class="{'md-active':data.StirPeriodUnit==2}">月</span>
+							<span style="padding: 1px 9px;" dataId="1" class="md-switch-button" ng-click="switchTap('StirPeriodUnit',1)" ng-class="{'md-active':data.StirPeriodUnit==1}">日</span>
+						</div>
+					</div>
+					<div class="body">
+						<div class="edit" style="width: 42vw;">
+							<div ng-model-div-text="data.StirPeriod" class="needsclick" placeholder="请输入时间" lenlimit="9"></div>
+						</div>
+					</div>
+				</li>
+				<li class="mui-table-view-cell data-row">
+					<label>业务员</label>
+					<p class="opt md-icon font-15" ng-click="chooseClerks('Clerks')">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="chooseClerks('Clerks')">
+						<span class="placeholder" ng-show="data.Clerks.length==0">请选择业务员</span>
+						<span ng-show="data.Clerks.length>0" ng-repeat="user in data.Clerks" ng-bind="$index==0?user.name:'，'+user.name"></span>
+					</div>
+				</li>
+				<li class="mui-table-view-cell data-row">
+					<label>安调负责人</label>
+					<p class="opt md-icon font-15" ng-click="chooseInstallDutys('InstallDutys')">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="chooseInstallDutys('InstallDutys')">
+						<span class="placeholder" ng-show="data.InstallDutys.length==0">请选择安调负责人</span>
+						<span ng-show="data.InstallDutys.length>0" ng-repeat="user in data.InstallDutys" ng-bind="$index==0?user.name:'，'+user.name"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>备注</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="data.Remark" class="needsclick" placeholder="请输入备注" lenlimit="200"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>合同照片</label>
+					<div class="body">
+						<img src="../../../images/morePhotos.png" class="photo" ng-click="photoPick()" />
+						<div class="photo file" ng-repeat="p in Photos">
+							<div class="img-body">
+								<img ng-attr-src="{{(p | getPicUrl).src}}" ng-attr-data-preview-src="{{(p | getPicUrl).dataPpreviewSrc}}" data-preview-group="1" />
+							</div>
+							<img class="media-del" src="../../../images/delete.png" ng-click="deletePhoto($index,p.ID)">
+						</div>
+					</div>
+				</li>
+			</ul>
+			<p class="data-group-tip">迈迪国标通用物联码</p>
+			<ul class="data-group prodLibUl" ng-if="data.MdCodeList.length>0 && prod.IsDelete == 0" ng-repeat="prod in data.MdCodeList">
+				<li class="mui-table-view-cell mui-media">
+					<div class="body">
+						<span class="icon-topright-corner-delete" ng-click="removeProd($index)"></span>
+						<p class="opt md-icon font-15" ng-click="removeProd($index)">
+							<span class="icon-right"></span>
+						</p>
+						<img class="size70 float-left border-f2 bg-f2 mr10" ng-src="{{ImgUrl+'/prod/logo/'+prod.ProdID+'_70x70.jpg'}}" ng-click="prodInfo(prod)" />
+						<div style="margin-right: 20px;" ng-click="prodInfo(prod)">
+							<span class="font-18" ng-bind="'设备名称：'+prod.ProdName"></span>
+						</div>
+						<p class="color-red-md" ng-bind="'物联码：'+prod.MdCode" ng-click="prodInfo(prod)"></p>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>合同产品序号</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="prod.ContracPkgNo" class="needsclick" placeholder="请输入合同产品序号" lenlimit="50"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>设备型号</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="prod.SkuName" class="needsclick" placeholder="请输入设备型号" lenlimit="50"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>出厂编号</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-if="prod.SourceCompID==LoginCompID" ng-model-div-text="prod.ProdInnerCode" class="needsclick" placeholder="请输入出厂编号" lenlimit="30"></div>
+							<span style="color: darkgray;" ng-if="prod.SourceCompID!=LoginCompID" ng-bind="prod.ProdInnerCode"></span>
+						</div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>制造时间</label>
+					<p class="opt md-icon font-15" ng-click="chooseDate('MakingDate',$index)">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="chooseDate('MakingDate',$index)">
+						<span ng-if="!prod.MakingDate" class="placeholder">请选择制造时间</span>
+						<span ng-if="prod.MakingDate" ng-bind="prod.MakingDate"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>出厂时间</label>
+					<p class="opt md-icon font-15" ng-click="chooseDate('FactoryDate',$index)">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="chooseDate('FactoryDate',$index)">
+						<span ng-if="!prod.FactoryDate" class="placeholder">请选择出厂时间</span>
+						<span ng-if="prod.FactoryDate" ng-bind="prod.FactoryDate"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<li class="btn-group" ng-click="tap('scan')">
+					<a id="addMdCode" class="btn-col"><i class="icon-saoyisao"></i><span> 添加迈迪国标通用物联码</span></a>
+				</li>
+			</ul>
+		</div>
+		<footer ng-class="{'mui-block':isLoad}" style="display: none;">
+			<button class="mui-btn mui-btn-primary mui-btn-block" style="border-radius: 0;height: 44px;margin-bottom: 0;" ng-click="saveData()">保存</button>
+		</footer>
+		<script type="text/javascript" src="../../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../../js/common.js"></script>
+		<script type="text/javascript" src="../../../js/utils.js"></script>
+		<script type="text/javascript" src="../../../js/rpc.js"></script>
+		<script type="text/javascript" src="../../../js/mui.zoom.js"></script>
+		<script type="text/javascript" src="../../../js/mui.previewimage.js"></script>
+		<script type="text/javascript" src="../../message/transMessage.js"></script>
+		<script>
+			app.controller("AddContractController", ["$scope", "ApiService", "DataService", "UtilsService", "CacheService", "DatePickerService", "AuthService", "Loading", "$timeout", "$Modal", "$filter", "RPCObserver",
+				function($scope, ApiService, DataService, UtilsService, CacheService, DatePickerService, AuthService, Loading, $timeout, $Modal, $filter, RPCObserver) {
+					$scope.curUser = CacheService.get("user");
+					$timeout(function() {
+						$scope.isLoad = true;
+					}, 200);
+					$scope.ImgUrl = ApiService.Img;
+					$scope.delNum = 0;
+					$scope.title = query("edit") == "true" ? "修改合同" : "新增合同";
+					$scope.Photos = []; //拍摄的照片
+					//提交的数据
+					$scope.data = {
+						"ID": 0,
+						"ContractCode": "", //合同编号
+						"ClientName": "", //用户名称
+						"ConstructionAddress": "", //施工地点
+						"ShipTime": "", //发货时间
+						"AcceptingTime": "", //验收时间
+						"StirPeriod": "", //无故障运行时间
+						"StirPeriodUnit": "1", //无故障运行时间单位：1 日 2 月 3年
+						"IsPublic": 0, //是否对外展示0否1是
+						"Clerks": [], //业务员
+						"InstallDutys": [], //安调负责人
+						"Remark": "", //备注
+						"MdCodeList": [], //绑定产品列表
+						"ContractPicList": [] //图片
+					}
+					$scope.LoginCompID = $scope.curUser.CompID; //当前登录的企业ID
+					var self = plus.webview.currentWebview();
+					if(self.contractData) {
+						$scope.data = JSON.parse(self.contractData);
+						$scope.data.StirPeriod = $scope.data.StirPeriod.toString();
+						$scope.Photos = JSON.parse(JSON.stringify($scope.data.ContractPicList));
+					}
+					var today = $filter("dateFormat")(new Date().getTime(), "yyyy-MM-dd");
+
+					//上传进度
+					$scope.Process = {
+						SaveState: 0, //0未保存 1保存中 2保存成功 3保存失败
+						ProcessList: [{
+							Text: "上传图片",
+							State: 0,
+							RetryMethod: uploadImageFile
+						}, {
+							Text: "保存合同信息",
+							State: 0,
+							RetryMethod: saveContract
+						}]
+					};
+
+					$scope.switchTap = function(key, dataid) {
+						$scope.data[key] = dataid;
+					}
+
+					//
+					$scope.tap = function(key) {
+						switch(key) {
+							case "scan":
+								UtilsService.openWindow({
+									needLogin: true,
+									id: 'scan.html',
+									url: "../../scan/scan.html",
+									extras: {
+										callback: "scanCallback"
+									}
+								});
+								break;
+						}
+					}
+					var saving = false;
+					$scope.saveData = function() {
+						document.activeElement.blur();
+						if(trim($scope.data.ContractCode) == "") {
+							mui.alert("请输入合同编号！");
+							return false;
+						}
+						if($scope.data.MdCodeList.length == 0 || $scope.delNum == $scope.data.MdCodeList.length) {
+							mui.alert("请添加迈迪国标通用物联码！");
+							return false;
+						}
+						//验证填字符长度
+						if(!checkLengthUtil.check()) {
+							return false;
+						}
+						saving = true;
+						//验证 本企业内合同编号是否已存在
+						var url = ApiService.Api45 + "/api/v1.0/WorkOrder/IsExistContractCode/" + $scope.data.ID + "?contractCode=" + $scope.data.ContractCode;
+						DataService.post(url, {}).then(function(res) {
+							if(res == true) {
+								document.activeElement.blur();
+								UtilsService.submitModal($scope.Process, function() {
+									saving = false;
+									mui.back();
+								});
+								setTimeout(function() {
+									//开始上传图片
+									uploadImageFile();
+								}, 500);
+							} else {
+								mui.alert(res.ErrorMessage);
+							}
+						}, function() {
+							mui.alert(res.ErrorMessage);
+						});
+					};
+
+					//保存合同
+					function saveContract() {
+						$scope.Process.ProcessList[1].State = 1;
+						var url = ApiService.Api45 + "/api/v1.0/WorkOrder/SaveMatContract";
+						console.log(JSON.stringify($scope.data));
+						setTimeout(function() {
+							DataService.post(url, $scope.data).then(function(res) {
+								RPCObserver.broadcast("ContrackReLoad");
+								if(res > 0) {
+									$scope.Process.ProcessList[1].State = 2;
+									if($scope.Process.ProcessList[0].State == 2 && $scope.Process.ProcessList[1].State == 2) {
+										$scope.Process.SaveState = 1;
+									}
+								} else {
+									$scope.Process.ProcessList[1].State = 3;
+								}
+							}, function(res) {
+								$scope.Process.ProcessList[1].State = 3;
+								mui.alert(res.ErrorMessage);
+							});
+						}, 500);
+					}
+					var imgUploadSuccessList = [];
+					//上传图片
+					function uploadImageFile() {
+						$scope.Process.ProcessList[0].State = 1;
+						if($scope.Photos.length == 0 || $scope.Photos.length == imgUploadSuccessList.length) {
+							$scope.Process.ProcessList[0].State = 2;
+							saveContract();
+							return;
+						}
+						uploadImageSingleFile(0);
+					}
+					//逐个图片上传
+					function uploadImageSingleFile(index) {
+						if(arrayContain(imgUploadSuccessList, index)) {
+							return;
+						}
+
+						//跳过修改状态下已有ID的图片
+						if($scope.Photos[index].ID > 0) {
+							imgUploadSuccessList.push(index);
+							//全部传了一遍后，判断是否全部上传成功了。
+							if((index + 1) == $scope.Photos.length) {
+								if(imgUploadSuccessList.length == $scope.Photos.length) {
+									$scope.Process.ProcessList[0].State = 2;
+									saveContract();
+								} else {
+									$scope.Process.ProcessList[0].State = 3;
+								}
+							} else {
+								uploadImageSingleFile(index + 1);
+							}
+							return;
+						}
+
+						var url = ApiService.Api45 + "/api/v1.0/Picture/UploadPic";
+						var file = $scope.Photos[index].src || $scope.Photos[index].FilePath;
+
+						//首先压缩照片
+						zipImage(file, function(src, dst, status) {
+							//压缩完毕后，不管成功与否，都上传图片
+							uploadFile(url, dst, index, function(index, t, status) {
+								if(status) { //上传成功，加入到成功队列
+									imgUploadSuccessList.push(index);
+									$scope.Process.ProcessList[0].Index += 1;
+									//保存图片ID
+									$scope.data.ContractPicList.push({
+										"ID": 0,
+										"Guid": JSON.parse(t.responseText).Data,
+										"IsDelete": 0
+									});
+								}
+								//全部传了一遍后，判断是否全部上传成功了。
+								if((index + 1) == $scope.Photos.length) {
+									if(imgUploadSuccessList.length == $scope.Photos.length) {
+										$scope.Process.ProcessList[0].State = 2;
+									} else {
+										$scope.Process.ProcessList[0].State = 3;
+									}
+									saveContract();
+								} else {
+									uploadImageSingleFile(index + 1);
+								}
+							});
+						}, "50%");
+					}
+
+					//选择日期
+					$scope.chooseDate = function(key, index) {
+						if(index < 0) {
+							DatePickerService.pickDate({
+								selected: $scope.data[key],
+								minDate: today
+							}).then(function(res) {
+								$scope.data[key] = res + " 00:00:00";
+							});
+						} else {
+							var obj = $scope.data.MdCodeList[index];
+							DatePickerService.pickDate({
+								selected: obj[key],
+								minDate: today
+							}).then(function(res) {
+								obj[key] = res + " 00:00:00";
+							});
+						}
+					};
+
+					//选择业务人员
+					$scope.chooseClerks = function() {
+						UtilsService.openWindow({
+							needLogin: true,
+							id: "contact-select.html",
+							url: "../../common/contact-select.html?action=select&multiselect=true&type=org",
+							extras: {
+								selectObj: $scope.data.Clerks,
+								callback: "selectClerksCallback"
+							}
+						});
+					}
+					window.selectClerksCallback = function(obj) {
+						if(obj && obj.length > 0) {
+							obj.forEach(function(item) {
+								$scope.data.Clerks.push({
+									id: item.UserID,
+									name: item.RealName
+								})
+								$scope.$apply();
+							})
+						}
+					}
+
+					//选择安装负责人员
+					$scope.chooseInstallDutys = function() {
+						UtilsService.openWindow({
+							needLogin: true,
+							id: "contact-select.html",
+							url: "../../common/contact-select.html?action=select&multiselect=true&type=org",
+							extras: {
+								selectObj: $scope.data.InstallDutys,
+								callback: "selectInstallDutysCallback"
+							}
+						});
+					}
+					window.selectInstallDutysCallback = function(obj) {
+						if(obj && obj.length > 0) {
+							obj.forEach(function(item) {
+								$scope.data.InstallDutys.push({
+									id: item.UserID,
+									name: item.RealName
+								})
+								$scope.$apply();
+							})
+						}
+					}
+
+					$scope.prodInfo = function(prod) {
+						UtilsService.openWindow({
+							needLogin: true,
+							id: 'prodinfo-head.html',
+							url: '../../problib/prodinfo-head.html?prodId=' + prod.ProdID
+						});
+					}
+
+					//移除
+					$scope.removeProd = function(index) {
+						mui.confirm("确认移除该迈迪国标通用物联码？", '移除', ["我再想想", "继续移除"], function(e) {
+							if(e.index == 1) {
+								$scope.data.MdCodeList[index].IsDelete = 1;
+								$scope.delNum += 1;
+								$scope.$apply();
+							}
+						});
+					}
+
+					window.scanCallback = function(value) {
+						var type = JSON.parse(value).codeType;
+						var code = JSON.parse(value).codeValue;
+						Loading.show();
+						setTimeout(function() {
+							//验证是否已扫描过
+							for(var i = 0; i < $scope.data.MdCodeList.length; i++) {
+								if($scope.data.MdCodeList[i].MdCode == code && $scope.data.MdCodeList[i].IsDelete == 0) {
+									mui.alert("该迈迪国标通用物联码已在列表！");
+									Loading.hide();
+									return;
+								}
+							}
+							//判断是否为迈迪国标通用物联码
+							checkCode(type, code);
+						}, 500);
+					};
+
+					//验证扫码规则
+					var m_url = 'http://m.maidiyun.com';
+					var my_url = 'http://m.my3dparts.com';
+
+					function checkCode(codeType, codeValue) {
+						if(codeValue.match(/^http(|s):\/\//g)) {
+							//如果是带有m.maidiyun.com或m.my3dparts.com标识的网址，说明是迈迪的专有码
+							if(codeValue.indexOf(m_url) >= 0 || codeValue.indexOf(my_url) >= 0) {
+								var params = codeValue.split('?');
+
+								if(params.length > 1) {
+									var codeValue = params[1];
+									checkMdCode(codeValue);
+									return;
+								}
+							}
+						} else { //不带网址的码，需要验证是不是迈迪国标通用物联码，不是的仅显示
+							checkMdCode(codeValue);
+						}
+					}
+
+					function checkMdCode(code) {
+						Loading.hide();
+						//验证迈迪国标通用物联码
+						var url = ApiService.Api45 + '/api/v1.0/MdCode/CheckMdCode?code=' + code;
+						for(var i = 0; i < $scope.data.MdCodeList.length; i++) {
+							if($scope.data.MdCodeList[i].MdCode == code && $scope.data.MdCodeList[i].IsDelete == 1) {
+								$scope.data.MdCodeList[i].IsDelete = 0;
+								$scope.delNum -= 1;
+								return;
+							}
+						}
+						DataService.get(url).then(function(e) {
+							if(e.State == 1) {
+								//验证该设备是否已经存在于其他合同中
+								if(e.Data.Type == 1 || !e.Data.Type) {
+									isEqInContract(code);
+								} else {
+									//设备码
+									mui.alert("该码取到的是设备信息，请扫描正确的迈迪国标通用物联码");
+								}
+							} else {
+								//不是迈迪国标通用物联码，直接提示
+								mui.alert("不是正确的迈迪国标通用物联码！");
+							}
+						})
+					};
+
+					//判断该设备是否已经录入其他合同中
+					function isEqInContract(code) {
+						var url = ApiService.Api45 + "/api/v1.0/WorkOrder/CheckMdCodeCanBindCon?mdCode=" + code;
+						DataService.get(url).then(function(reData) {
+							if(reData && reData.State == 1) {
+								if(reData.Data) {
+									//判断产品是否入本企业库
+									isInStock(code);
+								} else {
+									Loading.hide();
+									mui.alert(reData.ErrorMessage || "该设备已经录入其他合同中");
+								}
+							}
+						});
+					};
+
+					//判断产品是否入本企业库
+					function isInStock(code) {
+						var url = ApiService.Api45 + "/api/v1.1/Prod/GetAssemblePkgInfo?MDCode=" + code;
+						DataService.get(url).then(function(reData) {
+							if(reData && reData.CompID == $scope.curUser.CompID || reData.IsInStock == 1) {
+								//获取产品详情
+								loadProdInfo(code);
+							} else {
+								mui.alert("该产品不是本企业所有！");
+								Loading.hide();
+							}
+						})
+					};
+
+					//通过迈迪国标通用物联码获取产品概要信息
+					function loadProdInfo(code) {
+						var url = ApiService.Api45 + "/api/v1.0/MdCode/GetProdInfoByMdCode?code=" + code;
+						DataService.get(url).then(function(res) {
+							if(res) {
+								$scope.data.MdCodeList.push({
+									"ID": 0,
+									"SourceCompID": res.SourceCompID,
+									"ProdName": res.ProdName,
+									"ProdID": res.ProdID,
+									"SkuName": res.SkuName,
+									"MdCode": code,
+									"ContracPkgNo": '',
+									"ProdInnerCode": res.InnerCode,
+									"MakingDate": '',
+									"FactoryDate": '',
+									"IsDelete": 0
+								});
+							} else {
+								mui.alert(res.ErrorMessage);
+							}
+							Loading.hide();
+						});
+					};
+
+					//压缩图片
+					function zipImage(srcFile, callback, width, dstFile, quality) {
+						dstFile = dstFile || (srcFile + '.temp');
+						plus.zip.compressImage({
+							src: srcFile,
+							dst: dstFile,
+							overwrite: true,
+							width: width || "20%",
+							quality: quality || 60
+						}, function(e) {
+							if(typeof callback == "function") {
+								callback(srcFile, dstFile, true);
+							}
+						}, function(e) {
+							callback(srcFile, dstFile, false);
+						});
+					};
+
+					var fileIndex = 1;
+					//上传图片
+					function uploadFile(url, localFile, localFileIndex, callback) {
+						var task = plus.uploader.createUpload(url, {
+							method: "post"
+						}, function(t, status) {
+							if(status == 200 && JSON.parse(t.responseText).State == 1) {
+								callback(localFileIndex, t, true);
+							} else {
+								callback(localFileIndex, t, false);
+							}
+						});
+						task.addFile(localFile, {
+							key: "F" + fileIndex
+						});
+						task.start();
+						fileIndex += 1;
+					}
+
+					//判断对象是否在数组内
+					function arrayContain(arr, obj) {
+						var i = arr.length;
+
+						while(i--) {
+							if(arr[i] == obj) {
+								return true;
+							}
+						}
+						return false
+					}
+					/**
+					 * *******************拍照***************
+					 */
+					$scope.photoPick = function() {
+						plus.nativeUI.actionSheet({
+							title: "添加照片",
+							cancel: "取消",
+							buttons: [{
+								title: "拍照"
+							}, {
+								title: "从相册选择照片"
+							}]
+						}, function(e) {
+							if(e.index == 1) { //拍摄照片
+								captureImageAcc();
+							} else if(e.index == 2) { //相册选取
+								pickImage(function(files) {
+									if(files) {
+										for(var i = 0; i < files.length; i++) {
+											zipImage(files[i], function(srcFile, dstFile, status) {
+												$scope.Photos.push({
+													ID: 0,
+													src: srcFile,
+													dst: dstFile
+												});
+												$scope.$apply();
+											});
+										}
+									}
+								});
+							}
+						});
+					}
+					//连续拍照
+					function captureImageAcc() {
+						captureImage(function(file) {
+							if(file) {
+								zipImage(file, function(srcFile, dstFile, status) {
+									$scope.Photos.push({
+										ID: 0,
+										src: srcFile,
+										dst: dstFile
+									});
+									$scope.$apply();
+
+									setTimeout(function() {
+										captureImageAcc();
+									}, 500);
+								});
+							}
+						});
+					}
+					//删除指定的照片
+					$scope.deletePhoto = function(index, pID) {
+						if(pID > 0) {
+							for(idx in $scope.data.ContractPicList) {
+								if($scope.data.ContractPicList[idx].ID == pID) {
+									$scope.data.ContractPicList[idx].IsDelete = 1;
+									break;
+								}
+							}
+						}
+						$scope.Photos.splice(index, 1);
+					}
+					//照相机
+					var camera;
+					/**
+					 * 拍摄照片
+					 * @param {Object} callback
+					 */
+					function captureImage(callback) {
+						if(!camera) {
+							camera = plus.camera.getCamera();
+						}
+						camera.captureImage(function(e) {
+							if(typeof callback == "function") {
+								callback("file://" + plus.io.convertLocalFileSystemURL(e));
+							}
+						}, function(e) {
+							if(typeof callback == "function") {
+								callback(false);
+							}
+						});
+					}
+					/**
+					 * 从相册选择照片
+					 * @param {Object} callback
+					 */
+					function pickImage(callback, multiple) {
+						if(multiple == undefined) {
+							multiple = true;
+						}
+						plus.gallery.pick(function(e) {
+							if(typeof callback == "function") {
+								var ret = multiple ? e.files : e;
+								callback(ret);
+							}
+						}, function(e) {
+							if(typeof callback == "function") {
+								callback(false);
+							}
+						}, {
+							filter: "image",
+							multiple: multiple,
+							system: false
+						});
+					}
+				}
+			]);
+			var appElement = document.querySelector('[ng-controller=AddContractController]');
+			var $scope = angular.element(appElement).scope();
+			//获取合同图片
+			app.filter("getPicUrl", ["ApiService", function(ApiService) {
+				return function(imgData) {
+					var self = plus.webview.currentWebview();
+					if(self.contractData) {
+						var id = JSON.parse(self.contractData).ID;
+					}
+					var property = {};
+					if(imgData.ID > 0) {
+						property = {
+							src: ApiService.Api45 + '/api/v1.0/WorkOrder/MatContract/' + id + '_' + imgData.ID + '_60x60.png',
+							'dataPpreviewSrc': ApiService.Api45 + '/api/v1.0/WorkOrder/MatContract/' + id + '_' + imgData.ID + '_0x0.png'
+						}
+					} else {
+						property = {
+							src: imgData.dst,
+							'dataPpreviewSrc': imgData.src
+						}
+					}
+					return property;
+				}
+			}]);
+			//获取产品图片
+			app.filter('getLogo', ["ApiService", function(ApiService) {
+				return function(item) {
+					if(item.IsNew == 0) {
+						return ApiService.Pic + "/cGtnL2xvZ28=_" + item.ProdID + "_200x200.jpg";
+					} else {
+						return ApiService.Img + "/prod/logo/" + item.ProdID + "_0x0.jpg";
+					}
+				}
+			}]);
+			mui.init();
+			//初始化图片预览
+			mui.previewImage();
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

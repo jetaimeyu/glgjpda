@@ -1,0 +1,84 @@
+<ul class="data-group" style="margin-top: 0px;">
+	<li class="mui-table-view-cell data-row" ng-repeat="item in model" ng-click="tap($event,'preserveView',item.ID)">
+		<!--<p class="opt md-icon font-15" ng-click="tap($event,'maintenEdit',item.ID)">
+			<span class="icon-edit"></span>
+		</p>-->
+		<div class="body">
+			<span class="font-15 mui-ellipsis-2" style="color: #000000;" ng-bind="item.Content"></span>
+			<div class="faultyDiv">
+				<img src="../../images/imgPre.png" ng-style="{'background-image':'url('+ (item.AttachFilePath | getEquLogo:40) +')'}" class="imgslist" />
+				<div>
+					<p class='faultyP01 mui-ellipsis' ng-bind="item.EqName"></p>
+					<p class='faultyP02'><span class="faultySpan01 mui-ellipsis" ng-bind="item.SkuName"></span><span class="faultySpan01 mui-ellipsis" ng-if="item.SkuName || item.EqIdentifier">/</span><span class="faultySpan01 mui-ellipsis" ng-bind="item.EqIdentifier" ng-if="item.EqIdentifier"></span></p>
+				</div>
+			</div>
+			<p class="font-12">
+				<span class="font-12" style="color: #AAAAAA;" ng-bind="item.CreateDate"></span>
+				<span class="font-12" style="color: #AAAAAA;" ng-if="type=='at'" ng-bind="item.MaintainUserName"></span>
+				<md-chat-user-list ng-model="item.user" ng-if="['dept','depts','all'].indexOf(type)>=0"></md-chat-user-list>
+			</p>
+		</div>
+	</li>
+</ul>
+<style>
+	.data-group .data-row .body {
+		padding: 10px 16px;
+	}
+	
+	.data-group .data-row .body>span {
+		line-height: 19px;
+	}
+	
+	.data-group .data-row .opt,
+	.data-group .data-row .body.arrow:after {
+		padding: 10px 16px 11px 10px;
+		color: #AEAEAE!important;
+	}
+	
+	.faultyDiv {
+		padding: 10px;
+		margin-top: 10px;
+		margin-bottom: 10px;
+		border: 1px solid #F7F7F7;
+		background-color: #F7F7F7;
+	}
+	
+	.faultyDiv>img {
+		float: left;
+		width: 40px;
+		height: 40px;
+	}
+	
+	.faultyDiv>div {
+		padding-top: 3px;
+		margin-left: 50px;
+	}
+	
+	.faultyDiv .faultyP01 {
+		height: 1.7rem;
+		font-size: 1.5rem;
+		line-height: 1.7rem;
+		color: #AAAAAA;
+		margin-bottom: 9px;
+	}
+	
+	.faultyDiv .faultyP02 {
+		margin-bottom: 0px;
+		line-height: 1.3rem;
+	}
+	
+	.faultyDiv .faultySpan01 {
+		display: inline-block;
+		max-width: 30.0vw;
+		font-size: 1.2rem;
+		line-height: 1.3rem;
+		color: #AAAAAA;
+		margin-right: 7px;
+	}
+	
+	.imgslist {
+		width: 40px;
+		height: 40px;
+		background-size: cover!important;
+	}
+</style>

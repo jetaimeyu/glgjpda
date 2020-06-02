@@ -1,0 +1,184 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<link rel="stylesheet" href="customer-datas.css">
+	</head>
+
+	<body ng-controller="ListController">
+		<div id="pullrefresh" ng-controller="pullrefreshController" class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<div class="mui-content" ng-switch="key">
+				<div ng-switch-when="debug">
+					<md-debug-list ng-model="data"></md-debug-list>
+				</div>
+				<div ng-switch-when="repair">
+					<md-mat-repair-list type="'all'" ng-model="data"></md-mat-repair-list>
+				</div>
+				<div ng-switch-when="service">
+					<md-customer-translation ng-model="data"></md-customer-translation>
+				</div>
+				<div ng-switch-when="failure">
+					<md-faulty-work-order ng-model="data"></md-faulty-work-order>
+				</div>
+				<div ng-switch-when="linkman">
+					<ul class="data-group partsList">
+						<li class="data-row mui-table-view-cell" ng-repeat="item in data">
+							<div class="body" ng-click="tap(item.ID)">
+								<div class="link-man" ng-bind="item.LinkName"  style="color: #000;"></div>
+								<div class="parts-item" ng-if="item.LinkPhone">
+									<i class="md-icon icon-tel"  ng-click="call(item.LinkPhone)"></i>
+									<span ng-bind="item.LinkPhone"></span>
+								</div>
+							</div>
+						</li>
+					</ul>
+				</div>
+				<div ng-switch-when="delay">
+					<ul class="data-wrap">
+						<li ng-repeat="item in data" class="data-item mui-table-view-cell" ng-click="delayTap(item)">
+							<h1 class="user-name text-dot" ng-bind="item.CreateUserName"></h1>
+							<div class="product">
+								<span class="product-avatar" ng-style="{'background-image':'url('+ (item | getProdLogo:40:0) +')'}"></span>
+								<div class="product-info">
+									<h5 class="product-name text-dot" ng-bind="item.ProdName"></h5>
+									<div class="product-type-wrap">
+										<span class="product-type-item text-dot" ng-bind="item.SkuName"></span>
+										<span class="product-type-item" ng-if="item.ProdInnerCode">/</span>
+										<span class="product-type-item text-dot" ng-bind="item.ProdInnerCode"></span>
+									</div>
+								</div>
+							</div>
+							<div class="operate-info">
+								<span class="operte-item text-dot" ng-bind="item.CreateUser"></span>
+								<span class="operte-item text-dot" ng-bind="item.CreateDate"></span>
+								<span class="operte-item extended-warranty text-dot" ng-bind="'延保:'+item.ExtendedWarranty + DateType[item.ExtendedWarrantyUnit]"></span>
+							</div>
+						</li>
+					</ul>
+				</div>
+				<div ng-switch-when="other">
+					<md-service-list ng-model="data"></md-service-list>
+				</div>
+				<div ng-switch-when="pos-equ|insp-equ" ng-switch-when-separator="|">
+					<md-device-list ng-model="data"></md-device-list>
+				</div>
+				
+				<div ng-switch-when="pos-station">
+					<ul class="data-group mdDervRepaList" style="margin-top: 0px;">
+						<li class="data-row" ng-repeat="item in data">
+							<div class="body">
+								<div class="station-content mui-ellipsis-2" ng-bind="item.Station"></div>
+							</div>
+						</li>
+					</ul>
+				</div>
+				<div ng-switch-when="repair-log">
+					<md-work-record ng-model="data"></md-work-record>
+				</div>
+				<md-no-data ng-show="data && data.length==0">暂无数据</md-no-data>
+			</div>
+		</div>
+		<script src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script>
+			app.controller("ListController", ["$scope", "$filter", "ApiService", "RPCObserver", "CacheService", "ChatUserService", function($scope, $filter, ApiService, RPCObserver, CacheService, ChatUserService) {
+				$scope.pageIndex = 0;
+				$scope.pageSize = 10;
+				$scope.key = query("key");
+				$scope.userInfo = CacheService.get("user");
+				$scope.DateType = {
+					1: "天",
+					2: "月",
+					3: "年"
+				}
+				$scope.chart = function(event, user) {
+					event.stopPropagation();
+					if($scope.userInfo.UserID == user.ID) {
+						mui.toast('不能与自己会话');
+					} else {
+						// 不存在
+						ChatUserService.tap({
+							chatId: user.CreateUserID,
+							chatName: user.CreateUserName,
+							hasLogo: user.ULogoIsExist,
+							chatCompId: user.CompID
+						});
+					}
+				};
+				$scope.delayTap = function(item) {
+					openWindow('../problib/securing-services-info.html?id=' + item.ID, {}, 'securing-services-info.html');
+				}
+				
+				$scope.tap = function(id){
+					openWindow('../customer/linkman-info.html?id=' + id, {}, 'linkman-info.html.html');
+				}
+
+				function getKey() {
+					switch($scope.key) {
+						case "linkman":
+							$scope.url = ApiService.Api50 + "/api/v1/Customer/GetCustLinkMenList?customerId=" + query("id") + "&page=" + $scope.pageIndex + "&pageSize=20&sortType=5";
+							break;
+						case "debug":
+							$scope.url = ApiService.Api50 + "/api/v1/ProdDebug/GetPagedProdDebugListByCustomerID?customerId=" + query("id") + "&pageIndex=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize;
+							break;
+						case "repair":
+							$scope.url = ApiService.Api50 + "/api/v1/MatWorkOrder/GetPageMatRepairRecordsListByCustomerId?customerId=" + query("id") + "&pageIndex=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize;
+							break;
+						case "service":
+							$scope.url = ApiService.Api50 + "/api/v1/MatWorkOrder/GetPagedMatRepairServiceEvalByCustomerId?customerId=" + query("id") + "&pageIndex=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize;
+							break;
+						case "failure":
+							$scope.url = ApiService.Api50 + "/api/v1/MatWorkOrder/GetPagedMatWorkOrderFailureByCustomerID?customerId=" + query("id") + "&pageIndex=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize;
+							break;
+						case "parts":
+							$scope.url = ApiService.Api50 + "/api/v1/MatWorkOrder/GetPagedCustomerPartsRecord?customerId=" + query("id") + "&pageIndex=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize;
+							break;
+						case "delay":
+							$scope.url = ApiService.Api50 + "/api/v2/Prod/GetPagedPkgWarrantyDelayLogByCustomerId?customerId=" + query("id") + "&pageIndex=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize;
+							break;
+						case "other":
+							$scope.url = ApiService.Api50 + "/api/v2/Customer/GetPagedCustomerListByCustomerID?customerId=" + query("id") + "&pageIndex=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize;
+							break;
+						case "pos-equ":
+							$scope.url = ApiService.Api50 + "/api/v1/Equipment/GetPagedEqInfoByProcPosID?procPosID=" + query("id") + "&pageIndex=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize;
+							break;
+						case "pos-station":
+							$scope.url = ApiService.Api50 + "/api/v1/Equipment/GetPagedEqStationList?posId=" + query("id") + "&pageIndex=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize;
+							break;
+						case "repair-log":
+							$scope.url = ApiService.Api50 + "/api/v1/MatWorkOrder/GetPagedWorkLogListByCustomerId?customerId=" + query("id") + "&pageIndex=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize;
+							break;
+						case "insp-equ":
+						    $scope.url = ApiService.Api50 + "/api/v1/Equipment/GetEqinfoByStandardID?StandardID="+query("id") + "&pageIndex=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize;
+						     break;
+					};
+				}
+
+				$scope.$on('refresh_pageindex', getKey);
+				RPCObserver.on('refresh_my_sxun', 'refresh_my_sxun');
+				window.refresh_my_sxun = function() {
+					$scope.$broadcast('md_pullrefresh');
+				};
+				$scope.call = function(phone) {
+					plus.device.dial(phone, false);
+					return false;
+				}
+			}]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

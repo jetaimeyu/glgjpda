@@ -1,0 +1,84 @@
+<div class="share">
+	<div class="font-15">发送给：</div>
+	<div class="share-to">
+		<div class="user-box mui-media mui-col-xs-3 mui-col-sm-3 mui-pull-left" ng-repeat="user in users">
+			<div class="mui-media-object md-img-round avata" ng-style="{'background-image':'url('+ (user.UserID | getUserLogo:50:0) +')'}"
+			 ng-if="user.ULogoIsExist"></div>
+			<div class="mui-media-object md-img-round avata md-userCustomLogo" ng-if="!user.ULogoIsExist" ng-bind="user.ViewName | getUserCustomLogo"></div>
+			<div class="view-name mui-ellipsis" ng-bind="user.ViewName"></div>
+		</div>
+		<!--	<img class="md-img-round" ng-src="{{user.UserID | getUserLogo:50:50}}" ng-repeat="user in users" />-->
+	</div>
+	<div class="content">
+		<img class="size60 float-left border-f2 bg-f2 mr10" src="{{obj.img}}" />
+		<span class="font-15 mui-ellipsis-1" ng-bind="obj.title"></span>
+		<span class="color-gray font-13 mui-ellipsis-2" ng-bind="obj.desc"></span>
+	</div>
+</div>
+<footer class="f_btns">
+	<a ng-click="cancel()">取消</a>
+	<a ng-click="save()">确定</a>
+</footer>
+<style>
+	.share {
+		margin: -5px 10px -20px 10px;
+	}
+
+	.share .share-to {
+		max-height: 50vh;
+		overflow: auto;
+		margin: 5px 0px;
+		width: 100vw;
+	}
+
+	.share .share-to .user-box {
+		text-align: center;
+		margin-bottom: 10px;
+		font-size: 1.6rem;
+	}
+
+	.share .share-to img {
+		margin-right: 5px;
+	}
+
+	.share .share-to .md-img-round {
+		width: 50px;
+		height: 50px;
+		border-radius: 50%;
+		background-size: cover;
+		display: block;
+		margin-right: 10px;
+	}
+
+	.view-name {
+		padding: 5px 0;
+		width: 50px;
+	}
+
+	.share .content {
+		margin-bottom: 60px;
+		width: 100vw;
+		overflow: hidden;
+	}
+
+	.share .content span {
+		max-width: 75vw;
+		padding-right: 20px;
+	}
+
+	div.md-userCustomLogo {
+		width: 50px;
+		height: 50px;
+		line-height: 50px;
+	}
+
+	.mui-ellipsis-1 {
+		display: -webkit-box;
+		overflow: hidden;
+		white-space: normal !important;
+		text-overflow: ellipsis;
+		word-wrap: break-word;
+		-webkit-line-clamp: 1;
+		-webkit-box-orient: vertical;
+	}
+</style>

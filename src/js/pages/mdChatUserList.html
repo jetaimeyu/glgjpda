@@ -1,0 +1,14 @@
+<span class="chat-user" ng-repeat="item in model">
+	<span ng-if="userid!=item.ID" ng-bind="item.Name||item.UserName" ng-click="tap($event,item)"></span>
+	<span ng-if="userid==item.ID" ng-bind="item.Name||item.UserName"></span>
+</span>
+<style>
+	.chat-user {
+		color: #3296FA;
+		margin-right: 5px;
+	}
+	
+	.chat-user:last-child {
+		margin-right: 0;
+	}
+</style>

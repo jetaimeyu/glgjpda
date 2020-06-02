@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport"
+		content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<title>二维码名片</title>
+	<!--标准mui.css-->
+	<link rel="stylesheet" href="../../css/mui.min.css">
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	<link rel="stylesheet" href="qr-code.css">
+	<link rel="stylesheet" href="../../css/mui.loading.css">
+</head>
+
+<body ng-controller="myEwmDetailsCtrl">
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left">二维码名片</a>
+	</header>
+	<div class="mui-content" style="display: none;" ng-class="{'mui-block':isLoad}">
+		<ul class="mui-table-view">
+			<li class="mui-table-view-cell" style="height:390px;">
+				<div class="body">
+					<div class="mui-media-object mui-pull-left avatar"
+						ng-style="{'background-image':'url('+ (myDetailsVM.UserID|getUserLogo:48:0) +')'}"
+						ng-class="myDetailsVM.ULogoIsExist?'':'ng-hide'"></div>
+					<div class="mui-media-object mui-pull-left md-userCustomLogo" ng-if="!myDetailsVM.ULogoIsExist"
+						style="height: 48px;max-width: 48px;line-height: 48px;"
+						ng-bind="myDetailsVM.ViewName | getUserCustomLogo"></div>
+					<div class="mui-media-body">
+						<p class="mui-ellipsis" style="margin-top: 3px;">
+							<span style="font-size: 16px;color:#000;margin-right: 5px;"
+								ng-bind="myDetailsVM.ViewName"></span>
+							<i class="mui-icon icon-man" style="color:#007AFF;font-size: 15px;"
+								ng-if="myDetailsVM.Sex==1"></i>
+							<i class="mui-icon icon-woman" style="color:#007AFF;font-size: 15px;"
+								ng-if="myDetailsVM.Sex==2"></i>
+						</p>
+						<p class="mui-ellipsis">
+							<div class="info-detail" ng-bind="'通号 ' + ': ' + myDetailsVM.Mdt"></div>
+						</p>
+					</div>
+				</div>
+
+				<div style="margin-top: 40px;text-align: center;">
+					<div id="qrcode" style="display: none;">
+
+					</div>
+					<p class="my-remark">扫一扫上面的二维码图案，加我好友</p>
+				</div>
+
+			</li>
+		</ul>
+		<div class="mui-content-padded" style="margin-bottom: 80px;">
+			<button class="mui-btn mui-btn-primary mui-btn-block" ng-click="sendToMore()">推荐自己</button>
+
+		</div>
+	</div>
+	<script type="text/javascript" src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/rpc.js"></script>
+	<script type="text/javascript" src="../../js/jquery.min.js"></script>
+	<script type="text/javascript" src="../../js/jquery.qrcode.js"></script>
+	<script type="text/javascript" src="../../js/qrcode.js"></script>
+	<script src="../../js/mui.loading.js"></script>
+	<script src="../message/transMessage.js"></script>
+	<script type="text/javascript" src="qr-code.js"></script>
+</body>
+
+</html>

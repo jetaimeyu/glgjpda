@@ -1,0 +1,80 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.data-group .data-row label {
+				margin-right: 30px;
+				width: 100vw;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="ServiceIndexController">
+		<p class="data-group-tip" style="margin-top: 10px;display: none;" ng-class="{'mui-block':isLoad}">安装调试数据查询</p>
+		<div class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}" style="display: none;margin-top: 40px;">
+			<div class="mui-content">
+				<ul class="data-group" style="margin-top: 0;">
+					<li class="data-row mui-table-view-cell" ng-repeat="param in debugParams" ng-click="tap(param)">
+						<p class="opt md-icon icon-right"></p>
+						<label ng-bind="param.title"></label>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script>
+			app.controller("ServiceIndexController", ["$scope", "$Modal", "ApiService", "DataService", "UtilsService", "RPCObserver", "CustomModalService", function($scope, $Modal, ApiService, DataService, UtilsService, RPCObserver, CustomModalService) {
+				$scope.debugParams = [{
+					id: -1,
+					title: '默认模板'
+				}];
+				$scope.retryModal = {
+					msg: "安装调试",
+					retry: GetCustomerServiceParamsTypeList,
+					state: ''
+				};
+				GetCustomerServiceParamsTypeList();
+				//获取客户服务参数分组
+				function GetCustomerServiceParamsTypeList() {
+					var url = ApiService.Api50 + "/api/v1/ProdDebug/GetDebugParamsTypeList";
+					DataService.get(url).then(function(res) {
+						$scope.isLoad = true;
+						res.forEach(function(item) {
+							$scope.debugParams.push({
+								id: item.ID,
+								title: item.Name
+							})
+						});
+						$scope.retryModal.state = "";
+					},function(error){
+						$scope.retryModal.state = error.State;
+					})
+				};
+
+				$scope.tap = function(param) {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: "debug-list.html",
+						url: "debug-list.html?id=" + param.id + "&title=" + encodeURIComponent(param.title)
+					})
+				}
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

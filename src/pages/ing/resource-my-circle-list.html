@@ -1,0 +1,782 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.detail-title {
+				padding: 8px 16px 8px 16px;
+				background-color: #f7f7f7;
+				position: relative;
+				padding-bottom: 15px;
+			}
+			
+			.detail-title::after {
+				width: 100%;
+				position: absolute;
+				left: 0;
+				bottom: 0;
+				height: 1px;
+				content: '';
+				-webkit-transform: scaleY(0.5);
+				transform: scaleY(0.5);
+				background-color: #ddd;
+			}
+			
+			.detail-content {
+				margin-top: 8px;
+				word-break: break-all;
+				clear: both;
+				padding-left: 43px;
+			}
+			
+			.bid-list p,
+			.detail-content p {
+				margin-bottom: 0;
+				color: #323232;
+			}
+			
+			.detail-content [width],
+			.detail-content [style*="width"] {
+				max-width: 100%;
+			}
+			
+			.headline {
+				font-family: MicrosoftYaHei;
+				margin: 0;
+				font-size: 1.6rem;
+				font-weight: normal;
+				max-width: 100%;
+				color: #323232;
+				line-height: 1.5;
+				margin-bottom: 6px;
+				word-wrap: break-word;
+			}
+			
+			.actionline {
+				font-size: 1.2rem;
+				color: #3296FA;
+				line-height: 12px;
+				margin-bottom: 10px;
+				display: flex;
+				justify-content: flex-end;
+				margin-top: 15px;
+			}
+			
+			.actionline span {
+				margin-left: 4px;
+			}
+			
+			.scan-user-logo {
+				float: left;
+				width: 37px;
+				height: 37px;
+				background-size: 100% 100%;
+				background-repeat: no-repeat;
+				margin-right: 5px;
+				border-radius: 5px;
+			}
+			
+			.info-wrap {
+				line-height: 24px;
+				overflow: hidden;
+				margin-top: 15px
+			}
+			
+			.info-item.name {
+				margin-left: 38px;
+				color: #3296FA;
+				font-size: 1.5rem;
+				max-width: 60vw;
+				font-weight: 600;
+			}
+			
+			.info-item.time {
+				color: #999999;
+				font-size: 1.2rem;
+				width: 20vw;
+				text-align: right;
+				float: right;
+				margin-top: -42px;
+				line-height: 13px;
+			}
+			
+			.content-wrap {
+				padding: 0 16px;
+			}
+			
+			.tptal {
+				padding: 8px 16px;
+				font-size: 1.4rem;
+				color: #323232;
+				padding-bottom: 0;
+			}
+			
+			.tptal i {
+				font-size: 1.4rem;
+				margin-right: 7px;
+			}
+			
+			.tptal li {
+				min-height: 20px !important;
+				line-height: 20px;
+			}
+			
+			.tptal .icon-right {
+				line-height: 2.1;
+				color: #555555;
+				margin-left: 6px;
+			}
+			
+			.bid-list .data-group {
+				margin-top: 0;
+			}
+			
+			md-compile img {
+				max-width: 100%;
+				width: auto !important;
+				height: auto !important;
+			}
+			
+			md-compile ul {
+				padding-left: 40px;
+				list-style: disc;
+			}
+			
+			footer.ing-info {
+				width: 100%;
+				position: fixed;
+				height: 44px;
+				line-height: 44px;
+				color: #fff;
+				z-index: 9;
+				bottom: 0;
+				background: #fff;
+				padding: 5px 0px 5px 0px;
+				border-top: 1px solid #ccc;
+			}
+			
+			footer.ing-info span.inp {
+				font-size: 1.4rem;
+				margin: 0 16px;
+				height: 32px;
+				display: block;
+				background: #e9e9e9;
+				border-radius: 35px;
+				padding-left: 38px;
+				line-height: 32px;
+				color: #323232;
+			}
+			
+			footer.ing-info .icon-pen {
+				position: absolute;
+				font-size: 1.4rem;
+				left: 34px;
+				top: -2px;
+				color: #000;
+			}
+			
+			.detail-title .md-userCustomLogo {
+				font-size: 1.4rem;
+			}
+			
+			.md-atical-img {
+				width: 100%;
+				display: flex;
+				flex-wrap: wrap;
+				line-height: 0;
+			}
+			
+			.md-atical-img img {
+				height: 85px;
+				width: 85px;
+				padding-right: 0;
+				margin-right: 6px;
+				margin-bottom: 6px;
+				border: none;
+			}
+			
+			.md-atical-img img.oneimg {
+				min-width: 42%;
+				padding-right: 4px;
+				margin-top: 4px;
+				height: 150px;
+			}
+			
+			.atical-content {
+				font-size: 1.4rem;
+				margin: 10px 0;
+				margin-top: -14px;
+				margin-bottom: 7px;
+			}
+			
+			.singal-pic img {
+				max-width: 50%;
+				height: auto;
+			}
+			
+			.dt-comment-box {
+				width: 80%;
+				background: #eee;
+				margin: 0 auto;
+				min-height: 20px;
+				position: relative;
+			}
+			
+			.dt-liked-box {
+				font-size: 1.3rem;
+				color: #3296FA;
+				box-sizing: border-box;
+				padding: 5px 8px;
+				position: relative;
+			}
+			
+			.dt-liked-box:after {
+				width: 100%;
+				position: absolute;
+				left: 0;
+				bottom: 0;
+				height: 1px;
+				content: '';
+				-webkit-transform: scaleY(0.5);
+				transform: scaleY(0.5);
+				background-color: #ddd;
+			}
+			
+			.comutation-box {
+				padding: 5px 8px;
+				font-size: 1.3rem;
+			}
+			
+			.comutation-box .compname {
+				color: #3296FA;
+				float: left;
+				/*   margin-right: 5px;*/
+				max-width: 83%;
+				overflow: hidden;
+				height: 17px;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+			
+			.comutation-box .comted-con {
+				/*width: 70%;*/
+				/*float: left;*/
+			}
+			
+			.comutation-box span {
+				display: block;
+			}
+			
+			.comutation-box p {
+				margin-bottom: 3px;
+				/*word-break: break-word;*/
+				/*word-wrap: break-word; */
+				overflow: hidden;
+			}
+			
+			.triangle-up {
+				width: 0;
+				height: 0;
+				border-left: 8px solid transparent;
+				border-right: 8px solid transparent;
+				border-bottom: 11px solid #eee;
+				position: absolute;
+				top: -10px;
+				left: 20px;
+			}
+			
+			.md-atical-img .video {
+				width: 110px;
+				height: 123px;
+				margin-right: 15px;
+			}
+			
+			.md-atical-img .video.file .bgVideo {
+				width: 25px;
+				height: 25px;
+				z-index: 0;
+				left: 50%;
+				top: 29%!important;
+				transform: translateX(-50%);
+				padding: 0px !important;
+			}
+			
+			span.comted-con {
+				word-wrap: break-word;
+				/*float:right;*/
+				word-break: break-all;
+				/*overflow: hidden;*/
+			}
+			
+			.replyModal .replay-input {
+				border: solid 1px #EAEAEA;
+				border-radius: 6px;
+				height: 50px;
+				font-size: 1.4rem;
+				padding: 5px;
+				overflow-y: auto;
+				margin-bottom: 0;
+				line-height: 22px;
+				padding: 0 5px;
+				margin-right: 5px;
+			}
+			
+			.replyModal {
+				height: 96px;
+				margin-bottom: -20px;
+				margin-top: -10px;
+				display: flex;
+				align-items: center;
+			}
+			
+			.md-modal .md-modal-body.hidden-footer .md-modal-content {
+				bottom: 0;
+				padding-bottom: 10px;
+				padding-top: 7px;
+			}
+			
+			.replyModal .mui-btn-block {
+				line-height: 1;
+				width: 70px;
+				float: right;
+				top: 2px;
+				margin: 0;
+				height: 42px;
+				padding: 0;
+				line-height: 42px;
+				font-size: 1.4rem;
+				margin-bottom: 4px;
+			}
+			
+			.icon {
+				width: 16px;
+				height: 14.5px;
+			}
+			
+			.Createuser {
+				line-height: 13px;
+				font-size: 1.2rem;
+				margin-bottom: 11px;
+				color: #666666;
+				font-weight: normal;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="AssistDetail">
+		<div id="pullrefresh" class="mui-scroll-wrapper" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<div class="mui-content" style="display: none;" ng-class="{'mui-block':isLoad}">
+				<!-- 头部信息 -->
+				<div class="detail-title" ng-repeat="item in cdata">
+					<div class="info-wrap">
+						<div class="mui-media-object mui-pull-left md-img-round scan-user-logo" ng-style="{'background-image':'url('+ (item.CompID | getCompLogo:50:50) +')'}"></div>
+						<div class="info-item name mui-ellipsis">
+							<div ng-bind="item.CompName" ng-click="tocompany(item)"></div>
+							<div class="Createuser" ng-bind="item.CreateUserName" ng-click="toperson(item)"></div>
+						</div>
+						<span class="info-item time" ng-bind="item.CreateDate"></span>
+					</div>
+
+					<div class="detail-content">
+						<div class="atical-content" ng-bind="item.Content"></div>
+						<div class="md-atical-img">
+							<md-pic images="item.Attachs" readonly="true"></md-pic>
+							<md-zy-video videos="item.Attachs" readonly="true" ng-repeat="url in item.Attachs" ng-if="url.FileType==1"></md-zy-video>
+						</div>
+					</div>
+					<div class="actionline">
+						<i ng-class="{'icon-concerned':!item.imf||!isliked,'icon-unconcerned':item.imf||isliked}" ng-click="focusQ(item)">
+					<span ng-bind="item.imf?'取消':'赞'"></span>  
+				</i>
+						<i class="icon-pen" ng-click="answer(item)" style="margin-left:15px;">
+					<span>评论</span>
+				</i>
+						<i class="icon-dustbin" ng-click="del(item)" style="margin-left:15px;">
+					<span>删除</span>
+				</i>
+						<i class="icon-delete" ng-click="pdel(item)" style="margin-left:15px;" ng-if="isshow&&UserID!=item.CreateUserID">
+					<span>屏蔽</span>
+				</i>
+					</div>
+					<div class="dt-comment-box" ng-if="item.Praises.length>0||item.Comments.length>0">
+						<div class="triangle-up"></div>
+						<div class="dt-liked-box" ng-if="item.Praises.length>0">
+							<span>
+						<i class="icon-unconcerned" ></i>
+					</span>
+							<span class="like-comp" ng-repeat="zan in item.Praises " ng-bind="$index==0?zan.CreateUserName:'，'+zan.CreateUserName"></span>
+						</div>
+						<div class="comutation-box" ng-if="item.Comments.length>0">
+							<p ng-repeat="comt in item.Comments">
+								<span class="compname" ng-bind="comt.CreateUserName+':'"></span>
+								<span class="comted-con" ng-bind="comt.Content"></span>
+							</p>
+						</div>
+					</div>
+				</div>
+				<!--无网络或请求失败重试-->
+				<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+				<md-no-data ng-show="cdata && cdata.length==0" v-if="isLoad">暂无数据</md-no-data>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../message/transMessage.js"></script>
+		<script type="text/javascript" src="../../js/xss.min.js"></script>
+		<script type="text/javascript">
+			app.controller("AssistDetail", ["$scope", "AuthService", "ApiService", "DataService",
+				"UtilsService", "ChatUserService", "Loading", "RPCObserver", "$filter", "CacheService", "$timeout",
+				function($scope, AuthService, ApiService, DataService, UtilsService, ChatUserService, Loading, RPCObserver,
+					$filter, CacheService, $timeout) {
+					$scope.pageIndex = 0; //页数
+					$scope.pageSize = 5; //每页数量
+					$scope.params = '';
+					$scope.isshow = false;
+					$scope.ispublish = false
+					var compID = query("compid");
+					Loading.show();
+					$scope.isLoad = false;
+					$scope.isliked = false;
+					$scope.cdata = [];
+					//无网络或请求失败重试
+					$scope.retryModal = {
+						msg: "",
+						retry: downpullRefresh,
+						state: ''
+					}
+
+					RpcServer.expose("RPC_RefreshList", function(params) {
+						$scope.curUser = CacheService.get("user");
+						$scope.UserID = $scope.curUser.UserID;
+						$scope.params = params
+						getAssistDetail('down', params)
+						getcomadminautor()
+						loadData()
+
+						$scope.$apply();
+					});
+
+					function getAssistDetail(type, params) {
+						$scope.curUser = CacheService.get("user");
+						$scope.UserID = $scope.curUser.UserID;
+
+						if(params && params.UserID != 0) {
+							var url = ApiService.Api64 + '/api/v1/ResCircle/GetPagedResCircleListByUserID?queryUserId=' + params.UserID + '&pageIndex=' + $scope.pageIndex + '&pageSize=' + $scope.pageSize
+
+						} else {
+							var url = ApiService.Api64 + '/api/v1/ResCircle/GetPagedMyResCircleList?pageIndex=' + $scope.pageIndex + '&pageSize=' + $scope.pageSize
+						}
+
+						DataService.get(url).then(function(res) {
+
+							Loading.hide();
+							
+							$scope.retryModal.state = '';
+							if(res) {
+								//								console.log(JSON.stringify(res))
+								RPCObserver.broadcast('refresh_readList');
+
+								if(type == "down" || $scope.pageIndex == 1) {
+									$scope.cdata = [];
+								}
+								$scope.cdata = $scope.cdata.concat(res.DataRows);
+
+								var resDataRows = [];
+								for(var i = 0; i < $scope.cdata.length; i++) {
+									resDataRows = resDataRows.concat($scope.cdata[i]);
+								}
+								$scope.isLoad = true;
+								mui("#pullrefresh").pullRefresh() && mui('#pullrefresh').pullRefresh().refresh(true);
+								var isEnd = resDataRows.length >= res.TotalCount;
+								if(mui("#pullrefresh").pullRefresh()) {
+									if(type == "down") {
+										mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
+										mui("#pullrefresh").pullRefresh().endPullupToRefresh(isEnd && resDataRows.length > 0);
+										mui("#pullrefresh").pullRefresh() && mui('#pullrefresh').pullRefresh().scrollTo(0, 0);
+									} else {
+										mui("#pullrefresh").pullRefresh().endPullupToRefresh(isEnd && resDataRows.length > 0);
+									}
+								}
+								var tip = document.querySelector('.mui-pull-bottom-pocket');
+								if(tip) {
+									if(resDataRows.length == 0) {
+										tip.classList.contains('mui-visibility') && tip.classList.remove('mui-visibility');
+										tip.classList.contains('mui-block') && tip.classList.remove('mui-block');
+									} else {
+										!tip.classList.contains('mui-visibility') && tip.classList.add('mui-visibility');
+										!tip.classList.contains('mui-block') && tip.classList.add('mui-block');
+									}
+								}
+								for(var i = 0; i < $scope.cdata.length; i++) {
+									if($scope.cdata[i].Praises.length != 0) {
+										$scope.index = $scope.cdata[i].Praises.findIndex(function(item) {
+											return item.CreateUserID == $scope.UserID
+
+										})
+
+										if($scope.index != undefined && $scope.index != -1 && $scope.cdata[i].Praises.length > 0 && $scope.cdata[i] != 'undefined') {
+
+											$scope.zanid = $scope.cdata[i].Praises[$scope.index].ID
+
+										}
+										for(var j = 0; j < $scope.cdata[i].Praises.length; j++) {
+											if($scope.cdata[i].Praises[j].CreateUserID == $scope.UserID) {
+												$scope.cdata[i].imf = true
+												if($scope.cdata[i].Praises.length > 0) {
+													if($scope.zanid = $scope.cdata[i].Praises[$scope.index].ID != undefined) {
+
+														$scope.cdata[i].imfid = $scope.cdata[i].Praises[$scope.index].ID
+													}
+
+												}
+
+											}
+
+										}
+									}
+								}
+
+							}
+						}, function(error) {
+
+							$scope.retryModal.state = error.State;
+						});
+					};
+					//跳到个人资料页
+					$scope.toperson = function(item) {
+                         UtilsService.openWindow({
+							needLogin: true,
+							id: "personal-info.html",
+							url: "../../pages/contact/personal-info.html?userid=" + item.CreateUserID
+						}); 						
+					}
+					//获取指定资源圈发布人
+					loadData()
+
+					function loadData() {
+						var url = ApiService.Api64 + "/api/v1/ResCircle/GetPagedResCircleUserList?pageIndex=1&pageSize=100";
+						DataService.get(url).then(function(res) {
+							if(res) {
+								$scope.isLoad = true;
+								Loading.hide();
+								var index = res.DataRows.findIndex(function(item) {
+									return item.UserID === $scope.UserID
+								})
+
+								if(index > -1) {
+									$scope.ispublish = true
+								}
+							}
+
+						})
+					}
+					$scope.tocompany = function(item) {
+						UtilsService.openWindow({
+							needLogin: true,
+							id: "personal-info.html",
+							url: "../../pages/complib/index.html?compid=" + item.CompID,
+						});
+					}
+					getcomadminautor()
+
+					function getcomadminautor() {
+						var url = ApiService.Api50 + "/api/v1/Common/MdtGetIsAdmin/" + user.UserID;
+						DataService.get(url).then(function(res) {
+							//                       console.log(JSON.stringify(res))
+							if(res.IsCreater || res.IsAdmin) {
+								Loading.hide();
+								$scope.isshow = true;
+
+							}
+						})
+					}
+					$scope.del = function(item) {
+
+						mui.confirm("确认删除吗？", function(e) {
+							if(e.index == 0) {
+								var url = ApiService.Api64 + '/api/v1/ResCircle/DeleteResCircle?id=' + item.ID
+								DataService.post(url).then(function(res) {
+									getAssistDetail('down')
+									RPCObserver.broadcast('refresh_Assist_detail')
+								});
+							}
+						});
+
+					}
+
+					$scope.pdel = function(item) {
+						var postData = [
+
+							item.CreateUserID,
+
+						]
+						mui.confirm("确认屏蔽？", function(e) {
+							if(e.index == 0) {
+								var url = ApiService.Api64 + '/api/v1/ResCircle/SaveResCircleUser'
+								DataService.post(url, postData).then(function(res) {
+									downpullRefresh()
+									getAssistDetail()
+//									$scope.$apply()
+								});
+							}
+						});
+
+					}
+					//点赞
+					$scope.focusQ = function(item) {
+
+						$scope.isFoucsing = true;
+
+						if(item.imf != 'undefined' && !item.imf) {
+
+							//未点赞->点赞
+							var url = ApiService.Api64 + "/api/v1/ResCircle/AddResCirclePraise?resCircleId=" + item.ID;
+							DataService.post(url).then(function(res) {
+								$scope.zanid = res
+								item.imf = true
+								if(item.Praises.length > 0) {
+									var isindex = item.Praises.findIndex(function(items) {
+										items.CreateUserName === $scope.curUser.UserName
+
+									})
+									if(isindex != -1) {
+										return false
+									} else {
+
+										item.Praises.push({
+											"CreateUserName": $scope.curUser.UserName
+										})
+
+										mui.toast("点赞成功");
+									}
+
+								} else {
+									item.Praises.push({
+										"CreateUserName": $scope.curUser.UserName
+									})
+									mui.toast("点赞成功");
+								}
+								$timeout(function() {
+									$scope.isFoucsing = false;
+								}, 200);
+							})
+
+						} else {
+							if(item.Praises.length > 0) {
+
+								var isindex = item.Praises.findIndex(function(items) {
+									return items.CreateUserName == $scope.curUser.UserName
+
+								})
+								item.Praises[isindex].ID != undefined ? $scope.cancelid = item.Praises[isindex].ID : $scope.cancelid = $scope.zanid
+								//已点赞->取消点赞
+								var url = ApiService.Api64 + "/api/v1/ResCircle/CancelResCirclePraise?id=" + $scope.cancelid;
+								DataService.post(url).then(function(res) {
+									item.imf = false
+									item.Praises.splice(isindex, 1)
+									mui.toast("点赞取消了");
+
+									$timeout(function() {
+										$scope.isFoucsing = false;
+									}, 200);
+								}, function() {
+
+								})
+
+							}
+
+						}
+					};
+
+					//评论保存
+					var a = 1;
+					$scope.answer = function(item) {
+						if(a == 1) {
+							a = 0;
+							UtilsService.comentModal(150, "", "请输入评论内容").then(function(res) {
+								var url = ApiService.Api64 + '/api/v1/ResCircle/AddResCircleComment';
+								var postData = {
+									"CreateUserName": $scope.curUser.UserName,
+									"ResCircleID": item.ID,
+									"ReplyID": 0,
+									"Content": res
+								}
+								DataService.post(url, postData).then(function(res) {
+									if(res) {
+										item.Comments.push(
+											postData
+										)
+
+										mui.toast("评论成功");
+										RPCObserver.broadcast('refresh_my_reply_ing');
+
+									}
+								});
+
+							});
+							setTimeout(function() {
+								a = 1
+							}, 500);
+						}
+					}
+
+					//刷新页面数据
+					RPCObserver.on('refresh_Assist_detail', 'refresh_Assist_detail');
+					window.refresh_Assist_detail = function() {
+						downpullRefresh()
+					};
+					//下拉刷新
+					function downpullRefresh() {
+						$scope.pageIndex = 1; //页数
+						getAssistDetail("down", $scope.params);
+					};
+					//上拉加载
+					function uppullRefresh() {
+						$scope.pageIndex++; //页数
+						getAssistDetail();
+					};
+					//下拉刷新,上拉加载
+					setTimeout(function() {
+						mui.init({
+							pullRefresh: {
+								container: '#pullrefresh',
+								up: {
+									auto: true,
+									callback: uppullRefresh
+								},
+								down: {
+									callback: downpullRefresh
+								}
+							}
+						});
+					});
+					//刷新登陆
+					RpcServer.expose("RPC_RefreshLogin", function(params) {
+						$scope.curUser = CacheService.get("user");
+						downpullRefresh();
+						$scope.$apply();
+					});
+
+				}
+
+			]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+				plus.webview.currentWebview().setStyle({
+					scrollIndicator: 'none'
+				});
+			});
+		</script>
+	</body>
+
+</html>

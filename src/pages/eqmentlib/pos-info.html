@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-cn" id="testForm">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="Expires" content="0">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-control" content="no-cache">
+		<meta http-equiv="Cache" content="no-cache">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="format-detection" content="telephone=no" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title ng-bind="title"></title>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../css/common.css" rel="stylesheet" />
+		<link href="../../bill/css/common.min.css?version=0.0.10" rel="stylesheet">
+		<link href="../../bill/css/app.min.css?v=24c62ec6f03283c50cff" rel="stylesheet">
+		<link href="../../icon-font/iconfont.css" rel="stylesheet" />
+		<style>
+			body {
+				background-color: #f1f1f1 !important;
+			}
+			
+			.md-modal .md-modal-content input[type='text'] {
+				margin-bottom: 0;
+				font-size: 1.3rem;
+			}
+			
+			.mui-bar {
+				z-index: 300
+			}
+			
+			.md-modal:not(.auto-size) {
+				top: 44px;
+			}
+			
+			.mui-content {
+				background: #eee;
+			}
+			
+			.data-group.hastitle .data-row:after {
+				position: absolute;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				height: 1px;
+				content: '';
+				-webkit-transform: scaleY(0.5);
+				transform: scaleY(0.5);
+				background-color: #ccc;
+			}
+			/* 修改表单内的样式 勿删 */
+			
+			.bill_info_form .page_info {
+				position: inherit;
+			}
+			
+			.bill_info_form .opt .icon {
+				z-index: 100;
+			}
+			
+			.bill_info_form .opt .press-opt {
+				z-index: 100;
+			}
+			/* 修改表单内的样式 勿删 */
+			
+			.detail {
+				background-color: #fff;
+			}
+			
+			.data-group.mdDervRepaList .data-row .body {
+				padding: 4px 0px 4px 16px;
+				margin-right: 40px;
+			}
+			
+			.data-group.mdDervRepaList .data-row:after {
+				left: 0;
+				right: 0;
+			}
+			
+			.data-group .data-row .body .repair-content {
+				font-size: 1.5rem;
+				color: #000;
+				line-height: 19px;
+				font-family: MicrosoftYaHei;
+			}
+			
+			.mui-table-view-cell:after {
+				left: 10px;
+				right: 10px;
+			}
+			
+			.mui-ellipsis {
+				white-space: nowrap !important;
+			}
+			
+			.equ-title {
+				font-size: 1.5rem;
+				color: #000000;
+			}
+			
+			.equ-sub {
+				line-height: 16px;
+				font-size: 1.2rem;
+				color: #AAAAAA;
+				font-family: MicrosoftYaHei;
+			}
+			
+			.imgslist {
+				float: left;
+				width: 68px;
+				height: 68px;
+				margin-right: 10px;
+				background-size: cover !important;
+			}
+			
+			.total {
+				text-align: center;
+				line-height: 40px;
+				color: #3296FA;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="TestFormCtl">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">投产地详情</a>
+		</header>
+		<div class="mui-content" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<!-- 用户信息 -->
+			<div class="detail">
+				<md-bill-view data-options="{skinkey:skinkey,dataid:dataid,srchkey:srchkey,edit:edit,list:list,custom}"></md-bill-view>
+			</div>
+			<!-- 信息列表  -->
+			<div class="infos" ng-if="Datas[0].data.TotalCount>0">
+				<ul class="data-group hastitle">
+					<li class="data-row">
+						<label class="title">设备</label>
+					</li>
+				</ul>
+				<!-- 设备信息 -->
+				<ul class="data-group mt0 mui-table-view mui-table-view-chevron">
+					<li class="mui-table-view-cell mui-media" ng-click="tap(Datas[0].href,Datas[0].data.Data)">
+						<img src="../../images/imgPre.png" ng-style="{'background-image':'url('+ (Datas[0].data.Data.AttachFilePath | getEquLogo:55) +')'}" class="imgslist" />
+						<div class="mui-clearfix">
+							<div class="mui-ellipsis equ-title" ng-bind="Datas[0].data.Data.EqName"></div>
+							<p class="mui-ellipsis equ-sub" ng-bind="'型号：'+Datas[0].data.Data.SkuName"></p>
+							<p class="mui-ellipsis equ-sub" ng-bind="'编号：'+Datas[0].data.Data.EqIdentifier"></p>
+							<p class="mui-ellipsis equ-sub" ng-if="Datas[0].data.Data.Station" ng-bind="'工位：'+ Datas[0].data.Data.Station"></p>
+						</div>
+					</li>
+					<li class="data-row mui-table-view-cell mui-block" ng-click="lookover('pos-equ')">
+						<div class="total">合计
+							<span ng-bind="Datas[0].data.TotalCount"></span> 个设备</div>
+					</li>
+				</ul>
+			</div>
+			<div class="infos" ng-if="Datas[1].data.TotalCount>0">
+				<ul class="data-group hastitle">
+					<li class="data-row">
+						<label class="title">投产工位</label>
+					</li>
+				</ul>
+				<ul class="data-group mdDervRepaList" style="margin-top: 0px;">
+					<li class="data-row">
+						<div class="body">
+							<div class="repair-content mui-ellipsis-2" ng-bind="Datas[1].data.Data.Station"></div>
+						</div>
+					</li>
+					<li class="data-row mui-table-view-cell mui-block" ng-click="lookover('pos-station')">
+						<div class="total">合计
+							<span ng-bind="Datas[1].data.TotalCount"></span> 个工位</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../bill/script/libs.min.js?version=0.0.10"></script>
+		<script type="text/javascript" src="../../bill/script/common.min.js?version=0.0.10"></script>
+		<script type="text/javascript" src="../../bill/script/app.min.js?v=24c62ec6f03283c50cff"></script>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/bill.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script>
+			var scope;
+			app.controller("TestFormCtl", ["$scope", "$Modal", "$timeout", "ApiService", "UtilsService", "DataService", "$rootScope",
+				function($scope, $Modal, $timeout, ApiService, UtilsService, DataService, $rootScope) {
+					scope = $scope;
+					$scope.isLoad = false;
+					$scope.skinkey = query("skinkey");
+					$scope.dataid = query("dataid");
+					$scope.srchkey = query("srchkey");
+					$scope.funckey = query("funckey");
+					$scope.edit = function(_ret) {
+						openWindow("../common/bill-edit.html?skinkey=" + _ret.skinkey + "&dataid=" + _ret.dataid +
+							"&funckey=" + $scope.funckey);
+					};
+					$timeout(function() {
+						$scope.isLoad = true;
+					}, 300);
+
+					$scope.list = function() {
+						//刷新表单列表页 "mdt-equ-pos"
+						RpcClient.invoke("../eqmentlib/pos-list.html", "RPC_PosListRefresh");
+						mui_back();
+					};
+
+					$scope.custom = function(key, row) {
+						key == "Delete" && mui.confirm("确认删除吗？", function(e) {
+							if(e.index == 0) {
+								var url = ApiService.Api50 + "/api/v1/Equipment/DeleteEqProducePosById/" + row.ID;
+								DataService.get(url).then(function(res) {
+									$scope.list();
+								});
+							}
+						});
+					};
+
+					// ---------- 信息 -------------
+					$scope.Datas = [{
+							href: "equ-details.html", // 当前list item 点击跳转的页面
+							data: {},
+							type: "pos",
+							name: "设备",
+							url: "/api/v1/Equipment/GetEqInfoLastOneByProcPosID" // 获取当前list的接口
+						},
+						{
+							href: "",
+							data: {},
+							type: "eqStat",
+							name: "投产工位",
+							url: "/api/v1/Equipment/GetEqStationLastOne"
+						}
+					];
+					cicleGetData()
+
+					function cicleGetData() {
+						// 获取信息
+						for(var i = 0; i < $scope.Datas.length; i++) {
+							var item = $scope.Datas[i];
+							var url = "";
+							if(item.type == "pos") {
+								url = ApiService.Api50 + item.url + "?procPosID=" + $scope.dataid; //2092
+							} else {
+								url = ApiService.Api50 + item.url + "?posId=" + $scope.dataid; //2092
+							}
+							// 获取数据
+							getCustomerInfo(url, i);
+						}
+					}
+					//跳转到相应的页面
+					$scope.tap = function(href, obj) {
+						$rootScope.$broadcast("stop_audio");
+						openWindow(href + "?equid=" + obj.ID);
+					};
+
+					$scope.lookover = function(key) {
+						var url = "../../pages/aftersale/customer-datas.html?key=" + key + "&id=" + $scope.dataid
+						var title = (key == "pos-equ") ? "设备列表" : "投产工位"
+						openWindow("../common/hyperlink.html", {
+							hyperlink: {
+								title: title,
+								url: url
+							}
+						}, "hyperlink.html");
+					};
+
+					function getCustomerInfo(url, i) {
+						DataService.get(url).then(function(res) {
+							$scope.Datas[i].data = res;
+						});
+					}
+
+					//刷新
+					RpcServer.expose("RPC_BillViewRefresh", function(type) {
+						$scope.$broadcast('load_bill_view');
+						// 设备页面修改之后 返回这个页面之后刷新
+						cicleGetData();
+					})
+
+				}
+			]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("testForm"), ["TestForm"]);
+			});
+		</script>
+	</body>
+
+</html>

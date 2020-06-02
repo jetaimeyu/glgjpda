@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="utf-8">
+		<title>新闻详情</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.css">
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="news-info.css" />
+		<style type="text/css">
+			.newsinfo-warp {
+				margin-top: 45px;
+				word-wrap: break-word;
+			}
+			
+			.newstotal-warp {
+				text-align: center;
+			}
+			
+			.mui-loading {
+				margin-top: 50%;
+				margin-left: 50%;
+				width: 24px !important;
+				height: 24px !important;
+			}
+			
+			.mui-table-view-cell:after {
+				left: 0px;
+			}
+			
+			.mui-scroll-wrapper {
+				height: 100%;
+				width: 100%;
+				overflow-y: scroll;
+				-webkit-overflow-scrolling: touch;
+				overflow: hidden;
+				position: absolute;
+				bottom: 0px;
+				top: 0px;
+				padding-bottom: 5px;
+			}
+			
+			.mui-table-view:before {
+				height: 0px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="newsInfoController">
+		<!--导航栏-->
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left" id="newstitle">新闻详情</a>
+		</header>
+		<div id="title-list" class=" newsinfo-warp mui-content" style="display: none;padding: 0;" ng-class="{'mui-block':isLoad}">
+
+			<ul class="mui-table-view nobk" id="newsContent">
+				<li class="mui-table-view-cell newstotal-warp">
+					<div><span ng-bind="Title" class="font-16"></span></div>
+				</li>
+				<li id="newsDetail" class="mui-table-view-cell"></li>
+				<!--<li class="mui-table-view-cell">
+						<p>
+							创建时间：<span ng-bind="CreateTime"></span>
+						</p>
+					</li>-->
+			</ul>
+
+		</div>
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script>
+			app.controller("newsInfoController", ["$scope", "ApiService", "DataService", "AuthService", "UtilsService", "Loading", function($scope, ApiService, DataService, AuthService, UtilsService, Loading) {
+				$scope.newsid = query("id");
+				$scope.Title = ""; //新闻标题
+				$scope.Content = ""; //新闻内容
+				$scope.CreateTime = ""; //创建时间
+				$scope.ReadTimes = ""; //阅读次数
+				$scope.TypeName = ""; //新闻类型
+				$scope.PublishTime = "";
+				$scope.ImgUrl = "";
+				setTimeout(function() {
+					mui.init({
+						swipeBack: true //启用右滑关闭功能
+					});
+					//					mui('.mui-scroll-wrapper').scroll({
+					//						bounce: false, //是否启用回弹
+					//						indicators: false, //是否显示滚动条
+					//						deceleration: 0.0005
+					//					});
+				})
+				// 加载企业新闻详情
+				function loadCompnewsInfo() {
+					Loading.show();
+					setTimeout(function() {
+						var url = ApiService.Api50 + "/api/v1/News/GetNewsInfo?newsId=" + $scope.newsid;
+						DataService.get(url).then(function(res) {
+							Loading.hide();
+							$scope.isLoad = true;
+							if(res) { 
+								$scope.Title = res.Title;
+								document.getElementById("newsDetail").innerHTML = res.Content.replace(/http:\/\/api3.maidiyun.com/g, ApiService.Api30).replace(/\/\/mdcloud.maidiyun.com\/50/g, ApiService.Api50);
+								$scope.CreateTime = res.CreateTime;
+								$scope.ReadTimes = res.ReadTimes;
+								$scope.TypeName = res.TypeName;
+								$scope.ImgUrl = res.ImgUrl;
+								var textlist = document.getElementsByTagName("*");
+								for(var j = 0; j < textlist.length; j++) {
+									textlist[j].style.width = "100%";
+								}
+								var imglist = document.getElementsByTagName("img");
+								for(var i = 0; i < imglist.length; i++) {
+									imglist[i].style.width = "100%";
+									imglist[i].style.height = "50%";
+									imglist[i].parentNode.style.width = "100%";
+									imglist[i].parentNode.style.height = "100%";
+									imglist[i].parentNode.style.textAlign = "center";
+									imglist[i].parentNode.style.textIndent = "0px";
+									imglist[i].parentNode.parentNode.style.textIndent = "0px";
+									imglist[i].parentNode.parentNode.parentNode.style.textIndent = "0px";
+									imglist[i].parentNode.parentNode.parentNode.parentNode.style.textIndent = "0px";
+								}
+								document.getElementById("newstitle").style.width = "auto";
+							}
+						});
+					}, 100);
+				};
+				//加载数据初始值
+				loadCompnewsInfo();
+
+				mui('body').on('tap', 'a', function() {
+					var url = this.getAttribute('href');
+					var title = this.getAttribute("title") || "";
+					if(url) {
+						UtilsService.openWindow({
+							needLogin: false,
+							id: 'hyperlink',
+							url: '../common/hyperlink.html',
+							extras: {
+								hyperlink: {
+									title: title,
+									url: url
+								}
+							}
+						});
+					}
+				});
+			}]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,102 @@
+<div class="data-box" ng-repeat="info in model">
+	<div class="creatdate" ng-bind="info.Date"></div>
+	<div class="remind-item-list data-group ">
+		<div class="remind-item mui-table-view-cell  data-row" ng-repeat="item in info.DataRows" ng-click="gotoinfo(item.ID)">
+			<div class="remind-item-left">
+				<div class="item-date">
+					<div class="Md" ng-bind="item.Md"></div>
+					<div class="Hm" ng-bind="item.Hm"></div>
+				</div>
+				<div class="Content" ng-bind="item.Content"></div>
+			</div>
+			<span class="remind-item-right icon-right"></span>
+		</div>
+	</div>
+</div>
+<style>
+			.creatdate {
+				width: 100%;
+				text-align: center;
+				height: 40px;
+				line-height: 40px;
+				font-size: 1.4rem;
+				color: #888888;
+			}
+			
+			.remind-item-list {
+				width: 100%;
+				padding: 0 10px;
+				box-sizing: border-box;
+			}
+			
+			.remind-item {
+				width: 100%;
+				box-sizing: border-box;
+				padding: 6px;
+				background: #fff;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+			}
+			
+			.item-date {
+				width: 65px;
+				height: 50px;
+				background: #F5F6F8;
+				text-align: center;
+				padding-top: 5px;
+			}
+			
+			.Md {
+				font-size: 1.2rem;
+				color: #3296FA;
+			}
+			
+			.Hm {
+				font-size: 1.4rem;
+				color: #666666;
+			}
+			
+			.remind-item-left {
+				display: flex;
+				align-items: center;
+				width: 96%;
+			}
+			
+			.Content {
+				width: 65%;
+				margin-left: 15px;
+				font-size: 1.5rem;
+				display: -webkit-box;
+				-webkit-box-orient: vertical;
+				-webkit-line-clamp: 2;
+				overflow: hidden;
+			}
+			
+			.icon-right {
+				color: #AEAEAE;
+			}
+			
+			.data-row:after {
+				width: 100% !important;
+				position: absolute;
+				left: 0!important;
+				right: 0;
+				height: 1px;
+				content: '';
+				-webkit-transform: scaleY(0.5);
+				transform: scaleY(0.5);
+				background-color: #ECECEC;
+			}
+			
+			.data-group {
+				background: none;
+				margin-top: 0;
+			}
+			
+			.mui-table-view-cell.data-row {
+				padding: 6px;
+				text-align: initial;
+				border: initial;
+			}
+		</style>

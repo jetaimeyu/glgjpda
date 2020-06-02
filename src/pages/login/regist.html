@@ -1,0 +1,923 @@
+<!--注册 scz-->
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>注册</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="../../css/mui.loading.css" />
+		<style type="text/css">
+			.stepDiv {
+				padding-left: 16px;
+				padding-right: 16px;
+				background-color: #F3F9FF;
+				/*CSS3弹性盒子*/
+				display: -ms-flex;
+				display: -webkit-flex;
+				display: flex;
+				-webkit-justify-content: space-between;
+				justify-content: space-between;
+			}
+			
+			.stepDiv>div:nth-child(1) {
+				width: 33%;
+				text-align: center;
+			}
+			
+			.stepDiv>div:nth-child(2) {
+				width: 33%;
+				text-align: center;
+			}
+			
+			.stepDiv>div:last-child {
+				width: auto;
+				text-align: center;
+			}
+			
+			.mui-table-view-cell>a:not(.mui-btn).mui-active {
+				background-color: transparent;
+			}
+			/*导航li*/
+			
+			.mui-table-view-cell {
+				list-style: none;
+				background-color: #FFFFFF;
+				background-color: #F3F9FF;
+			}
+			/*导航的a*/
+			
+			.mui-table-view-cell a {
+				height: 47px;
+				padding: 16px 0 !important;
+				font-size: 1.5rem;
+				line-height: 1.5rem;
+				background-color: #F3F9FF;
+			}
+			
+			.lastHeadA {
+				float: right;
+				color: #85C2FF !important;
+			}
+			
+			.aPadding {
+				text-align: center;
+				color: #85C2FF !important;
+			}
+			
+			.mui-navigate-right:after,
+			.mui-push-right:after {
+				right: 0px;
+			}
+			/*激活的步骤*/
+			
+			.stepActive {
+				color: #3296FA !important;
+			}
+			/*未激活的步骤*/
+			
+			.stepNoActive {
+				color: #85C2FF !important;
+			}
+			
+			.roundNum {
+				display: inline-block;
+				width: 15px;
+				height: 15px;
+				margin-right: 5px;
+				font-size: 1rem;
+				line-height: 15px;
+				text-align: center;
+				border-radius: 50%;
+				position: relative;
+				top: -1.0px;
+			}
+			
+			.roundNum01 {
+				color: #FFFFFF;
+				background-color: #3296FA;
+			}
+			
+			.roundNum02 {
+				color: #85C2FF;
+				border: 1px solid #85C2FF;
+				border-radius: 50%;
+			}
+			
+			.headRight {
+				float: right;
+				font-size: 1.5rem;
+			}
+			/*********第一步样式*********/
+			/*去掉ul上下边线*/
+			
+			.data-group:before,
+			.data-group:after {
+				height: 0;
+			}
+			/*li边线离左右距离、边线颜色*/
+			
+			.data-group .data-row:after {
+				left: 10px;
+				right: 10px;
+				background-color: #EAEAEA;
+			}
+			/*ul上下间距*/
+			
+			.data-group {
+				margin-top: 8px;
+			}
+			/*li高度*/
+			
+			.data-group .data-row {
+				height: 47px;
+			}
+			
+			.data-group .data-row .body {
+				padding: 12px 5px 12px 13px;
+				line-height: 22px;
+			}
+			
+			.stepHtml01 .data-group .data-row>img {
+				float: left;
+				height: 16px;
+				margin-left: 16px;
+				/*margin-top: 14px;*/
+			}
+			/*.stepHtml01 .data-group .data-row .body {
+				margin-left: 41px;
+			}*/
+			/*按钮*/
+			
+			.btn-submit {
+				margin: 50px 10px 15px 10px;
+			}
+			
+			.btn-submit span {
+				background-color: #3296FA;
+				color: #ffffff;
+				font-size: 1.8rem;
+				border-color: #3296FA;
+			}
+			
+			.mui-btn-block {
+				padding: 6.5px 0px;
+			}
+			/*输入验证码框离右边宽度*/
+			
+			.data-group .data-row .opt~.body {
+				margin-right: 96px;
+			}
+			
+			.stepHtml01 .opt {
+				max-width: 97px !important;
+				padding: 17px 16px !important;
+			}
+			
+			.countdownColor {
+				color: #888888;
+			}
+			/*底部登录*/
+			
+			.footLoad {
+				font-size: 1.2rem;
+				line-height: 1.2rem;
+				margin-left: 11.5px;
+				color: #888888;
+			}
+			
+			.footLoad>a {
+				color: #3296FA;
+			}
+			/*********第2步样式*********/
+			
+			.stepHtml02 .data-group .data-row {
+				height: 40px;
+			}
+			
+			.stepHtml02 .data-group .data-row .body {
+				padding: 9px 5px 9px 10px;
+			}
+			
+			.sh02_title {
+				font-size: 1.4rem;
+				line-height: 1.4rem;
+				color: #888888;
+				padding: 12px 16px 4px 16px;
+			}
+			
+			.detailedAdd {
+				height: auto !important;
+				min-height: 40px;
+			}
+			
+			.addressInp {
+				display: inline-block;
+				width: 93% !important;
+			}
+			
+			.addressA {
+				position: absolute;
+				top: 50%;
+				-webkit-transform: translateY(-50%);
+				transform: translateY(-50%);
+				overflow: hidden;
+				margin-right: 12.5px;
+				color: #B5B5B5;
+			}
+			
+			.addressA:after {
+				right: 11.5px !important;
+			}
+			/*********第3步样式*********/
+			
+			.stepHtml03 .data-group .data-row {
+				height: 40px;
+			}
+			
+			.stepHtml03 .data-group .data-row .body {
+				padding: 11px 5px 11px 10px;
+			}
+			
+			.succDiv {
+				height: 150px;
+				padding-top: 34.5px;
+				background-color: #FFFFFF;
+				text-align: center;
+			}
+			
+			.succDiv>img {
+				border-radius: 50%;
+				margin-bottom: 21px;
+			}
+			
+			.succDiv>p {
+				font-size: 1.8rem;
+				line-height: 1.8rem;
+				color: #1AAE12;
+			}
+			
+			.sh03_txt {
+				font-size: 1.5rem !important;
+				line-height: 1.5rem !important;
+				color: #323232 !important;
+			}
+			
+			.lastLiClass:after {
+				height: 0px !important;
+			}
+			/*暂且隐藏2，3页*/
+			
+			.stepHtml02,
+			.stepHtml03 {
+				display: none;
+			}
+			
+			img[src=""],
+			img:not([src]) {
+				opacity: 0;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="CompIntroController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">注册</a>
+		</header>
+		<div class="mui-content" style="display:none;" ng-class="{'mui-block':isLoad}">
+			<div class="mui-row stepDiv">
+				<div>
+					<li class="mui-table-view-cell">
+						<a class="stepActive">
+							<span class="roundNum roundNum01">1</span>手机验证<span class="mui-icon icon-right headRight"></span>
+						</a>
+					</li>
+				</div>
+				<div>
+					<li class="mui-table-view-cell">
+						<a class="aPadding" ng-class="newComp.showHtml.shHtml02||newComp.showHtml.shHtml03?'stepActive':'stepNoActive'">
+							<span class="roundNum" ng-class="newComp.showHtml.shHtml02||newComp.showHtml.shHtml03?'roundNum01':'roundNum02'">2</span>信息完善<span class="mui-icon icon-right headRight"></span>
+						</a>
+					</li>
+				</div>
+				<div>
+					<li class="mui-table-view-cell">
+						<a class="lastHeadA" ng-class="newComp.showHtml.shHtml03?'stepActive':'stepNoActive'">
+							<span class="roundNum" ng-class="newComp.showHtml.shHtml03?'roundNum01':'roundNum02'">3</span>注册成功
+						</a>
+					</li>
+				</div>
+			</div>
+			<!--第1步-->
+			<div class="stepHtml01" ng-show="newComp.showHtml.shHtml01">
+				<ul class="data-group">
+					<li class="data-row">
+						<img src="../../images/login/tel.png" />
+						<div class="body">
+							<input type="tel" placeholder="请输入手机号" ng-model="newComp.newPhone" />
+						</div>
+					</li>
+					<li class="data-row">
+						<img src="../../images/login/verify.png" />
+						<p class="opt" style="max-width:150px!important">
+							<img ng-src="{{newComp.ImgCode}}" style="width:100px;margin-top:5px;height:30px" ng-click="newComp.getImgCode()" />
+						</p>
+						<div class="body" style="margin-right:150px;">
+							<input type="text" placeholder="请输入图片验证码" ng-model="newComp.inputImgCode" />
+						</div>
+					</li>
+					<li class="data-row lastLiClass">
+						<img src="../../images/login/verify.png" />
+						<p id="faultcommon" class="opt">
+							<span class="font-13 color-blue" ng-show="newComp.veriTime==60||newComp.veriTime==0" ng-click="newComp.getVeriCode()">获取验证码</span>
+							<span class="font-13 countdownColor" ng-show="newComp.veriTime!=60&&newComp.veriTime!=0" ng-bind="'倒计'+newComp.veriTime+'秒'"></span>
+						</p>
+						<div class="body">
+							<input type="text" placeholder="请输入验证码" ng-model="newComp.inputVCode" />
+						</div>
+					</li>
+				</ul>
+				<div class="btn-submit">
+					<span class="mui-btn mui-btn-block" ng-click="newComp.stepLog01()">下一步</span>
+				</div>
+				<div class="footLoad">已有账号，
+					<a ng-click="newComp.back()">登录</a>
+				</div>
+			</div>
+			<!--第2步-->
+			<div class="stepHtml02" ng-class="{'mui-block':newComp.showHtml.shHtml02}">
+				<div class="sh02_title">企业信息</div>
+				<ul class="data-group">
+					<li class="data-row must">
+						<label>企业名称</label>
+						<div class="body">
+							<input type="text" maxlength="150" id="compname" placeholder="请输入企业名称" ng-model="newComp.compName" ng-blur="newComp.getComInfo()" />
+						</div>
+					</li>
+					<li class="data-row must lastLiClass detailedAdd" ng-if="newComp.compId==0">
+						<label>详细地址</label>
+						<div class="body" ng-click="newComp.chooseAdd()">
+							<span class="addressInp placeholder" ng-if="newComp.compMapLng.length==0">请选择地址</span>
+							<span class="addressInp" ng-bind="newComp.compProvince | locationfilter:newComp.compCity:newComp.compDistrict:newComp.compAddress:newComp.compStreet" ng-if="newComp.compMapLng.length!=0"></span>
+							<a class="icon-right addressA" href=""></a>
+						</div>
+					</li>
+					<!--选择部门-->
+					<li class="data-row" ng-if="newComp.compId>0" ng-click="newComp.selectOrg()">
+						<label>部门</label>
+						<div class="body">
+							<span ng-bind="newComp.OrgName"></span>
+						</div>
+					</li>
+					<li class="data-row must" ng-if="newComp.compId>0">
+						<label>账号</label>
+						<p class="opt md-icon">
+							<span ng-bind="'@'+newComp.Mdt"></span>
+						</p>
+						<div class="body" style="margin-right: 100px;">
+							<input ng-keyup="newComp.checkRate()" maxlength="20" id="mdt" ng-model="newComp.regAccount" type="text" placeholder="请输入账号" />
+						</div>
+					</li>
+				</ul>
+				<div class="sh02_title">密码设置</div>
+				<ul class="data-group">
+					<li class="data-row must">
+						<label>您的称呼</label>
+						<div class="body">
+							<input type="text" maxlength="20" placeholder="请输入称呼" ng-model="newComp.userName" />
+						</div>
+					</li>
+					<li class="data-row must">
+						<label>密码</label>
+						<div class="body">
+							<input type="password" placeholder="密码必须为6~20位" ng-model="newComp.userPW" onkeyup="this.value=this.value.replace(/\s+/g,'')" />
+						</div>
+					</li>
+					<li class="data-row must lastLiClass">
+						<label>确认密码</label>
+						<div class="body">
+							<input type="password" placeholder="请再次输入密码" ng-model="newComp.againPW" onkeyup="this.value=this.value.replace(/\s+/g,'')" />
+						</div>
+					</li>
+				</ul>
+				<div class="btn-submit">
+					<span class="mui-btn mui-btn-block" ng-click="newComp.saveComp()">下一步</span>
+				</div>
+			</div>
+			<!--第3步-->
+			<div class="stepHtml03" ng-class="{'mui-block':newComp.showHtml.shHtml03}">
+				<div class="succDiv">
+					<img src="../../images/login/zhuceSucc.png" alt="注册成功" />
+					<p ng-bind="newComp.compId>0?('您已成功加入'+newComp.compName):'注册企业成功'"></p>
+				</div>
+				<ul class="data-group">
+					<li class="data-row">
+						<label>企业通号</label>
+						<div class="body">
+							<p class="sh03_txt" ng-bind="newComp.loginAccount|passNum"></p>
+						</div>
+					</li>
+					<li class="data-row lastLiClass">
+						<label>登录账号</label>
+						<div class="body">
+							<p class="sh03_txt" ng-bind="newComp.loginAccount"></p>
+						</div>
+					</li>
+				</ul>
+				<div class="btn-submit">
+					<span class="mui-btn mui-btn-block" ng-click="newComp.loginUser()">进入企业</span>
+				</div>
+			</div>
+		</div>
+
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../../js/mui.loading.js"></script>
+		<script type="text/javascript">
+			app.controller("CompIntroController", ["$scope", "AuthService", "ApiService", "DataService", "Loading", "UtilsService", "CacheService", "$q",
+				function($scope, AuthService, ApiService, DataService, Loading, UtilsService, CacheService, $q) {
+					Loading.show();
+					$scope.cId = 0; //用于暂存查询到的企业id
+					$scope.Mdt = ""; //用于暂存查询到的企业通号
+					$scope.newComp = {
+						newPhone: query("phone") || '', //手机号
+						veriCode: '', //返回验证码
+						inputVCode: '', //输入的验证码
+						veriTime: 60, //验证码倒计时
+						compName: '', //企业名称
+						compProvince: '', //企业省
+						compCity: '', //企业市
+						compDistrict: '', //企业区
+						compAddress: '', //企业地址
+						compStreet: '', //企业街道
+						compMapLng: '', //企业经度
+						compMapLat: '', //企业纬度
+						userName: '', //您的名字
+						regAccount: '', //注册账号
+						userPW: '', //您的密码
+						againPW: '', //确认密码
+						loginAccount: '', //返回的登录账号
+						inputImgCode: "",
+						Mdt: "",
+						compId: 0,
+						OrgID: 0,
+						OrgName: "",
+						getLocation: function() {
+							var _this = this;
+							//位置定位
+							UtilsService.getLocation(true).then(function(location) {
+								_this.compMapLat = location.lat; //纬度
+								_this.compMapLng = location.lng; //经度
+								_this.compAddress = location.address; //详细地址
+								_this.compProvince = location.province; //省
+								_this.compCity = location.city; //市
+								_this.compDistrict = location.district; //区
+								_this.compAddress = location.street; //街道
+							});
+						},
+						ImgCode: ApiService.Api50 + "/api/checkcode/register.jpg?v=" + new Date().getTime(),
+						getImgCode: function() {
+							$scope.newComp.ImgCode = ApiService.Api50 + "/api/checkcode/register.jpg?v=" + new Date().getTime();
+						},
+						showHtml: query('quick') ? {
+							//是否显示
+							shHtml01: false,
+							shHtml02: true,
+							shHtml03: false,
+						} : {
+							//是否显示
+							shHtml01: true,
+							shHtml02: false,
+							shHtml03: false,
+						},
+						//获取验证码
+						getVeriCode: function() {
+							if($scope.newComp.veriTime != 60 && $scope.newComp.veriTime != 0) {
+								//每隔一分钟获取一次
+								return;
+							}
+							if(!$scope.newComp.newPhone) {
+								mui.toast("请输入手机号！", {
+									duration: 1300,
+									type: 'div'
+								});
+								return;
+							}
+							if(!/^1\d{10}$/.test($scope.newComp.newPhone)) {
+								mui.toast("请输入正确的手机号！");
+								return;
+							}
+
+							if(!$scope.newComp.inputImgCode) {
+								mui.toast("请输入验证码!");
+								return;
+							}
+
+							var url = ApiService.Api50 + "/api/v1/user/GetPhoneCode";
+
+							var _data = {
+								"Phone": $scope.newComp.newPhone,
+								"Code": $scope.newComp.inputImgCode,
+								"UserType": 2,
+								"CodeType": "register"
+							};
+
+							DataService.post(url, _data).then(function(res) {
+								$scope.newComp.veriCode = res;
+								//$scope.newComp.inputVCode = res;
+								$scope.newComp.veriTime = 59;
+
+								var intl = setInterval(function() {
+									$scope.$apply(function() {
+										$scope.newComp.veriTime--;
+									});
+									if($scope.newComp.veriTime <= 0) {
+										clearInterval(intl);
+									}
+								}, 1000);
+							}, function(res) {
+								//									console.log("err:"+JSON.stringify(res))
+								$scope.newComp.getImgCode();
+								mui.toast((res && res.State == 3) ? res.Data || res.ErrorMessage : "获取验证码失败!");
+							});
+
+							// AuthService.getVerifyCode($scope.newComp.newPhone).then(function (res) {
+							// 	$scope.newComp.veriCode = res;
+							// 	//$scope.newComp.inputVCode = res;
+							// 	$scope.newComp.veriTime = 59;
+
+							// 	var intl = setInterval(function () {
+							// 		$scope.$apply(function () {
+							// 			$scope.newComp.veriTime--;
+							// 		});
+							// 		if ($scope.newComp.veriTime <= 0) {
+							// 			clearInterval(intl);
+							// 		}
+							// 	}, 1000);
+							// }, function (error) {
+							// 	mui.toast("获取验证码失败：" + error, {
+							// 		duration: 1300,
+							// 		type: 'div'
+							// 	});
+							// });
+						},
+						//<1 的下一步>
+						stepLog01: function() {
+							if(!$scope.newComp.newPhone) {
+								mui.toast("请输入手机号！", {
+									duration: 1300,
+									type: 'div'
+								});
+								return;
+							}
+							if($scope.newComp.inputVCode != '') {
+								$scope.newComp.verifyCode(function() {
+									$scope.newComp.showHtml.shHtml01 = false;
+									$scope.newComp.showHtml.shHtml02 = true;
+								});
+							} else {
+								if(!$scope.newComp.inputVCode) {
+									mui.toast("请输入验证码！", {
+										duration: 1300,
+										type: 'div'
+									});
+								}
+							}
+						},
+						//验证码是否过期
+						verifyCode: function(callback) {
+							var url = ApiService.Api50 + "/api/v1/User/VerifyCode?phone=" + $scope.newComp.newPhone + "&code=" + $scope.newComp
+								.inputVCode + "&type=register";
+							DataService.get(url).then(function(res) {
+								if(res) {
+									callback();
+								} else {
+									mui.toast("验证码不正确或者已经过期");
+								}
+							});
+						},
+						//选择地址
+						chooseAdd: function() {
+							if($scope.newComp.isCanUse == false) {
+								return false;
+							}
+							UtilsService.openWindow({
+								id: "mdAddress.html",
+								url: "../common/pickaddress.html",
+								extras: {
+									callback: 'getAddr',
+									Province: $scope.newComp.compProvince,
+									City: $scope.newComp.compCity,
+									District: $scope.newComp.compDistrict,
+									Address: $scope.newComp.compAddress,
+									Street: $scope.newComp.compStreet,
+									Lng: $scope.newComp.compMapLng,
+									Lat: $scope.newComp.compMapLat
+								}
+							});
+
+							//						var addr = {
+							//							"province": '',
+							//							"city": '',
+							//							"district": '',
+							//							"address": '',
+							//							"lng": '',
+							//							"lat": ''
+							//						}
+							//
+							//						UtilsService.getAddress(addr, true, 150).then(function(res) {
+							//							var userAddre = '';
+							//							if(res.province == res.city) {
+							//								userAddre = res.province + res.district + res.address;
+							//							} else {
+							//								userAddre = res.province + res.city + res.district + res.address;
+							//							}
+							//							$scope.newComp.compAddress = userAddre;
+							//						})
+						},
+						isCanUse: true,
+						//企业名称验证
+						getComInfo: function() {
+							//查询企业信息
+							$scope.newComp.compId = 0;
+							$scope.newComp.Mdt = "";
+							$scope.newComp.OrgID = 0;
+							$scope.newComp.OrgName = "";
+							if($scope.newComp.compName) {
+								$scope.newComp.isCanUse = false;
+								Loading.show();
+								var url = ApiService.Api50 + "/api/v1/Comp/GetCompInfoByName?compName=" + $scope.newComp.compName.trim();
+								DataService.get(url).then(function(res) {
+									if(res) {
+										//1、小于等于10人弹出是否加入该企业；2、大于10人弹出请联系系统管理员分配账号
+										if(res.nums <= 10) {
+											plus.nativeUI.confirm("当前企业已存在，是否加入该企业？", function(e) {
+												//跳转到组织机构页面
+												if(e.index == 0) {
+													//												$scope.cId=res.ID;
+													//												$scope.Mdt=res.Mdt;
+													$scope.newComp.compId = res.ID;
+													$scope.newComp.Mdt = res.Mdt;
+													$scope.$apply()
+													$scope.newComp.selectOrg();
+												}
+											}, "提示", ["确定", "取消"]);
+										} else {
+											mui.toast("当前企业已存在，请联系管理员分配账号")
+											$scope.newComp.compId = 0;
+											$scope.newComp.Mdt = "";
+											$scope.newComp.OrgID = 0;
+										}
+
+									} else {
+										$scope.newComp.compId = 0;
+										$scope.newComp.Mdt = "";
+										$scope.newComp.OrgID = 0;
+									}
+									$scope.newComp.isCanUse = true;
+									Loading.hide();
+
+								}, function(e) {
+									//																	console.log(JSON.stringify(e))
+								});
+							}
+						},
+						selectOrg: function() {
+							UtilsService.openWindow({
+								id: "mdSelectOrgPage.html",
+								url: "../common/mdSelectOrgPage.html?type=register",
+								extras: {
+									callback: 'getOrg',
+									selectedOrgID: $scope.newComp.OrgID,
+									compName: $scope.newComp.compName.trim(),
+									compId: $scope.newComp.compId
+								}
+							});
+						},
+						//判断字符串是否为数字和字母组合
+						checkRate: function() {
+							var re = /^[0-9a-zA-Z]*$/g;
+							if(!re.test($scope.newComp.regAccount)) {
+								mui.toast("账号只能输入数字和字母");
+								$scope.newComp.regAccount = $scope.newComp.regAccount.replace(/[^0-9a-zA-Z]/g, '');
+								return false;
+							} else {
+								return true;
+							}
+						},
+						//保存企业信息
+						saveComp: function() {
+							//做校验用
+							var compData = {
+								"Phone": $scope.newComp.newPhone,
+								"CompName": $scope.newComp.compName,
+								"Address": $scope.newComp.compAddress,
+								"RealName": $scope.newComp.userName,
+								"Password": $scope.newComp.userPW
+							}
+							//发送的数据
+							var compDataOby = {
+								"Phone": $scope.newComp.newPhone,
+								"CompName": $scope.newComp.compName,
+								"Province": $scope.newComp.compProvince,
+								"City": $scope.newComp.compCity,
+								"District": $scope.newComp.compDistrict,
+								"Address": $scope.newComp.compAddress,
+								"Street": $scope.newComp.compStreet,
+								"MapLng": $scope.newComp.compMapLng,
+								"MapLat": $scope.newComp.compMapLat,
+								"RealName": $scope.newComp.userName,
+								"Password": $scope.newComp.userPW.trim()
+							}
+
+							//							if($scope.newComp.newPhone == '') {
+							//								mui.toast("请填写手机号！", {
+							//									duration: 1300,
+							//									type: 'div'
+							//								});
+							//								return false;
+							//							}
+							if($scope.newComp.compName.trim() == '') {
+								mui.toast("请填写企业名称！", {
+									duration: 1300,
+									type: 'div'
+								});
+								return false;
+							}
+							if($scope.newComp.compAddress == '' && $scope.newComp.compId == 0) {
+								mui.toast("请选择地址！", {
+									duration: 1300,
+									type: 'div'
+								});
+								return false;
+							}
+							if($scope.newComp.regAccount == '' && $scope.newComp.compId > 0) {
+								mui.toast("请输入账号！", {
+									duration: 1300,
+									type: 'div'
+								});
+								return false;
+							}
+							if($scope.newComp.userName.trim() == '') {
+								mui.toast("请填写称呼！", {
+									duration: 1300,
+									type: 'div'
+								});
+								return false;
+							}
+							if($scope.newComp.userPW.trim() == '') {
+								mui.toast("请填写密码！", {
+									duration: 1300,
+									type: 'div'
+								});
+								return false;
+							}
+							if($scope.newComp.againPW.trim() == '') {
+								mui.toast("请填写确认密码！", {
+									duration: 1300,
+									type: 'div'
+								});
+								return false;
+							}
+							//校验input
+							if($scope.newComp.userPW.length < 6 || $scope.newComp.userPW.length > 20) {
+								mui.toast("密码必须为6~20位！", {
+									duration: 1300,
+									type: 'div'
+								});
+								return false;
+							} else if($scope.newComp.userPW != $scope.newComp.againPW) {
+								mui.toast("输入的两次密码不一致！", {
+									duration: 1300,
+									type: 'div'
+								});
+								return false;
+							}
+							//保存信息
+							if($scope.newComp.compId > 0) {
+								var postData = {
+									"CompID": $scope.newComp.compId, //企业id
+									"OrgID": $scope.newComp.OrgID, //部门id
+									"Account": $scope.newComp.regAccount, //用户名
+									"Password": $scope.newComp.userPW.trim(), //密码
+									"Phone": $scope.newComp.newPhone, //手机号，
+									"RealName": $scope.newComp.userName.trim()
+
+								}
+								//							console.log(JSON.stringify(postData))
+								var url = ApiService.Api50 + "/api/v1/User/MdtSaveUser";
+								DataService.post(url, postData).then(function(res) {
+									//								console.log(JSON.stringify(res))
+									$scope.newComp.loginAccount = $scope.newComp.regAccount + '@' + $scope.newComp.Mdt;
+									$scope.newComp.showHtml.shHtml02 = false;
+									$scope.newComp.showHtml.shHtml03 = true;
+								}, function(e) {
+									//										console.log(JSON.stringify(e))
+								});
+							} else {
+								var url = ApiService.Api50 + "/api/v1/Comp/RegisteredComp?isMessage=true";
+								DataService.post(url, compDataOby).then(function(res) {
+									$scope.newComp.loginAccount = res;
+									$scope.newComp.showHtml.shHtml02 = false;
+									$scope.newComp.showHtml.shHtml03 = true;
+								});
+							}
+
+						},
+						back: function() {
+							mui.back();
+						},
+						//返回到上页 按钮
+						loginUser: function() {
+							mui.showLoading("正在自动登录...", "div");
+							//自动登录
+							AuthService.login($scope.newComp.loginAccount, $scope.newComp.userPW).then(function(res) {
+								CacheService.set("preUserName", $scope.newComp.loginAccount, true);
+								CacheService.remove("user");
+								CacheService.remove("userList");
+								CacheService.set("user", res[0], true);
+								RpcClient.invoke("login.html", "RPC_LoginSuccess");
+								res[0].IsNew = true;
+								RpcClient.invoke("message.html", "RPC_Login", res[0]);
+								RpcClient.invoke("webView.html", "RPC_Register_code", res[0]);
+								var promises = [AuthService.getUserSwitchList(), AuthService.getUserAuth(), DataService.get(ApiService.Api50 + '/api/v1/Org/OrgEditAuth'), AuthService.getMenuAuth(), AuthService.getYunModuleAuthority()];
+								$q.all(promises).then(function(resp) {
+									CacheService.set("userList", resp[0], true);
+									resp[2] && resp[1].push('Q0');
+									CacheService.set("userAuth", resp[1], true);
+									CacheService.set("menuAuth", resp[3], true);
+									CacheService.set("moduleAuth", resp[4], true);
+									//									mui.back();
+									mui.openWindow({
+										id: 'tab.html'
+									});
+								});
+							});
+							//mui.back();
+						}
+					};
+					$scope.isLoad = true;
+					Loading.hide();
+					$scope.newComp.getLocation();
+
+					window.getLocation = function(viewId, callback) {
+						UtilsService.getLocation(true).then(function(res) {
+							plus.webview.getWebviewById(viewId).evalJS(callback + "(" + JSON.stringify(res) + ")")
+						})
+					}
+				}
+			]);
+
+			//截取的企业通号
+			app.filter('passNum', function() { //可以注入依赖
+				return function(text) {
+					return text.substring(text.indexOf('@') + 1);
+				}
+			});
+
+			function getAddr(res) {
+				var appElement = document.querySelector('[ng-controller=CompIntroController]');
+				var $scope = angular.element(appElement).scope();
+				$scope.newComp.compProvince = res.Province;
+				$scope.newComp.compCity = res.City;
+				$scope.newComp.compDistrict = res.District;
+				$scope.newComp.compAddress = res.Address;
+				$scope.newComp.compStreet = res.Street;
+				$scope.newComp.compMapLng = res.Lng;
+				$scope.newComp.compMapLat = res.Lat;
+				$scope.$apply();
+			}
+			//选择部门回调
+			function getOrg(obj) {
+				var appElement = document.querySelector('[ng-controller=CompIntroController]');
+				var $scope = angular.element(appElement).scope();
+				//				console.log("obj:"+JSON.stringify(obj))
+				//				$scope.newComp.compId=$scope.cId;
+				//				$scope.newComp.Mdt=$scope.Mdt;
+				if(obj.length > 0) {
+					for(var i = 0; i < obj.length; i++) {
+						$scope.newComp.OrgID = obj[obj.length - 1].ID;
+						$scope.newComp.OrgName = obj[obj.length - 1].OrgName;
+					}
+				} else {
+					$scope.newComp.OrgID = 0;
+					$scope.newComp.OrgName = "";
+				}
+				$scope.$apply();
+			};
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+				plus.webview.currentWebview().setStyle({
+					softinputMode: "adjustResize"
+				});
+			});
+		</script>
+	</body>
+
+</html>

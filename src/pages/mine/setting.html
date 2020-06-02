@@ -1,0 +1,161 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>设置</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style>
+			/*伪元素(底线)控制*/
+			/*去掉最后一个li的底线*/
+			
+			.data-group .data-row:last-child:after {
+				height: 0;
+			}
+			/*去掉ul上下边线*/
+			
+			.data-group:before,
+			.data-group:after {
+				height: 0;
+			}
+			/*li边线离左右距离、边线颜色*/
+			
+			.data-group .data-row:after {
+				left: 10px;
+				right: 10px;
+				background-color: #EAEAEA;
+			}
+			/*ul上下间距*/
+			
+			.data-group {
+				margin-top: 8px;
+			}
+			/*li高度*/
+			
+			.data-group .data-row {
+				display: block;
+				height: 40px;
+				padding-top: 12px;
+				padding-bottom: 12px;
+			}
+			
+			.data-group .data-row a {
+				font-size: 1.4rem;
+				line-height: 1.4rem;
+				color: #323232;
+			}
+			/*按钮*/
+			
+			.btn-submit {
+				margin-top: 40px;
+				height: 40px;
+			}
+			
+			.btn-submit span {
+				background-color: #FFFFFF;
+				color: #323232;
+				font-size: 1.6rem;
+				line-height: 1.6rem;
+			}
+			
+			.mui-btn {
+				border-radius: 0;
+				border: transparent;
+			}
+			
+			.mui-navigate-right:after {
+				color: #AEAEAE;
+				font-size: 15px;
+			}
+			
+			.icon-right {
+				float: right;
+				color: #C7C7CB;
+			}
+			
+			.mui-table-view-cell>a:not(.mui-btn).mui-active {
+				background-color: transparent;
+			}
+			
+			.mui-table-view-cell.data-row {
+				padding: 11px 15px
+			}
+		</style>
+	</head>
+
+	<body ng-controller="SettingController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">设置</a>
+		</header>
+		<div class="mui-scroll-wrapper" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<ul class="data-group">
+				<!-- <li class="mui-table-view-cell data-row"  ng-click="tap('addeManager')">
+					管理我的收货地址<span class="icon-right"></span>
+				</li> -->
+				<li class="data-row mui-table-view-cell" ng-click="tap('modify')">
+					修改密码<span class="icon-right"></span>
+				</li>
+				<li class="data-row mui-table-view-cell" ng-click="tap('change')" ng-if="UserList.Phone">
+					切换用户<span class="icon-right"></span>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<li class="data-row mui-table-view-cell" ng-click="tap('about')">
+					关于<span class="icon-right"></span>
+				</li>
+			</ul>
+			<div class="btn-submit">
+				<span class="mui-btn mui-btn-block" ng-click="logout()">退出登录</span>
+			</div>
+		</div>
+		<script src="../../js/angular.min.js"></script>
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/common.js"></script>
+		<script src="../../js/utils.js"></script>
+		<script src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("SettingController", ["$scope", "UtilsService", "AuthService", function($scope, UtilsService, AuthService) {
+				setTimeout(mui.init);
+				AuthService.getAuth().then(function(res) {
+					$scope.UserList = res;
+					$scope.isLoad = true;
+				});
+				//退出
+				$scope.logout = function() {
+					mui.confirm('确认要退出？', '退出', ['否', '是'], function(e) {
+						e.index == 1 && AuthService.logout().then(function() {
+							//反注册信鸽推送（关闭信鸽推送）
+							//plus.Push.unregisterPush();
+							//关闭当前页面
+							plus.webview.currentWebview().close("none");
+						});
+					});
+				};
+
+				//跳转
+				$scope.tap = function(key) {
+					var url = {
+						change: 'change-account.html',
+						about: "about.html",
+						modify: "modify-password.html",
+						addeManager: 'manage-address.html',
+					};
+					UtilsService.openWindow({
+						needLogin: true,
+						id: url[key],
+						url: url[key]
+					});
+				};
+
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,449 @@
+<!--故障维护 scz-->
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.mui-scroll-wrapper {
+				padding-bottom: 70px;
+			}
+			
+			.data-group {
+				margin-top: 8px !important;
+			}
+			
+			.data-group:first-child {
+				margin-top: 0px !important;
+			}
+			
+			.equiFontColor02 {
+				color: #929292 !important;
+			}
+			
+			.equiFailDiv02 {
+				padding-left: 16px !important;
+				padding-bottom: 2px !important;
+			}
+			
+			.equiFailSpan03 {
+				display: inline-block;
+				max-height: 2.8rem;
+				font-size: 1.4rem !important;
+				line-height: 3rem;
+				overflow: hidden;
+				vertical-align: middle;
+			}
+			
+			.partsRepl {
+				width: 50% !important;
+				color: #323232 !important;
+				padding-left: 24px !important;
+				position: absolute;
+				top: 50%;
+				-webkit-transform: translateY(-50%);
+				transform: translateY(-50%);
+			}
+			
+			.partsRepl01 {
+				width: 50% !important;
+				padding-left: 24px !important;
+			}
+			
+			.partsRepl02 {
+				width: 20% !important;
+			}
+			
+			.partsRepl03 {
+				width: 26% !important;
+			}
+			
+			.partsName {
+				background-color: #F3F9FF;
+			}
+			
+			.partsName:after {
+				height: 0 !important;
+			}
+			
+			.equiFontColor {
+				color: #3296FA !important;
+			}
+			
+			.failPop {
+				padding-right: 6px;
+			}
+			
+			.icon-add {
+				position: relative;
+				right: 3px;
+			}
+			
+			.lh19 {
+				line-height: 19px;
+			}
+			
+			.data-group .data-row .opt:not(.md-icon) {
+				min-width: 35px !important;
+				width: 43px;
+			}
+			
+			.mdDervRepaList .body {
+				padding-left: 16px !important;
+				margin-right: 16px !important;
+			}
+			
+			.icon-edit {
+				display: none;
+			}
+			
+			.hideLastLi {
+				height: 0px;
+			}
+			
+			.partDomUl.data-group {
+				margin-top: 0px !important;
+			}
+			
+			.partDomHead {
+				color: #000;
+				background-color: #F7F7F7;
+			}
+			
+			.data-group.hastitle .data-row:after {
+				left: 0;
+				right: 0;
+			}
+			
+			.partDomHead:after {
+				height: 0 !important;
+			}
+			
+			.partDomList {
+				color: #929292 !important;
+			}
+			
+			.data-group .data-row:after {
+				left: 10px;
+				right: 10px;
+			}
+			
+			.md-info-bottom-bar li.mui-media {
+				width: 20vw !important;
+				background: rgba(255, 255, 255, 0.95);
+			}
+			
+			.md-info-bottom-bar li.mui-media:last-child {
+				border-right: 0px !important;
+				border-top-right-radius: 50px;
+				border-bottom-right-radius: 50px;
+			}
+			
+			.md-info-bottom-bar li.mui-media:first-child {
+				border-top-left-radius: 50px;
+				border-bottom-left-radius: 50px;
+			}
+			
+			.md-info-bottom-bar ul.mui-table-view {
+				margin: 0 auto;
+				box-shadow: 0px 0px 3px 1px rgba(138, 138, 138, 0.2);
+			}
+			
+			.md-info-bottom-bar {
+				padding: 20px 0px !important;
+			}
+			
+			.mui-table-view {
+				background: transparent !important;
+			}
+			
+			.content {
+				position: absolute;
+				top: 44px;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				overflow: auto;
+			}
+			
+			.log .date {
+				padding: 0 20px;
+				line-height: 40px;
+				font-size: 1.4rem;
+				color: #999999;
+			}
+			
+			.log .list {
+				position: relative;
+				background-color: #FFFFFF;
+				padding: 10px 0px;
+			}
+			
+			.log .list .line {
+				background-color: #EFEFEF;
+				top: 0;
+				bottom: 0;
+				left: 84px;
+				width: 2px;
+				position: absolute;
+			}
+			
+			.log .list .row {
+				padding: 10px 20px;
+				position: relative;
+			}
+			
+			.log .list .row .time {
+				display: inline-block;
+				width: 60px;
+				position: absolute;
+				top: 10px;
+			}
+			
+			.log .list .row .time span {
+				display: block;
+				color: #AAAAAA;
+				font-size: 1.2rem;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				-o-text-overflow: ellipsis;
+				overflow: hidden;
+			}
+			
+			.log .list .row .round {
+				position: absolute;
+				left: 80px;
+				width: 10px;
+				height: 10px;
+				border-radius: 50%;
+				top: 15px;
+			}
+			
+			.log .list .row .event {
+				display: inline-block;
+				margin-left: 90px;
+				width: calc(100% - 100px);
+			}
+			
+			.log .list .row .event span {
+				display: block;
+				-o-text-overflow: ellipsis;
+				overflow: hidden;
+			}
+			
+			.log .list .row .event .title {
+				color: #323232;
+				font-size: 1.5rem;
+				word-break: break-all;
+			}
+			
+			.log .list .row .event .desc {
+				color: #AAAAAA;
+				font-size: 1.2rem;
+				min-height: 21px;
+			}
+			
+			.log .list .row .color_orange {
+				background-color: #FFAD52
+			}
+			
+			.log .list .row .color_blue {
+				background-color: #51BAF2
+			}
+			
+			.log .list .row .color_gray {
+				background-color: #CCCCCC
+			}
+			
+			.log .list .row .color_violet {
+				background-color: #DA62FF
+			}
+			
+			.log .list .row .color_green {
+				background-color: #71CA58
+			}
+			
+			.log .list .row .color_new {
+				background-color: #7695F0;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="FaultInfoController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">故障详情</a>
+		</header>
+		<div class="mui-scroll-wrapper md-info-page" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<ul class="data-group">
+				<li class="data-row" ng-if="faultInfoData.Description">
+					<label>故障描述</label>
+					<div class="body">
+						<span ng-bind="faultInfoData.Description"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="faultInfoData.ArmAttach.FileSize">
+					<label>语音描述</label>
+					<div class="body">
+						<md-audio audio="faultInfoData.ArmAttach" readonly="true"></md-audio>
+					</div>
+				</li>
+				<li class="data-row" ng-if="faultInfoData.ImgAttach.length!=0||faultInfoData.VideoAttach.length!=0">
+					<div class="body attach" style="padding-left: 16px;">
+						<md-image ng-if="faultInfoData.ImgAttach.length!=0" images="faultInfoData.ImgAttach" readonly="true"></md-image>
+						<md-video ng-if="faultInfoData.VideoAttach.length!=0" videos="faultInfoData.VideoAttach" readonly="true"></md-video>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group" ng-if="faultInfoData.WorkOrderType==1">
+				<p class="data-group-tip">相关设备</p>
+				<li class="data-row">
+					<label>故障设备</label>
+					<p class="opt md-icon font-15" ng-click="tap('prod')">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="tap('prod')">
+						<span ng-bind="faultInfoData.ProdName | formatProdInfo:faultInfoData.SkuName"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="faultInfoData.ProdInnerCode">
+					<label ng-bind="InnerCodeName"></label>
+					<div class="body">
+						<span ng-bind="faultInfoData.ProdInnerCode"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group" ng-if="faultInfoData.WorkOrderType==2">
+				<p class="data-group-tip">相关设备</p>
+				<li class="data-row mui-table-view-cell">
+					<label>故障设备</label>
+					<p class="opt md-icon font-15" ng-click="tap('equ')">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="tap('equ')">
+						<span ng-bind="'' | formatEquInfo:faultInfoData.EqInfo.EqName:faultInfoData.EqInfo.SkuName"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="faultInfoData.EqInfo.EqIdentifier">
+					<label>设备编号</label>
+					<div class="body">
+						<span ng-bind="faultInfoData.EqInfo.EqIdentifier"></span>
+					</div>
+				</li>
+			</ul>
+			<div class="log" ng-repeat="item in faultInfoData.LogList">
+				<div class="date color-gray-dark" ng-bind="item.CreateDate"></div>
+				<div class="list">
+					<div class="line"></div>
+					<div class="row" ng-repeat="row in item.DataRows">
+						<div class="time">
+							<span ng-bind="row.CreateDate"></span>
+							<span ng-bind="row.CreateUserName"></span>
+						</div>
+						<div class="round {{roundColor[row.Operate]}}">
+
+						</div>
+						<div class="event">
+							<span class="title" ng-bind="row.Content||'-'"></span>
+							<span class="desc" ng-bind="getName(row.Operate,row.Users)"></span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--无网络或请求失败重试-->
+		<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript">
+			app.controller("FaultInfoController", ["$scope", "ApiService", "DataService", "UtilsService", "Loading", function($scope, ApiService, DataService, UtilsService, Loading) {
+				var id = query("id");
+
+				//无网络或请求失败重试
+				$scope.retryModal = {
+					msg: "故障工单",
+					retry: getFaultData,
+					state: ''
+				};
+
+				function getFaultData() {
+					var url = ApiService.Api50 + "/api/v2/MatWorkOrder/GetMatWorkOrderFailureById?id=" + id;
+					Loading.show();
+					DataService.get(url).then(function(res) {
+						Loading.hide();
+						$scope.isLoad = true;
+						$scope.retryModal.state = '';
+						if(res) {
+							if(res.LogList.length > 0 && res.LogList.slice(-1)[0].CreateDate == res.CreateDate) {
+								res.LogList.slice(-1)[0].DataRows.push({
+									Content: "创建工单",
+									Operate: "创建工单",
+									CreateDate: res.CreateTime,
+									CreateUserName: res.CreateUserName,
+									Users: [{
+										Name: res.CustomerName
+									}]
+								});
+							} else {
+								res.LogList.push({
+									CreateDate: res.CreateDate,
+									DataRows: [{
+										Content: "创建工单",
+										Operate: "创建工单",
+										CreateDate: res.CreateTime,
+										CreateUserName: res.CreateUserName,
+										Users: [{
+											Name: res.CustomerName
+										}]
+									}]
+								});
+							}
+							$scope.faultInfoData = res;
+							$scope.InnerCodeName = res.InnerCodeName || '出厂编号';
+						}
+					}, function(error) {
+						$scope.retryModal.state = error.State;
+					});
+				};
+
+				getFaultData();
+
+				$scope.tap = function(key) {
+					var url = {
+						'prod': "../problib/prodinfo-head.html?prodId=" + $scope.faultInfoData.ProdID + "&SkuID=" + $scope.faultInfoData.SkuID + "&MdCode=" + $scope.faultInfoData.MDCode,
+						'equ': "../eqmentlib/equ-details.html?equid=" + ($scope.faultInfoData.EqInfo && $scope.faultInfoData.EqInfo.ID)
+					}
+					UtilsService.openWindow({
+						needLogin: true,
+						id: url[key].substring(url[key].lastIndexOf('/') + 1, url[key].indexOf('?')),
+						url: url[key]
+					});
+				};
+
+				$scope.roundColor = {
+					"创建工单": 'color_orange',
+					"派工给": 'color_green',
+					"故障维修": 'color_new',
+					"抄送给": 'color_gray'
+				};
+
+				$scope.getName = function(operate, users) {
+					return(["创建工单", '故障维修'].indexOf(operate) >= 0 ? '' : (operate + "：")) + users.map(function(i) {
+						return i.Name
+					}).join('，');
+				};
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

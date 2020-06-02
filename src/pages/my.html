@@ -1,0 +1,441 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link href="../css/common.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../icon-font/iconfont.css" />
+		<link href="mine/my.css" rel="stylesheet" />
+		<style>
+			.mui-ellipsis-2 {
+				-webkit-line-clamp: 1;
+			}
+			
+			.mui-table-view-cell.data-row {
+				padding: 0px;
+			}
+			
+			span.unreadnumber.ng-binding {
+				min-width: 24px;
+				height: 18px;
+				font-size: 1.3rem;
+				background: red;
+				color: #fff;
+				border-radius: 30%;
+				display: block;
+				text-align: center;
+				line-height: 19px;
+				padding: 0 5px;
+			}
+			
+			.unreadnumber-md-icon {
+				right: 15px!important;
+				overflow: auto!important;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="MyController" style="display: none;" ng-class="{'mui-block':isLoad}">
+		<!--<div class="mui-content" ng-show="!IsLogIn">
+			<md-need-login></md-no-login>
+		</div>-->
+		<div class="mui-content">
+			<ul class="data-group">
+				<li class="mui-table-view-cell data-row mui-block spare-item" ng-click="tap('userdetail')">
+					<p class="opt md-icon">
+						<span class="icon-right"></span>
+					</p>
+					<span ng-show="UserInfo.ULogoIsExist" class="icon-item">
+					<!--	<img class="avatar" ng-src="{{UserInfo.UserID|getUserLogo:48:48}}" />-->
+					<div class="avatar" ng-style="{'background-image':'url('+ (UserInfo.UserID|getUserLogo:48:0) +')'}"></div>
+				</span>
+					<div class="mui-media-object mui-pull-left md-userCustomLogo" style="margin-bottom: 6px;" ng-if="!UserInfo.ULogoIsExist" ng-bind="ViewName | getUserCustomLogo"></div>
+					<div class="name-title">
+						<span class="names mui-ellipsis-2" ng-bind="ViewName"></span>
+						<span ng-if="UserInfo.Signature" class="introduction mui-ellipsis-2" ng-bind="UserInfo.Signature"></span>
+						<span ng-if="!UserInfo.Signature" class="nointroduction">添加描述，让大家更好地认识你</span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group fun-group">
+				<li class="mui-table-view-cell  spare-item data-row" ng-click="tap('ewm')">
+					<p class="opt md-icon">
+						<span class="icon-right"></span>
+					</p>
+					<span class="icon-item">
+					<img src="../images/ewm.png" style="width: 20px;margin-left:-2px" />
+				</span>
+					<label>二维码名片</label>
+				</li>
+
+				<!--<ul class="data-group spare-item">
+				<li class="data-row">
+					<p class="opt md-icon">
+						<span class="icon-right"></span>
+					</p>
+					<span class="icon-item">
+						<img src="../images/statistics@3x.png" style="width: 17px;"/>
+					</span>
+					<label>工作统计</label>
+				</li>
+			</ul>-->
+				<!--<ul class="data-group spare-item">
+				<li class="data-row">
+					<p class="opt md-icon">
+						<span class="icon-right"></span>
+					</p>
+					<span class="icon-item">
+						<img src="../images/bill@3x.png" style="width: 17px;"/>
+					</span>
+					<label>账单</label>
+				</li>
+			</ul>-->
+				<!--<ul class="data-group spare-item">
+				<li class="data-row">
+					<p class="opt md-icon">
+						<span class="icon-right"></span>
+					</p>
+					<span class="icon-item">
+						<img src="../images/purchase@3.png" style="width: 17px;"/>
+					</span>
+					<label>采购记录</label>
+				</li>
+			</ul>-->
+				<li class="mui-table-view-cell  spare-item data-row" ng-if="isShowPoint" ng-click="tap('point')">
+					<p class="opt md-icon">
+						<span class="icon-right"></span>
+					</p>
+					<span class="icon-item">
+					<img src="../images/point.png" style="width: 17px;" />
+				</span>
+					<label>我的积分</label>
+				</li>
+				<li class="mui-table-view-cell  spare-item data-row" ng-click="tap('draft')">
+					<p class="opt md-icon">
+						<span class="icon-right"></span>
+					</p>
+					<span class="icon-item">
+					<img src="../images/purchase@3.png" style="width: 17px;" />
+				</span>
+					<label>草稿箱</label>
+				</li>
+				<li class="mui-table-view-cell  spare-item data-row" ng-click="tap('scanlist')" ng-if="UserInfo&&UserInfo.CompID == 266">
+					<p class="opt md-icon">
+						<span class="icon-right"></span>
+					</p>
+					<span class="icon-item"><img src="../images/scan_fun.png" style="width: 17px;" /></span>
+					<label>扫码记录</label>
+				</li>
+				<li class="mui-table-view-cell  spare-item data-row" ng-click="tap('myFind')">
+					<p class="opt md-icon unreadnumber-md-icon"><span class="unreadnumber" ng-bind="unreadnumber" ng-if="unreadnumber>0"></span></p>
+					<p class="opt md-icon">
+
+						<span class="icon-right"></span>
+					</p>
+					<span class="icon-item">
+						<img src="../images/resource_circle.png" style="width: 17px;" />
+					</span>
+					<label>我的发现</label>
+				</li>
+				<li class="mui-table-view-cell  spare-item data-row" ng-click="tap('business')">
+					<p class="opt md-icon">
+						<span class="icon-right"></span>
+					</p>
+					<span class="icon-item">
+							<img src="../images/Failurereporting3x.png" style="width: 17px;" />
+						</span>
+					<label>我的业务</label>
+				</li>
+
+			</ul>
+			<ul class="data-group fun-group">
+				<li class="mui-table-view-cell  spare-item data-row" ng-click="tap('friend')">
+					<p class="opt md-icon">
+						<span class="icon-right"></span>
+					</p>
+					<span class="icon-item">
+					<img src="../images/cont-ck.png" style="width: 17px;" />
+				</span>
+					<label>我的好友</label>
+				</li>
+				<li class="mui-table-view-cell  spare-item data-row" ng-click="tap('myResource')">
+					<p class="opt md-icon">
+						<span class="icon-right"></span>
+					</p>
+					<span class="icon-item">
+						<img src="../images/cont-ck.png" style="width: 17px;" />
+					</span>
+					<label style="width:130px">我的资源</label>
+				</li>
+				<li class="mui-table-view-cell  spare-item data-row" ng-click="tap('groupNotice')">
+					<p class="opt md-icon">
+						<span class="icon-right"></span>
+					</p>
+					<span class="icon-item">
+					<img src="../images/group_notice.png" style="width: 17px;" />
+				</span>
+					<label>我的群聊</label>
+				</li>
+				<li class="mui-table-view-cell  spare-item data-row" ng-click="tap('trip')" ng-if="UserInfo.CompID && UserInfo.CompID>0 && ('crm'|hasModuleAuth)">
+					<p class="opt md-icon">
+						<span class="icon-right"></span>
+					</p>
+					<span class="icon-item">
+					<img src="../images/addtirp.png" style="width: 17px;" />
+				</span>
+					<label>我的行程</label>
+				</li>
+				<li class="mui-table-view-cell  spare-item data-row" ng-if="UserInfo.CompID>0" ng-click="tap('yunFile')">
+					<p class="opt md-icon">
+						<span class="icon-right"></span>
+					</p>
+					<span class="icon-item">
+					<img src="../images/Spareparts@3x.png" style="width: 17px;" />
+				</span>
+					<label>我的云文档</label>
+				</li>
+				<li class="mui-table-view-cell  spare-item data-row" ng-click="tap('postAddr')">
+					<p class="opt md-icon">
+						<span class="icon-right"></span>
+					</p>
+					<span class="icon-item">
+					<img src="../images/outstock.png" style="width: 17px;" />
+				</span>
+					<label style="width:130px">我的收货地址</label>
+				</li>
+			</ul>
+			<ul class="data-group fun-group">
+				<li class="mui-table-view-cell  spare-item data-row" ng-click="tap('comp')" ng-if="UserInfo&&UserInfo.CompID>0">
+					<p class="opt md-icon">
+						<span class="icon-right"></span>
+					</p>
+					<span class="icon-item">
+					<img src="../images/customerevaluation.png" style="width: 17px;" />
+				</span>
+					<label>我的企业</label>
+				</li>
+				<li class="mui-table-view-cell  spare-item data-row" ng-click="tap('compNotice')" ng-if="UserInfo&&UserInfo.CompID>0&&hasNoticeAuth">
+					<p class="opt md-icon">
+						<span class="icon-right"></span>
+					</p>
+					<span class="icon-item">
+					<img src="../images/work_notice.png" style="width: 17px;" />
+				</span>
+					<label>我的公告</label>
+				</li>
+				<li class="mui-table-view-cell  spare-item data-row" ng-click="tap('org')" ng-if="UserInfo.CompID && UserInfo.CompID>0">
+					<p class="opt md-icon">
+						<span class="icon-right"></span>
+					</p>
+					<span class="icon-item">
+					<img src="../images/org@3x.png" style="width: 17px;" />
+				</span>
+					<label>我的组织</label>
+				</li>
+
+				<li class="mui-table-view-cell  spare-item data-row" mg-if="isManager" ng-click="tap('prodManager')" ng-if="UserInfo.CompID && UserInfo.CompID>0 && ('product'|hasModuleAuth)">
+					<p class="opt md-icon">
+						<span class="icon-right"></span>
+					</p>
+					<span class="icon-item">
+					<img src="../images/productlibrary.png" style="width: 17px;" />
+				</span>
+					<label>我的产品</label>
+				</li>
+				<li class="mui-table-view-cell  spare-item data-row" mg-if="isManager" ng-click="tap('eqManager')" ng-if="UserInfo.CompID && UserInfo.CompID>0 && ('eq'|hasModuleAuth)">
+					<p class="opt md-icon">
+						<span class="icon-right"></span>
+					</p>
+					<span class="icon-item">
+					<img src="../images/eqmaintenance.png" style="width: 17px;" />
+				</span>
+					<label>我的资产</label>
+				</li>
+				<li class="mui-table-view-cell  spare-item data-row" ng-click="tap('workRecord')" ng-if="ISJJComp">
+					<p class="opt md-icon">
+						<span class="icon-right"></span>
+					</p>
+					<span class="icon-item">
+					<img src="../images/maintenancestatistics.png" style="width: 17px;" />
+					
+				</span>
+					<label style="width:130px">工作日志统计</label>
+				</li>
+				<li class="mui-table-view-cell  spare-item data-row" mg-if="isManager" ng-click="tap('giftMall')" ng-if="'crm'|hasModuleAuth">
+					<p class="opt md-icon">
+						<span class="icon-right"></span>
+					</p>
+					<span class="icon-item">
+					<img src="../images/statistics@3x.png" style="width: 17px;" />
+					
+				</span>
+					<label style="width:130px">关怀订单统计</label>
+				</li>
+				<!--<li class="mui-table-view-cell  spare-item data-row" ng-click="tap('part')">
+					<p class="opt md-icon">
+						<span class="icon-right"></span>
+					</p>
+					<span class="icon-item">
+						<img src="../images/org@3x.png" style="width: 17px;"/>
+					</span>
+					<label>我参与的</label>
+				</li>-->
+				<li class="mui-table-view-cell  spare-item data-row" ng-click="tap('setting')">
+					<p class="opt md-icon">
+						<span class="icon-right"></span>
+					</p>
+					<span class="icon-item">
+					<img src="../images/setup@3x.png" style="width: 17px;" />
+				</span>
+					<label>设置</label>
+				</li>
+			</ul>
+
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script type="text/javascript" src="../js/angular.min.js"></script>
+		<script type="text/javascript" src="../js/common.js"></script>
+		<script type="text/javascript" src="../js/utils.js"></script>
+		<script type="text/javascript" src="../js/rpc.js"></script>
+		<script>
+			app.controller("MyController", ["$scope", "CacheService", "UtilsService", "$filter", "RPCObserver", "ApiService", "DataService",
+				function($scope, CacheService, UtilsService, $filter, RPCObserver, ApiService, DataService) {
+					$scope.UserInfo = {
+						UserID: '',
+						UserName: '',
+						RealName: '',
+						Signature: ''
+					};
+					$scope.hasNoticeAuth = false;
+					//我的公告菜单权限
+					if($filter("hasMenuAuth")("tygn", "wdqy")) {
+						$filter("hasMenuAuth")("tygn", "wdqy", "qygg") ? $scope.hasNoticeAuth = true : $scope.hasNoticeAuth = false;
+					}
+
+					var user = CacheService.get('user');
+					$scope.UserInfo = user;
+					$scope.ViewName = $scope.UserInfo ? $filter("getViewName")($scope.UserInfo.UserName, $scope.UserInfo.RealName, $scope.UserInfo.Mdt) : "";
+					//刷新积分功能
+					refreshPoint();
+					$scope.isLoad = true;
+					$scope.isManager = $filter("hasAuth")(['Q0']);
+					//跳转
+					$scope.tap = function(key) {
+						var url = {
+							userdetail: '../pages/mine/personal-information.html',
+							setting: '../pages/mine/setting.html',
+							ewm: '../pages/mine/qr-code.html',
+							org: '../pages/work/org.html',
+							fault: '../pages/mine/fault-list.html',
+							part: '../pages/mine/part.html',
+							design: 'mine/ing-list.html',
+							circle: 'ing/resource-my-circle.html',
+							outsource: 'outsourcing/demand-list.html',
+							draft: '../pages/aftersale/mat-drafts.html',
+							point: '../pages/mall/index.html',
+							friend: '../pages/contact/resources.html?resType=2&isTitle=1',
+							groupNotice: '../pages/contact/group-chat.html?resType=1&isTitle=1',
+							prodManager: '../pages/complib/prodManager-header.html',
+							eqManager: '../pages/eqmentlib/equ-manager.html?action=',
+							giftMall: 'mine/gift-mall.html',
+							yunFile: 'mine/yun-file-list.html',
+							postAddr: 'mine/manage-address.html',
+							workRecord: '../pages/aftersale/work-list.html',
+							myResource: 'mine/myResource.html',
+							myFind: "mine/myFind.html",
+							business: "mine/myBusiness.html",
+							scanlist: "mine/scan-list.html"
+						};
+						if(key == "comp") {
+							UtilsService.openWindow({
+								needLogin: true,
+								id: 'complib-index.html',
+								url: '../pages/complib/index.html?compid=' + $scope.UserInfo.CompID
+							});
+						} else if(key == "compNotice") {
+							UtilsService.openWindow({
+								id: "compnotice.html",
+								url: "../pages/complib/compnotice.html"
+							});
+						} else if(key == "trip") {
+							UtilsService.openWindow({
+								id: "checkList?backIndex=1",
+								url: "../pages/crm/index.html#/checkList?backIndex=1&hideBtn=1"
+							});
+						} else {
+							UtilsService.openWindow({
+								needLogin: true,
+								id: url[key].split('/').pop().substring(0, url[key].split('/').pop().lastIndexOf(".html") + 5),
+								url: url[key]
+							});
+						}
+					};
+					getunreadnumber();
+					//获取资源圈动态未读消息数量
+					function getunreadnumber() {
+						var url = ApiService.Api64 + '/api/v1/ResCircle/GetMyPublishCircleCommentPraiseUnReadCount'
+						DataService.get(url).then(function(res) {
+							if(res) {
+								$scope.unreadnumber = res
+							}
+						}, function() {
+
+						})
+					}
+
+					//刷新登陆
+					RpcServer.expose("RPC_RefreshLogin", function(params) {
+						if(params) {
+							$scope.UserInfo = params;
+						} else {
+							$scope.UserInfo = {
+								UserID: '',
+								UserName: '',
+								RealName: '',
+								Signature: ''
+							};
+						}
+						$scope.ViewName = $filter("getViewName")($scope.UserInfo.UserName, $scope.UserInfo.RealName, $scope.UserInfo.Mdt);
+						$scope.isManager = $filter("hasAuth")(['Q0']);
+						$scope.ISJJComp = ($scope.UserInfo.CompID == 266 && $filter("hasMenuAuth")("tygn", "rcgz") && $filter("hasModuleAuth")("work"));
+						$scope.$apply();
+						//刷新积分功能
+						refreshPoint();
+					});
+
+					function refreshPoint() {
+						var url = ApiService.Api52 + "/api/v1/Reg/UserIsExistIntegral";
+						DataService.get(url).then(function(res) {
+							$scope.isShowPoint = res;
+						});
+					};
+					//刷新消息
+					RPCObserver.on('refresh_readList', 'refresh_readList')
+					window.refresh_readList = function() {
+						$scope.unreadnumber = 0
+						getunreadnumber()
+
+						$scope.$apply();
+					}
+					//刷新用户信息
+					RpcServer.expose("RPC_RefreshUserInfo", function(params) {
+						params && (document.querySelector(".avatar").style.backgroundImage = "url(" + params + ")");
+						var user = CacheService.get('user');
+						getunreadnumber()
+						$scope.UserInfo = user;
+						$scope.ViewName = $filter("getViewName")($scope.UserInfo.UserName, $scope.UserInfo.RealName, $scope.UserInfo.Mdt);
+						$scope.$apply();
+					});
+				}
+			]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

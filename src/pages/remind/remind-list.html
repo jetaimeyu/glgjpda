@@ -1,0 +1,72 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style>
+			.icon {
+				width: 16px;
+			}
+			
+			.btn-bottom {
+				z-index: 9999;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="workremindlist">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left" ng-bind="state=='done'?'已完成日程':'日程安排'"></a>
+			<a class="mui-pull-right menu-add" ng-click="tap('add')">
+				<img class="icon" src="../../images/add.png" />
+			</a>
+			<a class="mui-pull-right menu-search" ng-click="tap('search')">
+				<img class="icon" src="../../images/search.png" />
+			</a>
+		</header>
+		<footer class="btn-bottom" ng-if="state!='done'" ng-click="tap('done')">点击查看已发生日程</footer>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script>
+			app.controller("workremindlist", ["$scope", "UtilsService", function($scope, UtilsService) {
+				$scope.state = query("state");
+
+				mui.init({
+					subpages: [{
+						url: 'remind-all.html?type=' + $scope.state,
+						id: Date.now(),
+						styles: {
+							top: '45px',
+							bottom: ($scope.state == 'done') ? '0px' : '40px',
+						}
+					}]
+				});
+
+				$scope.tap = function(key) {
+					var url = {
+						add: 'remind-edit.html',
+						done: 'remind-list.html?state=done',
+						search: 'remindsearch.html?type=' + $scope.state
+					};
+					UtilsService.openWindow({
+						needLogin: true,
+						id: url[key].substring(url[key].lastIndexOf('/') + 1, url[key].indexOf('?')),
+						url: url[key]
+					});
+				};
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

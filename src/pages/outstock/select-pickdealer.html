@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="select-customer.css" />
+		<style type="text/css">
+			footer {
+				width: 100%;
+				height: 44px;
+				position: fixed;
+				bottom: -1px;
+				line-height: 44px;
+				text-align: center;
+				color: #169BD5;
+				background-color: #ffffff;
+				z-index: 800;
+				overflow: hidden;
+			}
+			
+			footer .footer-btn-sure {
+				background-color: #169BD5;
+			}
+			
+			footer .footer-btn-sure .btn-sure {
+				color: #fff;
+			}
+			
+			.top82 {
+				margin-top: 82px!important;
+			}
+			
+			.top42 {
+				margin-top: 42px!important;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="OutStockDealerController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">选择经销商</a>
+			<a class="mui-btn-outlined mui-btn" id="btn_select" ng-click="selectCustomer()">确定</a>
+			<!--<a class="right-menu-words " id="btn_select" ng-click="selectCustomer()">确定</a>-->
+		</header>
+		<div class="mui-scroll-wrapper" id="scroll" style="display:none;" ng-class="{'mui-block':isLoad}">
+			<div class="search_input search-box" style="z-index: 5;">
+				<form ng-submit="search()">
+					<input type="search" placeholder="输入经销商名称" ng-model="data.Key" maxlength="50" ng-change="searchClear()">
+					<i class="icon-search-thin color-gray-dark"></i>
+					<i class="icon-delete color-gray" ng-show='data.Key' ng-click="deleteSearch()"></i>
+					<span ng-click="search()">搜索</span>
+				</form>
+
+			</div>
+			<div class="search-result top-thin-line" style="display: none;z-index: 5;">
+				查询结果:共<span class="color-red-md" ng-bind="data.totalCount"></span>条数据
+				<div class="opt md-icon">
+					<span class="icon-close-4">
+                    </span>
+				</div>
+			</div>
+			<div id="pullrefresh" class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad,'top42':isIos&&!isSearch,'top82':isSearch&&isIos}" style="display: none;">
+				<div class="mui-content">
+					<ul class="data-group biglabel" id="customerCatalog">
+						<li class="data-row" ng-repeat="row in data.customerList" ng-click="selectRow(row.ID)">
+							<p class="selectCustomer float-left" ng-class="{'icon-roundcheckfill color-blue':data.checkedID==row.ID,'icon-round color-gray':data.checkedID!=row.ID}"></p>
+							<!--<input class="choice" name="checkbox" value="" type="checkbox">-->
+
+							<div class="body customer-manage">
+								<p class="font-15 color-gray-dark mui-ellipsis customerInfo" ng-bind="row.Name"></p>
+								<p class="font-12 color-gray-deep mui-ellipsis customerInfo" ng-bind="row.Province | locationfilter:row.City:row.District:row.Address:row.Street"></p>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+
+			<md-no-data ng-show="data.customerList && data.customerList.length==0">暂无数据</md-no-data>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script>
+			app.controller("OutStockDealerController", ["$scope", "ApiService", "RPCObserver", "UtilsService", "Loading", "DataService", "CacheService", function($scope, ApiService, RPCObserver, UtilsService, Loading, DataService, CacheService) {
+				$scope.pageIndex = 0;
+				$scope.pageSize = 10;
+				$scope.data = {
+					totalCount: 0,
+					Key: "",
+					customerList: [], //经销商列表
+					//选择的ID
+					checkedID: -1,
+					//选中经销商的信息
+					//选择的数据
+					selectedList: {},
+
+				}
+				$scope.isIos = !mui.os.android;
+				$scope.isLoad = false;
+				$scope.isSearch = false;
+				var self = plus.webview.currentWebview();
+				if(self.selectObj.chooseID) {
+					$scope.data.checkedID = self.selectObj.chooseID;
+				}
+				setTimeout(function() {
+					mui.init({
+						pullRefresh: {
+							container: '#pullrefresh',
+							up: {
+								auto: true,
+								callback: pullupRefresh
+							}
+						}
+					});
+				})
+
+				function pullupRefresh() {
+					$scope.pageIndex++;
+					loadDealer()
+				}
+				//客户数据
+				var isEnd = false;
+
+				function loadDealer() {
+					Loading.show();
+					var url = ApiService.Api45 + "/api/v1/Stock/FindSuppliers?key=" + encodeURIComponent($scope.data.Key) + "&pageSize=" + $scope.pageSize + "&pageIndex=" + $scope.pageIndex;
+					DataService.get(url).then(function(res) {
+						if(res) {
+							$scope.data.totalCount = res.TotalCount;
+							if(typeof $scope.data.customerList == "string") {
+								$scope.data.customerList = res.DataRows;
+							} else {
+								$scope.data.customerList = $scope.data.customerList.concat(res.DataRows);
+							}
+							isEnd = $scope.data.customerList.length ? $scope.data.customerList.length >= (res.TotalCount) : true;
+							if(mui("#pullrefresh").pullRefresh()) {
+								mui('#pullrefresh').pullRefresh().refresh(true);
+								mui("#pullrefresh").pullRefresh().endPullupToRefresh(isEnd);
+							}
+							if($scope.data.Key != '') {
+								var result = document.querySelector('.search-result');
+								if(result) {
+									result.style.display = "block";
+								}
+							}
+						}
+
+						$scope.isLoad = true;
+						Loading.hide();
+						hideUpData();
+					}, function(error) {
+						Loading.hide();
+						$scope.isLoad = true;
+						$scope.data.customerList = "";
+						mui("#pullrefresh").pullRefresh().endPullupToRefresh(true);
+						hideUpData();
+					});
+				}
+				//当数据为空时，隐藏上拉的提示
+				function hideUpData() {
+					var tip = document.querySelector('.mui-pull-bottom-pocket');
+					if(tip) {
+						if(!$scope.data.customerList || $scope.data.customerList.length == 0) {
+							tip.classList.contains('mui-visibility') && tip.classList.remove('mui-visibility');
+							tip.classList.contains('mui-block') && tip.classList.remove('mui-block');
+						} else {
+							!tip.classList.contains('mui-visibility') && tip.classList.add('mui-visibility');
+							!tip.classList.contains('mui-block') && tip.classList.add('mui-block');
+						}
+					}
+				}
+				//点击选择整行   
+				$scope.selectRow = function(id) {
+					if($scope.data.checkedID == id) {
+						//如果选中，再次点击取消选中
+						$scope.data.checkedID = -1;
+					} else {
+						$scope.data.checkedID = id;
+					}
+				};
+				//搜索
+				$scope.search = function() {
+					//$scope.data.customerName = document.querySelector("input").value.trim();
+					if(!$scope.data.Key) {
+						mui.toast("请输入搜索内容!");
+						return;
+					}
+					$scope.isSearch = true;
+					$scope.pageIndex = 1;
+					$scope.data.customerList = [];
+					loadDealer();
+				}
+				$scope.searchClear = function() {
+					if(!$scope.data.customerName) {
+						document.querySelector('.search-result').style.display = "none";
+						$scope.isSearch = false;
+						$scope.pageIndex = 1;
+						$scope.data.customerList = [];
+						loadDealer();
+					}
+				}
+				$scope.deleteSearch = function() {
+					document.querySelector('.search-result').style.display = "none";
+					$scope.data.Key = "";
+					$scope.pageIndex = 1;
+					$scope.data.customerList = [];
+					$scope.isSearch = false;
+					loadDealer();
+				}
+				//选择
+				$scope.selectCustomer = function() {
+					if($scope.data.checkedID == -1) {
+						mui.toast("请选择经销商");
+						return;
+					}
+					for(var i = 0; i < $scope.data.customerList.length; i++) {
+						if($scope.data.checkedID == $scope.data.customerList[i].ID) {
+							$scope.data.selectedList = $scope.data.customerList[i];
+							break;
+						}
+					}
+					var view = plus.webview.currentWebview();
+					var opener = view.opener();
+					if(view.callback) {
+						var ret = {
+							"ID": $scope.data.selectedList.CustCompID, //企业id
+							"CustName": $scope.data.selectedList.Name,
+							"Address": $scope.data.selectedList.Address,
+							"Province": $scope.data.selectedList.Province,
+							"City": $scope.data.selectedList.City,
+							"District": $scope.data.selectedList.District,
+							"CustomerID": $scope.data.selectedList.ID, //编号
+							"MapLng": $scope.data.selectedList.MapLng, //经度
+							"MapLat": $scope.data.selectedList.MapLat, //纬度
+							"MainLinkID": $scope.data.selectedList.MainLinkID, //主联系人ID
+							"MainLinkName": $scope.data.selectedList.MainLinkName, //主联系人姓名
+							"MainLinkPhone": $scope.data.selectedList.MainLinkPhone, //主联系人电话
+
+						};
+						opener.evalJS(view.callback + "(" + JSON.stringify(ret) + ")");
+					}
+					mui.back();
+				};
+
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+				plus.webview.currentWebview().setStyle({
+					scrollIndicator: 'none'
+				});
+			});
+		</script>
+	</body>
+
+</html>

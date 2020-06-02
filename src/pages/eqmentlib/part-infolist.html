@@ -1,0 +1,178 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/common.css">
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+	</head>
+
+	<body ng-controller="PartInfolistController">
+		<div id="PartInfolistCont" class="mui-scroll-wrapper" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<div class="mui-content">
+				<md-part-infolist ng-model="partList"></md-part-infolist>
+				<md-no-data ng-show="partList==''">暂无数据</md-no-data>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("PartInfolistController", ["$scope", "ApiService", "DataService", "UtilsService", "Loading", "RPCObserver", function($scope, ApiService, DataService, UtilsService, Loading, RPCObserver) {
+				$scope.pageIndex = 0; //页数
+				$scope.pageSize = 10; //每页数量
+				$scope.partList = null;
+				$scope.isLoad = false;
+				$scope.isEnd = false;
+				$scope.Network = true;
+				$scope.type = query('type');
+				var typeLog = {
+					"dept": 2,
+					"depts": 3,
+					"all": 4
+				}
+				Loading.show();
+
+				function getPartInfo(type) {
+					if(query("equid") == 0) {
+						var url = ApiService.Api50 + "/api/v2/MatWorkOrder/";
+						switch($scope.type) {
+							case 'my':
+								url += "GetMyPartsRecord?page=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize;
+								break;
+							case 'dept':
+							case 'depts':
+							case 'all':
+								url += "GetPartsRecord?page=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize + "&authType=" + typeLog[$scope.type];
+								break;
+						}
+						DataService.get(url).then(function(res) {
+							$scope.Network = true;
+							if(type == "down" || $scope.pageIndex == 1) {
+								$scope.partList = [];
+							}
+							Loading.hide();
+							$scope.isLoad = true;
+							if($scope.pageIndex != 1 && res.Data != '') {
+								if($scope.partList[$scope.partList.length - 1].Date == res.Data[0].Date) {
+									$scope.partList[$scope.partList.length - 1].DataRows = $scope.partList[$scope.partList.length - 1].DataRows.concat(res.Data[0].DataRows);
+									res.Data.shift();
+								}
+							}
+							$scope.partList = $scope.partList.concat(res.Data);
+							var resDataRows = [];
+							for(var i = 0; i < $scope.partList.length; i++) {
+								resDataRows = resDataRows.concat($scope.partList[i].DataRows);
+							}
+
+							$scope.isEnd = resDataRows.length >= res.TotalCount;
+							if(mui("#PartInfolistCont").pullRefresh()) {
+								if(type == "down") {
+									mui('#PartInfolistCont').pullRefresh().endPulldownToRefresh();
+									mui('#PartInfolistCont').pullRefresh().refresh(true);
+									mui("#PartInfolistCont").pullRefresh().endPullupToRefresh($scope.isEnd);
+								} else {
+									mui("#PartInfolistCont").pullRefresh().endPullupToRefresh($scope.isEnd);
+								}
+							}
+							hideUpData();
+						}, function(error) {
+							$scope.Network = false;
+							$scope.isLoad = true;
+							if($scope.partList == null) {
+								$scope.partList = [];
+							}
+							if(mui("#PartInfolistCont").pullRefresh()) {
+								mui('#PartInfolistCont').pullRefresh().endPulldownToRefresh();
+								mui("#PartInfolistCont").pullRefresh().endPullupToRefresh($scope.isEnd);
+							}
+							hideUpData();
+						})
+					} else {
+						var url = ApiService.Api50 + "/api/v2/MatWorkOrder/GetPartsReplaceRecord?equipmentId=" + query("equid") + "&page=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize;
+						DataService.get(url).then(function(res) {
+							$scope.Network = true;
+							$scope.isLoad = true;
+							if(res) {
+								$scope.partList = res;
+							}
+							Loading.hide();
+							if(mui("#PartInfolistCont").pullRefresh()) {
+								if(type == "down") {
+									mui('#PartInfolistCont').pullRefresh().endPulldownToRefresh();
+								}
+								mui("#PartInfolistCont").pullRefresh().endPullupToRefresh(true);
+							}
+							hideUpData();
+						}, function(error) {
+							$scope.Network = false;
+							$scope.isLoad = true;
+							if($scope.partList == null) {
+								$scope.partList = [];
+							}
+							if(mui("#PartInfolistCont").pullRefresh()) {
+								mui('#PartInfolistCont').pullRefresh().endPulldownToRefresh();
+								mui("#PartInfolistCont").pullRefresh().endPullupToRefresh(false);
+							}
+							hideUpData();
+						})
+					}
+				}
+
+				//当数据为空时，隐藏上拉的提示
+				function hideUpData() {
+					var tip = document.querySelector('.mui-pull-bottom-pocket');
+					if(tip) {
+						if($scope.partList.length == 0) {
+							tip.classList.contains('mui-visibility') && tip.classList.remove('mui-visibility');
+							tip.classList.contains('mui-block') && tip.classList.remove('mui-block');
+						} else {
+							!tip.classList.contains('mui-visibility') && tip.classList.add('mui-visibility');
+							!tip.classList.contains('mui-block') && tip.classList.add('mui-block');
+						}
+					}
+				}
+
+				RPCObserver.on('refresh_equ_parts_list', 'refresh_equ_parts_list');
+				window.refresh_equ_parts_list = downpullRefresh;
+
+				//下拉刷新
+				function downpullRefresh() {
+					$scope.pageIndex = 1; //页数
+					getPartInfo("down");
+				};
+				//上拉加载
+				function uppullRefresh() {
+					$scope.Network && $scope.pageIndex++;
+					getPartInfo();
+				};
+
+				//下拉刷新,上拉加载
+				setTimeout(function() {
+					mui.init({
+						pullRefresh: {
+							container: '#PartInfolistCont',
+							up: {
+								auto: true,
+								callback: uppullRefresh
+							},
+							down: {
+								callback: downpullRefresh
+							}
+						}
+					});
+				})
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

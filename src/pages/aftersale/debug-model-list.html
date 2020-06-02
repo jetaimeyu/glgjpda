@@ -1,0 +1,220 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link href="../../css/mui.min.css" rel="stylesheet" />
+	<link href="../../css/common.css" rel="stylesheet" />
+	<link href="../../icon-font/iconfont.css" rel="stylesheet" />
+	<style>
+		.phraseList .mui-icon-back {
+			line-height: 44px;
+			margin-left: -17px !important;
+			color: #323232;
+			font-size: 2.7rem !important;
+		}
+
+		.phraseList .mui-bar .mui-title {
+			left: 19px;
+			color: #323232;
+			font-weight: 420;
+			line-height: 46px;
+		}
+
+		.phraseList .mui-bar .icon-add {
+			line-height: 44px;
+			color: #323232;
+		}
+
+		.phraseList .data-group {
+			font-size: 1.5rem;
+			margin-top: 0;
+		}
+
+		.phraseList .data-group .data-row .body {
+			padding-left: 16px;
+		}
+
+		.phraseList .data-group .data-row .body span.phrase-content {
+			color: #000;
+			font-size: 1.5rem;
+			margin-left: 25px;
+			display: block;
+		}
+
+		#adpopover {
+			/*min-width: 260px;*/
+			/*height: 370px;*/
+			top: 55% !important;
+			margin-top: -150px;
+			left: 50% !important;
+			margin-left: -141px;
+			border-radius: 3px;
+			background-color: #fff;
+		}
+
+		#adpopover.mui-popover .mui-popover-arrow {
+			display: none !important;
+		}
+
+		#adpopover .data-group:before {
+			height: 0;
+		}
+
+		#adpopover .data-group .data-row .body {
+			padding: 10px 5px 11px 10px;
+		}
+
+		#adpopover .data-group .data-row:after {
+			left: 10px;
+			background-color: #E5E5E5;
+		}
+
+		#adpopover .data-group .data-row.first:after {
+			left: 5px;
+			right: 5px;
+			background-color: #E5E5E5;
+		}
+
+		#adpopover .data-group .data-row:last-child:after {
+			height: 1px;
+			left: 5px;
+			right: 5px;
+		}
+
+		#adpopover .data-group .data-row.first {
+			min-height: 38px
+		}
+
+		.phraseList .addelment {
+			margin: 12px 20px 12px 20px;
+		}
+
+		.phraseList .addelment a {
+			background-color: #3296FA;
+			color: #fff;
+			padding: 5px 0;
+			border: 1px solid #3296FA;
+		}
+
+		.phraseList .data-group .data-row .label-gray {
+			color: #333333;
+		}
+
+		.phraseList .info-title {
+			margin-left: 10px;
+			line-height: 1;
+			color: #1f1f1f;
+		}
+
+		.phraseList .title {
+			color: #1f1f1f;
+		}
+
+		.phraseList .mdt_leftline {
+			width: 3px;
+			height: 14px;
+			background: #169BD5;
+			margin-top: -13px;
+			margin-left: -3px;
+		}
+
+		#adpopover .data-group .data-row label {
+			width: 70px;
+		}
+
+		#adpopover .body-edit {
+			max-height: 30vh;
+			overflow-y: auto;
+		}
+
+		.phraseList span.placeholder a {
+			color: #dddddd !important;
+		}
+
+		.phraseList .color-theme {
+			color: #108cee;
+		}
+
+		.phraseList .body>i {
+			font-size: 1.8rem;
+			padding: 0 16px;
+			position: absolute;
+			top: 50%;
+			left: 0;
+			transform: translateY(-50%);
+			-webkit-transform: translateY(-50%);
+		}
+
+		.phraseList .icon-roundcheckfill:before {
+			content: "\E656";
+		}
+
+		.phraseList .icon-round:before {
+			content: "\E6D7";
+		}
+	
+	</style>
+</head>
+
+<body ng-controller="bodyCtl" class="phraseList">
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon mui-icon-back mui-pull-left"></a>
+		<h1 class="mui-action-back mui-title">调试模版</h1>
+	</header>
+	<div class="mui-content">
+		<ul class="data-group " style="display:none;" ng-class="{'mui-block':list && list.length>0}">
+			<li class="data-row mui-table-view-cell searchlist" ng-repeat="item in list" ng-click="selected(item)">
+				<div class="body">
+					<i ng-class="(item.ID==selectId)?'icon-roundcheckfill color-theme':'icon-round color-gray'"></i>
+					<!--<i ng-class="(item.Content==selectContent)?'icon-roundcheckfill color-theme':'icon-round color-gray'"></i>-->
+					<span ng-bind="item.Name" class="phrase-content"></soan>
+				</div>
+			</li>
+		</ul>
+		<div style="text-align:center;padding-top:30px;"   ng-show="!list"> <i class="mui-spinner" style="position:relative;top:5px;left:-3px;"></i>正在加载数据...</div>
+		<md-no-data style="display:none;" ng-class="{'mui-block':list && list.length==0}">暂无数据</md-no-data>
+	</div>
+	<script src="../../js/mui.min.js"></script>
+	<script src="../../js/angular.js"></script>
+	<script src="../../js/common.js"></script>
+	<script src="../../js/utils.js"></script>
+	<script type="text/javascript">
+		app.controller("bodyCtl", ["$scope", "ApiService", "DataService", function ($scope, ApiService, DataService) {
+			$scope.list = "";
+			$scope.selectId = plus.webview.currentWebview().selectObj.id || 0;
+
+			var url = ApiService.Api50 + "/api/v1/ProdDebug/GetDebugParamsTypeList";
+
+			DataService.get(url).then(function (res) {
+				$scope.list = res;
+			});
+
+			$scope.selected = function (item) {
+				//反选
+				//phraseObj = phraseObj.Content == $scope.selectContent ? {} : phraseObj;					
+				//item = item.ID == $scope.selectId ? {} : item;
+				//选择
+				//$scope.selectContent = phraseObj.Content;
+				$scope.selectId = item.ID;
+				var view = plus.webview.currentWebview();
+				var opener = view.opener();
+				if (view.callback) {
+					opener.evalJS(view.callback + "(" + JSON.stringify(item) + ")");
+				}
+
+				mui.back();
+			};
+
+
+		}]);
+
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+		});
+	</script>
+</body>
+
+</html>

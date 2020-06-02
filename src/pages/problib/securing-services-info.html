@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>延保服务详情</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.data-group:first-child {
+				margin-top: 0px!important;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="securingServicesDetail">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">延保记录</a>
+		</header>
+		<div class="mui-scroll-wrapper md-info-page" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<ul class="data-group">
+				<li class="data-row">
+					<label>产品</label>
+					<div class="body">
+						<span ng-bind="data.ProdName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>型号</label>
+					<div class="body">
+						<span ng-bind="data.SkuName"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="data.ProdInnerCode">
+					<label ng-bind="InnerCodeName"></label>
+					<div class="body">
+						<span ng-bind="data.ProdInnerCode"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>客户</label>
+					<div class="body">
+						<span ng-bind="data.CustomerName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>保修期</label>
+					<div class="body">
+						<span ng-show="data.Warranty==null">未设置</span>
+						<span ng-if="data.Warranty!=null" ng-bind="data.Warranty + DateType[data.WarrantyUnit]"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>延保期</label>
+					<div class="body">
+						<span  ng-bind="data.ExtendedWarranty + DateType[data.ExtendWarrantyUnit]"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>过保日期</label>
+					<div class="body">
+						<span ng-bind="data.EndDate"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>延保人</label>
+					<div class="body">
+						<span ng-bind="data.CreateUser"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>延保日期</label>
+					<div class="body">
+						<span ng-bind="data.CreateDate"></span>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<!--无网络或请求失败重试-->
+		<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript">
+			app.controller("securingServicesDetail", ["$scope", "ApiService", "DataService", "Loading", "AuthService", function($scope, ApiService, DataService, Loading, AuthService) {
+				$scope.DateType = {
+					1: "日",
+					2: "月",
+					3: "年"
+				};
+				
+				$scope.retryModal = {
+					msg: "延保记录详情",
+					retry: init,
+					state: ''
+				}
+				
+				AuthService.getAuth().then(function(res){
+					$scope.InnerCodeName = res.InnerCodeName || '出厂编号';
+					init();
+				});
+				
+				function init(){
+					Loading.show();
+					var url = ApiService.Api50 + "/api/v2/Prod/GetPkgWarrantyDelayLogById?Id=" + query('id');
+					DataService.get(url).then(function(res) {
+						if(res) {
+							Loading.hide();
+							$scope.isLoad = true;
+							
+							$scope.data = res;
+//							if($scope.data.Warranty==null){
+//								$scope.data.Warranty=0
+//							}
+							
+						}
+					}, function(error) {
+						$scope.retryModal.state = error.State;
+					});
+				}
+			}]);
+
+			// 初始化
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

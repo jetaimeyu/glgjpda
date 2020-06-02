@@ -1,0 +1,195 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.icon {
+				width: 16px;
+			}
+			
+			.mui-bar-nav~.mui-content .mui-pull-top-pocket {
+				top: 80px!important;
+			}
+			
+			#slider {
+				padding-top: 0px!important;
+				margin-top: 44px;
+				background: #ffffff;
+				height: 35px;
+			}
+			
+			#slider .mui-segmented-control.mui-scroll-wrapper .mui-scroll {
+				height: 35px;
+				line-height: 35px;
+			}
+			
+			#slider .mui-segmented-control.mui-scroll-wrapper .mui-scroll a {
+				margin-left: 15px;
+				font-size: 12px;
+				height: 35px;
+				display: table-cell;
+				line-height: 35px;
+				padding: 0px 0px 0px 15px;
+			}
+			
+			#slider .mui-segmented-control.mui-scroll-wrapper .mui-scroll a i {
+				font-size: 8px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="faultListController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left" id="title"></a>
+			<a class="right-menu-words dev-list" ng-bind="domData.isList?'地图':'列表'" ng-click="event.changeView()"></a>
+		</header>
+
+		<div id="slider" class="mui-slider mui-fullscreen">
+			<div id="sliderSegmentedControl" class="mui-scroll-wrapper  mui-slider-indicator mui-segmented-control mui-segmented-control-inverted" style="background: #fff; ">
+
+				<div class="mui-scroll " top="84">
+					<a ng-click="event.selectClass()">选择分类<i class="icon icon-down"></i></a>
+					<a ng-click="event.showOrder()" ng-show="domData.isList">排序方式<i class="icon icon-down"></i></a>
+				</div>
+				<div class="md-tab-block-line"></div>
+			</div>
+
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			var state = query("state");
+			var title = "大厅";
+			switch(state) {
+				case "3":
+					title = "交易" + title;
+					break;
+				case "11":
+					title = "租赁" + title;
+					break;
+				case "9":
+					title = "回收" + title;
+					break;
+			}
+
+			document.querySelector("#title").innerHTML = title;
+
+			app.controller("faultListController", ["$scope", "UtilsService", "RPCObserver", "$timeout", "$filter", function(
+				$scope, UtilsService, RPCObserver, $timeout, $filter) {
+				mui.init({
+					subpages: [{
+						url: 'equ-hall-list-all.html' + location.search,
+						id: 'equ-hall-list-all.html',
+						styles: {
+							top: '80px',
+							bottom: '0px',
+						}
+					}]
+				});
+
+				$scope.domData = {
+					selectType: "",
+					orderView: "",
+					isList: true
+				};
+
+				var curView = plus.webview.currentWebview();
+				$scope.event = {
+					changeView: function() {
+
+						$scope.domData.isList = !$scope.domData.isList;
+
+						if(curView.children().length == 1) {
+							createSubPage();
+							curView.children()[0].hide();
+						} else {
+							var path = ($scope.domData.selectType ? $scope.domData.selectType.CPath : '');
+
+							if($scope.domData.isList) {
+								curView.children()[0].show();
+								curView.children()[1].hide();
+								curView.children()[0].evalJS("setPath('" + path + "')");
+							} else {
+								curView.children()[1].show();
+								curView.children()[0].hide();
+								curView.children()[1].evalJS("setPath('" + path + "')");
+							}
+						}
+					},
+					selectClass: function() {
+						UtilsService.openWindow({
+							id: "mdSelectEqClass.html",
+							url: "../eqmentlib/mdSelectEqClass.html",
+							extras: {
+								selectObj: $scope.domData.selectType,
+								callback: 'faultEquCallback'
+							}
+						})
+					},
+					showOrder: function() {
+						if(!$scope.domData.orderView) {
+							var styles = {
+								background: 'transparent',
+								zindex: 10
+							};
+							if(mui.os.android && ["5.0", "5.1"].indexOf(mui.os.version) >= 0) {
+								styles.hardwareAccelerated = false;
+							}
+							$scope.domData.orderView = plus.webview.create("../menus/menu-hall-order.html", "menu-hall-order", styles);
+						}
+
+						$scope.domData.orderView.show("fade-in");
+					}
+				};
+
+				window.faultEquCallback = function(res) {
+					$scope.domData.selectType = res[0];
+					$scope.$apply();
+
+					var path = ($scope.domData.selectType ? $scope.domData.selectType.CPath : '');
+
+					if($scope.domData.isList) {
+						curView.children()[0].evalJS("setPath('" + path + "')");
+					} else {
+						curView.children()[1].evalJS("setPath('" + path + "')");
+					}
+
+				};
+
+				window.orderBack = function(order) {
+					plus.webview.currentWebview().children()[0].evalJS("setOrder(" + order + ")");
+				};
+
+				function createSubPage() {
+					var styles = {
+						popGesture: "none",
+						top: "80px",
+						bottom: "0px"
+					};
+					if(mui.os.android && ["5.0", "5.1"].indexOf(mui.os.version) >= 0) {
+						styles.hardwareAccelerated = false;
+					}
+					win = plus.webview.create("eq-hall-map.html"+ location.search, "eq-hall-map.html", styles, {
+						cpath: ($scope.domData.selectType ? $scope.domData.selectType.CPath : '')
+					});
+					plus.webview.currentWebview().append(win);
+				};
+			}]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

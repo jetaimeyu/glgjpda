@@ -1,0 +1,442 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/common.css">
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<style>
+			.md-equ-approve-info .margin-left-15 {
+				margin-left: 15px!important;
+			}
+			
+			.md-equ-approve-info .infos {
+				padding-left: 105px;
+			}
+			
+			.md-equ-approve-info .imgslist {
+				float: left;
+				width: 40px;
+				height: 40px;
+				background-size: cover!important;
+			}
+			
+			.md-equ-approve-info .btn-bottom {
+				background: transparent;
+			}
+			
+			.md-equ-approve-info .data-group .equ-tip {
+				margin-bottom: -8px;
+			}
+			
+			.md-equ-approve-info .approve-btn-box {
+				display: flex!important;
+				z-index: 1000;
+			}
+			
+			.md-equ-approve-info .approve-btn-box .mui-btn {
+				flex: 1;
+				line-height: 28px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="equApproveInfoController" class="md-equ-approve-info">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left" ng-bind="curTitle"></a>
+		</header>
+		<div class="mui-scroll-wrapper" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<ul class="data-group">
+				<p class="data-group-tip">申请信息</p>
+				<li class=" data-row">
+					<label>申请人</label>
+					<div class="body">
+						<span ng-bind="data.equApproveInfo.applyPerson"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>申请时间</label>
+					<div class="body">
+						<span ng-bind="data.equApproveInfo.applyTime"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>审核人</label>
+					<div class="body">
+						<span ng-bind="data.equApproveInfo.approvePerson"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label ng-bind="applyType==1?'申请原因':'报废原因'"></label>
+					<div class="body">
+						<span ng-bind="data.equApproveInfo.applyReason"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="applyType==1">
+					<label>申请到货时间</label>
+					<div class="body">
+						<span ng-bind="data.equApproveInfo.applyArrivalTime"></span>
+					</div>
+				</li>
+				<li class=" data-row" ng-if="applyType==1">
+					<label>备注</label>
+					<div class="body">
+						<span ng-bind="data.equApproveInfo.applyRemark"></span>
+					</div>
+				</li>
+				<li class=" data-row" ng-if="applyType==2">
+					<label>设备说明</label>
+					<div class="body">
+						<span ng-bind="data.equApproveInfo.Remarks"></span>
+					</div>
+				</li>
+				<li class=" data-row" ng-if="applyType==2">
+					<label>出售价格</label>
+					<div class="body">
+						<span ng-bind="data.equApproveInfo.SellingPrice"></span>
+					</div>
+				</li>
+				<li class=" data-row" ng-if="applyType==2">
+					<label>联系人</label>
+					<div class="body">
+						<span ng-bind="data.equApproveInfo.LinkMan"></span>
+					</div>
+				</li>
+				<li class=" data-row" ng-if="applyType==2">
+					<label>联系电话</label>
+					<div class="body">
+						<span ng-bind="data.equApproveInfo.LinkPhone"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group" ng-if="data.equInfo.length>0">
+				<p class="data-group-tip equ-tip">设备信息</p>
+			</ul>
+			<ul class="data-group equ-list" ng-repeat=" equ in data.equInfo">
+				<li class=" data-row">
+					<div class="body">
+						<div class="margin-left-15">
+							<img src="../../images/productlibrary.png" class="imgslist" ng-if="applyType==1" />
+							<img src="../../images/imgPre.png" ng-style="{'background-image':'url('+ (equ.AttachFilePath| getEquLogo:40) +')'}" class="imgslist" ng-if="applyType==2" />
+							<div class="infos">
+								<div class="mui-ellipsis" ng-bind="equ.EqName"></div>
+								<div ng-bind="equ.SkuName"></div>
+								<div ng-bind="equ.EqIdentifier" ng-if="applyType==2"></div>
+							</div>
+						</div>
+					</div>
+				</li>
+				<li class=" data-row" ng-if="applyType==1">
+					<label>设备归类</label>
+					<div class="body">
+						<span ng-bind="equ.CName"></span>
+					</div>
+				</li>
+				<li class=" data-row" ng-if="applyType==2">
+					<label>设备归类</label>
+					<div class="body">
+						<span ng-bind="equ.CatalogName"></span>
+					</div>
+				</li>
+				<li class=" data-row" ng-if="applyType==2">
+					<label>设备负责人</label>
+					<div class="body">
+						<span ng-bind="equ.PersonLiableName"></span>
+					</div>
+				</li>
+				<li class=" data-row" ng-if="applyType==2">
+					<label>投产地</label>
+					<div class="body">
+						<!--<span ng-bind="equ.ProcPosName"></span>-->
+						<span ng-bind="equ.ProcPosInfo.Province | locationfilter:equ.ProcPosInfo.City:equ.ProcPosInfo.District:equ.ProcPosInfo.Address:equ.ProcPosInfo.Street"></span>
+					</div>
+				</li>
+				<li class=" data-row" ng-if="applyType==2">
+					<label>投产工位</label>
+					<div class="body">
+						<span ng-bind="equ.Station"></span>
+					</div>
+				</li>
+				<li class=" data-row" ng-if="applyType==2">
+					<label>投产日期</label>
+					<div class="body">
+						<span ng-bind="equ.BeginProduceDate"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="applyType==1">
+					<label>供应商</label>
+					<div class="body">
+						<span ng-bind="equ.SupplierName"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="applyType==1">
+					<label>购买数量</label>
+					<div class="body">
+						<span ng-bind="equ.BuyNums"></span>
+					</div>
+				</li>
+				<li class=" data-row" ng-if="applyType==1">
+					<label>单价</label>
+					<div class="body">
+						<span ng-bind="(equ.UnitPrice==='')?equ.UnitPrice:(equ.UnitPrice+'元')"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="applyType==1">
+					<label>预计总费用</label>
+					<div class="body">
+						<span ng-bind="equ.TotalPrice===''?equ.TotalPrice:(equ.TotalPrice+'元')"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group" ng-if="data.approveRecord.length>0&&(hasAuth||data.applyState>2)">
+				<p class="data-group-tip equ-tip">审核信息</p>
+			</ul>
+			<ul class="data-group" ng-if="data.approveRecord.length>0&&(hasAuth||data.applyState>2)" ng-repeat="record in data.approveRecord">
+				<li class=" data-row">
+					<label>审核人</label>
+					<div class="body">
+						<span ng-bind="record.UserName"></span>
+					</div>
+				</li>
+				<li class=" data-row">
+					<label>审核时间</label>
+					<div class="body">
+						<span ng-bind="record.CreateDate"></span>
+					</div>
+				</li>
+				<li class=" data-row">
+					<label>审核结果</label>
+					<div class="body">
+						<span ng-bind="record.Oper=='1'?'已同意':'已驳回'"></span>
+					</div>
+				</li>
+				<li class=" data-row">
+					<label>审核意见</label>
+					<div class="body">
+						<span ng-bind="record.Remarks"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group" style="margin-bottom: 60px;" ng-if="data.applyState==2&&hasAuth">
+				<p class="data-group-tip">审核</p>
+				<li class=" data-row">
+					<label>审核意见</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="data.approveSuggest" class="needsclick " placeholder="请输入审核意见" lenlimit="300"></div>
+						</div>
+					</div>
+
+				</li>
+			</ul>
+		</div>
+		<footer class="btn-bottom" style="display: none;" ng-class="{'approve-btn-box':data.applyState==2&&isLoad&&hasAuth}">
+			<span class="mui-btn mui-btn-grey" ng-click="saveApplyData('2')">驳回</span>
+			<span class="mui-btn  mui-btn-danger" ng-click="saveApplyData('1')">通过</span>
+		</footer>
+		<!--无网络或请求失败重试-->
+		<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+		<script type="text/javascript" src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../message/transMessage.js"></script>
+		<script>
+			app.controller("equApproveInfoController", ["$scope", "ChatUserService", "ApiService", "RPCObserver", "Loading", "DataService", "CacheService", "$filter", function($scope, ChatUserService, ApiService, RPCObserver, Loading, DataService, CacheService, $filter) {
+				var applyId = query("applyId");
+				$scope.applyType = query("applyType"); //1采购2报废
+				var curUser = CacheService.get('user');
+				$scope.userId = curUser.UserID;
+				$scope.hasAuth = false;
+				$scope.state = query("applyState"); //1新建、2待审核、3已驳回、4已同意
+				//				if($scope.state==2&&($scope.userId==$scope.data.equApproveInfo.approveId)){
+				//					$scope.curTitle="审核"
+				//				}else{
+				//					$scope.curTitle="申请单详情"
+				//				}
+				$scope.isLoad = false;
+				$scope.data = {
+					"applyState": $scope.state,
+					"equApproveInfo": {
+						"applyId": "",
+						"approveId": "",
+						"applyPerson": "",
+						"applyTime": "",
+						"approvePerson": "",
+						"applyReason": "",
+						"applyArrivalTime": "",
+						"applyRemark": "",
+						"LinkMan": "",
+						"LinkPhone": "",
+						"Remarks": "", //设备说明
+						"SellingPrice": "" //出售价格
+					},
+					"equInfo": [],
+					"approveRecord": [],
+					"approveSuggest": ""
+				}
+				//状态转换
+				//				$scope.changeState=function(key){
+				//					if(key=='2'){
+				//						return "待审核"
+				//					}else if(key=='3'){
+				//						return "已驳回"
+				//					}else if(key=='1'){
+				//						return "已同意"
+				//					}
+				//				}
+				//无网络或请求失败重试
+				$scope.retryModal = {
+					msg: "设备详情",
+					retry: getEqApproveInfo,
+					state: ''
+				}
+				//获取设备信息
+				getEqApproveInfo();
+
+				function getEqApproveInfo() {
+					Loading.show();
+					var url = ApiService.Api52 + "/api/v1/EqApply/GetApplyInfoFlowByAId?aId=" + applyId;
+					DataService.get(url).then(function(res) {
+						$scope.retryModal.state = '';
+						Loading.hide();
+						$scope.isLoad = true;
+						if(res) {
+							$scope.Applicant = {
+								FID: res.CompID,
+								ID: res.Applicant,
+								Name: res.ApplicantName
+							};
+							$scope.data.equApproveInfo.applyId = res.ID;
+							$scope.data.equApproveInfo.applyPerson = res.ApplicantName;
+							$scope.data.equApproveInfo.applyTime = res.ApplicationDate;
+							$scope.data.equApproveInfo.approvePerson = res.AuditorName;
+							$scope.data.equApproveInfo.applyReason = res.Reason;
+							$scope.data.equApproveInfo.applyArrivalTime = res.ArrivalDate;
+							$scope.data.equApproveInfo.applyRemark = res.Remarks;
+							$scope.data.applyState = res.State;
+							$scope.data.equApproveInfo.approveId = res.Auditor;
+							$scope.data.equApproveInfo.LinkMan = res.LinkMan || "";
+							$scope.data.equApproveInfo.LinkPhone = res.LinkPhone || "";
+							$scope.data.equApproveInfo.Remarks = res.Remarks || "";
+							$scope.data.equApproveInfo.SellingPrice = res.SellingPrice || "";
+							if($scope.applyType == 1) {
+								$scope.data.equInfo = res.ApplyInfoList;
+							} else {
+								$scope.data.equInfo.push(res.EqInfo);
+							}
+
+							var userUrl = ApiService.Api50 + "/api/v1/Common/MdtGetIsAdmin/" + curUser.UserID;
+							DataService.get(userUrl).then(function(res) {
+								if(res) {
+									if(res.IsAdmin || res.IsCreater || $scope.data.equApproveInfo.approveId == curUser.UserID) {
+										$scope.hasAuth = true;
+									}
+								};
+							})
+
+							//						$scope.data.equInfo=res.ApplyInfoList.map(function(item){
+							//							return {
+							//								ProdID: item.EPID,
+							//								EqName: item.EqName,
+							//								SupplierName: item.SupplierName,
+							//								TotalPrice: item.TotalPrice,
+							//								UnitPrice: item.UnitPrice,
+							//								CName: item.CName,
+							//								SkuName: item.SkuName,
+							//								BuyNums: item.BuyNums,
+							//								LogoIsExist:false
+							//							}
+							//						})
+							if(res.FlowRecordList) {
+								$scope.data.approveRecord = res.FlowRecordList;
+							}
+							if($scope.data.applyState == 2) {
+								$scope.curTitle = "审核"
+							} else {
+								$scope.curTitle = "申请单详情"
+							}
+						}
+
+					}, function(error) {
+						$scope.isLoad = false;
+						$scope.retryModal.state = error.State;
+					})
+				};
+				//审核
+				var isSave = false;
+				$scope.saveApplyData = function(oper) {
+					if($scope.data.approveSuggest == "" && oper == '2') {
+						mui.toast("请输入审核意见")
+						return false;
+					}
+					if($scope.data.approveSuggest.length > 300) {
+						mui.toast("审核意见最长300字")
+						return false;
+					}
+					isSave = true;
+					Loading.show();
+					var url = ApiService.Api52 + "/api/v1/EqApply/SaveEqFlowRecord";
+					var saveData = {
+						"ID": 0,
+						//					  "FID": 0,
+						"EQID": 0, //购置0 报废传设备id
+						"AID": $scope.data.equApproveInfo.applyId,
+						"Type": $scope.applyType,
+						"Oper": oper, //1同意2驳回
+						"UserID": $scope.userId,
+						"UserName": curUser.UserName,
+						"Operation": "",
+						"Remarks": $scope.data.approveSuggest
+					}
+					if($scope.applyType == '2') {
+						saveData.EQID = $scope.data.equInfo[0].ID;
+					}
+					//console.log(JSON.stringify(saveData))
+					DataService.post(url, saveData).then(function(res) {
+						if(res) {
+							//刷新审核列表
+							RPCObserver.broadcast('refresh_equ_approve_list');
+							isSave = false;
+							Loading.hide();
+							//发消息给申请人
+							sendMsg(oper);
+							mui.back()
+						}
+					}, function(res) {
+						isSave = false;
+						Loading.hide();
+					});
+				}
+				//给审核人发送消息
+				function sendMsg(oper) {
+					ChatUserService.send({
+						chatId: $scope.Applicant.ID,
+						chatName: $scope.Applicant.Name,
+						chatCompId: $scope.Applicant.FID,
+						hasLogo: curUser.ULogoIsExist,
+						chatLogo: false,
+						type: 7,
+						content: {
+							eventName: $scope.applyType == 1 ? "equ-apply" : "equ-scraping",
+							logo: ApiService.Down + "/chat/equ-audit-results.png",
+							title: $scope.applyType == 1 ? "设备购置审核结果" : "设备报废审核结果",
+							desc: "审核意见：" + $scope.data.approveSuggest,
+							params: [$scope.data.equApproveInfo.applyId, 1, $scope.data.equApproveInfo.approveId, oper]
+						}
+					});
+				}
+
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

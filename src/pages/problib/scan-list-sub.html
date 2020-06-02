@@ -1,0 +1,246 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/mui.picker.min.css" />
+	</head>
+	<style type="text/css">
+		.icon {
+			width: 16px;
+		}
+		
+		.date-picker {
+			/*position: fixed;
+           top:45px;
+            width: 100%;
+            z-index: 1;*/
+			text-align: center;
+			line-height: 44px;
+			background-color: #fff;
+		}
+		
+		.date-picker .mui-icon {
+			padding: 0 10px;
+		}
+		
+		.scan-body {
+			height: 120px;
+			text-align: center;
+			line-height: 54px;
+			background-color: #fff;
+			margin-top: 2px;
+		}
+		
+		.scan-body .num-body {
+			width: 50vw;
+			display: table-cell;
+		}
+		
+		.scan-body .scan-title-count {
+			font-size: 40px;
+			font-weight: bold;
+			color: #00A3E9;
+			text-align: center;
+		}
+		
+		.scan-body .line {
+			height: 80px;
+			width: 1px;
+			background: #ccc;
+			float: left;
+			margin-top: 20px;
+		}
+		
+		.scanList .mui-control-content {
+			background-color: #F1F1F1;
+		}
+		
+		.scanList #pullrefresh {
+			margin-top: 10px;
+		}
+	</style>
+
+	<body ng-controller="scanListSubController">
+		<div class="mui-content scanList" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<div class="date-picker">
+				<span class="mui-icon mui-icon-left-nav font-18" ng-click="dateChange('sub')"></span>
+				<span ng-bind="searchDate" ng-click="chooseDate()"></span>
+				<span class="mui-icon icon-right font-14" ng-click="dateChange('add')"></span>
+			</div>
+			<div class="scan-body">
+				<div class="num-body" ng-style="{'width':showMyData?'50vw':'100vw'}">
+					<span>总数(盘数)</span>
+					<p class="scan-title-count" ng-bind="TotalCount"></p>
+				</div>
+				<div class="num-body type-count" ng-if="showMyData">
+					<span class="line"></span>
+					<span>线盘种类</span>
+					<p class="scan-title-count" ng-bind="TypeCount"></p>
+				</div>
+			</div>
+			<div class="content mt10">
+				<md-scan-list ng-model="data" type="showMyData"></md-scan-list>
+				<md-no-data ng-show="data.length==0">暂无数据</md-no-data>
+			</div>
+		</div>
+
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/jquery.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/mui.picker.min.js"></script>
+		<script>
+			app.controller("scanListSubController", ["$scope", "ApiService", "UtilsService", "DataService", "$filter", "Loading", "DatePickerService", "RPCObserver", "CacheService",
+				function($scope, ApiService, UtilsService, DataService, $filter, Loading, DatePickerService, RPCObserver, CacheService) {
+					$scope.pageIndex = 0;
+					$scope.pageSize = 10;
+					$scope.data = [];
+					var curDate = new Date();
+					var UserID = CacheService.get("user").UserID;
+					$scope.searchDate = $filter("date")(curDate, "yyyy-MM");
+					var type = query("type");
+					//获取admin或者管理员权限
+					$scope.showMyData = true;
+					query("auth") == 'true' && ($scope.showMyData = false);
+					type == 'day' && ($scope.searchDate = $filter("date")(curDate, "yyyy-MM-dd"));
+
+					$scope.dateChange = function(changeType) {
+						var filterName;
+						var format = type == 'month' ? 'yyyy-MM' : 'yyyy-MM-dd';
+						if(changeType == 'add') {
+							filterName = type == 'month' ? 'dateAddMonths' : 'dateAddDays';
+							var resuleDate = $filter(filterName)($scope.searchDate, 1, format);
+							if(new Date(resuleDate.replace(/\-/g, "\/")) > new Date()) {
+								mui.toast("查询时间不能大于当前时间");
+								return;
+							} else {
+								$scope.searchDate = resuleDate;
+							}
+						} else {
+							filterName = type == 'month' ? 'dateSubMonths' : 'dateSubDays';
+							var resuleDate = $filter(filterName)($scope.searchDate, 1, format);
+							if(new Date("resuleDate".replace(/\-/g, "\/")) < "1970-01-01".replace(/\-/g, "\/")) {
+								mui.toast("查询时间不能再往前了");
+								return;
+							} else {
+								$scope.searchDate = resuleDate;
+							}
+						}
+						loadData();
+					}
+
+					//日期选择
+					$scope.chooseDate = function() {
+						if(type == "month") return;
+						DatePickerService.pickDate({
+							selected: $scope.searchDate,
+						}).then(function(res) {
+							$scope.searchDate = res;
+							loadData();
+						});
+					}
+
+					//数据加载
+					function loadData() {
+						var start, end;
+						if(type == "month") {
+							var month, year;
+							if(mui.os.android) {
+								month = new Date($scope.searchDate.replace(/\-/g, "\/")).getMonth() + 1;
+								year = new Date($scope.searchDate.replace(/\-/g, "\/")).getFullYear();
+							} else {
+								month = new Date($scope.searchDate).getMonth() + 1;
+								year = new Date($scope.searchDate).getFullYear();
+							}
+							var date = $filter("getCustomDate")(year, "", month);
+							start = date.start;
+							end = date.end;
+						} else {
+							start = $scope.searchDate + " 00:00:00";
+							end = $scope.searchDate + " 23:59:59";
+						}
+						var rootUrl = $scope.showMyData ? "/api/v2/Special/GetStatisProdPrintList" : "/api/v2/Special/GetStatisUserPrintList";
+						var url = ApiService.Api45 + rootUrl + "?type=" + (type == "month" ? 2 : 1) + "&startDate=" + start + "&endDate=" + end;
+						if($filter("hasMenuAuth")("syyy", "fwcx")) {
+							if(!$filter("hasMenuAuth")("syyy", "fwcx", "sjcx", "dmtj")) {
+								url += ("&userId=" + UserID);
+							}
+						} else {
+							url += ("&userId=" + UserID);
+						}
+						DataService.get(url).then(function(res) {
+							Loading.hide();
+							$scope.isLoad = true;
+							$scope.TotalCount = res.TotalCount;
+							$scope.data = res.List;
+							$scope.showMyData && ($scope.TypeCount = res.TypeCount);
+							$scope.isLoad = true;
+						})
+					};
+
+					function newDate(strdate) {
+						var arr = strdate.split(/[- : \/]/);
+						date = new Date(arr[0], arr[1] - 1, arr[2], arr[3], arr[4], arr[5]);
+						return date;
+					}
+
+					Loading.show();
+					loadData();
+
+					RPCObserver.on("rpc_dataTypeChange", "dataTypeChange");
+					window.dataTypeChange = function() {
+						$scope.showMyData = !$scope.showMyData;
+						loadData();
+					}
+
+				}
+			]);
+			app.filter("dateSubMonths", ["$filter", function($filter) {
+				return function(date, months, format) {
+					if(!date) {
+						return "";
+					}
+					date = $filter("dateFormat")(date, "yyyy/MM/dd HH:mm:ss");
+					if(!date)
+						return "";
+					var _date = new Date(date);
+					if(isNaN(_date.getMonth()))
+						return "";
+					if(months) {
+						_date = _date.setMonth(_date.getMonth() - months);
+					}
+					return format ? $filter("dateFormat")(_date, format) : new Date(_date);
+				};
+			}]);
+
+			app.filter("dateSubDays", ["$filter", function($filter) {
+				return function(date, days, format) {
+					if(!date) {
+						return "";
+					}
+					date = $filter("dateFormat")(date, "yyyy/MM/dd HH:mm:ss");
+					if(!date)
+						return "";
+					var _date = new Date(date);
+					if(isNaN(_date.getDate()))
+						return "";
+					if(days)
+						_date = _date.setDate(_date.getDate() - days);
+					return $filter("dateFormat")(_date, format)
+				};
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

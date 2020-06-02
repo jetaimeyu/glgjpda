@@ -1,0 +1,786 @@
+<!--设备故障维护 scz-->
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title>工作日志详情</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+	<link href="../../css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	<style type="text/css">
+		.data-group:first-child {
+			margin-top: 0;
+		}
+
+		.self-style {
+			margin-top: 0;
+		}
+
+		.self-style .question-con {
+			width: 100%;
+			overflow: hidden;
+			color: #323232;
+			line-height: 21px;
+			font-size: 1.4rem;
+			word-break: break-all;
+		}
+
+		.self-style .question-con img {
+			width: auto !important;
+			height: auto !important;
+		}
+
+		.self-style .question {
+			width: 100%;
+			display: flex;
+			box-sizing: border-box;
+			padding: 16px;
+			padding-bottom: 10px;
+			padding-top: 10px;
+			padding-right: 0;
+		}
+
+		.self-style .user-right {
+			margin-left: 15px;
+			width: 80%;
+			overflow: hidden;
+		}
+
+		.self-style .time {
+			margin-right: 25px;
+		}
+
+		.self-style .time-row {
+			color: #999;
+			font-size: 1.2rem;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
+
+		.self-style .anwser {
+			display: inline-block;
+			min-width: 50px;
+			background: #ECECEC;
+			border-radius: 14px;
+			text-align: center;
+			color: #3296FA;
+			height: 25px;
+			font-size: 1.2rem;
+			line-height: 25px;
+		}
+
+		.self-style .username {
+			color: #999999;
+			font-size: 1.4rem;
+			width: 100%;
+		}
+
+		.self-style .goodp {
+			color: #3296FA;
+			font-size: 1.4rem;
+			margin-right: 32px;
+		}
+
+		.self-style .lowp {
+			color: #FA8232;
+		}
+
+		.self-style .user-right-row1 {
+			width: 100%;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		.self-style .user-right-row2 {
+			width: 100%;
+		}
+
+		.eval-title {
+			margin-left: 15px;
+			padding: 10px;
+			padding-left: 0px;
+		}
+
+		.tptal {
+			padding: 8px 16px;
+			font-size: 1.4rem;
+			color: #323232;
+			padding-bottom: 0;
+		}
+
+		.tptal i {
+			font-size: 1.4rem;
+			margin-right: 7px;
+		}
+
+		.tptal li {
+			min-height: 20px !important;
+			line-height: 20px;
+		}
+
+		.tptal .icon-right {
+			line-height: 2.1;
+			color: #555555;
+			margin-left: 6px;
+		}
+
+		.all-tips {
+			width: 100%;
+			text-align: center;
+			margin-top: 10px;
+		}
+
+		.data-group .worktype-btn {
+			padding-top: 8px;
+			width: 75vw;
+			margin-left: 0;
+		}
+
+		footer.work-info {
+			width: 100%;
+			position: fixed;
+			height: 44px;
+			line-height: 44px;
+			color: #fff;
+			z-index: 9;
+			bottom: 0;
+			background: #fff;
+			padding: 5px 0px 5px 0px;
+			border-top: 1px solid #ccc;
+		}
+
+		footer.work-info span.inp {
+			font-size: 1.4rem;
+			margin: 0 16px;
+			height: 32px;
+			display: block;
+			background: #e9e9e9;
+			border-radius: 35px;
+			padding-left: 38px;
+			line-height: 32px;
+			color: #323232;
+		}
+
+		footer.work-info .icon-pen {
+			position: absolute;
+			font-size: 1.4rem;
+			left: 34px;
+			top: -2px;
+			color: #000;
+		}
+
+		.nopadding {
+			padding-bottom: 0 !important;
+		}
+
+		.data-group .worktype-btn span {
+			margin-right: 4px;
+			display: inline-block;
+			border: 1px solid #3296FA;
+			margin-bottom: 5px;
+			padding: 0 5px;
+			/* height: 24px; */
+			/* line-height: 21px; */
+			display: flex;
+			width: 30%;
+			align-items: center;
+			justify-content: center;
+			font-size: 1.2rem;
+			float: left;
+		}
+
+		.data-group .showborder:after {
+			height: 0;
+		}
+
+		.data-group .margin {
+			margin-left: 120px;
+		}
+
+		.data-group .selfop:after {
+			position: absolute;
+			top: 10%;
+			height: 80%;
+			left: 0;
+			content: '';
+			background-color: #EAEAEA;
+			width: 1px;
+			-webkit-transform: scaleY(0.5);
+			transform: scaleY(0.5);
+		}
+	</style>
+</head>
+
+<body ng-controller="EvalInfoController">
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left">工作日志详情</a>
+		<a class="menu-more icon-more right-menu-icon-detail" href="#popover" id="openPopover" ng-if="('Q43' | hasAuth:WorkInfo.CreateUserID:WorkInfo.CompID)"
+		 style="display: none;" ng-class="{'mui-block':isLoad}"></a>
+		<i class="mui-pull-right menu-more-share icon-share" ng-click="goWorkShare()" style="display: none;" ng-class="{'mui-block':isLoad}"></i>
+	</header>
+	<div class="mui-scroll-wrapper md-info-page" ng-class="{'mui-block':isLoad,'nopadding':CurUserID==CreateUserID}" style="display: none; padding-bottom: 45px;">
+		<ul class="data-group">
+			<li class="data-row" ng-if="WorkContent" ng-class="{'showborder':OptionList.length>0}">
+				<label>工作内容</label>
+				<div class="body">
+					<span ng-bind-html="transContent(WorkContent)"></span>
+				</div>
+			</li>
+			<li class="data-row worktype-row" ng-if="OptionList.length>0">
+				<label ng-if="!WorkContent">工作内容</label>
+				<div class="button worktype-btn" ng-class="{'margin':!showmargin}">
+					<span ng-repeat="type in OptionList" ng-bind="worktype[type.LogOption]" ng-click="TypeInfo(type)"></span>
+				</div>
+			</li>
+			<li class="data-row" ng-if="LogTypeName!=''">
+				<label>分类</label>
+				<div class="body">
+					<span ng-bind="LogTypeName"></span>
+				</div>
+			</li>
+			<li class="data-row" ng-if="audio.FileSize">
+				<label>语音描述</label>
+				<div class="body">
+					<md-audio audio="audio" readonly="true"></md-audio>
+				</div>
+			</li>
+			<li class="data-row" ng-if="imageList.length!=0||videoList.length!=0">
+				<div class="body attach" style="padding-left: 16px;">
+					<md-image ng-if="imageList.length!=0" images="imageList" readonly="true"></md-image>
+					<md-video ng-if="videoList.length!=0" videos="videoList" readonly="true"></md-video>
+				</div>
+			</li>
+		</ul>
+		<ul class="data-group">
+			<li class="data-row">
+				<label>工作时间</label>
+				<div class="body">
+					<span ng-bind="WorkDate"></span>
+				</div>
+			</li>
+			<li class="data-row">
+				<label>工作地点</label>
+				<div class="body">
+					<span ng-bind="province | locationfilter:city:district:address:street"></span>
+				</div>
+			</li>
+			<li class="data-row">
+				<label>记录人</label>
+				<p class="opt md-icon" ng-if="WorkInfo.CreateUserID!=CurUserID" ng-click="sendMsg(WorkInfo.CreateUserID, WorkInfo.CreateUserName, WorkInfo.ULogoIsExist, WorkInfo.CompID)">
+					<span class="icon-chat-single font-15 color-blue"></span>
+				</p>
+				<div class="body">
+					<span ng-bind="WorkInfo.CreateUserName"></span>
+				</div>
+			</li>
+		</ul>
+
+		<ul style="display:none;" class="data-group" ng-class="{'mui-block':customerName.length>0||linkName.length>0||linkPhone.length>0||LinkEmail.length>0}">
+			<p class="data-group-tip">相关客户</p>
+			<li class="data-row mui-table-view-cell" ng-if="customerName">
+				<label>客户</label>
+				<p class="opt md-icon font-15" ng-click="selectCustomerInfo(customerId)">
+					<span class="icon-right"></span>
+				</p>
+				<div class="body" ng-click="selectCustomerInfo(customerId)">
+					<span ng-bind="customerName"></span>
+				</div>
+			</li>
+			<li class="data-row" ng-if="linkName">
+				<label>联系人</label>
+				<div class="body">
+					<span ng-bind="linkName"></span>
+				</div>
+			</li>
+			<li class="data-row" ng-if="linkPhone">
+				<label>联系电话</label>
+				<i class="opt md-icon icon-tel" style="color: #3296FA;" ng-click="call()"></i>
+				<div class="body">
+					<span ng-bind="linkPhone"></span>
+				</div>
+			</li>
+			<li class="data-row">
+				<label>客户邮箱号</label>
+				<i class="opt md-icon" style="color: #3296FA;"></i>
+				<div class="body">
+					<span ng-bind="LinkEmail"></span>
+				</div>
+			</li>
+
+		</ul>
+
+		<ul class="data-group">
+			<li class="data-row" ng-if="users.length>0">
+				<label>已抄送给</label>
+				<div class="body">
+					<md-chat-user-list ng-model="users"></md-chat-user-list>
+				</div>
+			</li>
+		</ul>
+		<ul class="tptal data-group" ng-if="evallist.length>0">
+			<li class="data-row">
+				<i class="icon-answer"></i>
+				<span ng-bind="evallist.length +'个评论'"></span>
+				<!-- <span class="icon-right"></span> -->
+			</li>
+		</ul>
+		<ul class="data-group self-style">
+			<li class="data-row" ng-repeat="item in evallist">
+				<div class="question">
+					<div class="userLogo" ng-click="openInfo(item.UserID)">
+						<md-user-logo ng-model="item.avatar" data-width="49" data-height="49"></md-user-logo>
+					</div>
+
+					<div class="user-right">
+						<div class="user-right-row1" ng-click="openInfo(item.UserID)">
+							<div ng-bind="item.Name" class="username"></div>
+						</div>
+
+						<div class="question-con">
+							<span ng-bind="item.Content"></span>
+						</div>
+						<div class="time-row">
+							<span>
+								<span class="time" ng-bind="item.CreateDate|formatAgo:item.CreateDate"></span>
+							</span>
+							<!--<sapn class="anwser">回复</sapn>-->
+						</div>
+					</div>
+				</div>
+			</li>
+		</ul>
+		<p class="text-center all-tips" ng-if="evallist.length>0">已加载全部数据</p>
+	</div>
+	<footer class="work-info" style="display: none;" ng-class="{'mui-block':isLoad&&block}" ng-if="CurUserID!==CreateUserID">
+		<span ng-click="evaluate()" class="inp">评论...</span>
+		<i class="icon-pen"></i>
+	</footer>
+
+	</div>
+	<!--无网络或请求失败重试-->
+	<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+	<div id="popover" class="mui-popover menuDivModel">
+		<ul class="mui-table-view">
+			<li class="mui-table-view-cell" ng-click="openTrip()" id="btn-trip" style="display:none;">
+				<a class="mui-icon icon-location">
+					<font>行程</font>
+				</a>
+			</li>
+			<li class="mui-table-view-cell" ng-click="tap('edit')">
+				<a class="mui-icon icon-edit">
+					<font>修改</font>
+				</a>
+			</li>
+			<li class="mui-table-view-cell">
+				<a class="mui-icon icon-dustbin" ng-click="del()">
+					<font>删除</font>
+				</a>
+			</li>
+		</ul>
+	</div>
+	<script type="text/javascript" src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/rpc.js"></script>
+	<script type="text/javascript" src="../message/transMessage.js"></script>
+	<script type="text/javascript">
+		app.controller("EvalInfoController", ["$scope", "$sce","AuthService", "ApiService", "DataService", "UtilsService",
+			"ChatUserService", "Loading", "RPCObserver", "$filter", "ShareLogService", "CacheService",
+			function ($scope,$sce, AuthService, ApiService, DataService, UtilsService, ChatUserService, Loading, RPCObserver,
+				$filter, ShareLogService, CacheService) {
+				$scope.WorkContent = ""; //工作内容
+				$scope.WorkDate = ""; //工作时间
+				$scope.address = ""; //详细地址
+				$scope.province = ""; //省
+				$scope.city = ""; //市
+				$scope.district = ""; //区
+				$scope.street = ""; //街道
+				$scope.users = ""; //抄送人员信息
+				$scope.WorkInfo = ""; //工作日志
+				$scope.audio = {}; // 音频
+				$scope.imageList = []; //图片
+				$scope.videoList = []; //视频
+				$scope.LogTypeName = "";
+				$scope.customerId = "";
+				$scope.linkName = "";
+				$scope.linkPhone = "";
+				$scope.LinkEmail = "";
+				$scope.customerName = "";
+				$scope.CreateUserName = "";
+				$scope.CreateUserID = 0;
+				$scope.CompID = 0;
+				$scope.ULogoIsExist = false;
+				$scope.block = true;
+				$scope.CreateUser = {};
+				$scope.OptionList = [];
+				$scope.worklogOptionList = [];
+				$scope.transContent = function(content) {
+					return $sce.trustAsHtml(content);
+				};
+				//无网络或请求失败重试,或已删除
+				$scope.retryModal = {
+					msg: "工作日志",
+					retry: GetEqOverhaulInfoById,
+					state: ''
+				}
+				$scope.worktype = {
+					1: '故障维修',
+					2: '安装调试',
+					3: '联系跟进'
+				}
+				var curUser = CacheService.get("user");
+				$scope.CurUserID = curUser.UserID;
+				var logid = query("logid") || 0;
+
+				$scope.openTrip = function () {
+					UtilsService.openWindow({
+						id: "template.html?key=tripMap",
+						url: "../map/template.html?key=tripMap&userId=" + $scope.CreateUserID
+					});
+				};
+
+				
+
+				//跳转
+				$scope.tap = function (key) {
+					mui('#popover').popover('hide');
+					var url = {
+						edit: 'work-edit.html?id=' + query("id"),
+					};
+					UtilsService.openWindow({
+						needLogin: true,
+						id: url[key].substring(url[key].lastIndexOf('/') + 1, url[key].indexOf('?')),
+						url: url[key]
+					});
+				};
+				$scope.openInfo = function (id) {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: "personal-info.html",
+						url: "../contact/personal-info.html?userid=" + id
+					});
+				};
+				//跳转客户详情
+				$scope.selectCustomerInfo = function (id) {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'customer-info.html',
+						url: '../customer/customer-info.html?customerid=' + id
+					});
+				};
+				//发消息
+				$scope.sendMsg = function (userid, userName, hasLogo, compId) {
+					ChatUserService.tap({
+						chatId: userid,
+						chatName: userName,
+						hasLogo: hasLogo,
+						chatCompId: compId
+					});
+				}
+				//获取工作日志数据
+				function GetEqOverhaulInfoById() {
+					Loading.show();
+					var url = ApiService.Api50 + "/api/v1/MatWorkOrder/GetMatWorkOrderWorkLogInfoById/" + query("id");
+					logid && (url += '?logid=' + logid);
+					DataService.get(url).then(function (res) {
+						$scope.retryModal.state = '';
+						$scope.isLoad = true;
+						if (res) {
+							$scope.WorkInfo = res;
+							$scope.CreateUserName = res.CreateUserName;
+							$scope.CreateUserID = res.CreateUserID;
+
+							$scope.ULogoIsExist = res.ULogoIsExist;
+							$scope.compid = res.CompID;
+							$scope.WorkContent = res.WorkContent.replace(/\n/g,"<br>");
+							if ($scope.WorkContent == "") {
+								$scope.showmargin = true
+							} else {
+								$scope.showmargin = false
+							}
+							$scope.WorkDate = res.RecordDate;
+							$scope.address = res.Address;
+							$scope.province = res.Province;
+							$scope.city = res.City;
+							$scope.district = res.District;
+							$scope.street = res.Street;
+							$scope.users = res.Users;
+							$scope.IsHasAudio = res.IsHasAudio;
+							$scope.AudioLength = res.AudioLength;
+							$scope.audio = res.ArmAttach; //音频
+							$scope.imageList = res.ImgAttach; //图片
+							$scope.videoList = res.VideoAttach; //视频
+							$scope.LogTypeName = res.LogTypeName;
+							$scope.customerId = res.CustomerID;
+							$scope.customerName = res.CustomerName;
+							$scope.linkName = res.LinkName;
+							$scope.linkPhone = res.LinkPhone;
+							$scope.LinkEmail = res.LinkEmail;
+							$scope.ViewName = res.CreateUserName;
+							$scope.OptionList = []
+							res.worklogOptionList && (res.worklogOptionList.map(function (item) {
+								if (item.Debuginfo != null) {
+									$scope.OptionList.push({
+										LogOption: 2,
+										LogOptionId: item.Debuginfo.ID
+									})
+								}
+								if (item.RecordsInfo != null) {
+
+									$scope.OptionList.push({
+										LogOption: 1,
+										LogOptionId: item.RecordsInfo.ID
+									})
+								}
+								if (item.FollowInfo != null) {
+									$scope.OptionList.push({
+										LogOption: 3,
+										LogOptionId: item.FollowInfo.ID
+									})
+								}
+
+							}));
+
+
+							DataService.get(ApiService.Api50+"/api/v1/Customer/IsViewTrip?userId="+$scope.CreateUserID).then(function(isView){
+								document.querySelector("#btn-trip").style.display=(isView?"block":"none");
+							})
+
+
+							Loading.hide();
+
+							//刷新工作的角标
+							if (logid) {
+								var workView = plus.webview.getWebviewById("work.html");
+								if (workView) {
+									RpcClient.invoke("work.html", "RPC_RefToDoWorkLog", true);
+								} else {
+									RpcClient.invoke("tab.html", "RPC_RefMsgList");
+								}
+							}
+
+							//判断非本公司不能评论
+							AuthService.getAuth().then(function (user) {
+
+								if ($scope.compid != user.CompID) {
+
+									$scope.block = false;
+								}
+							});
+						}
+
+					}, function (error) {
+						$scope.isLoad = false;
+						$scope.retryModal.state = error.State;
+					});
+
+				};
+
+				GetEqOverhaulInfoById();
+				$scope.TypeInfo = function (params) {
+					if (params.LogOption == 1) {
+						UtilsService.openWindow({
+							needLogin: true,
+							id: 'mat-repairView.html',
+							url: 'mat-repairView.html?id=' + params.LogOptionId
+						});
+					} else if (params.LogOption == 2) {
+						UtilsService.openWindow({
+							needLogin: true,
+							id: 'debug-info.html',
+							url: 'debug-info.html?id=' + params.LogOptionId + '&title=安装调试'
+
+						});
+					} else {
+						openWindow("../crm/index.html#/followDetails/" + params.LogOptionId + "?backIndex=1")
+
+					}
+					//						UtilsService.openWindow({
+					//							needLogin: true,
+					//							id: url[params.type].substring(url[params.type].lastIndexOf('/') + 1),
+					//							url: url[params.type]
+					//						});
+				}
+				logid && ShareLogService.add(logid, 8);
+				//删除
+				$scope.del = function () {
+					mui('#popover').popover('hide');
+					mui.confirm("确认删除吗？", function (e) {
+						if (e.index == 0) {
+							var url = ApiService.Api50 + "/api/v1/MatWorkOrder/DeleteMatWorkOrderWorkLogInfoById/" + query("id");
+							DataService.get(url).then(function () {
+								//刷新 工作日志列表
+								RPCObserver.broadcast('refresh_mat_worklog_list');
+								//刷新工作统计页面 
+								RpcClient.invoke("work-stat.html", "RPC_RefreshWorkStatistics");
+								//刷新日志搜索列表
+								RpcClient.invoke("work-search-list.html", "RPC_SearchWorkListRefresh");
+								//刷新客户详情-合计 列表
+								RPCObserver.broadcast("refresh_my_sxun");
+								// 客户信息刷新
+								RpcClient.invoke("customer-info.html", "RPC_BillViewRefresh", "customer");
+								//刷新日志外部搜索列表
+								RPCObserver.broadcast('refresh_mat_work_list');
+								mui('#popover').popover('hide');
+								mui.back();
+							});
+						} else {
+							mui('#popover').popover('hide');
+						}
+					});
+				};
+				RpcServer.expose("RPC_RefreshWorkLog", function () {
+					GetEqOverhaulInfoById();
+				});
+				//刷新关闭popover
+				RPCObserver.on('close_popover', 'close_popover');
+				window.close_popover = function () {
+					mui('#popover').popover('hide');
+				};
+				//详情分享
+				$scope.goWorkShare = function () {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: "contact-select.html",
+						url: "../common/contact-select.html?action=select&must=true&multiselect=true&hideself=true",
+						extras: {
+							selectObj: [],
+							callback: 'shareEqu'
+						}
+					});
+				};
+
+				$scope.doWorkShare = function (sltUsers) {
+					var obj = {
+						id: $scope.WorkInfo.ID,
+						img: ApiService.Down + "/chat/repair-log.png",
+						title: "工作日志",
+						desc: $filter("formatWrokLogInfo")($scope.IsHasAudio, $scope.AudioLength, $scope.WorkContent),
+					}
+					UtilsService.shareMsg(obj, sltUsers).then(function () {
+						var userNames = [];
+						sltUsers.forEach(function (user) {
+
+							userNames.push(user.ViewName);
+
+							ChatUserService.send({
+								chatId: user.UserID,
+								chatName: user.ViewName,
+								chatCompId: user.EquipmentID,
+								hasLogo: curUser.ULogoIsExist,
+								chatLogo: user.ULogoIsExist,
+								type: 7,
+								content: {
+									eventName: "repair-log",
+									logo: ApiService.Down + "/chat/repair-log.png",
+									title: "工作日志",
+									desc: $filter("formatWrokLogInfo")($scope.IsHasAudio, $scope.AudioLength, $scope.WorkContent),
+									params: [$scope.WorkInfo.ID]
+								}
+							});
+						})
+
+						mui.toast("成功分享给：" + userNames.join("，"));
+					});
+				};
+
+				//获取日志评价列表
+				function getmatworkorderworklogevalList() {
+					var url = ApiService.Api50 + "/api/v1/MatWorkOrder/GetMatWorkOrderWorkLogEvalList?workLogId=" + query("id");
+
+					DataService.get(url).then(function (res) {
+						$scope.evallist = res.reverse();
+
+						for (var i = 0; i < res.length; i++) {
+							$scope.item = res[i];
+							$scope.item.avatar = {
+								UserID: $scope.item.UserID,
+								ViewName: $scope.item.Name,
+								ULogoIsExist: $scope.item.ULogoIsExist
+							}
+						}
+
+					})
+				};
+				getmatworkorderworklogevalList();
+				//评价 保存
+				var a = 1;
+				$scope.evaluate = function () {
+					if (a == 1) {
+						a = 0;
+						UtilsService.replyModal(150, "", "请输入评论内容").then(function (res) {
+							var url = ApiService.Api50 + '/api/v1/MatWorkOrder/SaveMatWorkorderWorklogeval';
+							var postData = {
+								"ID": 0,
+								"WorkLogID": query("id"),
+								"EvalContent": res
+							}
+
+							DataService.post(url, postData).then(function (item) {
+								if (item) {
+									mui.toast("评论成功");
+									getmatworkorderworklogevalList();
+									//刷新 工作日志列表
+									plus.webview.getWebviewById("work-comment.html") && RPCObserver.broadcast(
+										'refresh_mat_worklog_comment_list');
+									if (curUser.UserID != $scope.CreateUserID) {
+
+										ChatUserService.send({
+											chatId: $scope.CreateUserID,
+											chatName: $scope.CreateUserName,
+											chatCompId: $scope.compid,
+											hasLogo: curUser.ULogoIsExist,
+											chatLogo: $scope.ULogoIsExist,
+											type: 7,
+											content: {
+												eventName: "log-eval",
+												logo: ApiService.Down + "/chat/repair-log.png",
+												title: "工作日志评论",
+												desc: res.length > 30 ? res.substr(0, 29) + "..." : res,
+												params: [query("id")]
+											}
+										});
+									}
+
+								}
+							}, function (e) {
+								if (e.State == -1) {
+									mui.toast("评论失败，请检查网络连接");
+								} else {
+									mui.toast(e.ErrorMessage);
+								}
+							});
+						});
+						setTimeout(function () {
+							a = 1
+						}, 500);
+					}
+
+				}
+				//拨打电话
+				$scope.call = function () {
+					plus.device.dial($scope.linkPhone, false);
+					return false;
+				}
+			}
+
+		]);
+
+		function shareEqu(sltObjs) {
+			var appElement = document.querySelector('[ng-controller=EvalInfoController]');
+			var $scope = angular.element(appElement).scope();
+			$scope.doWorkShare(angular.copy(sltObjs));
+		}
+
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+		});
+	</script>
+</body>
+
+</html>

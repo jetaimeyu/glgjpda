@@ -1,0 +1,74 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.icon {
+				width: 16px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="inspListController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">list-tab</a>
+			<a class="mui-pull-right menu-add" ng-click="tap('add')">
+				<img class="icon" src="../../images/add.png" />
+			</a>
+			<a class="mui-pull-right menu-search" ng-click="tap('search')">
+				<img class="icon" src="../../images/search.png" />
+			</a>
+		</header>
+		<md-tab ng-model="tabs"></md-tab>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript">
+			app.controller("inspListController", ["$scope", "UtilsService", function($scope, UtilsService) {
+			console.log("11111111111")
+			$scope.tabs = [{
+					url: "list-tab-subpage.html?type=at",
+					id: "subpage1",
+					title: "subpage1",
+					auth:["Q1"]
+				}, {
+					url: "list-tab-subpage.html?type=my",
+					id: "subpage2",
+					title: "subpage2",
+					auth:["Q211"]
+				}, {
+					url: "list-tab-subpage.html?type=all",
+					id: "subpage3",
+					title: "subpage3",
+					auth:["Q411"]
+				}]
+				//新增页面跳转
+				$scope.tap = function(key) {
+					switch(key) {
+						case 'add':
+							alert(key);
+							break;
+						case 'search':
+							alert(key);
+							break;
+						default:
+							break;
+					}
+				};
+			}]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

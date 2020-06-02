@@ -1,0 +1,474 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>巡检计划详情</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.equpatrolInfo .grey-btn {
+				color: #c7c7cc!important;
+			}
+			
+			.equpatrolInfo .body-patrol {
+				width: calc(100%-104px);
+				width: -moz-calc(100% - 104px);
+				width: -webkit-calc(100% - 104px);
+			}
+			
+			.equpatrolInfo .mui-media {
+				display: flex;
+				align-items: center;
+			}
+			
+			.data-group-tip {
+				margin-top: 10px;
+			}
+			
+			.prodLibUl.mui-table-view:after {
+				height: 0px!important;
+			}
+			
+			.prodLibUl .mui-table-view-cell {
+				padding: 8px 16px!important;
+			}
+			
+			.prodLibUl .mui-media-body {
+				position: relative;
+				left: 70px;
+				width: 80%;
+			}
+			
+			.prodLibUl .productName {
+				font-size: 1.5rem;
+				color: #000;
+				margin-top: 2px;
+				margin-bottom: 10px;
+				line-height: initial;
+				max-width: 90%;
+			}
+			
+			.prodLibUl .productType {
+				font-size: 1.2rem;
+				color: #AAA;
+				max-width: 90%;
+			}
+			
+			.prodLibUl .opt {
+				color: #AEAEAE;
+				position: absolute;
+				top: 50%;
+				right: 10px;
+				-webkit-transform: translateY(-50%);
+				transform: translateY(-50%);
+				overflow: hidden;
+				margin: 0px;
+			}
+			
+			.mui-table-view-cell:after {
+				left: 0px;
+			}
+			
+			.photo.file .icon-add {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+			}
+			
+			.photo.file .img-body {
+				position: relative;
+				overflow: hidden;
+				height: 35px;
+				background-color: #eaf6fe;
+			}
+			
+			.photo {
+				width: 35px;
+				height: 35px;
+				margin-right: 5px;
+				/*display: block;
+				float:left;*/
+			}
+			
+			.photo.content-box {
+				width: 120px;
+				text-align: center;
+				line-height: 35px;
+				color: #3296FA;
+			}
+			
+			.photo.content-box .img-body span.content-box-span {
+				width: 100%;
+				position: absolute;
+				top: 50%;
+				left: 0;
+				-webkit-transform: translateY(-50%);
+				transform: translateY(-50%);
+			}
+			
+			.photo.content-box .icon-topright-corner-delete {
+				margin-right: 0;
+				margin-top: -8px;
+				font-size: 2rem;
+			}
+			
+			.photo.file .img {
+				height: 100%;
+				background-size: cover;
+			}
+			
+			.color_red {
+				color: #FF0000;
+			}
+			
+			.color_green {
+				color: #008000;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="equpatrolEditController" class="equpatrolInfo">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">巡检计划详情</a>
+			<a class="menu-more icon-more right-menu-icon-detail" href="#popover" id="openPopover" style="display: none;" ng-class="{'mui-block':source!='list'&&isLoad}"></a>
+		</header>
+		<div class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<p class="data-group-tip">基本信息</p>
+			<ul class="data-group">
+				<li class="data-row">
+					<label>巡检名称</label>
+					<div class="body">
+						<span ng-bind="patrolName"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="source!='list'">
+					<label>设备归类</label>
+					<div class="body">
+						<span ng-repeat="cata in equCatalogDataList" ng-bind="$index==0?cata.DirName:','+cata.DirName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>巡检人</label>
+					<div class="body">
+						<span ng-repeat="user in patrolUserList" ng-if="(userNums==patrolUserList.length)||((userNums<=patrolUserList.length)&&user.State!=9)" ng-bind="user.RealName+((user.RealName+(userNums==patrolUserList.length)||((userNums<=patrolUserList.length)&&user.State!=9))&&$index!=(patrolUserList.length-1)?'，':'')"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>巡检类型</label>
+					<div class="body">
+						<span style="word-break: break-all;" ng-bind="TypeName"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="source!='list'">
+					<label>开始执行时间</label>
+					<div class="body">
+						<span ng-bind="startDate"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="source!='list'">
+					<label>截止时间</label>
+					<div class="body">
+						<span ng-bind="endDate"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="source!='list'">
+					<label>循环周期</label>
+					<div class="body">
+						<span ng-bind="cyclePeriod?cyclePeriod+unitChange[periodUnit]:'-'"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="source!='list'">
+					<label>下次巡检时间</label>
+					<div class="body">
+						<span ng-bind="nextRepairDate || '--'"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="source!='list'">
+					<label>已执行次数</label>
+					<div class="body">
+						<span ng-bind="numbers"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="source=='list'">
+					<label>巡检时间</label>
+					<div class="body">
+						<span ng-bind="RepairDate"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>设备数</label>
+					<div class="body">
+						<span ng-bind="eqCount"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="source!='list'">
+					<label>状态</label>
+					<div class="body">
+						<span ng-bind="overDate?'已结束':stateChange[state]"></span>
+					</div>
+				</li>
+
+			</ul>
+			<p class="data-group-tip" ng-if="equNums>0">
+				设备信息
+			</p>
+			<ul class="data-group prodLibUl" ng-repeat="equ in equInfoList" ng-if="equ.IsDel!=1">
+				<li class="data-row">
+					<label>设备名称</label>
+					<div class="body">
+						<div ng-bind="equ.EqName"></div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>设备型号</label>
+					<div class="body">
+						<div ng-bind="equ.SkuName"></div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>设备编号</label>
+					<div class="body">
+						<div ng-bind="equ.EqIdentifier"></div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>巡检标准</label>
+					<div class="body">
+						<div ng-bind="equ.StdName"></div>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<div id="popover" class="mui-popover menuDivModel">
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell" ng-click="edit()">
+					<a class="mui-icon icon-edit" ng-class="!editAuth?'grey-btn':''">
+						<font>修改</font>
+					</a>
+				</li>
+				<li class="mui-table-view-cell" ng-click="del()">
+					<a class="mui-icon icon-dustbin" ng-class="!delAuth?'grey-btn':''">
+						<font>删除</font>
+					</a>
+				</li>
+				<li class="mui-table-view-cell" ng-click="UpPatrolPlanState()">
+					<a class="mui-icon" ng-class="{'icon-state-normal':state==2,'icon-eq-stop':state!=2,'grey-btn':overDate||state==3}">
+						<font ng-bind="state==2?'启用':'停用'"></font>
+					</a>
+				</li>
+			</ul>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script>
+			app.controller("equpatrolEditController", ["$scope", "ApiService", "DataService", "UtilsService", "Loading", "RPCObserver", "CacheService", function($scope, ApiService, DataService, UtilsService, Loading, RPCObserver, CacheService) {
+				$scope.ID = query("planId");
+				$scope.source = query("source") || "";
+				var curUser = CacheService.get('user');
+				$scope.RepairDate = query("RepairDate"); //待巡检，已巡检计划的巡检时间
+				$scope.userId = curUser.UserID;
+				//获取admin或者管理员权限
+				$scope.hasAuth = false;
+				getAdminAuth();
+
+				function getAdminAuth() {
+					var userUrl = ApiService.Api50 + "/api/v1/Common/MdtGetIsAdmin/" + $scope.userId;
+					DataService.get(userUrl).then(function(res) {
+						if(res) {
+							if(res.IsAdmin || res.IsCreater) {
+								$scope.hasAuth = true;
+							}
+						};
+					}, function(error) {})
+				}
+
+				if($scope.ID > 0) {
+					$scope.isLoad = false;
+					getpatrolInfo();
+				}
+				var equList = [];
+				$scope.equNums = 0; //设备数量
+				//巡检计划名称
+				$scope.patrolName = "";
+				//设备归类
+				$scope.equCatalogDataList = [];
+				//巡检人信息
+				$scope.patrolUserList = [];
+				$scope.userNums = 0;
+				//巡检类型
+				$scope.TypeID = "";
+				$scope.TypeName = "";
+				//巡检开始时间
+				$scope.startDate = "";
+				//巡检截止时间
+				$scope.endDate = "";
+				//巡检循环周期
+				$scope.cyclePeriod = "";
+				$scope.periodUnit = 3;
+				$scope.unitChange = {
+					"1": "年",
+					"2": "月",
+					"3": "日",
+					"4": "小时"
+				}
+				//下次巡检时间
+				$scope.nextRepairDate = "";
+				//已执行次数
+				$scope.numbers = 0;
+				//是否有巡检记录
+				$scope.HaveCheck = false;
+				//设备数
+				$scope.eqCount = 0;
+				//状态 1启用、2停用、3已结束
+				$scope.state = 1;
+				$scope.stateChange = {
+					0: "启用",
+					1: "启用",
+					2: "停用",
+					3: "已结束"
+				}
+				//设备信息列表
+				$scope.equInfoList = [];
+				//是否超期
+				$scope.overDate = false;
+				//可修改权限
+				$scope.editAuth = false;
+				//可删除权限
+				$scope.delAuth = false;
+				//获取巡检计划信息
+				function getpatrolInfo() {
+					var url = ApiService.Api52 + "/api/v1/EqPatrolPlan/GetPatrolPlanInfoById?planId=" + $scope.ID;
+					DataService.get(url).then(function(res) {
+						Loading.hide();
+						$scope.isLoad = true;
+						if(res) {
+							$scope.state = res.State;
+							$scope.patrolName = res.PlanName;
+							$scope.equCatalogDataList = res.CatalogList;
+							$scope.patrolUserList = res.Users.map(function(item) {
+								return {
+									"UserID": item.ID,
+									"CompID": item.CompID,
+									"RealName": item.Name,
+									"State": item.State
+								}
+							});
+							$scope.TypeID = res.TypeID;
+							$scope.TypeName = res.TypeName;
+							$scope.startDate = res.StartDate.slice(0, 16);
+							$scope.endDate = res.EndDate.slice(0, 16);
+							$scope.nextRepairDate = res.NextRepairDate;
+							$scope.userNums = 0;
+							$scope.patrolUserList.forEach(function(item, idx) {
+								if(item.State == 9) {
+									$scope.userNums++;
+								}
+							});
+							$scope.cyclePeriod = res.CyclePeriod ? String(res.CyclePeriod) : "";
+							$scope.periodUnit = res.PeriodUnit;
+							$scope.numbers = res.Numbers;
+							$scope.HaveCheck = res.HaveCheck;
+							$scope.eqCount = res.EqCount;
+							$scope.state = res.State;
+							$scope.equInfoList = res.PlanEqList;
+							$scope.equInfoList.forEach(function(item) {
+								item.IsDel != 1 && $scope.equNums++;
+							})
+							//判断修改权限
+							getEditAuth();
+							//删除权限 无巡检记录的 启用 停用 已结束 计划均可删除；有巡检记录的均不可删除；
+							$scope.delAuth = !$scope.HaveCheck ? true : false;
+						};
+
+					}, function(error) {
+						$scope.isLoad = true;
+
+					})
+				};
+				//删除
+				$scope.del = function() {
+					if(!$scope.delAuth) return;
+					mui.confirm("确认删除吗？", function(e) {
+						if(e.index == 0) {
+							var url = ApiService.Api52 + "/api/v1/EqPatrolPlan/DeletePatrolPlanByID/" + $scope.ID;
+							DataService.post(url).then(function(res) {
+								RPCObserver.broadcast('refresh_equ_patrol_list'); //刷新列表
+								mui.toast("删除成功");
+								mui('#popover').popover('hide');
+								setTimeout(function() {
+									mui.back();
+								}, 300);
+
+							}, function(error) {
+								mui('#popover').popover('hide');
+							});
+						} else {
+							mui('#popover').popover('hide');
+						}
+					});
+				}
+				//修改
+				$scope.edit = function() {
+					if(!$scope.editAuth) return;
+					mui('#popover').popover('hide');
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'equ-patrol-edit.html',
+						url: "equ-patrol-edit.html?planId=" + $scope.ID,
+					});
+				};
+				//修改计划状态
+				$scope.UpPatrolPlanState = function() {
+					if($scope.overDate || $scope.state == 3) return;
+					var newState = $scope.state == 2 ? 1 : 2;
+					var url = ApiService.Api52 + "/api/v1/EqPatrolPlan/UpPatrolPlanState/" + $scope.ID + "?state=" + newState;
+					DataService.get(url).then(function(res) {
+						if(res) {
+							mui.toast(newState == 1 ? "已启用该巡检计划" : "已停用该巡检计划");
+							getpatrolInfo();
+							RPCObserver.broadcast('refresh_equ_patrol_list');
+							mui('#popover').popover('hide');
+						}
+					})
+				}
+				RPCObserver.on('refresh_patrol_info', 'refresh_patrol_info');
+				window.refresh_patrol_info = function() {
+					getpatrolInfo();
+				};
+
+				//判断巡检计划修改权限
+				function getEditAuth() {
+					var curDate = new Date();
+					//已超截止时间的，各状态计划均不可修改
+					if(new Date($scope.endDate.replace(/\-/g, "\/")) < curDate) {
+						$scope.overDate = true;
+						$scope.editAuth = false;
+					}
+					//未到截止时间
+					else if(!$scope.HaveCheck) {
+						$scope.overDate = false;
+						//无巡检记录的 启用 停用 已结束 计划均可修改
+						$scope.editAuth = true;
+					} else {
+						$scope.overDate = false;
+						//产生记录的 启用、已结束计划不可修改，停用计划可修改
+						$scope.editAuth = $scope.state == 2 ? true : false;
+					}
+				}
+
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,193 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="../../css/mui.picker.min.css" />
+		<link rel="stylesheet" href="../../css/mui.loading.css" />
+
+		<body ng-controller="bodyCtl">
+			<header class="mui-bar mui-bar-nav">
+				<a class="mui-action-back mui-icon icon-back mui-pull-left">工作履历</a>
+			</header>
+			<div class="mui-content" style="display: none;" ng-class="{'mui-block':isLoad}">
+				<ul class="data-group">
+					<li class="data-row must">
+						<label>公司名称</label>
+						<div class="body">
+							<input type="text" maxlength="50" ng-model="data.CompName" placeholder="请输入公司名称" />
+						</div>
+					</li>
+					<li class="data-row must" ng-click="event.chooseDate(false)">
+						<label>开始时间</label>
+						<p class="opt md-icon font-15">
+							<span class="icon-right"></span>
+						</p>
+						<div class="body" data-options='{}'>
+							<span ng-if="!data.StartDate" class="placeholder">请选择开始时间</span>
+							<span ng-if="data.StartDate" ng-bind="event.transDate(data.StartDate)"></span>
+						</div>
+					</li>
+					<li class="data-row must" ng-click="event.chooseDate(true)">
+						<label>结束时间</label>
+						<p class="opt md-icon font-15">
+							<span class="icon-right"></span>
+						</p>
+						<div class="body" data-options='{}'>
+							<span ng-if="!data.EndDate" class="placeholder">请选择结束时间</span>
+							<span ng-if="data.EndDate" ng-bind="event.transDate(data.EndDate)"></span>
+						</div>
+					</li>
+					<li class="data-row must">
+						<label>职务</label>
+						<div class="body">
+							<p ng-repeat="item in dutys" style="display:inline-block;float:left;margin-right:5px;" ng-click="event.choose(item)">
+								<i class="icon-roundcheckfill color-blue" ng-if="data.Duty == item.CodeID"></i>
+								<i class="icon-round color-gray" ng-if="data.Duty!=item.CodeID"></i>
+								<span class="name">{{item.CodeName}}</span>
+							</p>
+						</div>
+					</li>
+					<li class="data-row must">
+						<label>工作经历</label>
+						<div class="body">
+							<div class="edit">
+								<div id="div-workinfo" class="needsclick" placeholder="请输入工作经历" contenteditable="true" lenlimit="200"></div>
+							</div>
+						</div>
+					</li>
+				</ul>
+				<div class="mui-content-padded">
+					<span class="mui-btn mui-btn-block" ng-click="event.save()">保存</span>
+				</div>
+			</div>
+			<script type="text/javascript" src="../../js/mui.min.js"></script>
+			<script type="text/javascript" src="../../js/angular.min.js"></script>
+			<script type="text/javascript" src="../../js/common.js"></script>
+			<script type="text/javascript" src="../../js/utils.js"></script>
+			<script type="text/javascript" src="../../js/rpc.js"></script>
+			<script type="text/javascript" src="../../js/mui.loading.js"></script>
+			<script type="text/javascript" src="../../js/mui.picker.min.js"></script>
+			<script>
+				app.controller("bodyCtl", ["$scope", "ApiService", "DataService", "UtilsService", "CacheService",
+					"DatePickerService",
+					function($scope, ApiService, DataService, UtilsService, CacheService, DatePickerService) {
+						var curView = plus.webview.currentWebview();
+
+						$scope.data = curView.data || {
+							StartDate: "",
+							EndDate: "",
+							CompName: "",
+							Duty: "",
+							WorkInfo: ""
+						};
+						$scope.dutys = [];
+
+						document.querySelector("#div-workinfo").innerText = $scope.data.WorkInfo;
+
+						var curData = {
+							getDuty: function() {
+								var url = ApiService.Api31 + "/res/getcodebytype?type=";
+								curView.state == "6" && (url += "DesignDuty");
+								curView.state == "7" && (url += "TechnicianDuty");
+
+								DataService.get(url).then(function(res) {
+									mui.hideLoading();
+									$scope.dutys = res;
+									$scope.isLoad = true;
+								}, function() {
+									mui.hideLoading();
+								});
+							}
+						};
+						var datePicker = "";
+						curData.getDuty();
+						$scope.event = {
+							transDate: function(value) {
+								return value.substr(0, 7);
+							},
+							choose: function(item) {
+								$scope.data.Duty = item.CodeID;
+							},
+							chooseDate: function(isEnd) {
+								if(isEnd && !$scope.data.StartDate) {
+									mui.toast("请选择开始时间！");
+									return;
+								}
+								var year=new Date().getFullYear();
+								var datePicker = new mui.DtPicker({
+										"type": "month",
+										"beginDate": new Date(1900,01,01),
+//										"endYear": new Date().getFullYear(),
+										"endDate": isEnd?new Date():new Date(2019,11),
+										"value":isEnd?$scope.data.EndDate:$scope.data.StartDate
+									});
+								datePicker.show(function(res) {
+									isEnd && ($scope.data.EndDate = res.text);
+									!isEnd && ($scope.data.StartDate = res.text);
+
+									$scope.$apply();
+
+									datePicker.dispose();
+								});
+
+								// DatePickerService.pickDate({
+								//     selected: isEnd ? $scope.data.EndDate : $scope.data.StartDate,
+								//     minDate: isEnd ? $scope.data.StartDate : ""
+								// }).then(function (res) {
+								//     isEnd && ($scope.data.EndDate = res);
+								//     !isEnd && ($scope.data.StartDate = res);
+								// });
+							},
+							save: function() {
+								var data = $scope.data;
+								data.WorkInfo = document.querySelector("#div-workinfo").innerText;
+								if(!data.CompName.trim()) {
+									mui.toast("请填写公司名称");
+									return;
+								}
+								if(!data.StartDate) {
+									mui.toast("请选择开始时间");
+									return;
+								}
+								if(!data.EndDate) {
+									mui.toast("请选择结束时间");
+									return;
+								}
+								if(!data.Duty) {
+									mui.toast("请选择职务");
+									return;
+								}
+								if(!data.WorkInfo.trim()) {
+									mui.toast("请填写工作经历");
+									return;
+								}
+								if(data.WorkInfo.trim().length > 200) {
+									mui.toast("工作经历不能超过200个字");
+									return;
+								}
+								if(data.EndDate < data.StartDate) {
+									mui.toast("您选择的时间不正确");
+									return;
+								}
+								$scope.data.StartDate = new Date($scope.data.StartDate).Format("yyyy-MM-dd");
+								$scope.data.EndDate = new Date($scope.data.EndDate).Format("yyyy-MM-dd");
+								curView.opener().evalJS(curView.callback + "(" + JSON.stringify($scope.data) +
+									"," + curView.idx + ")");
+								mui.back();
+							}
+						};
+					}
+				]);
+
+				mui.showLoading("", "div");
+
+				mui.plusReady(function() {
+					angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+				});
+			</script>

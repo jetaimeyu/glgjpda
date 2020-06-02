@@ -1,0 +1,140 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.icon {
+				width: 16px;
+			}
+			.mui-bar-nav~.mui-content .mui-pull-top-pocket {
+				top: 84px!important;
+			}
+			
+			.mui-bar-nav~.no-tab .mui-pull-top-pocket {
+				top: 50px!important;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="repairListController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">故障处理记录</a>
+			<!--<a class="mui-pull-right menu-add" id="add" ng-click="add()" ng-if="('Q25' | hasAuth)" style="display: none;" ng-class="{'mui-block':showadd}">
+				<img class="icon" src="../../images/add.png" />
+			</a>-->
+			<a class="mui-pull-right menu-search" id="search" ng-click="search()" ng-if="!isscan" style="display: none;" ng-class="{'mui-block':showadd}">
+				<img class="icon" src="../../images/search.png" />
+			</a>
+		</header>
+		<div class="mui-content" ng-class="{'has-tab':isLoad,'no-tab':isscan,'mui-block':isLoad}" style="display: none;">
+			<ul class="md-tab" top="84" ng-if="!(['Q24','Q26'] |hasAuth) && !isscan">
+				<li class="md-tab-item md-active" href="mat-repair-all.html?type=my&action={{action}}&selectedid={{selectObj.ID}}&faultid={{faultId}}&innercode={{innerCode}}" winid="mat-repair-my.html">我提交的</li>
+				<li class="md-tab-item " href="mat-repair-all.html?type=at&action={{action}}&selectedid={{selectObj.ID}}&faultid={{faultId}}&innercode={{innerCode}}" winid="mat-repair-at.html">发给我的</li>
+				
+				<li class="md-tab-item" href="mat-repair-all.html?type=dept&action={{action}}&selectedid={{selectObj.ID}}&equid={{equId}}&faultid={{faultId}}&innercode={{innerCode}}" winid="mat-repair-dept.html" ng-if="(['Q22','Q23','Q24','Q26'] | hasAuth)&&comId>0">本部门的</li>
+				<li class="md-tab-item" href="mat-repair-all.html?type=depts&action={{action}}&selectedid={{selectObj.ID}}&equid={{equId}}&faultid={{faultId}}&innercode={{innerCode}}" winid="mat-repair-depts.html" ng-if="(['Q23','Q24','Q26'] | hasAuth)&&comId>0">下级部门</li>
+			</ul>
+			<ul class="md-tab" top="50" ng-if="isscan" style="display: none">
+				<a class="md-tab-item md-active" href="mat-repair-all.html?type=all&mdcode={{mdcode}}&prodid={{prodId}}&skuid={{skuId}}&innercode={{innercode}}" winid="mat-repair-all-scan.html"></a>
+			</ul>
+			<div id="slider" class="mui-slider mui-fullscreen " ng-if="(['Q24','Q26'] |hasAuth) && !isscan">
+				<div id="sliderSegmentedControl" class="mui-scroll-wrapper  mui-slider-indicator mui-segmented-control mui-segmented-control-inverted " style="background: #fff; display: none;" ng-class="{'mui-block':isLoad}">
+					<!--md-tab-block-->
+					<div class="mui-scroll md-tab  " top="84">
+						<a class="md-tab-item md-active" href="mat-repair-all.html?type=my&action={{action}}&selectedid={{selectObj.ID}}&faultid={{faultId}}&innercode={{innerCode}}" winid="mat-repair-my.html">我提交的</a>
+						<a class="md-tab-item " href="mat-repair-all.html?type=at&action={{action}}&selectedid={{selectObj.ID}}&faultid={{faultId}}&innercode={{innerCode}}" winid="mat-repair-at.html">发给我的</a>
+						
+						<a class="md-tab-item" href="mat-repair-all.html?type=dept&action={{action}}&selectedid={{selectObj.ID}}&equid={{equId}}&faultid={{faultId}}&innercode={{innerCode}}" winid="mat-repair-dept.html" ng-if="(['Q22','Q23','Q24','Q26'] | hasAuth)&&comId>0">本部门的</a>
+						<a class="md-tab-item" href="mat-repair-all.html?type=depts&action={{action}}&selectedid={{selectObj.ID}}&equid={{equId}}&faultid={{faultId}}&innercode={{innerCode}}" winid="mat-repair-depts.html" ng-if="(['Q23','Q24','Q26'] | hasAuth)&&comId>0">下级部门</a>
+						<a class="md-tab-item" href="mat-repair-all.html?type=all&action={{action}}&selectedid={{selectObj.ID}}&faultid={{faultId}}&innercode={{innerCode}}" winid="mat-repair-all.html" ng-if="(['Q24','Q26'] | hasAuth)&&comId>0">所有维修</a>
+					</div>
+				</div>
+				<div class="md-tab-block-line"></div>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("repairListController", ["$scope", "UtilsService", "RPCObserver","CacheService", "$timeout", "$filter", function($scope, UtilsService, RPCObserver,CacheService,$timeout, $filter) {
+				setTimeout(function() {
+					$scope.showadd = true;
+					$scope.isscan = query('isscan');
+					$scope.mdcode = query('mdcode');
+					$scope.isLoad = $filter("hasAuth")('Q23') ? $filter("hasAuth")(['Q22', 'Q23', 'Q24', 'Q26']) : true;
+					//选择维修
+					if($scope.action == "select") {
+						//接受已选择的参数
+						$scope.selectObj = plus.webview.currentWebview().selectObj;
+					}
+					if($scope.isscan) {
+						$scope.prodInfo = plus.webview.currentWebview().prodInfo;
+					}
+					$scope.$apply();
+				}, 100);
+				var user = CacheService.get('user');
+				$scope.comId=user.CompID;
+				$scope.faultId = query("faultid");
+				$scope.action = query("action");
+				$scope.prodId = query("prodid") || "";
+				$scope.skuId = query("skuid") || "";
+				//$scope.innercode = query("innercode") || "";
+				$scope.selectObj = {};
+				$scope.must = query("must");
+				setTimeout(function() {
+					MdConfig.StartUsingTab();
+				}, 200);
+
+				//选择
+				RPCObserver.on('refresh_mat_Repair_Select_Info', 'refresh_mat_Repair_Select_Info');
+				window.refresh_mat_fault_Select_Info = function(params) {
+					RPCObserver.broadcast('refresh_mat_Repair_Select_Refresh', params.ID);
+					$scope.selectObj = params;
+					$scope.$apply();
+					var view = plus.webview.currentWebview();
+					var opener = view.opener();
+					if(view.callback) {
+						opener.evalJS(view.callback + "(" + JSON.stringify($scope.selectObj) + ")");
+					}
+					mui.back();
+					return;
+				};
+				//添加页面跳转
+				$scope.add = function() {
+					var isscan = $scope.isscan ? "?from=scan" : "";
+					var extras = $scope.isscan ? {
+						addMatRecord: $scope.prodInfo
+					} : {};
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'mat-repair.html',
+						url: 'mat-repair.html' + isscan,
+						extras: extras
+					});
+				};
+				//跳转搜索页
+				$scope.search = function() {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'mat-repair-search.html',
+						url: 'mat-repair-search.html?faultid=' + $scope.faultId + "&action=" + $scope.action + "&selectedid=" + $scope.selectObj.ID + "&must=" + $scope.must
+					});
+				};
+			}]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

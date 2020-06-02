@@ -1,0 +1,191 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.icon {
+				width: 16px;
+			}
+			
+			.mui-bar-nav~.mui-content .mui-pull-top-pocket {
+				top: 44px !important;
+			}
+			
+			.mui-bar-nav~.has-tab .mui-pull-top-pocket {
+				top: 84px !important;
+			}
+			
+			.mui-bar-nav~.no-tab .mui-pull-top-pocket {
+				top: 50px !important;
+			}
+			
+			.mui-table {
+				display: table !important;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="repairListController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left mui-ellipsis" ng-bind="paramTitle + '记录'" style="max-width: 70vw;"></a>
+			<!--<a class="mui-pull-right menu-add" id="add" ng-click="add()" ng-if="'Q30' | hasAuth" style="display: none;" ng-class="{'mui-block':showadd}">
+				<img class="icon" src="../../images/add.png" />
+			</a>-->
+			<a class="mui-pull-right menu-search" id="search" ng-click="search()" ng-if="!isscan" style="display: none;" ng-class="{'mui-block':showadd}">
+				<img class="icon" src="../../images/search.png" />
+			</a>
+		</header>
+		<div class="mui-content" ng-class="{'has-tab':isLoad,'no-tab':isscan}">
+			<ul class="md-tab" top="84" ng-if="!(['Q29','Q31']|hasAuth) && !isscan" style="display: none;" ng-class="{'mui-block':isLoad}">
+				<li class="md-tab-item md-active" href="debug-all.html?type=my&id={{paramID}}&title={{paramTitle}}" winid="debug-my.html">我提交的</li>
+				<li class="md-tab-item " href="debug-all.html?type=at&id={{paramID}}&title={{paramTitle}}" winid="debug-at.html">发给我的</li>
+				<li class="md-tab-item" href="debug-all.html?type=dept&id={{paramID}}&title={{paramTitle}}" winid="debug-dept.html" ng-if="['Q27','Q28','Q29','Q31'] | hasAuth">本部门的</li>
+				<li class="md-tab-item" href="debug-all.html?type=depts&id={{paramID}}&title={{paramTitle}}" winid="debug-depts.html" ng-if="['Q28','Q29','Q31'] | hasAuth">下级部门</li>
+			</ul>
+			<ul class="md-tab" top="50" ng-if="isscan" style="display: none;">
+				<a class="md-tab-item md-active" href="debug-all.html?type=all&mdcode={{mdcode}}&prodid={{prodid}}&skuid={{skuid}}&innercode={{innercode}}" winid="debug-all-scan.html">isscan</a>
+			</ul>
+			<div id="slider" class="mui-slider mui-fullscreen" ng-if="(['Q29','Q31']|hasAuth)  && !isscan">
+				<div id="sliderSegmentedControl" class="mui-scroll-wrapper  mui-slider-indicator mui-segmented-control mui-segmented-control-inverted  " style="background: #fff; display: none;" ng-class="{'mui-block':isLoad}">
+					<div class="mui-scroll md-tab md-tab-block" top="84" ng-if="!isscan">
+						<a class="md-tab-item md-active" href="debug-all.html?type=my&id={{paramID}}&title={{paramTitle}}" winid="debug-my.html">我提交的</a>
+						<a class="md-tab-item " href="debug-all.html?type=at&id={{paramID}}&title={{paramTitle}}" winid="debug-at.html">发给我的</a>
+						<a class="md-tab-item" href="debug-all.html?type=dept&id={{paramID}}&title={{paramTitle}}" winid="debug-dept.html" ng-if="['Q27','Q28','Q29','Q31'] | hasAuth">本部门的</a>
+						<a class="md-tab-item" href="debug-all.html?type=depts&id={{paramID}}&title={{paramTitle}}" winid="debug-depts.html" ng-if="['Q28','Q29','Q31'] | hasAuth">下级部门</a>
+						<a class="md-tab-item" href="debug-all.html?type=all&id={{paramID}}&title={{paramTitle}}" winid="debug-all.html" ng-if="['Q29','Q31'] | hasAuth">所有调试</a>
+					</div>
+					<div class="md-tab-block-line">
+
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("repairListController", ["$scope", "$Modal", "RPCObserver", "UtilsService", "DataService", "ApiService", "$filter", "$timeout",
+				function($scope, $Modal, RPCObserver, UtilsService, DataService, ApiService, $filter, $timeout) {
+					$timeout(function() {
+						$scope.showadd = true;
+						$scope.isLoad = $filter("hasAuth")('Q28') ? $filter("hasAuth")(['Q27', 'Q28', 'Q29', 'Q31']) : true;
+					}, 100);
+					setTimeout(function() {
+						MdConfig.StartUsingTab();
+					}, 200);
+					$scope.paramID = query("id");
+					$scope.paramTitle = query("title");
+					$scope.isscan = query('isscan');
+					$scope.mdcode = query("mdcode") || "";
+					$scope.prodid = query("prodid") || "";
+					$scope.skuid = query("skuid") || "";
+					$scope.innercode = query("innercode") || "";
+					$scope.debugParams = [];
+					// 产品信息
+					var prodInfo = plus.webview.currentWebview().prodInfo;
+					var extras = $scope.isscan ? {
+						isscan: $scope.isscan,
+						prodInfo: prodInfo
+					} : {}
+					// if(!$scope.mdcode){
+					getDebugParamsTypeList();
+					//跳转搜索页
+					$scope.search = function() {
+						UtilsService.openWindow({
+							needLogin: true,
+							id: 'debug-search.html',
+							url: 'debug-search.html?id=' + $scope.paramID
+						});
+					};
+					// }
+					//获取调试参数分组
+					function getDebugParamsTypeList() {
+						var url = ApiService.Api50 + "/api/v1/ProdDebug/GetDebugParamsTypeList";
+						DataService.get(url).then(function(res) {
+							if(res.length > 0) {
+								$scope.debugParams.push({
+									id: -1,
+									title: '安装调试'
+								})
+
+							}
+							res.forEach(function(item) {
+								$scope.debugParams.push({
+									id: item.ID,
+									title: item.Name
+								})
+							})
+						})
+
+					};
+
+					var floatw = null;
+					mui.init({
+						keyEventBind: {
+							backbutton: false //关闭back按键监听
+						}
+					});
+					// 创建悬浮窗口
+					function floatWebview() {
+						if(floatw) {
+							RPCObserver.broadcast('refresh_debug_type');
+							// 避免快速多次点击创建多个窗口
+							floatw.show("fade-in");
+
+						} else {
+							var styles = {
+								background: 'transparent',
+								zindex: 10
+							};
+							if(mui.os.android && ["5.0", "5.1"].indexOf(mui.os.version) >= 0) {
+								styles.hardwareAccelerated = false;
+							}
+							floatw = plus.webview.create("/src/pages/menus/eq-type.html", "modal", styles, {
+								prodInfo: prodInfo
+							});
+							floatw.show("fade-in");
+						}
+					};
+
+					//添加页面跳转
+					$scope.add = function() {
+						floatWebview()
+
+						/*if ($scope.debugParams.length == 0) {
+							UtilsService.openWindow({
+								needLogin: true,
+								id: 'debug-edit.html',
+								url: 'debug-edit.html',
+								extras: extras
+							});
+							return;
+						}
+						UtilsService.actionSheet("安装调试种类", $scope.debugParams).then(function (res) {
+							UtilsService.openWindow({
+								needLogin: true,
+								id: 'debug-edit.html',
+								url: 'debug-edit.html?typeid=' + res.id + "&title=" + encodeURIComponent(res.title),
+								extras: extras
+							});
+						})*/
+					};
+				}
+			]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,197 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/common.css">
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<link rel="stylesheet" href="contact-info.css">
+		<style>
+			.icon {
+				width: 16px;
+			}
+			
+			.foot_btns {
+				width: 100%;
+				height: 44px;
+				line-height: 44px;
+				text-align: center;
+				z-index: 800;
+				position: fixed;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				border-top: 1px solid #EEEEEE;
+				background: #FFFFFF;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="UserInfoController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">联系人信息</a>
+			<!--<a ng-if="type&&type=='staff'" class="mui-icon icon-more right-menu-icon" href="#popover" id="openPopover" ng-class="{'mui-block':Loaded}" style="display: none;"></a>-->
+			<!--<i class="mui-pull-right menu-more-share icon-share" ng-click="goMatFaultShare('share')"></i>-->
+		</header>
+		<div class="mui-scroll-wrapper md-info-page" ng-class="{'mui-block':Loaded}" style="margin-top: 33px;display: none;" ng-style="{'padding-bottom':source?'0':'44px'}">
+			<ul class="data-group">
+				<li class="data-row main-row mui-block" style="min-height:64px;padding:10px 16px;padding-right: 10px;">
+					<div class="mui-media-object mui-pull-left" ng-if="user.ULogoIsExist" ng-style="{'background-image':'url('+ (user.UserID | getUserLogo:48:0) +')'}"></div>
+					<div class="mui-media-object mui-pull-left md-userCustomLogo" ng-if="!user.ULogoIsExist" ng-bind="user.ViewName | getUserCustomLogo"></div>
+					<img class="mui-media-object mui-pull-right" src="../../images/send-msg.png" style="width: 36px;height: 36px;margin-top: 6px;margin-right: 16px;" ng-if="user.UserID!=loginUser.UserID" ng-click="sendMsg(user.UserID,(user.ViewName),user.ULogoIsExist,user.CompID)">
+					<!--<img class="mui-media-object mui-pull-right" style="width: 36px;height: 36px;margin-right: 12px;margin-top: 6px;" src="../../images/add-friend.png" ng-click="addFriend()" ng-if="!user.ResID&&user.UserID!=loginUser.UserID">
+					<img class="mui-media-object mui-pull-right" style="width: 36px;height: 36px;margin-right: 12px;margin-top: 6px;" src="../../images/del-friend.png" ng-click="delFriend()" ng-if="user.ResID&&user.UserID!=loginUser.UserID">-->
+					<div class="body">
+						<div class="info-title" ng-bind="user.ViewName"></div>
+						<div class="info-detail mui-ellipsis" ng-bind="user.Signature"></div>
+
+						<!--<div class="info-detail" ng-bind="'通号：' + user.Mdt"></div>-->
+					</div>
+				</li>
+			</ul>
+
+			<ul class="data-group">
+				<li class="data-row" ng-if="user.ResID">
+					<label>备注</label>
+					<i class="opt md-icon icon-edit" style="font-size: 1.7rem;" ng-click="editRemark()"></i>
+					<div class="body">
+						<span ng-bind="user.RemarkName"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-click="editGroup()" ng-if="user.ResID">
+					<label>分组</label>
+					<i class="opt md-icon icon-right"></i>
+					<div class="body">
+						<span ng-bind="user.GroupName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>迈迪通号</label>
+					<div class="body">
+						<span ng-bind="user.Mdt"></span>
+					</div>
+				</li>
+			</ul>
+			<!--非自己和未添加好友的隐藏，自己企业的显示-->
+			<ul class="data-group" ng-show="user.UserID==loginUser.UserID||user.ResID||user.CompID==loginUser.CompID||source">
+				<li class="data-row">
+					<label>姓名</label>
+					<div class="body">
+						<span ng-bind="user.RealName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>性别</label>
+					<div class="body">
+						<span ng-bind="user.Sex"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>手机</label>
+					<p class="opt md-icon" ng-if="user.UserID==loginUser.UserID" ng-click="tap('changephone')">
+						<span class="changephone font-13">变更手机号</span>
+					</p>
+					<p class="opt md-icon" ng-if="user.UserID!=loginUser.UserID" ng-click="tap('tel')">
+						<span class="md-icon icon-tel changephone"></span>
+					</p>
+					<div class="body">
+						<span ng-bind="user.Phone"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>邮箱</label>
+					<div class="body">
+						<span ng-bind="user.Email || '-'"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<li class="data-row" ng-click="gotoComp(user.CompID)" ng-if="user.CompID>0">
+					<label>企业</label>
+					<i class="opt md-icon icon-right"></i>
+					<div class="body">
+						<span ng-bind="user.CompName"></span>
+					</div>
+				</li>
+				<!--部门职务：1、工作进来的显示，联系人进来的不显示，2、非自己和未添加好友的隐藏,3本企业-->
+				<li ng-if="(type&&type=='staff'||(user.UserID==loginUser.UserID||user.ResID)||user.CompID==loginUser.CompID)&&user.CompID>0||source" class="data-row">
+					<label>部门</label>
+					<div class="body">
+						<span ng-repeat="item in user.OrgList" ng-bind="$index==0?item.OrgName:' > '+item.OrgName"></span>
+					</div>
+				</li>
+				<li ng-if="user.CompID>0&&user.Duty&&(type&&type=='staff'||(user.UserID==loginUser.UserID||user.ResID)||user.CompID==loginUser.CompID)" class="data-row">
+					<label>职务</label>
+					<div class="body">
+						<span ng-bind="user.Duty"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="user.CompID>0">
+					<label>地址</label>
+					<div class="body">
+						<span ng-bind="user.CompAddress"></span>
+					</div>
+				</li>
+			</ul>
+			<!--<ul class="data-group">
+				<li class="data-row">
+					<label>客服</label>
+					<div class="body">
+						<span>点击查看</span>
+					</div>
+					<i class="opt md-icon icon-right"></i>
+				</li>
+			</ul>-->
+		</div>
+		<!--<footer>
+			<ul class="mui-table-view mui-row">
+				<li class="mui-table-view-cell mui-media mui-col-sm-6 mui-col-xs-6">
+					<a href="#" style="float: right;">
+						<img src="../../images/add-friend.png" style="height: 66px; vertical-align: bottom;">
+						<div class="mui-media-body">加好友</div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell mui-media mui-col-sm-6 mui-col-xs-6">
+					<a href="#" style="float: left;">
+						<img src="../../images/send-msg.png" style="height: 66px; vertical-align: bottom;">
+						<div class="mui-media-body">发消息</div>
+					</a>
+				</li>
+			</ul>
+		</footer>-->
+		<footer class="foot_btns" ng-show="!source" ng-class="{'mui-block':Loaded}" style="display: none;">
+			<a class="font-15 mui-pull-left" style="background-color: #3388FF;color: white;width: 50%;" ng-click="addComp()">加为企业联系人</a>
+			<a class="font-15 mui-pull-right" style="background-color: #E59313;color: white;width: 50%;" ng-click="addPersonal()">加为个人联系人</a>
+		</footer>
+		<div id="editRemark" class="mui-modal">
+			<header class="mui-bar mui-bar-nav">
+				<a class="mui-icon mui-icon-close mui-pull-right" href="#editRemark"></a>
+				<h1 class="mui-title">修改备注</h1>
+			</header>
+			<div class="mui-content" style="height: 100%;">
+				<ul class="data-group">
+					<li class="data-row">
+						<label>备注</label>
+						<div class="body" style="padding-right: 15px;">
+							<textarea ng-model="user.RemarkName" class="font-14" style="margin-bottom: 0px;padding: 5px;"></textarea>
+						</div>
+					</li>
+				</ul>
+				<div style="padding: 10px;">
+					<a type="button" class="font-15 mui-btn mui-btn-block" ng-click="saveRemark()">确认</a>
+				</div>
+			</div>
+		</div>
+		<script src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../message/transMessage.js"></script>
+		<script type="text/javascript" src="contact-info.js"></script>
+	</body>
+
+</html>

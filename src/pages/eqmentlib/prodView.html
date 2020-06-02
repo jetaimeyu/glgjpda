@@ -1,0 +1,399 @@
+<!--型号选择-->
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			#slider {
+				height: 240px;
+				background-color: #ffffff;
+			}
+			
+			.prodLibUl .mui-media {
+				padding: 8px 16px !important;
+				font-size: 1.7rem;
+				color: #333;
+				white-space: normal;
+				overflow: hidden;
+			}
+			
+			.tab-video {
+				margin-top: 0px;
+			}
+			
+			.data-group .data-row:after {
+				left: 0px;
+				right: 0px;
+			}
+			
+			.tab-video .data-row .body {
+				padding-left: 16px;
+			}
+			
+			img {
+				max-width: 100% !important;
+			}
+			
+			md-compile ul {
+				padding-left: 40px;
+				list-style: disc;
+			}
+			
+			.empty-list img {
+				margin-top: 63vw;
+			}
+			
+			.empty-list {
+				margin-top: -60vw !important;
+			}
+			
+			.mui-content>.mui-table-view:first-child {
+				margin: 0px;
+			}
+			
+			#slider .avatar {
+				width: 100%;
+				height: 240px;
+				background-size: contain;
+				background-position-x: center;
+				background-repeat: no-repeat;
+				/*transform: scale(1.1);
+				-moz-transform: scale(1.1);
+				-webkit-transform: scale(1.1);
+				-o-transform: scale(1.1);
+				-ms-transform: scale(1.1);
+				border-radius: 0px;*/
+			}
+			
+			.imgslist {
+				float: left;
+				width: 56px;
+				height: 56px;
+				background-size: cover !important;
+				position: absolute;
+				top: 50%;
+				-webkit-transform: translateY(-50%);
+				transform: translateY(-50%);
+				overflow: hidden;
+				margin: 0;
+				left: 16px;
+				color: #000000;
+			}
+			
+			.prodLibUl .productName {
+				margin-bottom: 5px;
+			}
+			
+			.prodLibUl p {
+				color: #000;
+			}
+			
+			.mui-media-body {
+				margin-left: 70px;
+			}
+			
+			.prodLibUl .md-icon {
+				position: absolute;
+				right: 0px;
+				top: 50%;
+				-webkit-transform: translateY(-50%);
+				transform: translateY(-50%);
+				overflow: hidden;
+				margin: 0;
+				padding: 10px 16px;
+			}
+			
+			.vertical-right {
+				height: 15px;
+				width: 1px;
+				background: #ccc;
+				display: block;
+			}
+			
+			.md-icon-vertical {
+				padding: 0px !important;
+			}
+			
+			.details * {
+				max-width: 100%;
+				word-break: break-all;
+			}
+			
+			.data-group-tip {
+				margin-top: 10px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="productViewList">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">设备详情</a>
+		</header>
+		<div id="pullrefresh" class="mui-scroll-wrapper" ng-class="{'mui-block':domShow}" style="display: none;">
+			<div class="mui-content">
+				<div id="slider" class="mui-slider">
+					<div class="mui-slider-group mui-slider-loop" ng-click="previewImages()">
+						<!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
+						<div class="mui-slider-item mui-slider-item-duplicate">
+							<img class="avatar images" src="../../images/imgPre.png" ng-style="{'background-image':'url('+ (getImgPath(ProdShapes[0],480)) +')'}" ng-if="ProdShapes&&ProdShapes.length>0" fullpath="{{getImgPath(ProdShapes[0],200) | filePathReg}}"></img>
+							<img class="avatar" src="http://pic.maidiyun.com/cGtnL2xvZ28=_0_200x200.jpg" ng-if="ProdShapes&&ProdShapes.length==0"></img>
+						</div>
+						<div class="mui-slider-item" ng-if="ProdShapes&&ProdShapes.length>0" ng-repeat="obj in ProdShapes">
+							<img class="avatar images" src="../../images/imgPre.png" ng-style="{'background-image':'url('+  (getImgPath(obj,480)) +')'}" ng-if="ProdShapes&&ProdShapes.length>0" fullpath="{{getImgPath(obj,0) | filePathReg}}"></img>
+						</div>
+						<div class="mui-slider-item" ng-if="ProdShapes&&ProdShapes.length==0">
+							<img class="avatar" src="http://pic.maidiyun.com/cGtnL2xvZ28=_0_200x200.jpg"></img>
+						</div>
+						<!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+						<div class="mui-slider-item mui-slider-item-duplicate">
+							<img class="avatar" src="../../images/imgPre.png" ng-style="{'background-image':'url('+ (getImgPath(ProdShapes[0],480)) +')'}" ng-if="ProdShapes&&ProdShapes.length>0"></img>
+							<img class="avatar" src="http://pic.maidiyun.com/cGtnL2xvZ28=_0_200x200.jpg" ng-if="ProdShapes&&ProdShapes.length==0"></img>
+						</div>
+					</div>
+					<div class="mui-slider-indicator">
+						<div class="mui-indicator" ng-repeat="index in ProdShapes track by $index" ng-if="ProdShapes&&ProdShapes.length>1" ng-class="{'mui-active':$index==0}"></div>
+					</div>
+				</div>
+				<ul class="mui-table-view prodLibUl" style="margin-top: 8px;">
+					<li class="mui-table-view-cell mui-media">
+						<div class="mui-media-body" style="margin-left: 0px;">
+							<p class='productName font-15' ng-bind="prodHead.ProdName"></p>
+							<p class="font-12" ng-bind="'型号:'+prodHead.SkuName"></p>
+						</div>
+					</li>
+				</ul>
+
+				<ul class="mui-table-view prodLibUl" style="z-index: 1; margin-top: 8px;">
+					<li class="mui-media">
+						<div class="mui-icon-lists">
+							<p class="opt md-icon font-15" ng-click="phone()">
+								<span class="icon-tel"></span>
+							</p>
+							<p class="opt md-icon font-15 md-icon-vertical" style="right: 40px;">
+								<span class="vertical-right"></span>
+							</p>
+							<p class="opt md-icon font-15" style="right: 35px;" ng-click="compShow()">
+								<span class="icon-home"></span>
+							</p>
+						</div>
+						<img src="../../images/imgPre.png" ng-if="CompInfo!=null" ng-style="{'background-image':'url('+ (CompInfo.CompId| getCompLogo:56:56) +')'}" class="imgslist" />
+						<div class="mui-media-body">
+							<p class='productName font-15' ng-bind="CompInfo.CompName"></p>
+							<p class="font-12" ng-bind="'迈迪通号：' + CompInfo.CompMdt" style="margin-bottom: 0px; color: #aaa;"></p>
+							<p class="font-12" ng-bind="'联系电话：' + (CompInfo.Tel || CompInfo.Phone)" style="margin-bottom: 0px; color: #aaa;"></p>
+							<p class="font-12" style="margin-bottom: 0px; color: #aaa;">地址：<span ng-bind="CompInfo.Province | locationfilter:CompInfo.City:CompInfo.District"></span></p>
+						</div>
+					</li>
+				</ul>
+
+				<p class="data-group-tip">设备加工工时</p>
+				<ul class="data-group">
+					<li class="data-row">
+						<label>企业工时定价</label>
+						<div class="body" ng-bind="prodHead.HoursPrice?prodHead.HoursPrice+'元':'无'">
+						</div>
+					</li>
+				</ul>
+
+				<p class="data-group-tip" style="display:none;" ng-class="{'mui-block':parmas.length>0}">设备基本信息</p>
+				<ul class="data-group" style="display:none;" ng-class="{'mui-block':parmas.length>0}">
+					<li class="data-row" ng-repeat="item in params">
+						<label ng-bind="item.ProName"></label>
+						<div class="body" ng-bind="item.ProValue"></div>
+					</li>
+				</ul>
+
+				<p class="data-group-tip">设备基本情况</p>
+				<div style="background:#fff;padding:5px 15px;">
+					<md-compile data-template="prodHead.Intro"></md-compile>
+				</div>
+
+				<!-- <ul id="tab-type" class="md-tab data-group" style=" margin-top: 8px;">
+				<li class="md-tab-item" ng-class="{'md-active':TabType=='1'}" href="#tab1">产品详情</li>
+				<li class="md-tab-item" ng-class="{'md-active':TabType=='2'}" href="#tab2">电子样本</li>
+				<li class="md-tab-item" ng-class="{'md-active':TabType=='3'}" href="#tab3">视频说明书</li>
+			</ul>
+			<div class="tab-list">
+				<div id="#tab1" class="details" ng-show="TabType=='1'" style="background: #fff;">
+					<md-compile data-template="prodHead.Intro"></md-compile>
+					<md-no-data ng-show="!prodHead.Intro">暂无数据</md-no-data>
+				</div>
+				<div id="#tab2" ng-show="TabType=='2'" style="background: #fff;">
+					<div ng-repeat="obj in eBook">
+						<img ng-src="{{getImgProdYbPics(obj)}}" fullpath="{{getImgProdYbPics(obj) | filePathReg}}" class="imageview-native" />
+					</div>
+					<md-no-data ng-show="eBook&&eBook.length==0">暂无数据</md-no-data>
+				</div>
+				<div id="#tab3" ng-show="TabType=='3'" style="background: #fff;">
+					<ul class="data-group tab-video mui-table-view" ng-if="video&&video.length>0">
+						<li class="data-row mui-table-view-cell" ng-repeat="obj in video" ng-attr-videoname="{{obj.VideoName}}"
+						 ng-attr-videourl="{{obj.VideoUrl}}">
+							<p class="opt md-icon font-15">
+								<span class="icon-right"></span>
+							</p>
+							<div class="body">
+								<a style="color: #323232;" ng-bind="obj.VideoName"> </a>
+							</div>
+						</li>
+					</ul>
+					<md-no-data ng-show="video&&video.length==0">暂无数据</md-no-data>
+				</div>
+			</div> -->
+			</div>
+			<script type="text/javascript" src="../../js/mui.min.js"></script>
+			<script type="text/javascript" src="../../js/angular.min.js"></script>
+			<script type="text/javascript" src="../../js/common.js"></script>
+			<script type="text/javascript" src="../../js/rpc.js"></script>
+			<script type="text/javascript" src="../../js/utils.js"></script>
+			<script type="text/javascript" src="../../js/xss.min.js"></script>
+			<script>
+				app.controller("productViewList", ["$scope", "ApiService", "DataService", "UtilsService", "Loading", function(
+					$scope, ApiService, DataService, UtilsService, Loading) {
+					$scope.id = query("id") || '';
+					$scope.compId = query("compId");
+					$scope.prodHead = "";
+					$scope.ProdShapes = null; //轮播图
+					$scope.CompInfo = null; //产品详情
+					$scope.domShow = false;
+					$scope.TabType = "1";
+					$scope.params = [];
+					$scope.isResource = query("isResource") || 0;
+					Loading.show();
+
+					function init() {
+						// mui("#tab-type").on("tap", ".md-tab-item", function () {
+						// 	if (this.getAttribute("href") == "#tab1") {
+						// 		$scope.TabType = "1"
+						// 	} else if (this.getAttribute("href") == "#tab2") {
+						// 		previewImages()
+						// 		$scope.TabType = "2"
+						// 	} else if (this.getAttribute("href") == "#tab3") {
+						// 		$scope.TabType = "3"
+						// 	}
+						// 	$scope.$apply();
+						// });
+						loadInfo();
+
+						getCompInfo();
+					};
+					init();
+
+					function loadInfo() {
+
+						var url = ApiService.Api45 + "/api/v1.0/Equipment/GetEqInfosById?equipmentId=" + $scope.id;
+						DataService.get(url).then(function(res) {
+							$scope.prodHead = res.Info;
+							$scope.ProdShapes = res.Pics;
+							$scope.params = res.Pros;
+							Loading.hide();
+						}, function() {
+							Loading.hide();
+						});
+
+					};
+					$scope.previewImages = function() {
+						var images = [].slice.call(document.querySelectorAll('.images'));
+						images.splice(0, 1)
+						var urls = [];
+						images.forEach(function(item) {
+							item.getAttribute("fullpath") && urls.push(item.getAttribute("fullpath"));
+						});
+						mui('body').off('tap', '.images');
+						mui('body').on('tap', '.images', function() {
+							var index = images.indexOf(this);
+							if(index < 0) {
+								var index = 0;
+							}
+							plus.nativeUI.previewImage(urls, {
+								current: index,
+								loop: true,
+								indicator: 'number'
+							});
+						});
+
+					}
+
+					//加载企业详情
+					function getCompInfo() {
+						var url = ApiService.Api50 + "/api/v1/Comp/GetCompInfo?compId=" + $scope.compId;
+						DataService.get(url).then(function(res) {
+							Loading.hide();
+							$scope.domShow = true;
+							$scope.CompInfo == null && ($scope.CompInfo = {});
+							$scope.CompInfo = res;
+						});
+					};
+
+					//加载轮播图
+					$scope.getImgPath = function(img, w) {
+						if(img) {
+							return ApiService.Api45 + "/api/v1/Equipment/" + img + "_" + w + "x0.png"
+						}
+
+					};
+
+					$scope.cancel = function() {
+						mui.back();
+					}
+					$scope.homeview = function() {
+						var url = $scope.CompInfo.Url;
+						var title = $scope.CompInfo.CompName;
+						if(url) {
+							UtilsService.openWindow({
+								needLogin: false,
+								id: 'hyperlink',
+								url: '../common/hyperlink.html',
+								extras: {
+									hyperlink: {
+										title: title,
+										url: url
+									}
+								}
+							});
+						}
+					}
+					$scope.phone = function() {
+						var tel = $scope.CompInfo.Phone || $scope.CompInfo.Tel || ""
+						if(tel == "") {
+							mui.toast("该企业不存在联系电话")
+						}
+						tel != "" && plus.device.dial(tel, true);
+					};
+					$scope.compShow = function() {
+						UtilsService.openWindow({
+							needLogin: true,
+							id: 'compShow.html',
+							url: '../complib/compShow.html?compId=' + $scope.compId
+						});
+					}
+
+					mui("body").on("tap", ".tab-video>.data-row", function() {
+						var name = this.getAttribute("videoname");
+						var path = ApiService.Down + "\\" + this.getAttribute("videourl");
+						UtilsService.playVideo(name, path);
+					});
+					//					setTimeout(function() {
+					//						$scope.previewImages();
+					//						var sliderDom = document.querySelector("#slider");
+					//						if(sliderDom && $scope.ProdShapes.length !== 0 && $scope.ProdShapes.length !== 1) {
+					//							mui(sliderDom).slider({
+					//								interval: 1500
+					//							});
+					//						}
+					//
+					//					}, 500);
+				}]);
+
+				mui.plusReady(function() {
+					angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+				});
+			</script>
+	</body>
+
+</html>

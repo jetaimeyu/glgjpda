@@ -1,0 +1,173 @@
+/*加号图标样式*/
+
+.icon {
+	width: 16px;
+}
+
+
+/*列表栅格样式*/
+
+.mui-grid-view.mui-grid-9 {
+	border: 0;
+	background: #fff;
+}
+
+.mui-grid-view.mui-grid-9 .mui-table-view-cell {
+	border: 0;
+}
+
+.mui-grid-view.mui-grid-9 .mui-media {
+	color: #323223;
+}
+
+.mui-table-view-cell:after {
+	height: 0px;
+}
+
+.mui-grid-view.mui-grid-9 .mui-table-view-cell {
+	padding-left: 15px!important;
+}
+
+.mui-grid-view.mui-grid-9 .mui-table-view-cell {
+	padding: 0px;
+}
+
+.mui-table-view-cell {
+	padding: 0;
+	vertical-align: middle;
+}
+
+.mui-col-xs-6.mui-col-sm-6 {
+	margin-left: 16px;
+}
+
+
+/*列表样式*/
+
+.data-group {
+	margin-top: 0px;
+}
+
+.prodname {
+	background: #F3F9FF;
+	color: #3296FA;
+	font-size: 1.4rem;
+	position: fixed;
+	z-index: 1;
+	top: 0px;
+	width: 100%;
+}
+
+.prodtime {
+	background: #EFEFEF;
+	line-height: 40px;
+	text-align: center;
+}
+
+.prodtime span {
+	color: #888888!important;
+}
+
+.prodlist {
+	font-size: 1.4rem;
+}
+
+.data-group .data-row .body {
+	display: flex;
+	align-items: center;
+}
+
+.data-group .data-row:after {
+	left: 0px!important;
+	right: 0px!important;
+}
+
+.prodlist .mui-row {
+	color: #323232!important;
+}
+
+.mui-table-view-cell.mui-active {
+	background-color: transparent;
+}
+
+
+/*物料人的名字*/
+
+.pickHeader {
+	font-size: 1.4rem;
+	line-height: 1.4rem;
+	color: #3296FA;
+	position: absolute;
+	top: 50%;
+	-webkit-transform: translateY(-50%);
+	transform: translateY(-50%);
+	overflow: hidden;
+	margin: 0px;
+}
+
+.pickUserName {
+	left: 105px;
+	right: 55px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	text-overflow: ellipsis;
+	-ms-text-overflow: ellipsis;
+	-o-text-overflow: ellipsis;
+}
+
+.pickUserName>span {
+	margin-right: 8px;
+}
+
+.pickDetails {
+	right: 16px;
+}
+
+.prodgoodslist {
+	margin-left: 15px;
+	margin-right: 15px;
+	background: #fff!important;
+}
+
+.prodgoodslist:nth-child(2) {
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+}
+
+.prodgoodslist:last-child {
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
+}
+
+.data-group .data-row:first-child:after {
+	height: 0px;
+}
+
+.width50 {
+	width: 50%;
+}
+
+.width30 {
+	width: 30%;
+}
+
+.width20 {
+	width: 20%;
+	text-align: center;
+}
+
+.partDomUl li {
+	margin-left: 16px;
+}
+.MaterialName{
+	color: #000000!important;
+}
+.Spec,.DwgNo{
+	color: #AAAAAA!important;
+}
+.mui-grid-view {
+	line-height: 17px!important;
+}

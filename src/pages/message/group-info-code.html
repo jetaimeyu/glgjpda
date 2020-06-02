@@ -1,0 +1,60 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport"
+		content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link rel="stylesheet" href="../../css/mui.min.css">
+	<link rel="stylesheet" href="../../css/common.css">
+	<link rel="stylesheet" href="../../icon-font/iconfont.css">
+	<link rel="stylesheet" href="group-info-code.css">
+</head>
+<style>
+	.mui-switch {
+		width: 35px;
+		height: 20px;
+	}
+
+	.mui-switch .mui-switch-handle {
+		width: 18px;
+		height: 18px;
+	}
+
+	.mui-switch-blue.mui-active {
+		border: 2px solid #3296fa;
+		background-color: #3296fa;
+	}
+</style>
+
+<body ng-controller="GroupInfoController">
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left mui-ellipsis" ng-bind="domData.GroupName"></a>
+	</header>
+	<div class="mui-content" style="display:none;" ng-class="{'mui-block':domData.GroupInfo}">
+		<ul class="data-group mgt-0 group-desc">
+			<li class="data-row no-bt-line members-title">
+				<div class="body">
+					群描述
+				</div>
+			</li>
+			<li class="data-row desc-content">
+				<span ng-bind="domData.GroupInfo.Declared"></span>
+			</li>
+		</ul>
+	
+		<div class="mui-content-padded">
+			<span class="mui-btn mui-btn-block quit-btn" ng-click="event.quit()">申请加入</span>
+		</div>
+	</div>
+
+	<script src="../../js/mui.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/rpc.js"></script>
+	<script type="text/javascript" src="group-info-code.js"></script>
+</body>
+
+</html>

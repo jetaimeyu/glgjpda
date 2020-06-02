@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>搜索</title>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<style type="text/css">
+			* {
+				line-height: 18px;
+			}
+			
+			body,
+			.mui-content {
+				margin-top: 50px;
+			}
+			
+			.search-content {
+				text-align: center;
+				position: fixed;
+				top: 44px;
+				background: #fff;
+				height: 100%;
+				width: 100%;
+				padding-top: 35px;
+			}
+			
+			.search-content .search-content-title {
+				color: #AFAFAF;
+				font-size: 1.4rem;
+			}
+			
+			.content {
+				margin-top: 35px;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				flex-wrap: wrap;
+			}
+			
+			.content span {
+				display: inline-block;
+				width: 25vw;
+				margin-top: 35px;
+				color: #3296FA;
+				font-size: 1.5rem;
+				border-right: 1px solid #EAEAEA;
+			}
+			
+			.content span:nth-child(3),
+			.content span:last-child {
+				border-right: 0px;
+			}
+			
+			.content span:nth-child(1),
+			.content span:nth-child(2),
+			.content span:nth-child(3) {
+				margin-top: 0px;
+			}
+			
+			.moreserch {
+				height: 45px;
+			}
+			
+			.moreserch label {
+				color: #3296FA!important;
+				font-size: 1.3rem;
+			}
+			
+			.moreserch label.moreserch-customer {
+				margin-left: 10px;
+			}
+			
+			.moreserch label.icon-search-thin {
+				width: auto;
+			}
+			
+			.moreserch-list {
+				margin-top: 0px!important;
+			}
+			
+			.moreserch-list:before {
+				position: absolute;
+				left: 10px;
+				right: 0px;
+				top: 0;
+				height: 1px;
+				content: '';
+				-webkit-transform: scaleY(0.5);
+				transform: scaleY(0.5);
+				background-color: #ccc;
+			}
+			
+			.search-title {
+				color: #888888!important;
+				font-size: 1.4rem!important;
+				left: 15px!important;
+			}
+			
+			.data-group {
+				margin-top: 5px;
+			}
+			
+			ul.search-line li:after {
+				position: absolute;
+				left: 10px;
+				right: 0px;
+				top: 0;
+				height: 1px!important;
+				content: '';
+				-webkit-transform: scaleY(0.5);
+				transform: scaleY(0.5);
+				background-color: #ccc;
+			}
+			
+			ul.data-title {
+				margin-top: 0px!important;
+			}
+			.search-content .content_f2{
+				margin-top: 35px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="searchCtrl">
+		<div ng-class="{'mui-block':domShowX}" style="display: none;" ng-style="{'margin-bottom':action=='select'?'40px':'0px'}">
+			<div class="search_input">
+				<form ng-submit="search.doSearch()">
+					<a class="mui-action-back mui-icon icon-back mui-pull-left"></a>
+					<input type="search" placeholder="请输入搜索内容" ng-model="search.text" maxlength="50">
+					<i class="icon-search-thin color-gray-dark"></i>
+					<i class="icon-delete color-gray" ng-show='search.text' ng-click="search.deleteSearch()"></i>
+					<span ng-click="search.doSearch()">搜索</span>
+				</form>
+			</div>
+			<div class="search-content" ng-if="!domShow&&CompID==0">
+				<div class="search-content-title">可搜索如下内容</div>
+				<div class="content">
+					<span style="width: 45%;" ng-click="tap('contactSearch')">联系人</span>
+					<span style="width: 45%;" ng-click="tap('compSearch')">企业</span>
+				</div>
+			</div>
+			<div class="search-content" ng-if="!domShow&&CompID>0">
+				<div class="search-content-title">可搜索如下内容</div>
+				<div class="content">
+					<div class="content_f1">
+						<span ng-click="tap('contactSearch')">联系人</span>
+						<span ng-click="tap('compSearch')">企业</span>
+					</div>
+					<div class="content_f2">
+						<span ng-click="tap('prodSearch')">产品</span>
+						<span ng-click="tap('equipmentSearch')">设备</span>
+						<span ng-click="tap('customerSearch')">客户</span>
+					</div>
+					<!--<span ng-click="tap('supplierSearch')">供应商</span>-->
+				</div>
+			</div>
+			<div class="mui-scroll-wrapper" ng-class="{'mui-block':domShow}" style="display: none;top: 44px;">
+				<ul class="data-group search-line" ng-if="data.LinkUser.TotalCount>0">
+					<li class="data-row">
+						<label class="search-title">联系人</label>
+					</li>
+				</ul>
+				<md-search-user ng-model="data.LinkUser.DataRows"></md-search-user>
+				<ul class="data-group moreserch-list" ng-if="data.LinkUser.TotalCount>2">
+					<li class="data-row mui-table-view-cell moreserch" ng-click="tap('moreContactSearch')">
+						<label class="icon-search-thin color-gray-dark"></label>
+						<label class="moreserch-customer">更多联系人</label>
+					</li>
+				</ul>
+				<ul class="data-group search-line" ng-if="data.Comp.TotalCount>0">
+					<li class="data-row">
+						<label class="search-title">企业</label>
+					</li>
+				</ul>
+				<md-search-comp ng-model="data.Comp.DataRows"></md-search-comp>
+				<ul class="data-group moreserch-list" ng-if="data.Comp.TotalCount>2">
+					<li class="data-row mui-table-view-cell moreserch" ng-click="tap('moreCompSearch')">
+						<label class="icon-search-thin color-gray-dark"></label>
+						<label class="moreserch-customer">更多企业</label>
+					</li>
+				</ul>
+				<ul class="data-group search-line" ng-if="data.Prod.TotalCount>0">
+					<li class="data-row">
+						<label class="search-title">产品</label>
+					</li>
+				</ul>
+				<md-search-prod ng-model="data.Prod.DataRows"></md-search-prod>
+				<ul class="data-group moreserch-list" ng-if="data.Prod.TotalCount>2">
+					<li class="data-row mui-table-view-cell moreserch" ng-click="tap('moreProdSearch')">
+						<label class="icon-search-thin color-gray-dark"></label>
+						<label class="moreserch-customer">更多产品</label>
+					</li>
+				</ul>
+				<ul class="data-group search-line" ng-if="data.Equipment.TotalCount>0">
+					<li class="data-row">
+						<label class="search-title">设备</label>
+					</li>
+				</ul>
+				<md-search-equipment ng-model="data.Equipment.DataRows"></md-search-equipment>
+				<ul class="data-group moreserch-list" ng-if="data.Equipment.TotalCount>2">
+					<li class="data-row mui-table-view-cell moreserch" ng-click="tap('moreEquSearch')">
+						<label class="icon-search-thin color-gray-dark"></label>
+						<label class="moreserch-customer">更多设备</label>
+					</li>
+				</ul>
+				<ul class="data-group search-line" ng-if="data.Customer.TotalCount>0">
+					<li class="data-row">
+						<label class="search-title">客户</label>
+					</li>
+				</ul>
+				<md-search-customer ng-model="data.Customer.DataRows"></md-search-customer>
+				<ul class="data-group moreserch-list" ng-if="data.Customer.TotalCount>2">
+					<li class="data-row mui-table-view-cell moreserch" ng-click="tap('moreCustomerSearch')">
+						<label class="icon-search-thin color-gray-dark"></label>
+						<label class="moreserch-customer">更多客户</label>
+					</li>
+				</ul>
+				<!--<ul class="data-group search-line" ng-if="data.Supplier.TotalCount>0">
+					<li class="data-row">
+						<label class="search-title">供应商</label>
+					</li>
+				</ul>
+				<md-search-supplier ng-model="data.Supplier.DataRows"></md-search-supplier>
+				<ul class="data-group moreserch-list" ng-if="data.Supplier.TotalCount>2">
+					<li class="data-row mui-table-view-cell moreserch" ng-click="tap('moreSupplierSearch')">
+						<label class="icon-search-thin color-gray-dark"></label>
+						<label class="moreserch-customer">更多供应商</label>
+					</li>
+				</ul>-->
+				<md-no-data data-options="{type:'search'}" ng-show="data && data.LinkUser.TotalCount == 0 &&  data.Comp.TotalCount == 0 && data.Prod.TotalCount == 0 && data.Equipment.TotalCount== 0 && data.Customer.TotalCount == 0&& data.Supplier.TotalCount== 0">暂无数据</md-no-data>
+			</div>
+		</div>
+		<script src="../../js/angular.min.js"></script>
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script>
+			app.controller("searchCtrl", ["$scope", "ApiService", "DataService", "UtilsService", "Loading", "CacheService", "AuthService", "BillService","$timeout", function($scope, ApiService, DataService, UtilsService, Loading, CacheService, AuthService, BillService,$timeout) {
+				Loading.show();
+				$timeout(function() {
+					Loading.hide();
+				}, 100);
+				$scope.data = null;
+				$scope.domShow = false; //控制列表显示
+				$scope.domShowX = false; //控制x显示
+				$scope.searchName = ""; //搜索名称
+				$scope.loaded = false; //点击搜索
+				$scope.CompID=0;
+				var userId = "";
+				AuthService.getAuth().then(function(res) {
+					userId = res.UserID;
+					$scope.CompID = res.CompID;
+					$scope.domShowX = true;
+				});
+				//弹出键盘
+				showInput();
+				$scope.search = {
+					text: "",
+					history: [],
+					doSearch: function(type) {
+						$scope.data = null; //清空原数据
+						$scope.search.text = document.querySelector("input").value.trim();
+						if(!$scope.search.text) {
+							mui.toast("请输入搜索内容！");
+							return;
+						};
+						$scope.domShow = true;
+						Loading.show();
+						//关闭键盘
+						document.activeElement.blur();
+						BlendSearch();
+					},
+					//点击搜索x
+					deleteSearch: function() {
+						$scope.search.text = '';
+						$scope.domShow = false; //控制列表显示
+					}
+				};
+
+				//搜索
+				function BlendSearch() {
+					var url = ApiService.Api50 + "/api/v1/Search/BlendSearch?keywords=" + encodeURIComponent($scope.search.text);
+					DataService.get(url).then(function(res) {
+						if(res) {
+							Loading.hide();
+							$scope.domShow = true;
+							$scope.data = res;
+						}
+					})
+				}
+
+				//取消
+				$scope.cancel = function() {
+					mui.back();
+				}
+
+				//跳转
+				$scope.tap = function(key, keywords) {
+					switch(key) {
+						//联系人搜索
+						case 'contactSearch':
+							UtilsService.openWindow({
+								needLogin: true,
+								id: "contact-search.html",
+								url: "contact-search.html"
+							});
+
+							break;
+							//企业
+						case 'compSearch':
+							UtilsService.openWindow({
+								needLogin: true,
+								id: "comp-search.html",
+								url: "comp-search.html"
+							});
+							break;
+							//产品
+						case 'prodSearch':
+							UtilsService.openWindow({
+								needLogin: true,
+								id: "prod-search.html",
+								url: "../problib/sku-search.html?state=view"
+							});
+							break;
+							//设备
+						case 'equipmentSearch':
+							UtilsService.openWindow({
+								needLogin: true,
+								id: "equ-search.html",
+								url: "../eqmentlib/equ-search.html"
+							});
+							break;
+							//客户
+						case 'customerSearch':
+							UtilsService.openWindow({
+								needLogin: true,
+								id: "customer-search.html",
+								url: "customer-search.html"
+							});
+							break;
+							//供应商
+//						case 'supplierSearch':
+//							UtilsService.openWindow({
+//								needLogin: true,
+//								id: "supplier-search.html",
+//								url: "supplier-search.html"
+//							});
+//							break;
+							//更多搜索
+						case 'moreContactSearch':
+							UtilsService.openWindow({
+								needLogin: true,
+								id: 'contact-search.html',
+								url: 'contact-search.html',
+								extras: {
+									keywords: $scope.search.text
+								}
+							});
+							break;
+						case 'moreCompSearch':
+							UtilsService.openWindow({
+								needLogin: true,
+								id: 'comp-search.html',
+								url: 'comp-search.html',
+								extras: {
+									keywords: $scope.search.text
+								}
+							});
+							break;
+						case 'moreEquSearch':
+							UtilsService.openWindow({
+								needLogin: true,
+								id: 'equ-search.html',
+								url: '../eqmentlib/equ-search.html',
+								extras: {
+									keywords: $scope.search.text
+								}
+							});
+							break;
+						case 'moreProdSearch':
+							UtilsService.openWindow({
+								needLogin: true,
+								id: 'prod-search.html',
+								url: '../problib/sku-search.html?state=view',
+								extras: {
+									keywords: $scope.search.text
+								}
+							});
+							break;
+						case 'moreCustomerSearch':
+							UtilsService.openWindow({
+								needLogin: true,
+								id: 'customer-search.html',
+								url: 'customer-search.html',
+								extras: {
+									keywords: $scope.search.text
+								}
+							});
+							break;
+//						case 'moreSupplierSearch':
+//							UtilsService.openWindow({
+//								needLogin: true,
+//								id: 'supplier-search.html',
+//								url: 'supplier-search.html',
+//								extras: {
+//									keywords: $scope.search.text
+//								}
+//							});
+//							break;
+					}
+				};
+
+				RpcServer.expose("RPC_SearchListRefresh", function(params) {
+					BlendSearch();
+				})
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

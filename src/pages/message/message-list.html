@@ -1,0 +1,61 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/common.css">
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<link rel="stylesheet" href="message-list.css" />
+	</head>
+
+	<body ng-controller="MessageListController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">通知</a>
+		</header>
+		<md-state-tip data-options="{msg:'消息',retry:event.reload}" ng-show="!chatData.isNetWork"></md-state-tip>
+		<div class="mui-scroll-wrapper" id="chat_body" ng-show="chatData.isNetWork">
+			<div class="mui-scroll">
+				<div style="text-align: center;" id="content-loadding"><img src="../../images/Emotion/loadding.gif" /></div>
+				<div id="msg-repeat">
+					<!--<div ng-class="{'msg-item':true,'msg-item-self':item.SendID==chatData.UserID,'msg-item-chat':item.SendID!=chatData.UserID}" id="{{'msg-item-'+(item.MsgID || item.ID)}}" data-idx="{{$index}}" ng-repeat="item in chatData.msgList">-->
+						<!--<div class="time-split" ng-class="{'ng-hide':!event.isShowTime($index),'ng-show':event.isShowTime($index)}">-->
+							<!--<span ng-bind="event.getDate(item.SendTime)"></span>-->
+						<!--</div>-->
+						<!--&lt;!&ndash;<img class="msg-user-img mui-right" ng-if="item.SendID==chatData.UserID" src="http://pic.maidiyun.com/dXNlci9sb2dv_561.png?0.4040333496267361" />-->
+					<!--<img class="msg-user-img mui-right" data-user="{{chatData.UserID}}" ng-src="{{chatData.UserID | getUserLogo:50:50}}" ng-if="chatData.UserLogo && item.SendID==chatData.UserID">-->
+					<!--<div class="msg-user-img mui-right md-userCustomLogo" data-user="{{chatData.UserID}}" ng-if="!chatData.UserLogo && item.SendID==chatData.UserID" ng-bind="chatData.UserName | getUserCustomLogo"></div>&ndash;&gt;-->
+
+						<!--<img class="msg-user-img " src="../../images/work_notice.png" ng-if="chatData.type==2">-->
+						<!--<img class="msg-user-img " src="../../images/system_messages.png" ng-if="chatData.type==1">-->
+						<!--&lt;!&ndash;<div class="msg-user-img md-userCustomLogo" data-user="{{chatData.chatID}}" ng-if="!chatData.chatLogo && item.SendID!=chatData.UserID" ng-bind="chatData.chatName | getUserCustomLogo"></div>-->
+					<!--<img class="msg-user-img" ng-if="item.SendID!=chatData.UserID" src="http://pic.maidiyun.com/dXNlci9sb2dv_561.png?0.4040333496267361" />&ndash;&gt;-->
+
+						<!--<div class="msg-content" ng-class="{'content-voice':item.Content.indexOf('[6,')==4,'content-event':item.Content.indexOf('[7,')==4}">-->
+							<!--<div ng-if="item.SendState<2" class="content-exp resend" id="{{'content-exp-'+item.MsgID}}" data-state="{{item.SendState}}" data-idx="{{$index}}" data-type="{{item.RealType}}">-->
+								<!--<img src='../../images/Emotion/loadding.gif' ng-if="item.SendState==0" />-->
+								<!--<img src='../../images/Emotion/reSend.png' ng-if="item.SendState==1" />-->
+							<!--</div>-->
+							<!--<div class="msg-content-inner" ng-bind-html="event.transContent(item.Content,item.SendID==chatData.UserID)">-->
+							<!--</div>-->
+							<!--<div class="msg-content-angle"></div>-->
+						<!--</div>-->
+					<!--</div>-->
+				</div>
+			</div>
+		</div>
+
+		<script type="text/javascript" src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="transMessage.js"></script>
+		<script type="text/javascript" src="transEvent.js"></script>
+		<script type="text/javascript" src="message-list.js"></script>
+
+	</body>
+
+</html>

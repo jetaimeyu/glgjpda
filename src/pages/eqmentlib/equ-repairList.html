@@ -1,0 +1,33 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/common.css">
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<style>
+			.icon {
+				width: 16px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="RepairListController">
+		<div id="RepairListCont" class="mui-scroll-wrapper" ng-class="{'mui-block':domShow}" style="display: none;">
+			<div class="mui-content">
+				<md-equ-repair-list ng-model="EquiFailRecord"></md-equ-repair-list>
+				<md-no-data ng-show="EquiFailRecord && EquiFailRecord.length==0">暂无数据</md-no-data>
+			</div>
+		</div>
+		<script src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="equ-repairList.js"></script>
+	</body>
+
+</html>

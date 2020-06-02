@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../../css/common.css" />
+		<link rel="stylesheet" href="../../../icon-font/iconfont.css" />
+			<style type="text/css">
+			.mui-table-view-cell a > *{
+				vertical-align: middle;
+			}
+			.mui-table-view-cell div > *{
+				vertical-align: middle;
+			}
+			
+			.mui-table-view-cell a span{
+				display: inline-block;
+				margin-left: 15px;
+			}
+			.mui-table-view-cell div span{
+				display: inline-block;
+				margin-left: 15px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="productLogController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">生产日志</a>
+		</header>
+		<div class="mui-content">
+			<ul class="mui-table-view mt10">
+				<li class="mui-table-view-cell mui-media" ng-click="tap('add')">
+					<div>
+						<img src="../../../images/production-log/icon_add-equ.png" width="45" />
+						<span>新增生产日志</span>
+					</div>
+				</li>
+				<!--<li class="mui-table-view-cell mui-media" ng-click="tap('scan')">
+					<div>
+						<img src="../../../images/production-log/icon_account.png" width="45" />
+						<span class="mui-media-body">扫码查看生产日志</span>
+					</div>
+				</li>-->
+			</ul>
+		</div>
+		<script type="text/javascript" src="../../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../../js/common.js"></script>
+		<script type="text/javascript" src="../../../js/utils.js"></script>
+		<script>
+			app.controller("productLogController",["$scope","UtilsService",function($scope,UtilsService){			
+				mui.init();
+				$scope.tap = function(key) {
+						switch (key){
+							case 'add':
+								UtilsService.openWindow({
+									needLogin: true,
+									id: 'production-log-edit.html',
+									url: 'production-log-edit.html'
+								});
+								break;
+							case 'scan':
+								UtilsService.openWindow({
+									needLogin: true,
+									id: 'scan.html',
+									url: '../../scan/scan.html',
+									extras: {
+										callback: "scanCB",
+										type:"scan_technics_trace"
+									}
+								});
+								break;
+							default:
+								break;
+						}
+						
+				}
+				window.scanCB = function(type,code) {
+//					console.log(code)//MDGY133
+//					obj = JSON.parse(obj);
+					setTimeout(function() {
+						UtilsService.openWindow({
+							needLogin: true,
+							id: 'production-plan-detail.html',
+							url: "production-plan-detail.html?code=" + 133
+						});
+					}, 200)
+				}
+				
+			}])	
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

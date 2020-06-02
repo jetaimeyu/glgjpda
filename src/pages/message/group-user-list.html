@@ -1,0 +1,332 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<link rel="stylesheet" href="../../css/mui.min.css" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css">
+	<link rel="stylesheet" href="group-user-list.css">
+	<link rel="stylesheet" href="../../css/mui.loading.css" />
+</head>
+
+<body ng-controller="GroupUserListController">
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left">群成员</a>
+	</header>
+	<!--搜索框部分-->
+	<div class="search-box" style="margin-top: 44px;">
+		<div class="search-body">
+			<input type="text" placeholder="请输入关键字" value="" id="searchbox" />
+			<span class="mui-icon mui-icon-search" method="search" id="search"></span>
+			<span class="mui-icon mui-icon-clear" method="clearSearch"></span>
+		</div>
+		<div class="search-placeholder">
+			<span class="mui-icon mui-icon-search"></span>
+			<span class="placeholder">搜索</span>
+		</div>
+	</div>
+	<div class="mui-scroll-wrapper" style="display:none;margin-top: 90px;" ng-class="{'mui-block':isLoad}">
+		<ul class="md-user-list mui-table-view mui-table-view-chevron">
+			<div ng-repeat="group in groupUsers">
+				<p class="data-group-tip" ng-bind="($index==0?'群管理':'群成员')+'('+group.length+')'"
+					ng-show="groupUsers[$index].length>0"></p>
+				<li class="mui-table-view-cell mui-media" ng-repeat="user in group track by $index"
+					ng-click="tap(user)">
+					<div class="mui-media-object mui-pull-left md-img-round avatar"
+						ng-style="{'background-image':'url('+ (user.UserID | getUserLogo:50:0) +')'}"
+						ng-if="user.ULogoIsExist"></div>
+					<div class="mui-media-object mui-pull-left md-userCustomLogo" ng-if="!user.ULogoIsExist"
+						ng-bind="user.ViewName | getUserCustomLogo"></div>
+					<div class="mui-clearfix display-name" style="margin-right: 16px;">
+						<div class="mui-ellipsis news-title" ng-bind="user.ViewName"></div>
+						<div class="identity-card onwner-card" ng-if="user.Role==0">群主</div>
+						<div class="identity-card manage-card" ng-if="user.Role==1">管理员</div>
+					</div>
+					<i ng-if="action!='select'" class="opt md-icon icon-right"></i>
+				</li>
+			</div>
+		</ul>
+		<md-no-data ng-show="groupUsers&&groupUsers[0].length==0&&groupUsers[1].length==0">暂无数据</md-no-data>
+	</div>
+
+	<script src="../../js/mui.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/mui.loading.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/rpc.js"></script>
+	<script type="text/javascript">
+		app.controller("GroupUserListController", ["$scope", "ApiService", "DataService", "UtilsService", "CacheService",
+			"Loading",
+			function ($scope, ApiService, DataService, UtilsService, CacheService, Loading) {
+				//群成员
+				$scope.groupUsers = [
+					[],
+					[]
+				];
+
+				var curView = plus.webview.currentWebview();
+				var data = curView.GroupUsers;
+				var groupId = curView.GroupID;
+				var parent = curView.opener();
+
+				var curData = {
+					Users: [],
+					searchUser: function (_value) {
+						var data = this.Users.filter(function (_item) {
+							return _item.MemberName.indexOf(_value) >= 0 || _item.ViewName.indexOf(
+								_value) >= 0;
+						});
+
+						dom.event.renderUser(data, true);
+					}
+				};
+
+
+				var dom = {
+					init: function () {
+						this.ctl.init();
+						this.webView.init();
+						this.event.init();
+						this.service.init();
+					},
+					webView: {
+						cur: "",
+						init: function () {
+							this.cur = plus.webview.currentWebview();
+							this.cur.setStyle({
+								softinputMode: "adjustResize"
+							});
+							curData.Users = curView.GroupUsers;
+						}
+					},
+					event: {
+						init: function () {
+							this.renderUser(curData.Users);
+						},
+						renderUser: function (data, isApply) {
+							$scope.groupUsers = [
+								[],
+								[]
+							];
+
+							curData.Users.length > 0 && data.forEach(function (item) {
+								item.Role < 2 && $scope.groupUsers[0].push(item);
+								item.Role == 2 && $scope.groupUsers[1].push(item);
+							});
+							isApply && ($scope.$apply());
+						}
+					},
+					ctl: {
+						init: function () {
+							this.serachBox.init();
+						},
+						serachBox: {
+							init: function () {
+								mui(".search-box")
+									.on("tap", ".search-placeholder", function () {
+										this.parentElement.classList.add("is-searching");
+										setTimeout(function () {
+
+										})
+										this.parentElement.querySelector("input").focus();
+										showInput();
+									})
+									.on("tap", ".search-body .mui-icon-search", function () {
+										var input = this.parentElement.querySelector("input");
+										var value = input.value.replace(/(^\s+)|(\s+$)/g, "");
+										if (!value) {
+											mui.toast(input.getAttribute("placeholder") || "请输入关键字");
+											return;
+										}
+										var method = this.getAttribute("method");
+										if (method) {
+											blurInput();
+											this.parentElement.querySelector("input").blur();
+											window[method] && window[method](value);
+										}
+									}).on("tap", ".search-body .mui-icon-clear", function () {
+										this.style.display = "none";
+										this.parentElement.querySelector("input").value = "";
+										this.parentElement.parentElement.classList.remove("is-searching")
+										var method = this.getAttribute("method");
+
+										if (method) {
+											blurInput();
+											this.parentElement.querySelector("input").blur();
+											window[method] && window[method]();
+										}
+									});
+
+								mui(".search-box").on("input", "input", function () {
+									var value = this.value.replace(/(^\s+)|(\s+$)/g, "");
+									if (value) {
+										curData.searchUser(value);
+										this.parentElement.querySelector(".mui-icon-clear").style
+											.display = "block";
+									} else {
+										dom.event.renderUser(curData.Users, true);
+										this.parentElement.querySelector(".mui-icon-clear").style
+											.display = "none";
+									}
+								});
+
+								mui.each(document.querySelectorAll(".search-box input"), function () {
+									this.addEventListener("blur", function () {
+										if (!this.value.replace(/(^\s+)|(\s+$)/g, "")) {
+											this.parentElement.parentElement.classList.remove(
+												"is-searching");
+										}
+									});
+								});
+								window.search = function (value) {
+									curData.searchUser(value);
+								};
+								window.clearSearch = function () {
+									dom.event.renderUser(curData.Users, true);
+								};
+							}
+						}
+					},
+					service: {
+						init: function () {
+							this.Rpc_refreshGroup();
+						},
+						Rpc_refreshGroup: function () {
+							RpcServer.expose("Rpc_refreshGroup", function (_data) {
+								curData.Users = _data;
+
+								var _value = document.querySelector(".search-box input").value;
+
+								if (_value) {
+									curData.searchUser(_value);
+								} else {
+									dom.event.renderUser(curData.Users, true);
+								}
+							});
+						}
+					}
+				};
+
+
+
+
+				dom.init();
+
+				$scope.isLoad = true;
+
+				//当前用户信息
+				var MyRole = dom.webView.cur.MyRole;
+				var currentUser = CacheService.get("user", true).data;
+
+				$scope.tap = function (user) {
+					if (MyRole == 2) {
+						openUserInfo(user);
+						return;
+					}
+					var actionButtons = [{
+							id: 1,
+							title: "查看资料"
+						}
+						// , {
+						// 	id: 2,
+						// 	title: "修改群名片"
+						// }
+					];
+					if (MyRole == 0) {
+						user.Role == 1 && actionButtons.push({
+							id: 2,
+							title: "取消管理员"
+						});
+						user.Role == 2 && actionButtons.push({
+							id: 3,
+							title: "设为管理员"
+						});
+						user.Role != 0 && actionButtons.push({
+							id: 4,
+							title: "踢出群组"
+						});
+					}
+					if (MyRole == 1) {
+						user.Role == 2 && actionButtons.push({
+							id: 4,
+							title: "踢出群组"
+						});
+					}
+					UtilsService.actionSheet("", actionButtons).then(function (res) {
+						switch (res.id) {
+							case 1:
+								openUserInfo(user);
+								break;
+							case 3:
+								setManager(user.ID,1);
+								break;
+							case 2:
+								setManager(user.ID,2);
+								break;
+							case 4:
+								deleteUser(user.UserID);
+								break;
+							default:
+								break;
+						}
+					})
+				}
+
+				//查看个人信息
+				function openUserInfo(user) {
+					var url = "../contact/personal-info.html?userid=" + user.UserID;
+					var id = "personal-info.html";
+
+					if (user.UserID == currentUser.UserID) {
+						url = "../mine/personal-information.html";
+						id = "personal-information.html";
+					}
+					UtilsService.openWindow({
+						needLogin: true,
+						id: id,
+						url: url
+					});
+				}
+
+				function deleteUser(userId) {
+					mui.showLoading("请稍后", "div");
+					DataService.post(ApiService.Api50 + "/api/v1/Message/GroupMemberDel_Manage?userId=" + userId +
+						"&groupId=" + groupId, {}).then(function (res) {
+						mui.hideLoading();
+						//刷新详情页面页面
+						RpcClient.invoke(parent.id, "Rpc_refreshGroup");
+
+					}, function (res) {
+						mui.hideLoading();
+					})
+				};
+
+				function setManager(userId, role) {
+					mui.showLoading("请稍后", "div");
+					DataService.post(ApiService.Api50 + "/api/v1/Message/GroupMemberUpdateRole_Manage?memberId=" +
+						userId + "&groupId=" + groupId + "&role=" + role, {}).then(function (res) {
+						mui.hideLoading();
+						//刷新详情页面页面
+						RpcClient.invoke(parent.id, "Rpc_refreshGroup");
+
+					}, function (res) {
+						mui.hideLoading();
+					})
+				};
+
+			}
+		]);
+
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+		});
+	</script>
+</body>
+
+</html>

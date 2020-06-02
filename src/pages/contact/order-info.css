@@ -1,0 +1,28 @@
+.box1 ,.box4{
+display: flex;
+    overflow: hidden;
+    flex: 0 0 auto;
+    height: auto;
+    -webkit-box-orient: horizontal;
+    flex-direction: column;
+    width: 100%;
+    place-self: flex-start;
+    padding: 10px;
+    background: #fff;
+    /*margin-bottom: 20px;*/
+    margin-top: 7px;
+    padding-top: 11px;
+}
+.or_name{
+	font-size: 1.5rem;
+}
+.or_price{
+	font-size: 1.2rem!important;
+	margin-top: 10px;
+}
+.or_num{
+	font-size: 1.2rem;
+}
+.or_price_all{
+	margin-top: 5px;
+}

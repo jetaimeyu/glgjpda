@@ -1,0 +1,908 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="../../css/mui.loading.css" />
+		<link rel="stylesheet" href="personal-modify.css" />
+	</head>
+
+	<body ng-controller="PersModController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">个人信息修改</a>
+			<a class="right-menu-words" id="save">保存</a>
+		</header>
+		<div class="mui-content" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<ul class="data-group data-avatar">
+				<li class="mui-table-view-cell data-row" ng-click="changeLogo()">
+					<div class="body">
+						<!--<img class="avatar" ng-src="{{UserInfo.UserID|getUserLogo:48:48}}" ng-class="UserInfo.ULogoIsExist?'':'ng-hide'" />-->
+						<div class="avatar" ng-style="{'background-image':'url('+ (UserInfo.UserID|getUserLogo:48:0) +')'}" ng-class="UserInfo.ULogoIsExist?'':'ng-hide'">
+						</div>
+						<label class="modified">更改头像</label>
+						<p class="opt md-icon font-15">
+							<span class="icon-right"></span>
+						</p>
+						<div class="mui-media-object mui-pull-left md-userCustomLogo ng-hide" ng-show="!UserInfo.ULogoIsExist" ng-bind="(UserInfo.UserName| getViewName:UserInfo.RealName:UserInfo.Mdt) | getUserCustomLogo"></div>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<li class="data-row must">
+					<label>昵称</label>
+					<div class="body">
+						<input type="text" lenlimit="20" maxlength="20" id="username" ng-model="UserInfo.UserName" placeholder="输入昵称" onkeyup="value=value.replace(/[\ud800-\udbff][\udc00-\udfff]/g,'')" />
+					</div>
+				</li>
+				<li class="data-row">
+					<label>个性签名</label>
+					<div class="body">
+						<div class="edit">
+							<div placeholder="输入个性签名" class="needsclick" lenlimit="150" ng-bind="UserInfo.Signature" id="signature" contenteditable="true"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row" ng-show="info.State!=1 && UserInfo.CompID==0">
+					<label>公开能力</label>
+					<div class="body">
+						<div class="mui-switch mui-switch-blue mui-switch-mini" id="mySwitch" ng-class="{'mui-active':extendData.PublicAbility==1}">
+							<div class="mui-switch-handle"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>用户类型</label>
+					<div class="body">
+						<p ng-repeat="item in states" style="display:inline-block;float:left;margin-right:5px;" ng-click="event.choose(item)">
+							<i class="icon-roundcheckfill color-blue" ng-if="activeState == item.value"></i>
+							<i class="icon-round color-gray" ng-if="activeState!=item.value"></i>
+							<span class="name">{{item.label}}</span>
+						</p>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<li class="data-row must">
+					<label>姓名</label>
+					<div class="body">
+						<input type="text" lenlimit="20" maxlength="20" id="realname" ng-model="UserInfo.RealName" placeholder="输入姓名" onkeyup="value=value.replace(/[\ud800-\udbff][\udc00-\udfff]/g,'')" />
+					</div>
+				</li>
+				<li class="mui-table-view-cell data-row must" id="sex">
+					<label>性别</label>
+					<div class="body">
+						<span ng-bind="UserInfo.Sex|getUserSex"></span>
+						<p class="opt md-icon font-15">
+							<span class="icon-right"></span>
+						</p>
+					</div>
+				</li>
+				<li class="data-row must">
+					<label>邮箱</label>
+					<div class="body">
+						<input type="text" lenlimit="32" maxlength="32" id="email" ng-model="UserInfo.EMail" placeholder="输入邮箱" />
+					</div>
+				</li>
+				<li class="data-row must" ng-click="chooseAddress()">
+					<label>详细地址</label>
+					<p class="opt md-icon icon-right"></p>
+					<div class="body" ng-bind="postAddr.Province | locationfilter:postAddr.City:postAddr.District:postAddr.Address:postAddr.Street">
+
+					</div>
+				</li>
+			</ul>
+			<div ng-if="(activeState==7 || activeState==6)" class="extend-body">
+				<p class="data-group-tip">所处行业</p>
+				<ul class="data-group">
+					<li class="data-row" style="padding-left: 15px;height:auto;" ng-if="extendData[activeState].IndData.length==0" ng-click="event.chooseIndusty()">
+						<p class="opt md-icon icon-right"></p>
+						<div class="body">选择行业</div>
+					</li>
+					<li class="mui-table-view-cell data-row" style="padding-left: 15px;" style="height:auto;" ng-click="event.chooseIndusty()" ng-repeat="item in extendData[activeState].IndData">
+						<p class="opt md-icon icon-right"></p>
+						<div class="body" ng-bind="item.CName"></div>
+					</li>
+				</ul>
+
+				<p class="data-group-tip">教育背景</p>
+				<ul class="data-group part-group">
+					<li style="padding-left:15px;" class="data-row" ng-repeat="(index,item) in extendData[activeState].Edus" ng-click="event.editEdu(item,index)">
+						<p class="opt md-icon icon-delete" ng-click="event.delEdu(index);;$event.stopPropagation();"></p>
+						<div class="body" ng-bind="item.SchoolName">
+						</div>
+					</li>
+					<li class="btn-group" ng-click="event.editEdu()">
+						<a id="addPart" class="btn-col">新增教育背景</a>
+					</li>
+				</ul>
+
+				<p class="data-group-tip">工作履历</p>
+				<ul class="data-group part-group">
+					<li style="padding-left:15px;" class="data-row" ng-repeat="(index,item) in extendData[activeState].Tracks" ng-click="event.editWork(item,index)">
+						<p class="opt md-icon icon-delete" ng-click="event.delWork(index);;$event.stopPropagation();"></p>
+						<div class="body" ng-bind="item.CompName">
+						</div>
+					</li>
+					<li class="btn-group" ng-click="event.editWork()">
+						<a id="addPart" class="btn-col">新增工作履历</a>
+					</li>
+				</ul>
+
+				<ul class="data-group" ng-if="activeState==6">
+					<li class="data-row">
+						<label>擅长设计软件</label>
+						<div class="body">
+							<p ng-repeat="item in designSoft" style="display:inline-block;float:left;margin-right:5px;" ng-click="event.chooseSoft('DesignSoft',item)">
+								<i class="icon-roundcheckfill color-blue" ng-if="extendData[activeState].DesignSoft.indexOf(item.CodeID)>=0"></i>
+								<i class="icon-round color-gray" ng-if="extendData[activeState].DesignSoft.indexOf(item.CodeID)<0"></i>
+								<span class="name">{{item.CodeName}}</span>
+							</p>
+						</div>
+					</li>
+					<li class="data-row">
+						<label>其他设计软件</label>
+						<div class="body">
+							<input ng-model="extendData[activeState].DesignSoftOther" type="text" placeholder="请输入擅长的其他设计软件" />
+						</div>
+					</li>
+					<li class="data-row">
+						<label>擅长分析软件</label>
+						<div class="body">
+							<p ng-repeat="item in analyzeSoft" style="display:inline-block;float:left;margin-right:5px;" ng-click="event.chooseSoft('AnalyzeSoft',item)">
+								<i class="icon-roundcheckfill color-blue" ng-if="extendData[activeState].AnalyzeSoft.indexOf(item.CodeID)>=0"></i>
+								<i class="icon-round color-gray" ng-if="extendData[activeState].AnalyzeSoft.indexOf(item.CodeID)<0"></i>
+								<span class="name">{{item.CodeName}}</span>
+							</p>
+						</div>
+					</li>
+					<li class="data-row">
+						<label>其他分析软件</label>
+						<div class="body">
+							<input ng-model="extendData[activeState].AnalyzeSoftOther" type="text" placeholder="请输入擅长的其他分析软件" />
+						</div>
+					</li>
+					<li class="data-row">
+						<label>技术能力</label>
+						<div class="body">
+							<p ng-repeat="item in technical" style="display:inline-block;float:left;margin-right:5px;" ng-click="event.chooseSoft('Technical',item)">
+								<i class="icon-roundcheckfill color-blue" ng-if="extendData[activeState].Technical.indexOf(item.CodeID)>=0"></i>
+								<i class="icon-round color-gray" ng-if="extendData[activeState].Technical.indexOf(item.CodeID)<0"></i>
+								<span class="name">{{item.CodeName}}</span>
+							</p>
+						</div>
+					</li>
+					<li class="data-row">
+						<label>其他能力</label>
+						<div class="body">
+							<input ng-model="extendData[activeState].TechnicalOther" type="text" placeholder="请输入其他能力" />
+						</div>
+					</li>
+
+					<li class="data-row">
+						<label>擅长产品</label>
+						<div class="body">
+							<input ng-model="extendData[activeState].ProdName" type="text" placeholder="请输入擅长产品" />
+						</div>
+					</li>
+					<li class="data-row">
+						<label>等级证书</label>
+						<div class="body">
+							<div class="photo file" ng-repeat="img in extendData[activeState].Photos" ng-show="img.ID>0">
+								<div class="img-body">
+									<img class="img" ng-style="{'background-image':'url(' + (event.getPreSrc(img) | filePathReg) +')'}" ng-click="event.preview($index)" src="../../images/imgPre.png" />
+								</div>
+								<img class="media-del" src="../../images/delete.png" ng-click="event.delRelPhoto($index)">
+							</div>
+							<div class="photo file" ng-repeat="img in extendData[activeState].FilePhoto">
+								<div class="img-body">
+									<img class="img" ng-style="{'background-image':'url(' + (event.getPreSrc(img) | filePathReg) +')'}" ng-click="event.preview($index)" src="../../images/imgPre.png" />
+								</div>
+								<img class="media-del" src="../../images/delete.png" ng-click="event.delPhoto($index)">
+							</div>
+							<div class="photo file">
+								<div class="img-body" ng-click="event.addPhoto()">
+									<i class="icon-add color-blue"></i>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li class="data-row">
+						<label>技术能力描述</label>
+						<div class="body">
+							<div class="edit">
+								<div id="TechnicalInfo_6" class="needsclick" ng-bind="extendData[activeState].TechnicalInfo" placeholder="请输入技术能力描述" contenteditable="true" lenlimit="200"></div>
+							</div>
+						</div>
+					</li>
+				</ul>
+
+				<ul class="data-group" ng-if="activeState==7">
+					<li class="data-row">
+						<label>擅长领域</label>
+						<div class="body">
+							<input ng-model="extendData[activeState].Territory" type="text" placeholder="请输入擅长领域" />
+						</div>
+					</li>
+					<li class="data-row">
+						<label>擅长操作设备</label>
+						<div class="body">
+							<input ng-model="extendData[activeState].OprationProdName" type="text" placeholder="擅长操作设备" />
+						</div>
+					</li>
+
+					<li class="data-row">
+						<label>擅长维修设备</label>
+						<div class="body">
+							<input ng-model="extendData[activeState].RepairProdName" type="text" placeholder="请输入擅长维修设备" />
+						</div>
+					</li>
+					<li class="data-row">
+						<label>工时费</label>
+						<div class="body">
+							<input ng-model="extendData[activeState].ManHourCost" type="text" placeholder="请输入工时费" />
+						</div>
+					</li>
+					<li class="data-row">
+						<label>等级证书</label>
+						<div class="body">
+							<div class="photo file" ng-repeat="img in extendData[activeState].Photos" ng-show="img.ID>0">
+								<div class="img-body">
+									<img class="img" ng-style="{'background-image':'url(' + (event.getPreSrc(img) | filePathReg) +')'}" ng-click="event.preview($index)" src="../../images/imgPre.png" />
+								</div>
+								<img class="media-del" src="../../images/delete.png" ng-click="event.delRelPhoto($index)">
+							</div>
+							<div class="photo file" ng-repeat="img in extendData[activeState].FilePhoto">
+								<div class="img-body">
+									<img class="img" ng-style="{'background-image':'url(' + (event.getPreSrc(img) | filePathReg) +')'}" ng-click="event.preview($index)" src="../../images/imgPre.png" />
+								</div>
+								<img class="media-del" src="../../images/delete.png" ng-click="event.delPhoto($index)">
+							</div>
+							<div class="photo file">
+								<div class="img-body" ng-click="event.addPhoto()">
+									<i class="icon-add color-blue"></i>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li class="data-row">
+						<label>技术能力描述</label>
+						<div class="body">
+							<div class="edit">
+								<div id="TechnicalInfo_7" ng-bind="extendData[activeState].TechnicalInfo" class="needsclick" placeholder="请输入技术能力描述" contenteditable="true" lenlimit="200"></div>
+							</div>
+						</div>
+					</li>
+				</ul>
+
+			</div>
+
+			<!--<ul class="data-group" ng-if="UserInfo.CompID>0">
+				<li class="data-row">
+					<label>企业</label>
+					<div class="body">
+						<span ng-bind="UserInfo.CompName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>部门</label>
+					<div class="body">
+						<span ng-repeat="user in UserInfo.OrgList" ng-bind="$index==0?user.OrgName:' > '+user.OrgName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>职务</label>
+					<div class="body">
+						<span ng-bind="UserInfo.Duty"></span>
+					</div>
+				</li>
+			</ul>-->
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../../js/mui.loading.js"></script>
+		<script>
+			app.controller("PersModController", ["$scope", "ApiService", "DataService", "UtilsService", "CacheService", "Loading",
+				"$q", "$timeout", "RPCObserver",
+				function($scope, ApiService, DataService, UtilsService, CacheService, Loading, $q, $timeout, RPCObserver) {
+
+					$scope.process = {
+						SaveState: 0, //0未保存 1保存成功 2保存中 3保存失败
+						ProcessList: [{
+							Text: "上传证书",
+							State: 0,
+							RetryMethod: uploadImages
+						}, {
+							Text: "保存能力信息",
+							State: 0,
+							RetryMethod: saveAbility
+						}, {
+							Text: "保存内容",
+							State: 0,
+							RetryMethod: saveUserData
+						}]
+					};
+
+					$scope.chooseAddress = function() {
+						UtilsService.openWindow({
+							url: "manage-address.html",
+							id: "manage-address.html"
+						});
+					};
+
+					var user = CacheService.get('user');
+
+					$scope.postAddr = {};
+
+					function getDefPostAddr() {
+						DataService.get(ApiService.Api42 + "/api/PostAddr/GetDefault?userId=" + user.UserID).then(function(res) {
+							$scope.postAddr = res;
+						});
+					};
+
+					RPCObserver.on('refresh_addr_manage_list', 'refresh_addr_manage_list');
+
+					window.refresh_addr_manage_list = function() {
+						getDefPostAddr();
+					};
+
+					getDefPostAddr();
+
+					$scope.UserInfo = user;
+					$scope.AvaLocalPath = "";
+					$scope.guid = "";
+					$scope.isLoad = true;
+					$scope.activeState = user.UserType == 6 || user.UserType == 7 ? user.UserType : 1;
+					$scope.extendData = {
+						PublicAbility: 1,
+						2: {},
+						1: {},
+						7: {
+							IndList: [],
+							IndData: [],
+							Edus: [],
+							Tracks: [],
+							Photos: [],
+							FilePhoto: [],
+							TechnicalInfo: "", //技能描述
+							ManHourCost: "", //工时费
+							Territory: "", //擅长领域
+							OprationProdName: "", //擅长操作设备
+							RepairProdName: "", //擅长维修设备
+						},
+						6: {
+							IndList: [],
+							IndData: [],
+							Edus: [],
+							FilePhoto: [],
+							Tracks: [],
+							Photos: [],
+							DesignSoft: "",
+							DesignSoftOther: "", //设计软件其他
+							AnalyzeSoft: "", //分析软件选择
+							AnalyzeSoftOther: "", //分析软件其他
+							Technical: "", //技术能力选择
+							TechnicalOther: "", //技术能力其他
+							TechnicalInfo: "", //技能描述
+							ProdName: "", //擅长产品
+						}
+					};
+
+					$scope.designSoft = [];
+					$scope.analyzeSoft = [];
+					$scope.technical = [];
+
+					document.getElementById("mySwitch").addEventListener("toggle", function(event) {
+						if(event.detail.isActive) {
+							$scope.extendData.PublicAbility = 1;
+						} else {
+							$scope.extendData.PublicAbility = 0;
+						}
+						$scope.$apply();
+					});
+
+					var curData = {
+						getData: function() {
+							var url = ApiService.Api31 + "/res/getcodebytype?type=";
+
+							var promises = [DataService.get(url + "DesignSoft"), DataService.get(url + "AnalyzeSoft"), DataService.get(
+								url + "Technical"), DataService.get(ApiService.Api50 + "/api/v1/user/GetUserExtend")];
+							$q.all(promises).then(function(resp) {
+								$scope.designSoft = resp[0];
+								$scope.analyzeSoft = resp[1];
+								$scope.technical = resp[2];
+
+								$scope.extendData.PublicAbility = resp[3].PublicAbility;
+								$scope.extendData[6] = resp[3].design;
+								$scope.extendData[7] = resp[3].tech;
+
+								$scope.extendData[6].DelTracks = [];
+								$scope.extendData[6].DelEdus = [];
+								$scope.extendData[6].DelPhotos = [];
+
+								$scope.extendData[7].DelTracks = [];
+								$scope.extendData[7].DelEdus = [];
+								$scope.extendData[7].DelPhotos = [];
+
+								$scope.activeState = resp[3].UserType == 6 || resp[3].UserType == 7 ? resp[3].UserType : 1;
+
+								mui.hideLoading();
+							}, function() {
+								mui.hideLoading();
+							});
+						}
+					};
+
+					// if ($scope.UserInfo.CompID == 0) {
+					mui.showLoading("", "div");
+					curData.getData();
+					// }
+
+					$scope.states = [{
+						label: "普通用户",
+						value: 1
+					}, {
+						label: "设计工程师",
+						value: 6
+					}, {
+						label: "技术工程师",
+						value: 7
+					}];
+
+					$scope.event = {
+						addPhoto: function() {
+							UtilsService.chooseImage().then(function(res) {
+								$scope.extendData[$scope.activeState].FilePhoto = $scope.extendData[$scope.activeState].FilePhoto ? $scope
+									.extendData[$scope.activeState].FilePhoto.concat(res) : [].concat(res);
+							});
+						},
+						preview: function(index) {
+							var images = $scope.extendData[$scope.activeState].Photos.concat($scope.extendData[$scope.activeState].FilePhoto || []).map(function(img) {
+								if(img.ID) {
+									return ApiService.Api45 + "/api/v1/usercerif/" + img.UserID + "/" + img.ID + "_0x0.png";
+								} else {
+									return mui.os.android ? img.FilePath.replace("file://", "") : img.FilePath;
+								}
+							});
+							plus.nativeUI.previewImage(images, {
+								current: index,
+								loop: true,
+								indicator: 'number'
+							});
+						},
+						getPreSrc: function(img) {
+							if(img.ID)
+								return ApiService.Api45 + "/api/v1/usercerif/" + img.UserID + "/" + img.ID + "_100x0.png";
+							else
+								return img.FileSmall;
+						},
+						delPhoto: function(idx) {
+							$scope.extendData[$scope.activeState].FilePhoto.splice(idx, 1);
+
+						},
+						delRelPhoto: function(idx) {
+							var data = $scope.extendData[$scope.activeState].Photos;
+							if(data[idx].ID) {
+								$scope.extendData[$scope.activeState].DelPhotos.push(data[idx])
+							}
+							$scope.extendData[$scope.activeState].Photos.splice(idx, 1);
+
+						},
+						chooseSoft: function(property, item) {
+							var idx = $scope.extendData[$scope.activeState][property].indexOf(item.CodeID);
+							if(idx >= 0) {
+								$scope.extendData[$scope.activeState][property].splice(idx, 1);
+							} else {
+								$scope.extendData[$scope.activeState][property].push(item.CodeID)
+							}
+						},
+						choose: function(item) {
+							$scope.activeState = item.value;
+						},
+						chooseIndusty: function() {
+							UtilsService.openWindow({
+								url: "chooseIndustry.html",
+								id: "chooseIndustry.html",
+								extras: {
+									IndData: $scope.extendData[$scope.activeState].IndData,
+									IndList: $scope.extendData[$scope.activeState].IndList,
+									callback: "chooseIndBack"
+								}
+							});
+						},
+						editEdu: function(data, idx) {
+							UtilsService.openWindow({
+								url: "eduEdit.html",
+								id: "eduEdit.html",
+								extras: {
+									data: data,
+									idx: idx,
+									callback: "eduCallback"
+								}
+							});
+						},
+						delEdu: function(idx) {
+							var data = $scope.extendData[$scope.activeState].Edus;
+							if(data[idx].ID) {
+								$scope.extendData[$scope.activeState].DelEdus.push(data[idx])
+							}
+							$scope.extendData[$scope.activeState].Edus.splice(idx, 1);
+						},
+						editWork: function(data, idx) {
+							UtilsService.openWindow({
+								url: "workEdit.html",
+								id: "workEdit.html",
+								extras: {
+									data: data,
+									idx: idx,
+									state: $scope.activeState,
+									callback: "workCallback"
+								}
+							});
+						},
+						delWork: function(idx) {
+							var data = $scope.extendData[$scope.activeState].Tracks;
+							if(data[idx].ID) {
+
+								$scope.extendData[$scope.activeState].DelTracks.push(data[idx])
+							}
+							$scope.extendData[$scope.activeState].Tracks.splice(idx, 1);
+						}
+					};
+					window.chooseIndBack = function(data) {
+						$scope.extendData[$scope.activeState].IndData = data.IndData;
+						$scope.extendData[$scope.activeState].IndList = data.IndList;
+						$scope.$apply();
+					};
+					window.eduCallback = function(data, idx) {
+						if(idx >= 0) {
+							$scope.extendData[$scope.activeState].Edus[idx] = data;
+						} else {
+							$scope.extendData[$scope.activeState].Edus.push(data);
+						}
+
+						$scope.$apply();
+					}
+					window.workCallback = function(data, idx) {
+						if(idx >= 0) {
+							$scope.extendData[$scope.activeState].Tracks[idx] = data;
+						} else {
+							$scope.extendData[$scope.activeState].Tracks.push(data);
+						}
+
+						$scope.$apply();
+					}
+
+					//更换头像
+					$scope.changeLogo = function() {
+						if(mui.os.ios) {
+							UtilsService.chooseImage(false).then(function(res) {
+								plus.Push.imageResizer(res[0].FilePath, function(newImg) {
+									$scope.AvaLocalPath = newImg;
+									$scope.UserInfo.ULogoIsExist = true;
+									document.querySelector(".avatar").style.backgroundImage = "url(" + newImg + ")";
+								})
+							});
+						} else {
+							plus.Push.cropperPhoto(function(res) {
+								res = JSON.parse(res)[0];
+								$scope.AvaLocalPath = res;
+								$scope.UserInfo.ULogoIsExist = true;
+								document.querySelector(".avatar").style.backgroundImage = "url(" + res + ")";
+							});
+						}
+					};
+					//头像的上传
+					function UploadLogo(localFile) {
+						UtilsService.uploadImage(localFile, "png").then(function(data) {
+							$scope.guid = JSON.parse(data.responseText).Data;
+							saveUserInfo($scope.guid);
+						})
+					}
+					//判断字符串是否为数字和字母组合
+					$scope.checkRate = function() {
+						var re = /^[0-9a-zA-Z]*$/g;
+						if(!re.test($scope.UserInfo.UserName)) {
+							mui.toast("昵称只能输入数字和字母");
+							$scope.UserInfo.UserName = $scope.UserInfo.UserName.replace(/[^0-9a-zA-Z]/g, '');
+							return false;
+						} else {
+							return true;
+						}
+					};
+					//验证手机号
+					$scope.isMobile = function(value) {
+						var validateReg = /^((\+?86)|(\(\+86\)))?1\d{10}$/;
+						return validateReg.test(value);
+					};
+					//验证邮箱
+					$scope.isEmail = function(value) {
+						//					var validateReg = /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/;
+						var validateReg = /^[a-zA-Z0-9_-]+@([a-zA-Z0-9]+\.)+(com|cn|net|org)$/;
+						return validateReg.test(value);
+					};
+					init();
+					//初始化
+					function init() {
+						//选择性别
+						document.getElementById("sex").addEventListener('tap', function() {
+							var btnArray = [{
+								title: "男"
+							}, {
+								title: "女"
+							}];
+							plus.nativeUI.actionSheet({
+								title: "选择性别",
+								cancel: "取消",
+								buttons: btnArray
+							}, function(e) {
+								var index = e.index;
+								switch(index) {
+									case 0:
+										//"取消"
+										break;
+									case 1:
+										//男
+										$scope.UserInfo.Sex = 1;
+										$scope.$apply();
+										break;
+									case 2:
+										//女
+										$scope.UserInfo.Sex = 2;
+										$scope.$apply();
+										break;
+								}
+							});
+						});
+						document.getElementById("save").addEventListener("tap", function() {
+							if($scope.AvaLocalPath) {
+								UploadLogo($scope.AvaLocalPath);
+							} else {
+								saveUserInfo();
+							}
+						})
+					};
+
+					//修改部门
+					$scope.selectOrgs = function() {
+						UtilsService.openWindow({
+							id: "mdSelectOrgPage.html",
+							url: "../common/mdSelectOrgPage.html",
+							extras: {
+								callback: 'getOrg',
+								selectedOrgID: $scope.UserInfo.OrgID
+							}
+						});
+					};
+
+					//保存更改
+					function saveUserInfo(guid) {
+						if(!$scope.UserInfo.UserName) {
+							mui.toast("请输入昵称");
+							Loading.hide();
+							return;
+						}
+						if(!$scope.UserInfo.RealName) {
+							mui.toast("请输入姓名");
+							Loading.hide();
+							return;
+						}
+						if($scope.UserInfo.Sex == 0) {
+							mui.toast("请选择性别");
+							Loading.hide();
+							return;
+						}
+						if(!$scope.UserInfo.EMail.trim()) {
+							mui.toast("请输入邮箱");
+							Loading.hide();
+							return;
+						}
+						if(!$scope.isEmail($scope.UserInfo.EMail)) {
+							mui.toast("请输入正确的邮箱地址");
+							Loading.hide();
+							return;
+						}
+
+						if($scope.postAddr===null||!$scope.postAddr.ID) {
+							mui.toast("请选择默认收货地址作为详细地址");
+							Loading.hide();
+							return;
+						}
+						//验证所填字符长度
+						if(!checkLengthUtil.check()) {
+							Loading.hide();
+							return false;
+						}
+
+						UtilsService.submitModal($scope.process, function() {
+							mui.back();
+						}, function() {
+							$scope.process.SaveState = 0;
+							$scope.process.ProcessList.forEach(function(item) {
+								item.State = 0;
+							})
+						}, function() {
+							$scope.process.ProcessList.forEach(function(item) {
+								item.State = 0;
+							})
+						});
+
+						uploadImages();
+					}
+
+					function uploadImages() {
+						$scope.process.ProcessList[0].State = 1;
+						var images = $scope.extendData[$scope.activeState].FilePhoto || [];
+
+						if(images.length > 0) {
+							var promises = images.map(function(img) {
+								return UtilsService.uploadImage(img.FileSmall, "png");
+							});
+							$q.all(promises).then(function(res) {
+								var flag = true;
+								res.forEach(function(data) {
+
+									var guid = JSON.parse(data.responseText).Data;
+
+									if(!guid) {
+										flag = false;
+									} else {
+										$scope.extendData[$scope.activeState].Photos.push({
+											ID: 0,
+											FileName: guid + ".png"
+										});
+									}
+								});
+								$scope.process.ProcessList[0].State = flag ? 2 : 3;
+								//上传详情内容
+								flag && saveAbility();
+							}, function() {
+								$scope.process.ProcessList[0].State = 3;
+							});
+						} else {
+							$scope.process.ProcessList[0].State = 2;
+							saveAbility();
+						}
+					}
+
+					function saveAbility() {
+						if($scope.process.ProcessList[0].State != 2) {
+							return;
+						}
+						// if ($scope.UserInfo.CompID > 0) {
+						// 	$scope.process.ProcessList[1].State = 2;
+						// 	saveUserData();
+						// } else {
+						$scope.process.ProcessList[1].State = 1;
+						var data = {};
+
+						if($scope.activeState == 6 || $scope.activeState == 7) {
+							data = angular.copy($scope.extendData[$scope.activeState]);
+						}
+
+						if(data) {
+							delete data["IndData"];
+							delete data["FilePhoto"];
+						}
+						data.UserType = $scope.activeState == 6 || $scope.activeState == 7 ? $scope.activeState : user.CompID > 0 ? 2 :
+							1;
+						data.PublicAbility = $scope.extendData.PublicAbility;
+
+						if(document.querySelector("#TechnicalInfo_" + $scope.activeState)) {
+							data.TechnicalInfo = document.querySelector("#TechnicalInfo_" + $scope.activeState).innerText.trim();
+						}
+
+						var url = ApiService.Api50 + "/api/v1/user/SaveUserExtend";
+
+						DataService.post(url, data).then(function() {
+							$scope.process.ProcessList[1].State = 2;
+							saveUserData();
+						}, function() {
+							$scope.process.ProcessList[1].State = 3;
+						})
+						//}
+
+					}
+
+					function saveUserData() {
+						if($scope.process.ProcessList[1].State != 2) {
+							return;
+						}
+						$scope.process.ProcessList[2].State = 1;
+						var url = ApiService.Api50 + "/api/v1/User/UpdateUserInfo";
+						var postdata = {
+							"UserName": document.getElementById("username").value.trim(),
+							"Signature": replaceHTML(document.getElementById("signature").innerText),
+							"RealName": document.getElementById("realname").value.trim(),
+							"Sex": $scope.UserInfo.Sex,
+							"EMail": document.getElementById("email").value.trim(),
+							"Duty": $scope.UserInfo.Duty,
+							"Guid": $scope.guid || "",
+							"OrgID": $scope.UserInfo.OrgID
+						};
+						DataService.post(url, postdata).then(function(res) {
+							Loading.hide();
+							if(res) {
+								mui.toast("已保存");
+								//此处应该更新下登录人信息缓存
+								var userList = CacheService.get("userList");
+								!userList && (userList = []);
+								var index = userList.findIndex(function(_user) {
+									return _user.UserID == user.UserID;
+								});
+								if(index >= 0) {
+									userList[index].UserName = postdata.UserName;
+									userList[index].Signature = postdata.Signature;
+									userList[index].RealName = postdata.RealName;
+									userList[index].Sex = postdata.Sex;
+									userList[index].EMail = postdata.EMail;
+									userList[index].Duty = postdata.Duty;
+									userList[index].OrgID = postdata.OrgID;
+									CacheService.set("userList", userList, true);
+								}
+								user.UserName = postdata.UserName;
+								user.Signature = postdata.Signature;
+								user.RealName = postdata.RealName;
+								user.Sex = postdata.Sex;
+								user.EMail = postdata.EMail;
+								user.Duty = postdata.Duty;
+								user.OrgID = postdata.OrgID;
+								CacheService.set("user", user, true);
+
+								//刷新个人信息页面
+								RpcClient.invoke("userdetail", "RPC_RefreshUserInfo", $scope.AvaLocalPath);
+								//刷新我的页面
+								RpcClient.invoke("my.html", "RPC_RefreshUserInfo", $scope.AvaLocalPath);
+								RpcClient.invoke("personal-information.html", "RPC_RefreshUserInfo", $scope.AvaLocalPath);
+
+								$timeout(function() {
+									$scope.process.SaveState = 1;
+								}, 800);
+							}
+						}, function(error) {
+							$scope.process.ProcessList[2].State = 3;
+							// error.State == -1 && mui.toast("网络异常", {
+							// 	duration: 1300,
+							// 	type: 'div'
+							// });
+						});
+					}
+				}
+			]);
+			//选择部门回调
+			function getOrg(obj) {
+				var appElement = document.querySelector('[ng-controller=PersModController]');
+				var $scope = angular.element(appElement).scope();
+				$scope.UserInfo.OrgList = obj;
+				for(var i = 0; i < obj.length; i++) {
+					$scope.UserInfo.OrgID = obj[obj.length - 1].ID
+				}
+				$scope.$apply();
+			};
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+			//个性签名禁止输入表情处理
+			//			function disExpression() {
+			//				var signature = document.getElementById("signature");
+			//				signature.innerText = signature.innerText.replace(/\uD83C[\uDF00-\uDFFF]|\uD83D[\uDC00-\uDE4F]/g, '')
+			//				msgTextLastPos(signature)
+			//			}
+			//			function msgTextLastPos(obj) {
+			//				obj.focus(); //解决ff不获取焦点无法定位问题
+			//				var range = window.getSelection(); //创建range
+			//				range.selectAllChildren(obj); //range 选择obj下所有子内容
+			//				range.collapseToEnd(); //光标移至最后
+			//			};
+		</script>
+	</body>
+
+</html>

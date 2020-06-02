@@ -1,0 +1,89 @@
+.top44{
+	margin-top: 44px;
+}
+.contentbox{
+	min-height: calc(100vh - 180px);
+}
+.deviceshop-list{
+	display: flex;
+	justify-content: center;
+	background-color: #FFFFFF;
+}
+.deviceshop-box{
+	width:100%;
+	height: 80px;
+	margin-left:10px;
+	margin-right:10px;
+	border-bottom: 1px solid #EAEAEA;
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+}
+.company-logo{
+	width:75px;
+	height:45px;
+	border: 1px solid #EAEAEA;
+	margin-left:6px;
+	border-radius: 3px;
+	background: url(../../images/companylogo.png) no-repeat center center;
+}
+.conpany-intro{
+	/*width:274px;*/
+	width:100%;
+	height: 66px;
+	/*border:1px solid red;*/
+	margin-left: 10px;
+	display: flex;
+	flex-direction:column;
+	justify-content: space-around;
+	align-content:space-between;
+}
+.conpany-name{
+	/*width: 100%;*/
+	color:#323232;
+	font-size:1.5rem;
+}
+.company-mark{
+	width:100%;
+	margin-top:4px;
+}
+.company-product{
+	/*width:100%;*/
+	margin-top:2px;
+}
+.certified-enterprise{
+	display: inline-block;
+	float:left;
+	width:61px;
+	height: 18px;
+	background:url(../../images/companymark1.png) no-repeat center center;
+	background-size:cover;
+}
+.md-recommend{
+	display: inline-block;
+	float:left;
+	width:62px;
+	height: 18px;
+	background:url(../../images/companymark2.png) no-repeat center center;
+	margin-left: 5px;
+	background-size:cover;
+}
+.company-product span{
+	padding:2px;
+	background-color:#EFEFEF;
+	color:#999999;
+	font-size: 1rem;
+	margin-right:2px;
+	border-radius: 2px;
+}
+.btn-submit {
+	margin: 20px 88px 0 88px;
+}
+
+.btn-submit span {
+	background-color: #3296FA;
+	border-color: #3296FA;
+	color: #fff;
+	font-size: 1.6rem;
+	border-radius: 18px;
+}

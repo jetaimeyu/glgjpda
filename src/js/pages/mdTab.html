@@ -1,0 +1,38 @@
+<div class="content">
+	<ul class="md-tab" top="{{top}}" style="display: none;" ng-class="{'mui-block':showTab}">
+		<li class="md-tab-item" ng-repeat="tab in model" href="{{tab.url}}" winid="{{tab.id}}" ng-bind="tab.title" ng-class="{'md-active':$index==0,'md-unread':tab.isunread}" ng-if="!tab.auth||(tab.auth|hasAuth)">
+			
+		</li>
+	</ul>
+</div>
+
+<style type="text/css">
+	header+.mui-scroll-wrapper,
+	header+md-tab {
+		margin-top: 44px;
+		display: block;
+	}
+	
+	md-tab~div .mui-pull-top-pocket {
+		top: 84px !important;
+	}
+
+	
+	.has-tab~div .mui-pull-top-pocket {
+		top: 44px !important;
+	}
+	.md-tab-noHeader~div .mui-pull-top-pocket {
+		top: 44px !important;
+	}
+	.md-unread:before{
+		position: absolute;
+		right: 5px;
+        top: 3px;
+
+		content: "";
+		width: 10px;
+		height: 10px;
+		border-radius: 50%;
+		background: red;
+	}
+</style>

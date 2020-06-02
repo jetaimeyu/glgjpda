@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link href="css/mui.min.css" rel="stylesheet" />
+	</head>
+
+	<body ng-controller="launchCtrl">
+		<script type="text/javascript" src="js/angular.min.js"></script>
+		<script src="js/mui.min.js"></script>
+		<script type="text/javascript" src="js/common.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			app.controller("launchCtrl", ["$scope", "CacheService",
+				function($scope, CacheService) {
+					var user = CacheService.get('user');
+					var navId = "guide.html";
+					var isLaunched = localStorage.getItem("isLaunched");
+					if (isLaunched) {
+						if (user) {
+							navId = "tab.html";
+						} else {
+							navId = "login.html";
+						}
+					}
+					//预加载登录页
+					mui.preload({
+						url: "../src/pages/login/login.html",
+						id: "login.html",
+						styles: {
+							popGesture: 'none'
+						},
+						show: {
+							aniShow: "fade-in"
+						},
+						waiting: {
+							autoShow: false
+						}
+					});
+					//预加载首页
+					mui.preload({
+						url: "tab.html",
+						id: "tab.html",
+						styles: {
+							popGesture: "none"
+						},
+						show: {
+							aniShow: "fade-in"
+						},
+						waiting: {
+							autoShow: false
+						}
+					});
+					//预加载引导页
+					mui.preload({
+						url: "guide.html",
+						id: "guide.html",
+						styles: {
+							popGesture: 'none'
+						},
+						show: {
+							aniShow: "fade-in"
+						},
+						waiting: {
+							autoShow: false
+						}
+					});
+					//预加载菜单页面
+					mui.preload({
+						url: "pages/menus/menu-index.html",
+						id: "menu",
+						styles: {
+							popGesture: 'none',
+							background: 'transparent',
+							zindex: 10,
+						},
+						show: {
+							aniShow: "fade-in"
+						},
+						waiting: {
+							autoShow: false
+						}
+					});
+					mui.preload({
+						url: "webView.html",
+						id: "webView.html",
+						styles: {
+							popGesture: 'none'
+						}
+					});
+					setTimeout(function() {
+						plus.navigator.closeSplashscreen();
+						mui.openWindow({
+							id: navId
+						});
+					}, 500);
+				}
+
+			]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+				//plus.navigator.setStatusBarStyle('dark');
+				plus.navigator.removeAllCookie();
+			});
+		</script>
+	</body>
+
+</html>

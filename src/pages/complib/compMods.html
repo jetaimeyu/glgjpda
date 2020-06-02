@@ -1,0 +1,213 @@
+<!--企业秀 scz-->
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>企业秀</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link href="../../css/common.css" rel="stylesheet" />
+		<style type="text/css">
+			.mui-scroll-wrapper {
+				background-color: #FFFFFF;
+				padding: 54px 15px 10px 15px!important;
+				word-break: break-all;
+			}
+			
+			.about-info {
+				width: 100%;
+				text-align: center;
+				color: #fff!important;
+				padding-top: 10vh;
+			}
+			
+			.about-info .guide-box {
+				margin: 0 auto;
+				width: 160px;
+				height: 160px;
+				margin-bottom: 10vh;
+				position: relative;
+				/* visibility: hidden; */
+				padding: 10px;
+				border: 1px solid #D9D9D9;
+			}
+			
+			.about-info .guide-box img {
+				width: 100%;
+				height: 100%;
+				vertical-align: middle;
+			}
+			
+			.about-info p {
+				margin-bottom: 2vh;
+				text-align: left;
+				padding: 0 11vw;
+				font-size: 1.8rem;
+				color: #fff;
+			}
+			
+			img {
+				max-width: 100%!important;
+			}
+			
+			md-compile ul {
+				 padding-left: 40px; 
+				 list-style: disc; 
+			}
+			
+			.changeContent {
+				display: -webkit-box;
+				display: -webkit-flex;
+				display: box;
+				display: flex;
+				-webkit-box-orient: vertical;
+				-webkit-flex-direction: column;
+				-moz-flex-direction: column;
+				-ms-flex-direction: column;
+				-o-flex-direction: column;
+				flex-direction: column;
+				flex-wrap: nowrap;
+				overflow-x: hidden;
+				overflow-y: auto;
+				display: -moz-box;
+				display: -ms-flexbox;
+				display: box;
+				display: -moz-box;
+				display: -ms-flexbox;
+				-webkit-box-align: center;
+				-webkit-justify-content: center;
+				-moz-justify-content: center;
+				-ms-justify-content: center;
+				-o-justify-content: center;
+				justify-content: center;
+			}
+			
+			.changeContent,
+			.instruction_content {
+				word-break: break-all;
+				min-height: 100%;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="compIntr">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left" ng-bind="compShowTitle"></a>
+		</header>
+		<div class="mui-scroll-wrapper" ng-switch="compModuleKey" ng-class="{'mui-block':isLoad}" style="display: none;margin-top: 44px;" ng-style="{'background':getBackground(),'background-size':'cover'}">
+			<div class="innerHtml changeContent" ng-switch-default>
+				<md-compile data-template="compShowHtml"></md-compile>
+			</div>
+			<div class="gywm" ng-switch-when="MKey_gywm">
+				<div class="about-info" ng-style="{'margin-top':IsShowPublicNo != 0?'' : '18vh'}">
+					<div class="guide-box" ng-if="IsShowPublicNo != 0">
+						<img ng-src="{{compCodePicUrl}}">
+					</div>
+					<p class="about-address" ng-style="{'color':ColorSetting==2||ColorSettingValue=='#FFFFFF'?'#323232':'#fff'}">地址：<span ng-bind="compInfo.Province | locationfilter:compInfo.City:compInfo.District:compInfo.Address:compInfo.Street"></span></p>
+					<p class="about-phone" ng-style="{'color':ColorSetting==2||ColorSettingValue=='#FFFFFF'?'#323232':'#fff'}" ng-if="(compInfo.Phone||compInfo.Tel)&&IsShowPhone!=0">TEL ：<span ng-bind="compInfo.Phone || compInfo.Tel"></span> </p>
+					<p class="about-fax" ng-style="{'color':ColorSetting==2||ColorSettingValue=='#FFFFFF'?'#323232':'#fff'}" ng-if="compInfo.Fax">传真：<span ng-bind="compInfo.Fax"></span></p>
+					<p class="about-email" ng-style="{'color':ColorSetting==2||ColorSettingValue=='#FFFFFF'?'#323232':'#fff'}" ng-if="compInfo.Email">Email：<span ng-bind="compInfo.Email"></span></p>
+				</div>
+			</div>
+		</div>
+
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/xss.min.js"></script>
+		<script type="text/javascript">
+			app.controller('compIntr', ["$scope", "ApiService", "DataService", "Loading", "UtilsService", function($scope, ApiService, DataService, Loading, UtilsService) {
+				$scope.compShowTitle = query("modsName");
+				$scope.compShowHtml = '';
+				$scope.compModuleKey = '';
+				$scope.ColorSetting = '';
+				$scope.ColorSettingValue = '';
+				$scope.IsShowPublicNo = 0;
+				$scope.compCodePicUrl = ApiService.Api50 + "/api/v1/CoShow/GetCoShowConfigItemCodePic?w=160&h=160&compId=" + query('compid') + "&itemId=" + query('id');
+				var homeBackSetting = plus.webview.currentWebview().homeBackSetting;
+				//企业编号
+				$scope.compId = query('compid');
+				$scope.IsShowPhone = query('isshowphone');
+				$scope.compInfo = {};
+				//初始化，获取企业秀
+				function init() {
+					Loading.show();
+					var url = ApiService.Api50 + "/api/v1/Comp/GetCoShowConfigItemInfo/" + query('id');
+					DataService.get(url).then(function(res) {
+						$scope.isLoad = true;
+						$scope.compShowHtml = res.ModuleContent;
+						$scope.compModuleKey = res.ModuleKey;
+						$scope.ColorSetting = res.ColorSetting;
+						$scope.ColorSettingValue = res.ColorSettingValue;
+						$scope.IsShowPublicNo = res.IsShowPublicNo;
+
+						$scope.compShowHtml = $scope.compShowHtml.replace(/\/45/g, ApiService.Api45).replace(/\/\/mdcloud.maidiyun.com\/50/g, ApiService.Api50);
+						if($scope.compModuleKey == 'MKey_gywm') {
+							getCompInfo();
+						}
+						Loading.hide();
+					})
+				}
+
+				//获取企业信息
+				function getCompInfo() {
+					var url = ApiService.Api50 + "/api/v1/Comp/GetCompInfo?compId=" + $scope.compId;
+					DataService.get(url).then(function(res) {
+						$scope.compInfo = res;
+					})
+				}
+				var isInherit = false;
+				//设置背景
+				$scope.getBackground = function() {
+					var background;
+					//继承首页背景配置
+					if($scope.ColorSetting == 3) {
+						$scope.ColorSetting = homeBackSetting.ColorSetting;
+						$scope.ColorSettingValue = homeBackSetting.ColorSettingValue;
+						isInherit = true;
+					}
+
+					if($scope.ColorSetting == 0) { //背景使用背景图
+						var imgUrl = ApiService.Api50 + "/api/v1/CoShow/GetCoShowConfigItemPic?compId=" + $scope.compId + "&itemId=" + query('id') + "&w=375&h=667";
+						if(isInherit) imgUrl = ApiService.Api50 + "/api/v1/CoShow/GetCoShowConfigPic?compId=" + $scope.compId + "&w=375&h=667";
+						background = "url(" + imgUrl + ") no-repeat center"
+					} else if($scope.ColorSetting == 1) { //背景使用背景色
+						background = $scope.ColorSettingValue;
+					} else if($scope.ColorSetting == 2) {
+
+					} else {
+						background = "#FFFFFF"
+					}
+					return background;
+				}
+
+				init();
+				mui('body').on('tap', 'a', function() {
+					var url = this.getAttribute('href');
+					var title = this.getAttribute("title") || "";
+					if(url) {
+						UtilsService.openWindow({
+							needLogin: false,
+							id: 'hyperlink',
+							url: '../common/hyperlink.html',
+							extras: {
+								hyperlink: {
+									title: title,
+									url: url
+								}
+							}
+						});
+					}
+				});
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

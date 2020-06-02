@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<style type="text/css">
+			.mdDervFaulList{
+				margin-top: 3px!important;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="searchCtrl">
+		<div ng-class="{'mui-block':domShowX}" style="display: none;" ng-style="{'margin-bottom':action=='select'?'40px':'0px','padding-top':'!domShow&&search.history.length>0'?'45px':'0px'}">
+			<div class="search_input">
+				<form ng-submit="search.doSearch(1)">
+					<a class="mui-action-back mui-icon icon-back mui-pull-left"></a>
+					<input type="search" placeholder="请输入设备编号" ng-model="search.text" maxlength="50">
+					<i class="icon-search-thin color-gray-dark"></i>
+					<i class="icon-delete color-gray" ng-show='search.text' ng-click="search.deleteSearch()"></i>
+					<span ng-click="search.doSearch(1)">搜索</span>
+				</form>
+			</div>
+			<div class="search_group_f" ng-if="!domShow&&search.history.length>0">
+				<div class="title">搜索历史</div>
+				<div class="content">
+					<span ng-repeat="h in search.history track by $index" ng-click="search.searchlist(h)" ng-bind="h"></span>
+				</div>
+			</div>
+			<div class="search_group_f" ng-if="!domShow">
+				<div class="title" ng-if="FailureTypeList.length>0">故障归类</div>
+				<div class="content">
+					<span ng-repeat="f in FailureTypeList" ng-click="search.searchlist(f.Name,f.ID)">{{f.Name}}</span>
+				</div>
+			</div>
+			<div id="pullrefresh" class="mui-scroll-wrapper" ng-class="{'mui-block':domShow}" style="display: none;top:45px">
+				<div class="mui-content" >
+					<md-device-fault-list ng-model="data" action="action" selected-id="selectedId"></md-device-fault-list>
+					<md-no-data ng-show="data && data.length==0" data-options="{type:'search'}">暂无数据</md-no-data>
+				</div>
+			</div>
+		</div>
+		<script src="../../js/angular.min.js"></script>
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script src="fault-search.js"></script>
+		<style>
+			
+			.search_group_f {
+				padding: 5px 10px;
+			}
+			
+			.search_group_f .title {
+				color: #3296FA;
+				font-size: 1.3rem;
+			}
+			
+			.search_group_f .content {
+				overflow: hidden;
+			}
+			
+			.search_group_f .content span {
+				display: inline-block;
+				width: calc(32% - 1px);
+				text-align: center;
+				background-color: #fff;
+				margin-top: 5px;
+				margin-right: 5px;
+				line-height: 30px;
+				border-radius: 5px;
+				font-size: 1.5rem;
+				overflow: hidden;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				-o-text-overflow: ellipsis;
+			}
+			
+			.search_group_f .content span:last-child {
+				margin-right: 0px;
+			}
+		</style>
+	</body>
+
+</html>

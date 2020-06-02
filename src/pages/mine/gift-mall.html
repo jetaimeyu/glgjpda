@@ -1,0 +1,143 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>关怀订单统计</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style>
+			/*伪元素(底线)控制*/
+			/*去掉最后一个li的底线*/
+			
+			.data-group .data-row:last-child:after {
+				height: 0;
+			}
+			/*去掉ul上下边线*/
+			
+			.data-group:before,
+			.data-group:after {
+				height: 0;
+			}
+			/*li边线离左右距离、边线颜色*/
+			
+			.data-group .data-row:after {
+				left: 10px;
+				right: 10px;
+				background-color: #EAEAEA;
+			}
+			/*ul上下间距*/
+			
+			.data-group {
+				margin-top: 8px;
+			}
+			/*li高度*/
+			
+			.data-group .data-row {
+				display: block;
+				height: 40px;
+				padding-top: 12px;
+				padding-bottom: 12px;
+			}
+			
+			.icon-right {
+				float: right;
+				color: #C7C7CB;
+			}
+			
+			.mui-table-view-cell.data-row {
+				padding: 11px 15px
+			}
+		</style>
+	</head>
+
+	<body ng-controller="giftMallController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">关怀统计</a>
+		</header>
+		<div class="mui-scroll-wrapper" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<ul class="data-group">
+				<li class="data-row mui-table-view-cell" ng-click="tap(order.action,order.title)" ng-repeat="order in orderList">
+					<span ng-bind="order.title"></span><span class="icon-right"></span>
+				</li>
+			</ul>
+		</div>
+		<script src="../../js/angular.min.js"></script>
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/common.js"></script>
+		<script src="../../js/utils.js"></script>
+		<script type="text/javascript">
+			app.controller("giftMallController", ["$scope", "DataService", "CacheService", "ApiService","Loading", function($scope, DataService, CacheService, ApiService,Loading) {
+				var user = CacheService.get('user');
+				$scope.orderList = [{
+					"action": "per",
+					"title": "个人关怀统计"
+				}]
+				getcomadminautor()
+				//获取公司关怀统计权限
+				function getcomadminautor() {
+                     Loading.show();
+					var url = ApiService.Api50 + "/api/v1/Common/MdtGetIsAdmin/" + user.UserID;
+					DataService.get(url).then(function(res) {
+						if(res.IsAdmin || res.IsCreater) {
+							Loading.hide();
+							$scope.isLoad = true;
+							$scope.orderList.push({
+								"action": "comp",
+								"title": "公司关怀统计"
+							})
+						}
+					})
+				}
+				//获取部门统计权限
+				getInfo()
+				function getInfo() {
+					var url = ApiService.ApiJ + "/yunos/user/getLeaderUserByOrgId?orgId=" + user.OrgID;
+                    Loading.show();
+					DataService.get(url, {
+						adapter: function(res) {
+							res.State = res.code == 200 ? 1 : 0;
+							res.ErrorMessage = res.data.message;
+							res.Data = res.data;
+							return res;
+						}
+					}).then(function(res) {
+						Loading.hide();
+						$scope.isLoad = true;
+						if(res.data.id == user.UserID) {
+							$scope.orderList.push({
+								"action": "dept",
+								"title": "部门关怀统计"
+							})
+						}
+						$scope.OrgInfo = res.data;
+					});
+				}
+				var orgId = user.OrgID;
+				$scope.tap = function(key, title) {
+					var url = ApiService.Mall + "/Mobile/LoginApi/login?oauth=maidiyun&maidiyunToken=" + user.Token;
+					switch(key) {
+						case 'comp':
+							url += ("&compID=" + user.CompID + "&action=company&orgID=" + orgId);
+							break;
+						case 'dept':
+							url += ("&orgID=" + orgId + "&action=org")
+							break;
+						case 'per':
+							url += ("&userID=" + user.UserID + "&action=user")
+							break;
+					}
+					openUrl(url, title)
+				}
+
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

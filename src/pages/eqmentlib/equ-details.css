@@ -1,0 +1,305 @@
+/*header头部样式*/
+
+.menu-share {
+	z-index: 20;
+	padding: 13px 16px;
+}
+
+.menu-more {
+	z-index: 20;
+	padding: 13px 6px 13px 10px
+}
+
+
+/*入网设备样式*/
+
+.network-equipment {
+	height: 35px;
+	background: #FFF6BF;
+	line-height: 35px;
+	color: #F8A154;
+	font-size: 1.4rem;
+	text-align: left;
+	padding-left: 16px;
+}
+
+
+/*图片展示的样式*/
+
+.mui-grid-view {
+	margin-top: 8px!important;
+	background: #fff!important;
+}
+
+.eqmentlist {
+	overflow: hidden;
+	background: #fff;
+	padding: 10px 0px 10px 16px;
+	height: 98px;
+}
+
+.eqmentlist .eqmentimgs {
+	float: left;
+	margin-right: 10px;
+	height: 78px;
+}
+
+#tab1 .data-group .data-row:first-child {
+	height: 40px!important;
+}
+
+
+/*设置外层距离图片左右距*/
+
+.imgslist {
+	width: 78px;
+	height: 78px;
+	background-size: cover!important;
+}
+
+
+/*li边线离左右距离、边线颜色*/
+
+.listnames .data-row:after {
+	left: 10px!important;
+	right: 10px!important;
+}
+
+.data-group .data-row:after {
+	left: 0px;
+	right: 0px;
+	background-color: #EAEAEA;
+}
+
+
+/*聊天图片样式*/
+
+.icon-chat-single {
+	color: #47A0FA;
+}
+
+.vertical-right {
+	height: 22px;
+	width: 1px;
+	background: #EAEAEA;
+	margin-right: 48px;
+	position: absolute;
+    right: 0;
+    top: 50%;
+    margin-top: -11px;
+}
+
+
+/*设置样式*/
+
+.setting {
+	margin-right: 6px!important;
+	font-size: 1.3rem!important;
+	color: #3296FA!important;
+}
+
+
+/*第二列表竖杠样式*/
+
+.vertical-bar {
+	display: inline-block;
+	width: 2.5px;
+	height: 15px;
+	margin: 12px 8px 12px 16px;
+}
+
+
+/*问题陈述底部样式*/
+
+.eqtab .data-row:nth-child(2) {
+	padding-bottom: 10px;
+}
+
+.listnames .data-row:nth-child(2) {
+	padding-bottom: 0px!important;
+}
+
+#tab2 .data-row:nth-child(2) {
+	padding-bottom: 0px!important;
+}
+
+
+/*加号样式*/
+
+.plus {
+	margin: 12.5px 16px 12.5px 0px;
+}
+
+.icon-add {
+	color: #929292!important;
+	font-size: 1.5rem!important;
+}
+
+
+/*第一个列表个人的样式*/
+
+.avatar {
+	float: left;
+	width: 48px;
+	height: 48px;
+	border-radius: 48px;
+	background-size: cover;
+}
+
+.names {
+	font-size: 1.6rem;
+	color: #323232;
+	position: relative;
+	left: 14px;
+	padding-right: 16px;
+}
+
+
+/*简介样式*/
+
+.introduction {
+	font-size: 1.3rem;
+	color: #929292;
+	position: relative;
+	left: 14px;
+	top: 2px;
+}
+
+
+/*记录列表样式*/
+
+.recordlist {
+	padding: 10px 14px 4px 16px!important;
+}
+
+.fault-description {
+	color: #323232;
+	margin: 0 16px;
+	word-break: break-all;
+}
+
+.total {
+	text-align: center;
+	line-height: 40px;
+	color: #3296FA;
+}
+
+.data-group .data-row .opt,
+.data-group .data-row .body.arrow:after {
+	padding-right: 16px;
+}
+
+.name-title {
+	padding-top: 3px;
+}
+
+.img-placeholder {
+	position: relative;
+	top: 29px;
+	font-size: 1.4rem;
+	color: #999999;
+}
+
+.delLiAfter:after {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	left: 15px;
+	height: 0px;
+}
+
+.part-name {
+	vertical-align: bottom;
+	white-space: nowrap;
+	/*强制span不换行*/
+	display: inline-block;
+	/*将span当做块级元素对待*/
+	max-width: 50%;
+	/*限制宽度*/
+	overflow: hidden;
+	/*超出宽度部分隐藏*/
+	text-overflow: ellipsis;
+	/*超出部分以点号代替*/
+}
+
+.empty-list {
+	margin-top: 10vh!important;
+}
+
+.normUL {
+	text-align: center;
+	margin-top: 0;
+}
+
+.norm-div {
+	padding: 10px 16px 10px 0;
+}
+
+.normUL li {
+	line-height: 20px;
+	padding: 15px;
+	min-height: 50px!important;
+}
+
+.add-norm {
+	color: #3296FA!important;
+	box-shadow: 0px -1px 3px 0px rgba(180, 180, 180, 0.5)
+}
+
+
+/**/
+
+.mui-table-view .mui-table-view-cell,
+.mui-table-view .data-row {
+	/*min-height: 60px;*/
+	padding: 8px 15px;
+}
+
+.mui-content .mui-table-view .mui-clearfix {
+	margin-left: 15px;
+}
+
+.mui-content .mui-table-view .mui-ellipsis {
+	line-height: 22px;
+}
+
+.mui-content .mui-table-view .equ-status {
+	color: #323232;
+	font-size: 1.6rem;
+}
+
+.mui-content .mui-table-view .equ-status-desc {
+	color: #999999;
+	font-size: 1.4rem;
+}
+
+.flex-group
+{
+	display:flex;
+}
+.fiex-group p
+{
+	width:auto!important;
+}
+.flex-group .data-row
+{
+	flex-grow: 1;
+	padding-right: 0px;
+}
+.flex-group .btn-row
+{
+	width:120px;
+	text-align: center;
+	display: flex;
+	align-items: center;
+
+}
+.flex-group .btn-row div{
+	height:30px;
+	line-height: 30px;
+	width: 80px;
+	background:#3296FA;
+	color:white;
+	margin: 0 auto;
+	border-radius: 5px;
+}

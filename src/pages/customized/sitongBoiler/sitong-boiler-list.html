@@ -1,0 +1,208 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../../css/common.css" />
+		<link rel="stylesheet" href="../../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.icon {
+				width: 16px;
+			}
+			
+			.md-boiler-list.data-group .data-row::after {
+				right: 10px;
+				left: 10px;
+			}
+			
+			.md-boiler-list.data-group .data-row .body {
+				padding: 0px;
+			}
+			
+			.md-boiler-list.data-group .data-row {
+				padding: 10px 16px 10px 16px;
+			}
+			
+			.md-boiler-list.data-group:first-child {
+				margin-top: 0px;
+			}
+			
+			.md-boiler-list .names {
+				font-size: 1.5rem;
+				color: #000;
+				/*padding-top: 6px;*/
+				max-width: 80%;
+			}
+			
+			.md-boiler-list .CreateDate {
+				font-size: 1.2rem;
+				color: #AAAAAA;
+			}
+			
+			.md-boiler-list .log-type {
+				position: absolute;
+				top: 16px;
+				right: 16px;
+				/*color: #3296FA!important;*/
+				display: inline-block;
+				max-width: 80%;
+			}
+			
+			.md-boiler-list .margin-left-15 {
+				margin-left: 15px!important;
+			}
+			
+			.md-boiler-list .eq-running-normal {
+				color: #78E785;
+			}
+			
+			.md-boiler-list .eq-running-unusual {
+				color: #FD7C7C;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="sitongBoilerController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">锅炉列表</a>
+
+		</header>
+
+		<div id="pullrefresh" class="mui-scroll-wrapper " ng-class="{'mui-block':isLoad}" style="display: none;">
+			<div class="mui-content">
+				<ul class="data-group md-boiler-list">
+					<li class="mui-table-view-cell data-row mui-block" ng-repeat="item in data" ng-click="tap(item)">
+						<div class="body">
+							<div class="infos">
+								<div class="names mui-ellipsis" ng-bind="item.name+' '+item.code+' '+toBoilerType(item.type)"></div>
+								<div class="names mui-ellipsis" ng-bind="item.showWorkingTime.split('-')[0] + '天' 
+									                                    + item.showWorkingTime.split('-')[1] + '时' 
+									                                    + item.showWorkingTime.split('-')[2] + '分' 
+									                                    + item.showWorkingTime.split('-')[3] + '秒'">
+								</div>
+								<div class="CreateDate" ng-bind="item.province+' '+item.city+' '+item.district+' '+item.street+' '+item.address"></div>
+								<span class="log-type font-12 mui-ellipsis" ng-class="item.onlineState === 0 ? 'eq-running-normal':'eq-running-unusual'" ng-bind="item.onlineState===0?'在线':'下线'"></span>
+							</div>
+						</div>
+
+					</li>
+				</ul>
+				<md-no-data ng-show="data && data.length==0">暂无数据</md-no-data>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../../js/common.js"></script>
+		<script type="text/javascript" src="../../../js/utils.js"></script>
+		<script>
+			app.controller("sitongBoilerController", ["$scope", "ApiService", "DataService",  "UtilsService", "Loading", function($scope, ApiService, DataService,  UtilsService, Loading) {
+				user.ready();
+				$scope.pageIndex = 1;
+				$scope.pageSize = 10;
+				$scope.data = null;
+				$scope.isLoad = false;
+					mui.init({
+						pullRefresh: {
+							container: '#pullrefresh',
+							down: {
+								callback: pulldownRefresh
+							},
+							up: {
+								auto: true,
+								callback: pullupRefresh
+							}
+						}
+					});
+
+				function pulldownRefresh() {
+					$scope.pageIndex = 1;
+					//获取所有的设备信息
+					getBoilerList("down");
+				}
+
+				function pullupRefresh() {
+					$scope.Network && $scope.pageIndex++;
+					//获取所有的设备信息
+					getBoilerList();
+				}
+
+				//获取所有的设备信息
+				function getBoilerList(type) {
+					var url = ApiService.Boiler + "/boiler/queryBoilerList?pageIndex=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize;
+					getAjaxData(url, function(res) {
+						
+						$scope.Network = true;
+						//						Loading.hide();
+						if(res.data) {
+							$scope.isLoad = true;
+							if(type == "down") {
+								$scope.data = null;
+							}
+							$scope.data == null && ($scope.data = []);
+							$scope.data = $scope.data.concat(res.data);
+							$scope.isEnd = $scope.data.length >= res.page.total;
+							if(mui("#pullrefresh").pullRefresh()) {
+								if(type == "down") {
+									mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
+									mui('#pullrefresh').pullRefresh().refresh(true);
+									mui("#pullrefresh").pullRefresh().endPullupToRefresh($scope.isEnd);
+								} else {
+									mui("#pullrefresh").pullRefresh().endPullupToRefresh($scope.isEnd);
+								}
+							}
+							hideUpData();
+						}
+						$scope.$apply();
+					}, true)
+				}
+				//当数据为空时，隐藏上拉的提示
+				function hideUpData() {
+					var tip = document.querySelector('.mui-pull-bottom-pocket');
+					if(tip) {
+						if($scope.data.length == 0) {
+							tip.classList.contains('mui-visibility') && tip.classList.remove('mui-visibility');
+							tip.classList.contains('mui-block') && tip.classList.remove('mui-block');
+						} else {
+							!tip.classList.contains('mui-visibility') && tip.classList.add('mui-visibility');
+							!tip.classList.contains('mui-block') && tip.classList.add('mui-block');
+						}
+					}
+				}
+				//判断锅炉类型
+				$scope.toBoilerType = function(type) {
+					var BoilerName = '';
+					if(type === 1) {
+						return BoilerName = '生物质蒸汽';
+					} else if(type === 2) {
+						return BoilerName = '生物质热水';
+					} else if(type === 3) {
+						return BoilerName = '生物质导热油';
+					} else if(type === 4) {
+						return BoilerName = '燃油气蒸汽';
+					} else if(type === 5) {
+						return BoilerName = '燃油气热水';
+					} else if(type === 6) {
+						return BoilerName = '燃油气导热油';
+					}
+				}
+				$scope.tap = function(obj) {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'sitong-boiler-info.html',
+						url: 'sitong-boiler-info.html?type=' + obj.type+'&code='+obj.code
+					});
+				};
+			}]);
+			mui.plusReady(function() {
+				plus.webview.currentWebview().setStyle({
+					scrollIndicator: 'none'
+				});
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

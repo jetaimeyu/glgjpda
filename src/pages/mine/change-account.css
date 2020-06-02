@@ -1,0 +1,34 @@
+.acc-row {}
+
+.acc-row div {
+	position: absolute;
+	left: 80px;
+	top: 10px;
+	right: 0px;
+}
+
+.acc-row img {
+	width: 50px;
+	display: block;
+}
+
+.acc-row .name {
+	display: block;
+	font-size: 1.5rem;
+	line-height: 25px;
+}
+
+.acc-row .account {
+	display: block;
+	font-size: 1.2rem;
+	color: #999999;
+}
+
+.acc-row i {
+	position: absolute;
+	right: 10px;
+	top: 50%;
+	transform: translateY(-50%);
+	font-size: 1.8rem;
+	font-weight: bold;
+}

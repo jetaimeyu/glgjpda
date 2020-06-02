@@ -1,0 +1,456 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>设备投产</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.right-save {
+				font-size: 1.4rem;
+				line-height: 40px;
+				padding: 3px 2px;
+				float: right;
+				color: #3296FA;
+			}
+			
+			.data-group-tip {
+				margin-top: 10px;
+			}
+			
+			.prod-list-empty {
+				padding: 10px 16px;
+				height: 130px;
+				background: #FFFFFF;
+			}
+			
+			.prod-list-empty .empty-logo {
+				background-image: url("../../images/complib/empty.png");
+				width: 80px;
+				height: 80px;
+				display: block;
+				background-size: cover;
+				/*text-align: center;*/
+			}
+			
+			.prodLibUl.mui-table-view:after {
+				height: 0px!important;
+			}
+			
+			.imgslist {
+				float: left;
+				width: 56px;
+				height: 56px;
+				background-size: cover!important;
+				position: absolute;
+				top: 50%;
+				-webkit-transform: translateY(-50%);
+				transform: translateY(-50%);
+				overflow: hidden;
+				margin: 0;
+			}
+			
+			.prodLibUl .mui-table-view-cell {
+				padding: 8px 16px!important;
+			}
+			
+			.prodLibUl .mui-media-body {
+				position: relative;
+				left: 70px;
+				width: 80%;
+			}
+			
+			.prodLibUl .productName {
+				font-size: 1.5rem;
+				color: #000;
+				margin-top: 2px;
+				line-height: initial;
+				max-width: 90%;
+			}
+			
+			.prodLibUl .productType {
+				font-size: 1.2rem;
+				color: #AAA;
+				max-width: 90%;
+			}
+			
+			.prodLibUl .opt {
+				color: #AEAEAE;
+				position: absolute;
+				top: 50%;
+				right: 10px;
+				-webkit-transform: translateY(-50%);
+				transform: translateY(-50%);
+				overflow: hidden;
+				margin: 0px;
+			}
+			
+			.mui-table-view-cell:after {
+				left: 0px;
+			}
+			
+			.number span {
+				display: inline-block;
+				width: 30px;
+				height: 30px !important;
+				line-height: 30px;
+				border: 1px solid #CCCCCC !important;
+				text-align: center;
+				font-size: 1.3rem !important;
+				float: left;
+			}
+			
+			.number .icon-add {
+				border-right: none !important;
+				border-top-left-radius: 5px;
+				border-bottom-left-radius: 5px;
+			}
+			
+			.number .icon-remove {
+				border-left: none !important;
+				border-top-right-radius: 5px;
+				border-bottom-right-radius: 5px;
+			}
+			
+			.icon-topright-corner-delete {
+				color: red;
+				float: right;
+				margin-right: -16px;
+				margin-top: -4px;
+				font-size: 2.6rem;
+			}
+			
+			.body.drop-down-body .icon-roundclose {
+				right: 45px!important;
+				padding: 9px 5px 10px 5px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="ProdSalesRecordController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">设备投产</a>
+			<a class="right-save" ng-click="save()">投产</a>
+		</header>
+		<div class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}" style="display: none;margin-bottom: 41px;">
+			<ul class="data-group prodLibUl" ng-if="ProList.length>0" ng-repeat="prodItem in ProList">
+				<li class="mui-table-view-cell mui-media">
+					<span class="icon-topright-corner-delete" ng-click="removeProd($index)"></span>
+					<p class="opt md-icon font-15" ng-click="edit(prodItem)">
+						<span class="icon-right"></span>
+					</p>
+					<img src="../../images/imgPre.png" ng-style="{'background-image':'url('+ (prodItem.Attachs[0].FilePath | getEquLogo:55) +')'}" class="imgslist" />
+					<div class="mui-media-body" ng-click="edit(prodItem,$index)">
+						<p class='productName mui-ellipsis-2' ng-bind="prodItem.EqIdentifier"></p>
+						<p class='productName mui-ellipsis-2' ng-bind="prodItem.EqName"></p>
+						<p class='productType mui-ellipsis' ng-bind="prodItem.SkuName"></p>
+					</div>
+				</li>
+			</ul>
+			<center ng-if="ProList.length==0">
+				<div class="prod-list-empty">
+					<span class="empty-logo"></span>
+					<p class="mt10">请点击底部按钮，添加设备</p>
+				</div>
+			</center>
+		</div>
+		<footer class="btn-bottom" ng-click="tap('scan')" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<i class="md-icon icon-saoyisao"> 扫码添加设备</i>
+		</footer>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../message/transMessage.js"></script>
+		<script>
+			app.controller("ProdSalesRecordController", ["$scope", "ApiService", "DataService", "UtilsService", "CacheService", "DatePickerService", "AuthService", "Loading", "$timeout", "$Modal", "$filter", "RPCObserver",
+				function($scope, ApiService, DataService, UtilsService, CacheService, DatePickerService, AuthService, Loading, $timeout, $Modal, $filter, RPCObserver) {
+					$scope.postdate = [];
+					$scope.ProList = [];
+					$scope.curUser = CacheService.get("user");
+					$timeout(function() {
+						$scope.isLoad = true;
+					}, 200);
+					//产品信息列表
+					$scope.ProList = [];
+
+					var saving = false;
+					$scope.clikable=true;
+
+					//巡检设备选择
+					$scope.tap = function(key) {
+						switch(key) {
+							case "scan":
+								setTimeout(function() {
+									UtilsService.openWindow({
+										needLogin: true,
+										id: 'scan.html',
+										url: '../scan/scan.html',
+										extras: {
+											callback: "ScanBack",
+											type: "eq"
+										}
+									});
+								})
+								break;
+						}
+					}
+
+					//保存更改
+					$scope.save = function() {
+						if(saving) {
+							return;
+						}
+						document.activeElement.blur();
+						if(!checkLengthUtil.check()) {
+							return false;
+						}
+						if($scope.ProList.length == 0) {
+							mui.toast("请扫码添加设备");
+							return;
+						}
+						saving = true;
+						$scope.clikable=false;
+						Loading.show();
+						submitData();
+					}
+					var mui_back = mui.back;
+					mui.back = function() {
+						//                   alert(11111)
+						if(isModal) {
+							if($scope.ProList.length > 0) {
+
+								mui.confirm('有设备未投产，请投产后退出？', '提示', ["去投产", "继续退出"], function(e) {
+									if(e.index == 1) {
+										mui_back();
+									}
+								});
+							} else {
+								$Modal.close();
+								mui_back();
+							}
+						} else {
+							if($scope.ProList.length > 0) {
+
+								mui.confirm('有设备未投产，请投产后退出？', '提示', ["去投产", "继续退出"], function(e) {
+									if(e.index == 1) {
+										mui_back();
+									}
+								});
+							} else {
+								mui_back();
+							}
+						}
+
+					}
+
+					var isModal = false;
+					function submitData() {
+						var url = ApiService.Api52 + "/api/v1/EqApply/MdtSaveIntoEqInfo";
+//						$scope.ProList.forEach(function(item){
+//							if(item.)
+//							return
+//						})
+						var postdata = {
+							"ID": 0,
+							"EqInfoList": $scope.ProList
+						};
+						isModal = true;
+//                     console.log('保存的数据' + JSON.stringify(postdata));
+						DataService.post(url, postdata).then(function(res) {
+							Loading.hide();
+//							console.log('保存的数据' + JSON.stringify(postdata));
+							if(res) {
+								$scope.ProList = [];
+								RPCObserver.broadcast('refresh_equ_list');
+								RPCObserver.broadcast('refresh_equ_whrahouse_list');
+//								UtilsService.saveModal(function() {
+//									saving = false;
+//									isModal = false;
+//									mui.back();
+//								});
+								saving = false;
+								$scope.clikable=true
+								mui.toast("投产成功")
+								mui.back();
+								
+							}
+						}, function(err) {
+							saving = false;
+							$scope.clikable=true
+							
+						});
+					}
+					RpcServer.expose("RPC_equ", function(params) {
+						if(params) {
+							$scope.curentdata = params;
+							var identifierIsExit = false; //编号是否存在
+							var index = -1; //正在编辑数据的索引
+							if($scope.ProList.length > 0) {
+								$scope.ProList.forEach(function(item, idx) {
+//									alert(params.isEdit)
+//									alert('新编号'+params.EqIdentifier)
+//									alert('旧编号'+item.EqIdentifier)
+									if(!params.isEdit && item.EqIdentifier == params.EqIdentifier) {
+										identifierIsExit = true;
+									}
+									
+									if(params.isEdit && item.MDCode == params.MDCode) {
+										index = idx;
+									}
+								})
+								if(identifierIsExit == true) {
+									mui.toast('列表已存在此设备编号！');
+									return
+								} else {
+									if(params.isEdit && index > -1) {
+										$scope.ProList[index] = params;
+										$scope.$apply();
+									} else {
+										$scope.ProList.push(params);
+									}
+								}
+							} else {
+								$scope.ProList.push(params);
+							}
+							if(!params.isEdit) {
+								setTimeout(function() {
+									openWindow("../scan/scan.html", {
+										callback: 'ScanBack',
+										type: "eq",
+									}, 'scan.html');
+								},200)
+
+							}
+							$scope.$apply();
+						}
+					});
+					//移除产品列表中的产品
+					$scope.removeProd = function(index) {
+						mui.confirm("确认删除该条数据吗？", function(e) {
+							e.index == 0 && $scope.ProList.splice(index, 1);
+							$scope.curentdata = "";
+							$scope.$apply();
+						});
+					}
+					$scope.edit = function(prodItem,index) {
+						if($scope.clikable==false){
+							return
+						}
+						UtilsService.openWindow({
+							needLogin: true,
+							id: 'equ-comis-edit.html',
+							url: 'equ-comis-edit.html?isEdit=true&dataindex='+index,
+							extras: {
+								editInfo: prodItem,
+								alldata:$scope.ProList
+							}
+
+						})
+					}
+
+					//扫码回调
+					window.ScanBack = function(obj) {
+						obj = JSON.parse(obj);
+						console.log(JSON.stringify(obj))
+						var codeIsExit = false;
+						$scope.ProList.forEach(function(item) {
+							//判断扫描的产品是否已存在
+							if(item.MDCode == obj.codeValue) {
+								codeIsExit = true;
+								return;
+							}
+						})
+						if(codeIsExit == true) {
+							mui.toast('设备码已存在投产列表 请重新扫码');
+							return;
+						}
+						if(obj.resType == 2) {
+							mui.toast("该设备已经投产，请确认后再试");
+							return;
+						}
+						if(obj.resType == "") {
+							var url = ApiService.Api52 + "/api/v1/EqApply/GetEqPurchaseByMDCode?mdCode=" + obj.codeValue;
+							DataService.get(url).then(function(res) {
+								console.log(JSON.stringify(res))
+							if(res.length > 0) {
+//								alert(11)
+									res = res[0];
+									obj = {
+										"codeValue": obj.codeValue,
+										"isEmpty": false,
+										"isPcode": true,
+										"resInfo": {
+											"EqIdentifier": res.EqIdentifier,
+											"EPID": res.EPID,
+											"WareHouseID": res.ID,
+											"ProdName": res.EqName,
+											"CompID": res.CompID,
+											"EqName": res.EqName,
+											"SkuName": res.SkuName,
+											"ProduceCompID": res.ProduceCompID,
+											"ProduceCompName": res.ProduceCompName,
+											"SupplierName": res.SupplierName,
+											"SupplierID": res.SupplierID,
+											"CatalogID": res.CatalogID,
+											"CatalogPath": res.CatalogPath,
+											"CatalogName": res.CatalogName,
+											"SourceCompID": res.CompID
+										}
+									}
+									
+									jumpEditView(obj);
+								} else {
+									jumpEditView(obj);
+								}
+							}, function(re) {
+								jumpEditView(obj);
+							})
+						}
+						if(obj.resType == 1) {
+//							alert(111)
+							jumpEditView(obj);
+						}
+					};
+
+					function jumpEditView(obj) {
+						var extras = {
+							obj: obj,
+							
+						};
+						$scope.curentdata != undefined && (extras.editInfo = $scope.curentdata);
+						setTimeout(function() {
+							UtilsService.openWindow({
+								needLogin: true,
+								id: 'equ-comis-edit.html',
+								url: 'equ-comis-edit.html',
+								extras: {
+									obj: obj,
+									editInfo: $scope.curentdata,
+									alldata:$scope.ProList
+								}
+							});
+						},200)
+					}
+				}
+			]);
+			app.filter("formatDate", ["$filter", function($filter) {
+				return function(date) {
+					if(!date) {
+						return "";
+					}
+					return date.substr(0, 10);
+				};
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

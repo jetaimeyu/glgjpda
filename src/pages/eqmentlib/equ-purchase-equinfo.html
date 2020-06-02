@@ -1,0 +1,192 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>购置详情</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.mui-scroll-wrapper {
+				padding-bottom: 70px;
+			}
+			
+			.data-group:first-child {
+				margin-top: 0;
+			}
+			
+			.equiFailSpan03 {
+				display: inline-block;
+				max-height: 2.8rem;
+				font-size: 1.4rem!important;
+				line-height: 1.7rem;
+				overflow: hidden;
+				vertical-align: middle;
+			}
+			
+			.equiFontColor {
+				color: #3296FA!important;
+			}
+			
+			.data-group .data-row .opt:not(.md-icon) {
+				min-width: 35px!important;
+				width: 43px;
+			}
+			
+			.icon-edit {
+				display: none;
+			}
+			
+			.data-group.hastitle .data-row:after {
+				left: 0;
+				right: 0;
+			}
+			
+			.hideLastLi {
+				height: 0px;
+			}
+			
+			.partDomUl.data-group {
+				margin-top: 0px!important;
+			}
+			
+			.partDomHead {
+				color: #000;
+				background-color: #F7F7F7;
+			}
+			
+			.partDomHead:after {
+				height: 0!important;
+			}
+			
+			.partDomList {
+				color: #929292!important;
+			}
+			
+			.md-info-bottom-bar li.mui-media {
+				width: 20vw!important;
+				background: rgba(255, 255, 255, 0.95);
+			}
+			
+			.md-info-bottom-bar li.mui-media:last-child {
+				border-right: 0px!important;
+				border-top-right-radius: 50px;
+				border-bottom-right-radius: 50px;
+			}
+			
+			.md-info-bottom-bar li.mui-media:first-child {
+				border-top-left-radius: 50px;
+				border-bottom-left-radius: 50px;
+			}
+			
+			.md-info-bottom-bar ul.mui-table-view {
+				margin: 0 auto;
+				box-shadow: 0px 0px 3px 1px rgba(138, 138, 138, 0.2);
+			}
+			
+			.md-info-bottom-bar {
+				padding: 20px 0px!important;
+			}
+			
+			.mui-table-view {
+				background: transparent!important;
+			}
+			
+			.data-group-p-title {
+				background: #F1F1F1;
+				padding: 12px 10px 9px 16px;
+				font-weight: normal;
+				color: #ccc;
+				text-align: left;
+				font-size: 1.4rem;
+				margin: 0;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="CompIntroController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">设备详情</a>
+			<a class="menu-more icon-more right-menu-icon-detail" ng-if="ishow" href="#popover" id="openPopover" style="display: none;" ng-class="{'mui-block':isLoad}"></a>
+			<!--<i class="mui-pull-right menu-more-share icon-share" ng-click="goFaultShare('share')" style="display: none;" ng-class="{'mui-block':isLoad}"></i>-->
+		</header>
+		<div class="mui-scroll-wrapper md-info-page" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<ul class="data-group">
+				
+				<li class="data-row">
+					<label>设备名称</label>
+					<div class="body">
+						<span ng-bind="eqinfo.EqName"></span>
+					</div>
+				</li>
+
+				<li class="data-row">
+					<label>设备型号</label>
+					<div class="body">
+						<span ng-bind="eqinfo.SkuName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>设备归类</label>
+					<div class="body">
+						<span ng-bind="eqinfo.CName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>供应商</label>
+					<div class="body">
+						<span ng-bind="eqinfo.SupplierName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>购买数量</label>
+					<div class="body">
+						<span ng-bind="eqinfo.BuyNums"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>单价</label>
+					<div class="body">
+						<span ng-bind="eqinfo.UnitPrice"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>预估费用</label>
+					<div class="body">
+						<span ng-bind="eqinfo.TotalPrice"></span>
+					</div>
+				</li>
+
+			</ul>
+			</div>
+		<!--无网络或请求失败重试-->
+		<md-no-data ng-show="eqinfo && eqinfo.length==0">暂无数据</md-no-data>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../message/transMessage.js"></script>
+		<script type="text/javascript">
+			app.controller("CompIntroController", ["$scope", "$filter", "AuthService", "ApiService", "DataService", "UtilsService", "ChatUserService", "Loading", "RPCObserver", "ShareLogService", "CacheService", function($scope, $filter, AuthService, ApiService, DataService, UtilsService, ChatUserService, Loading, RPCObserver, ShareLogService, CacheService) {
+				//				var id = query("id");
+				
+				$scope.eqinfo = plus.webview.currentWebview().selectObj;
+				if(!($scope.eqinfo && $scope.eqinfo.length==0)){
+					$scope.isLoad=true;
+				}
+				var curUser = CacheService.get("user");
+				$scope.CurUserID = curUser.UserID;
+				}]);
+
+			
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

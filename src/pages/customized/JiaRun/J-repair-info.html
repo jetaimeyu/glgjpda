@@ -1,0 +1,428 @@
+<!--设备故障维护 scz-->
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>维修与保养详情</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../../css/common.css" />
+		<link rel="stylesheet" href="../../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.data-group:first-child {
+				margin-top: 0;
+			}
+			
+			.self-style {
+				margin-top: 0;
+			}
+			
+			.self-style .question-con {
+				width: 100%;
+				overflow: hidden;
+				color: #323232;
+				line-height: 21px;
+				font-size: 1.4rem;
+				word-break: break-all;
+			}
+			
+			.self-style .question-con img {
+				width: auto !important;
+				height: auto !important;
+			}
+			
+			.self-style .question {
+				width: 100%;
+				display: flex;
+				box-sizing: border-box;
+				padding: 16px;
+				padding-bottom: 10px;
+				padding-top: 10px;
+				padding-right: 0;
+			}
+			
+			.self-style .user-right {
+				margin-left: 15px;
+				width: 80%;
+				overflow: hidden;
+			}
+			
+			.self-style .time {
+				margin-right: 25px;
+			}
+			
+			.self-style .time-row {
+				color: #999;
+				font-size: 1.2rem;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+			}
+			
+			.self-style .anwser {
+				display: inline-block;
+				min-width: 50px;
+				background: #ECECEC;
+				border-radius: 14px;
+				text-align: center;
+				color: #3296FA;
+				height: 25px;
+				font-size: 1.2rem;
+				line-height: 25px;
+			}
+			
+			.self-style .username {
+				color: #999999;
+				font-size: 1.4rem;
+				width: 100%;
+			}
+			
+			.self-style .goodp {
+				color: #3296FA;
+				font-size: 1.4rem;
+				margin-right: 32px;
+			}
+			
+			.self-style .lowp {
+				color: #FA8232;
+			}
+			
+			.self-style .user-right-row1 {
+				width: 100%;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+			}
+			
+			.self-style .user-right-row2 {
+				width: 100%;
+			}
+			
+			.eval-title {
+				margin-left: 15px;
+				padding: 10px;
+				padding-left: 0px;
+			}
+			
+			.tptal {
+				padding: 8px 16px;
+				font-size: 1.4rem;
+				color: #323232;
+				padding-bottom: 0;
+			}
+			
+			.tptal i {
+				font-size: 1.4rem;
+				margin-right: 7px;
+			}
+			
+			.tptal li {
+				min-height: 20px !important;
+				line-height: 20px;
+			}
+			
+			.tptal .icon-right {
+				line-height: 2.1;
+				color: #555555;
+				margin-left: 6px;
+			}
+			
+			.all-tips {
+				width: 100%;
+				text-align: center;
+				margin-top: 10px;
+			}
+			
+			footer.work-info {
+				width: 100%;
+				position: fixed;
+				height: 44px;
+				line-height: 44px;
+				color: #fff;
+				z-index: 9;
+				bottom: 0;
+				background: #fff;
+				padding: 5px 0px 5px 0px;
+				border-top: 1px solid #ccc;
+			}
+			
+			footer.work-info span.inp {
+				font-size: 1.4rem;
+				margin: 0 16px;
+				height: 32px;
+				display: block;
+				background: #e9e9e9;
+				border-radius: 35px;
+				padding-left: 38px;
+				line-height: 32px;
+				color: #323232;
+			}
+			
+			footer.work-info .icon-pen {
+				position: absolute;
+				font-size: 1.4rem;
+				left: 34px;
+				top: -2px;
+				color: #000;
+			}
+			
+			.nopadding {
+				padding-bottom: 0!important;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="EvalInfoController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">维修与保养详情</a>
+			<a class="menu-more icon-more right-menu-icon-detail" href="#popover" id="openPopover" style="display: none;" ng-class="{'mui-block':isLoad}"></a>
+
+		</header>
+		<div class="mui-scroll-wrapper md-info-page" ng-class="{'mui-block':isLoad,'nopadding':CurUserID==CreateUserID}" style="display: none; padding-bottom: 45px;">
+			<ul class="data-group">
+				<li class="data-row">
+					<label>产品名称</label>
+					<div class="body">
+						<span ng-bind="ProdName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label ng-bind="InnerCodeName"></label>
+					<div class="body">
+						<span ng-bind="InnerCode"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>采油厂</label>
+					<div class="body">
+						<span ng-bind="OilProductionPlant"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>作业区</label>
+					<div class="body">
+						<span ng-bind="OperationArea"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>井号</label>
+					<div class="body">
+						<span ng-bind="WellNumber"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>加注数量(L)</label>
+					<div class="body">
+						<span ng-bind="FillAmount"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>设备类型</label>
+					<div class="body">
+						<span ng-bind="EqType"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>保养类型</label>
+					<div class="body">
+						<span ng-bind="MaintainType"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>负责人</label>
+					<div class="body">
+						<span ng-bind="ChargeUser"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>联系电话</label>
+					<div class="body">
+						<span ng-bind="Phone"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>下次提醒时间</label>
+					<div class="body">
+						<span ng-bind="NextRemindTime"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>推送人员</label>
+					<div class="body">
+						<md-chat-user-list ng-model="PushUserName"></md-chat-user-list>
+
+					</div>
+				</li>
+				<li class="data-row">
+					<label>下次作业内容</label>
+					<div class="body">
+						<span ng-bind="NextWorkContent"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>备注</label>
+					<div class="body">
+						<span ng-bind="Remarks"></span>
+					</div>
+				</li>
+			</ul>
+		</div>
+
+		</div>
+		<!--无网络或请求失败重试-->
+		<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+		<div id="popover" class="mui-popover menuDivModel">
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell" ng-click="tap('edit')">
+					<a class="mui-icon icon-edit">
+						<font>修改</font>
+					</a>
+				</li>
+				<li class="mui-table-view-cell">
+					<a class="mui-icon icon-dustbin" ng-click="del()">
+						<font>删除</font>
+					</a>
+				</li>
+			</ul>
+		</div>
+		<script type="text/javascript" src="../../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../../js/common.js"></script>
+		<script type="text/javascript" src="../../../js/utils.js"></script>
+		<script type="text/javascript" src="../../../js/rpc.js"></script>
+		<!--	<script type="text/javascript" src="../message/transMessage.js"></script>-->
+		<script type="text/javascript">
+			app.controller("EvalInfoController", ["$scope", "AuthService", "ApiService", "DataService", "UtilsService",
+				"ChatUserService", "Loading", "RPCObserver", "$filter", "ShareLogService", "CacheService",
+				function($scope, AuthService, ApiService, DataService, UtilsService, ChatUserService, Loading, RPCObserver,
+					$filter, ShareLogService, CacheService) {
+					$scope.id = query("id")
+					$scope.OilProductionPlant = "",
+						$scope.OperationArea = "",
+						$scope.WellNumber = "",
+						$scope.FillAmount = "",
+						$scope.EqType = "",
+						$scope.MaintainType = "",
+						$scope.ChargeUser = "",
+						$scope.NextWorkContent = "",
+						$scope.NextRemindTime = "",
+						$scope.Phone = "",
+						$scope.status = "",
+						$scope.Remarks = "",
+						$scope.InnerCode = "",
+						$scope.ProdName = "",
+						//无网络或请求失败重试,或已删除
+						$scope.retryModal = {
+							msg: "维修保养",
+							retry: GetEqOverhaulInfoById,
+							state: ''
+						}
+					AuthService.getAuth().then(function(res) {
+						$scope.InnerCodeName = res.InnerCodeName || '出厂编号';
+					});
+					var curUser = CacheService.get("user");
+					$scope.CurUserID = curUser.UserID;
+					var logid = query("logid") || 0;
+					//跳转
+					$scope.tap = function(key) {
+						mui('#popover').popover('hide');
+						var url = {
+							edit: 'maintenance-edit.html?id=' + query("id"),
+						};
+						UtilsService.openWindow({
+							needLogin: true,
+							id: url[key].substring(url[key].lastIndexOf('/') + 1, url[key].indexOf('?')),
+							url: url[key]
+						});
+					};
+
+					//发消息
+
+					//获取数据
+					function GetEqOverhaulInfoById() {
+						Loading.show();
+						var url = ApiService.Api50 + "/api/v1/MatWork/GetJrMrInfo?id=" + $scope.id;
+						DataService.get(url).then(function(res) {
+							$scope.retryModal.state = '';
+							$scope.isLoad = true;
+							if(res) {
+								$scope.OilProductionPlant = res.OilProductionPlant;
+								$scope.OperationArea = res.OperationArea;
+								$scope.WellNumber = res.WellNumber;
+								$scope.FillAmount = res.FillAmount;
+								$scope.EqType = res.EqType;
+								$scope.MaintainType = res.MaintainType;
+								$scope.ChargeUser = res.ChargeUser;
+								$scope.NextWorkContent = res.NextWorkContent;
+								$scope.NextRemindTime = res.NextRemindTime.slice(0, 10);
+								$scope.Phone = res.Phone;
+								$scope.status = res.status;
+								$scope.Remarks = res.Remarks;
+								$scope.PushUserName = res.PushUserName;
+								$scope.InnerCode = res.InnerCode;
+								$scope.ProdName = res.ProdName;
+								Loading.hide();
+							}
+
+						}, function(error) {
+							$scope.isLoad = false;
+							$scope.retryModal.state = error.State;
+							//							
+							//							if(error.ErrorMessage=='该数据已删除！'){
+							//									mui.alert('数据已删除请点击返回', '提示', function() {
+							//										mui.back()
+							//					                   
+							//				              });
+							//							}
+
+						});
+
+					};
+
+					GetEqOverhaulInfoById();
+
+					logid && ShareLogService.add(logid, 8);
+					//删除
+					$scope.del = function() {
+						mui('#popover').popover('hide');
+						mui.confirm("确认删除吗？", function(e) {
+							if(e.index == 0) {
+								var url = ApiService.Api50 + "/api/v1/MatWork/DeleteJrMaintainReminById?id=" + $scope.id;
+
+								DataService.post(url).then(function() {
+									//刷新 工作日志列表
+									RPCObserver.broadcast('refresh_maintenance_list');
+									mui('#popover').popover('hide');
+									mui.back();
+								});
+							} else {
+								mui('#popover').popover('hide');
+							}
+						});
+					};
+					RpcServer.expose("RPC_RefreshWorkLog", function() {
+						GetEqOverhaulInfoById();
+					});
+
+					RPCObserver.on('refresh_maintenance_list', 'refresh_maintenance_list');
+					window.refresh_maintenance_list = function() {
+						GetEqOverhaulInfoById()
+					};
+					//刷新关闭popover
+					RPCObserver.on('close_popover', 'close_popover');
+					window.close_popover = function() {
+						mui('#popover').popover('hide');
+					};
+
+				}
+
+			]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html id="MdTong">
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../../css/common.css" />
+		<link rel="stylesheet" href="../../../icon-font/iconfont.css" />
+		<style>
+			.mark {
+				padding: 5px;
+				background-color: #CCCCCC;
+				color: #000000;
+				margin-right: 10px;
+				font-size: 13px;
+			}
+			.empty {
+				margin-top: 30vh;
+				width: 100%;
+				text-align: center;
+				word-break: break-all;
+				color: #666666;
+				font-size: 1.5rem;
+				padding: 0 15px;
+			}
+			.body.prodInfo{
+				padding-left: 10px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="traceListController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">加工过程追溯</h1>
+		</header>
+		<div class="mui-scroll-wrapper" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<ul class="data-group" >
+				<li class="data-row">
+					<a class="body prodInfo">
+						<img  class="size60 float-left border-f2 bg-f2 mr10" ng-src="{{ImgUrl+'/prod/logo/'+ProdInfo.ProdID+'_100x100.jpg'}}"  />
+						<span class="font-16" ng-bind="ProdInfo.ProdName"></span>
+						<p class="font-14 color-red-md" ng-if="ProdInfo.SkuName">型号：<span ng-bind="ProdInfo.SkuName"></span></p>
+					</a>
+				</li>
+			</ul>
+			<ul class="data-group biglabel" ng-show="ProdInfo&&Process.length>0">
+				<li class="data-row"  ng-repeat="pro in Process" ng-click="tap(pro.ID)">
+					<label style="width: 100%;"><span class="mark">{{pro.ProcessName.substr(0, 1)}}</span>{{pro.ProdName}}</label>
+					<p class="opt md-icon icon-right"></p>
+				</li>
+			</ul>
+			<div class="empty" style="display: none;">暂无数据</div>
+			<div class="empty" style="display: none;" ng-bind="(LoginCompID!=ProdInfo.CompID)&&(ProdInfo.CompID!=24231)?'暂无权限查看加工过程信息':'暂无加工过程信息'">
+			</div>
+		</div>
+		</div>
+		<script type="text/javascript" src="../../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../../js/common.js"></script>
+		<script type="text/javascript" src="../../../js/utils.js"></script>
+		<script>
+			app.controller("traceListController",["$scope","UtilsService","ApiService","DataService","DatePickerService","Loading",function($scope,UtilsService,ApiService,DataService,DatePickerService,Loading){						
+				mui.init();
+				$scope.Process=[];
+				$scope.ProdInfo="";
+				$scope.ImgUrl=ApiService.Img;
+				var MdCode=query("code");
+				$scope.LoginCompID=query("compid");
+				$scope.isLoad=false;
+				Loading.show();
+				getProdInfo();
+				//获取设备信息
+				function getProdInfo() {
+					var url = ApiService.Api45 + "/api/v1.0/MdCode/GetProdInfoByMdCode?code=" + MdCode;
+					DataService.get(url).then(function(res) {
+//						console.log(JSON.stringify(res))
+						if(res) {
+							$scope.ProdInfo = res;
+//							$scope.ProdInfo.CompID=24231;
+							if(($scope.LoginCompID!=$scope.ProdInfo.CompID)&&$scope.ProdInfo.CompID!=24231){
+								mui(".empty")[1].style.display = "block";
+							}else{
+								getProcess();
+							}
+						} else {
+							mui(".empty")[0].style.display = "block";
+						}
+						Loading.hide();
+						$scope.isLoad=true;
+			
+					},function(e){
+//						console.log(JSON.stringify(e))	
+//						mui.back()
+					})
+
+				}
+				function getProcess() {
+					var url = ApiService.Api45 + "/api/v1.0/Process/GetProcessByMdCode?MdCode=" + MdCode + "&compId=" + $scope.LoginCompID;
+					DataService.get(url).then(function(res) {
+						if(res) {
+							$scope.Process = res;
+//							console.log(JSON.stringify(res))
+							if($scope.Process.length == 0) {
+								mui(".empty")[1].style.display = "block";
+							}
+						} else {
+							mui(".empty")[1].style.display = "block";
+						}
+						Loading.hide();
+						$scope.isLoad=true;
+			
+					},function(e){
+									
+					})
+
+				};
+				$scope.tap=function(id){
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'trace-info.html',
+						url: "trace-info.html?pid=" + id
+					});
+				}
+			}])	
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

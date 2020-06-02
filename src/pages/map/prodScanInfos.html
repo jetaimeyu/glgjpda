@@ -1,0 +1,161 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="prodScanInfos.css" />
+		<link rel="stylesheet" href="../../css/mui.pullrefresh.css" />
+		<link rel="stylesheet" href="../../css/mui.loading.css" />
+	</head>
+
+	<body ng-controller="scanInfoCtl">
+
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">详情</a>
+			<a class="right-menu-words ng-scope mui-block" ng-click="event.openTrack()">轨迹</a>
+		</header>
+		<div class="mui-content prodInfo" style="display:none" ng-class="{'mui-block':domData.prodInfo}">
+			<ul class="data-group" style="margin-top:0px">
+				<li class="data-row mui-table-view-cell" ng-click="event.openProd()">
+					<p class="opt md-icon icon-right"></p>
+					<p class="icon-down color-blue" ng-show="domData.Count>1" ng-click="event.openMore($event)" style="position:absolute;right:0px;bottom:0px;padding-right: 15px;padding-left: 15px;padding-top: 10px;z-index: 5000;"></p>
+					<div class="body">
+						<md-prod-logo style="float:left;margin-right: 10px;" ng-model="domData.prodInfo" data-width="66" data-height="66"></md-prod-logo>
+						<div class="mui-media-body">
+							<p class='productName mui-ellipsis' style="color:#000;font-size:15px;margin-top:5px;" ng-bind="domData.prodInfo.ProdName"></p>
+							<p class='productType mui-ellipsis' style="font-size: 12px;" ng-show="domData.prodInfo.SkuName" ng-bind="'型号：'+domData.prodInfo.SkuName"></p>
+							<p class='productType mui-ellipsis' style="font-size: 12px;" ng-show="domData.prodInfo.InnerCode" ng-bind="domData.InnerCodeName+'：'+domData.prodInfo.InnerCode"></p>
+						</div>
+					</div>
+				</li>
+			</ul>
+			<div class="div-split">
+			</div>
+
+			<div class="mui-scroll-wrapper mui-fullscreen" id="pullrefresh">
+				<div>
+
+					<div ng-class="['cd-container cd-timeline',$index==(domData.list.length-1)?'mgbottom10':'']" ng-repeat="row in domData.list">
+						<div class="cd-timeline-year">
+							<div class="cd-timeline-year-child"><span>{{row.Year}}</span></div>
+						</div>
+						<div class="cd-timeline-block" ng-repeat="drow in row.DataRows">
+							<div class="cd-timeline-month" ng-if="(drow.Rows[$index] != drow.Rows[$index-1])"><span>{{drow.Month}}月</span></div>
+							<div class="cd-timeline-block" ng-repeat="lrow in drow.Rows">
+								<!-- <a ng-if="lrow.EventType==1">
+									<div class="cd-timeline-img cd-picture">
+									</div>
+									<div class="cd-timeline-content">
+										<p>生产时间<span class="cd-date"><img class="cd-timeline-time" src="../../images/timeline/time.png"/>{{getDay(lrow.EventDate)}}</span></p>
+									</div>
+								</a>
+								<a ng-if="lrow.EventType==2">
+									<div class="cd-timeline-img cd-picture">
+									</div>
+									<div class="cd-timeline-content ">
+										<p class="cd-timeline-icon">
+											<span class="icon-right"></span>
+										</p>
+										<p>产品打码<span class="cd-date"><img class="cd-timeline-time" src="../../images/timeline/time.png"/>{{getDayandTime(lrow.EventDate)}}</span></p>
+									</div>
+								</a>
+								<a ng-if="lrow.EventType==6">
+									<div class="cd-timeline-img cd-picture">
+									</div>
+									<div class="cd-timeline-content ">
+										<p class="cd-timeline-icon">
+											<span class="icon-right"></span>
+										</p>
+										<p>产品装配<span class="cd-date"><img class="cd-timeline-time" src="../../images/timeline/time.png"/>{{getDayandTime(lrow.EventDate)}}</span></p>
+									</div>
+								</a> -->
+								<a ng-if="lrow.EventType==3">
+									<div class="cd-timeline-img cd-picture">
+									</div>
+
+									<div class="cd-timeline-content ">
+										<p class="cd-timeline-icon" ng-if="lrow.CompID==LoginCompID">
+											<span class="icon-right"></span>
+										</p>
+										<p>产品出库<span class="cd-date"><img class="cd-timeline-time" src="../../images/timeline/time.png"/>{{getDayandTime(lrow.EventDate)}}</span></p>
+										<p>出库人:<span>{{lrow.EventUser}}</span></p>
+										<p>出库给<span>{{getOutType(lrow.CustomerType)}}</span>：{{lrow.CustomerName}}</p>
+									</div>
+								</a>
+								<a ng-if="lrow.EventType==4">
+									<div class="cd-timeline-img cd-picture">
+									</div>
+
+									<div class="cd-timeline-content " ng-click="event.openDebugInfo(lrow.EventId)">
+										<p class="cd-timeline-icon">
+											<span class="icon-right"></span>
+										</p>
+										<p>安装调试<span class="cd-date"><img class="cd-timeline-time" src="../../images/timeline/time.png"/>{{getDayandTime(lrow.EventDate)}}</span></p>
+									</div>
+								</a>
+								<!-- <a ng-if="lrow.EventType==7" class="cd-timeline-block">
+									<div class="cd-timeline-img cd-picture">
+									</div>
+
+									<div class="cd-timeline-content ">
+										<p>设备验收<span class="cd-date"><img class="cd-timeline-time" src="../../images/timeline/time.png"/>{{getDayandTime(lrow.EventDate)}}</span></p>
+									</div>
+								</a> -->
+								<a ng-if="lrow.EventType==5">
+									<div class="cd-timeline-img cd-picture">
+									</div>
+
+									<div class="cd-timeline-content " ng-click="event.openWorkOrder(lrow.EventId)">
+										<p class="cd-timeline-icon">
+											<span class="icon-right"></span>
+										</p>
+										<p>故障维修<span class="cd-date"><img class="cd-timeline-time" src="../../images/timeline/time.png"/>{{getDayandTime(lrow.EventDate)}}</span></p>
+									</div>
+								</a>
+							</div>
+						</div>
+					</div>
+					<!-- <div ng-if="domData.list.length>0" id="emptydata" class="cd-container cd-timeline" style="margin-top: -1em;">
+					</div> -->
+
+					<!--<div class="lastRecords">
+                    <div class="lastRecordsItem" ng-repeat="item in domData.scanList">
+                        <div class="lastRecordsItemLeft">
+                            <img src="../../images/location.png" />
+                        </div>
+                        <div class="lastRecordsItemRight">
+                            <p style="margin-bottom: 0px;">{{item.Province | locationfilter:item.City:item.District:item.Address:item.Street}}</p>
+                            <ul class="scan-user">
+                                <li class="mui-table-view-cell" style="padding:5px 0px;" ng-click="event.openUser(item)">
+                                    <md-user-logo class="scan-user-logo" ng-model="item" data-width="50" data-height="50"></md-user-logo>
+                                    <div class="scan-user-name" ng-bind="item.ViewName || '游客'">
+                                    </div>
+                                    <div class="scan-user-compName" ng-bind="item.CompName">
+                                    </div>
+                                </li>
+                            </ul>
+                            <p style="margin-bottom: 0px;">{{item.ScanDate}}</p>
+                        </div>
+                    </div>
+                </div>-->
+					<md-no-data style="display:none;" ng-class="{'mui-block':domData.list&&domData.list.length==0&&domData.loadSuccess}">暂无数据</md-no-data>
+					<!-- <md-state-tip data-options="{msg:'列表',retry:event.reload}" ng-show="!domData.loadSuccess"></md-state-tip> -->
+				</div>
+			</div>
+		</div>
+
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/mui.pullToRefresh.js"></script>
+		<script type="text/javascript" src="../../js/mui.loading.js"></script>
+		<script type="text/javascript" src="prodScanInfos.js"></script>
+	</body>
+
+</html>

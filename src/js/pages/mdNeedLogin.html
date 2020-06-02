@@ -1,0 +1,50 @@
+	<div class="md-table" style="margin: 80px 0 0;">
+		<div class="md-row-single tip-login">
+			<img src="../images/login/nologin.png" width="115px" />
+			<p>您还未登陆</p>
+			<p>请先登录再进行操作</p>
+		</div>
+		<div class="btn-login" ng-click="tologin()">
+			<a>立即登录</a>
+		</div>
+	</div>
+<style>
+	.btn-login {
+		margin: 0 auto 0;
+		height: 35px;
+		line-height: 35px;
+		text-align: center;
+		background: #3296FA;
+		color: #fff;
+		width: 170px;
+		border-radius: 3px;
+		font-size: 1.6rem;
+	}
+	
+	.btn-login a {
+		width: 100%;
+		height: 100%;
+		color: #FFFFFF;
+		display: block;
+	}
+	
+	.tip-login {
+		text-align: center;
+		padding-top: 20px;
+	}
+	
+	.tip-login :nth-child(2) {
+		margin-bottom: 10px;
+		margin-top: 20px;
+		font-size: 1.5rem;
+		color: #323232;
+		line-height: 1.5rem;
+	}
+	
+	.tip-login :last-child {
+		margin-bottom: 20px;
+		font-size: 1.2rem;
+		color: #B5B5B5;
+		line-height: 1.2rem;
+	}
+</style>

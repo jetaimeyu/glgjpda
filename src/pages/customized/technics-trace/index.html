@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../../css/common.css" />
+		<link rel="stylesheet" href="../../../icon-font/iconfont.css" />
+		<style>
+			.mark {
+				padding: 5px;
+				background-color: #CCCCCC;
+				color: #000000;
+				margin-right: 10px;
+				font-size: 13px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="technicsTraceController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">加工过程追溯</a>
+		</header>
+		<div class="mui-scroll-wrapper">
+			<div class="mui-content-padded">
+				<button class="mui-btn mui-btn-primary mui-btn-block" ng-click="tap()">
+				<span class="icon-saoyisao"></span>
+				请扫描迈迪国标通用物联码
+			</button>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../../js/common.js"></script>
+		<script type="text/javascript" src="../../../js/utils.js"></script>
+		<script type="text/javascript">
+			app.controller("technicsTraceController",["$scope","UtilsService","CacheService",function($scope,UtilsService,CacheService){			
+				mui.init();
+				$scope.tap = function(key) {						
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'scan.html',
+						url: '../../scan/scan.html',
+						extras: {
+							callback: "scanCB",
+							type:"scan_technics_trace"
+						}
+					});
+				}
+				var curUser=CacheService.get("user");
+				window.scanCB = function(type,codeValue) {
+					setTimeout(function() {
+						UtilsService.openWindow({
+							needLogin: true,
+							id: 'trace-list.html',
+							url: "trace-list.html?code=" + codeValue+"&compid="+curUser.CompID
+						});
+					}, 200)
+				}
+				
+			}])	
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+			
+		</script>
+	</body>
+
+</html>

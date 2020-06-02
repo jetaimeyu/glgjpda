@@ -1,0 +1,92 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/common.css">
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<style>
+			
+		</style>
+	</head>
+
+	<body ng-controller="scanInfoController" >
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left" >扫码详情</a>
+		</header>
+		<div class="mui-scroll-wrapper">
+			<ul class="data-group">
+				<li class="data-row">
+					<label>MD码</label>
+					<div class="body">
+						<span ng-bind="data.MdCode"></span>
+					</div>
+				</li>
+				<li class=" data-row">
+					<label>产品名称</label>
+					<div class="body">
+						<span ng-bind="data.ProdName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>型号名称</label>
+					<div class="body">
+						<span ng-bind="data.SkuName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>扫码时间</label>
+					<div class="body">
+						<span ng-bind="data.ScanDate"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>扫码地址</label>
+					<div class="body">
+						<span ng-bind="data.Province| locationfilter:data.City:data.District:data.Street:data.Address"></span>
+					</div>
+				</li>
+				<li class=" data-row" >
+					<label>扫码人</label>
+					<div class="body">
+						<span ng-bind="data.ViewName"></span>
+					</div>
+				</li>
+				<li class=" data-row">
+					<label>迈迪通号</label>
+					<div class="body">
+						<span ng-bind="data.UserMdt"></span>
+					</div>
+				</li>
+				<li class=" data-row">
+					<label>扫码人企业</label>
+					<div class="body">
+						<span ng-bind="data.ScanCompName"></span>
+					</div>
+				</li>
+			</ul>
+			
+		</div>
+
+		<script type="text/javascript" src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script>
+			app.controller("scanInfoController", ["$scope", function($scope) {
+				$scope.data = {}
+				var obj=plus.webview.currentWebview().info;
+				if(obj){
+					$scope.data=obj
+				}
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

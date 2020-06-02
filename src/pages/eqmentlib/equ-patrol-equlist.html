@@ -1,0 +1,255 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+	</head>
+	<style type="text/css">
+		.mui-content .check-data-li {
+			display: flex;
+			padding: 6px 16px;
+			align-items: center;
+		}
+		
+		.mui-content .check-data-li .check-data-li-left {
+			width: 80%;
+			display: flex;
+			flex-direction: column;
+			padding-right: 18px;
+		}
+		
+		.mui-content .check-data-li .all-with {
+			width: 100%;
+		}
+		
+		.mui-content .check-data-li .check-data-li-right {
+			width: 20%;
+			color: #0099FF!important;
+			position: relative;
+			text-align: center;
+		}
+		
+		.mui-content .check-data-li .check-data-li-right:after {
+			position: absolute;
+			top: -8px;
+			height: 34px;
+			left: 0;
+			content: '';
+			background-color: #bbb;
+			width: 1px;
+			-webkit-transform: scaleY(0.5);
+			transform: scaleY(0.5);
+		}
+		
+		.equ-name {
+			font-size: 1.5rem;
+			color: #000;
+			margin-bottom: 5px;
+			display: block;
+			word-wrap: break-word;
+		}
+		
+		.equ-params {
+			color: #666;
+		}
+	</style>
+
+	<body ng-controller="ParentPageController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">巡检设备</a>
+			<a class="mui-icon icon-saoyisao right-menu-icon" ng-click="tap('scan')" ng-if="!done"></a>
+		</header>
+		<div class="mui-content" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<ul class="data-group" style="margin-top: 0px;">
+				<li class="mui-table-view-cell data-row check-data-li" ng-repeat="item in data" ng-click="tap('patrol',item)">
+					<div class="check-data-li-left" ng-class="{'all-with':done}">
+						<div class="equ-name">
+							<span ng-bind="item.EqName+' '+item.SkuName"></span>
+						</div>
+						<div class="equ-params">
+							<span>设备编号：</span>
+							<span ng-bind="item.EqIdentifier"></span>
+						</div>
+						<div class="equ-params" ng-if="item.State>0">
+							<span>是否异常：</span>
+							<span ng-if="item.Exception=='1'" style="color: #DE1616;">异常</span>
+							<span ng-if="item.Exception!='1'">正常</span>
+						</div>
+					</div>
+					<div ng-if="!done" class="check-data-li-right" ng-bind="item.State==0?'待执行':'已执行'"></div>
+				</li>
+			</ul>
+			<md-no-data ng-show="data && data.length==0">暂无数据</md-no-data>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script>
+			app.controller("ParentPageController", ["$scope", "ApiService", "DataService", "UtilsService", "RPCObserver", "Loading", function($scope, ApiService, DataService, UtilsService, RPCObserver, Loading) {
+				$scope.message = query('message'); //是不是从工作通知进来的
+				//              alert($scope.message)
+				$scope.planId = query("planid");
+				$scope.logId = query("logid");
+				$scope.done = query('done'); //待巡检列表或者已巡检列表
+
+				$scope.data = "";
+				getPlanDetailsPageList();
+
+				//巡检设备列表
+				function getPlanDetailsPageList() {
+					var url = ApiService.Api52 + "/api/v1/EqPatrolPlan/GetPatrolPlanEqpLogList?planId=" + $scope.planId + "&planLogId=" + $scope.logId + "&pageIndex=1&pageSize=999";
+					DataService.get(url).then(function(res) {
+						//						if($scope.message||res.State==1){
+						//										$scope.done=true
+						//									}
+						$scope.isLoad = true;
+						$scope.data = res.DataRows;
+					})
+				};
+
+				$scope.tap = function(key, equinfo) {
+					switch(key) {
+						case "scan":
+							setTimeout(function() {
+								UtilsService.openWindow({
+									needLogin: true,
+									id: 'scan.html',
+									url: '../scan/scan.html',
+									extras: {
+										callback: "ScanBack",
+										type: "eq"
+									}
+								});
+							})
+							break;
+						case "patrol":
+							if($scope.done) {
+								UtilsService.openWindow({
+									needLogin: true,
+									id: "equ-patrol-all-info.html",
+									url: "equ-patrol-all-info.html?planId=" + equinfo.PlanID + "&id=" + equinfo.ID + "&eqId=" + equinfo.EQID + "&isEdit=true" + "&done=" + $scope.done
+								})
+							} else {
+								Loading.show();
+								var url = ApiService.Api52 + "/api/v1/EqPatrolPlan/PatrolDetailsJudge?eqId=" + equinfo.EQID + "&planId=" + equinfo.PlanID + "&planLogId=" + equinfo.PlanLogID + "&eqLogId=" + equinfo.ID;
+								DataService.get(url).then(function(res) {
+									//									alert($scope.message) 
+									//									if($scope.message||res.State==1){
+									//										$scope.done=true
+									//									}
+									//res.State 1已巡检 2未巡检
+									Loading.hide();
+									//报废或删除
+									if(res.EqState == 9 || res.EqState == 2) {
+										mui.toast("该设备已报废或被删除");
+										if(res.State == 2) {
+											//未巡检的设备报废或删除，不进入，刷新列表
+											getPlanDetailsPageList();
+											RPCObserver.broadcast("refresh_msg_all_list");
+											RPCObserver.broadcast("equ-patrol-list-refresh");
+											return;
+										} else {
+											//已巡检的设备报废或删除，跳转详情页面
+											UtilsService.openWindow({
+												needLogin: true,
+												id: "equ-patrol-all-info.html",
+												url: "equ-patrol-all-info.html?planId=" + equinfo.PlanID + "&id=" + equinfo.ID + "&eqId=" + equinfo.EQID + "&isEdit=true" + "&done=true"
+											})
+										}
+									} else if($scope.message && equinfo.State == 1) {
+										UtilsService.openWindow({
+											needLogin: true,
+											id: "equ-patrol-all-info.html",
+											url: "equ-patrol-all-info.html?planId=" + equinfo.PlanID + "&id=" + equinfo.ID + "&eqId=" + equinfo.EQID + "&isEdit=true" + "&done=" + $scope.done
+										})
+									} else {
+										UtilsService.openWindow({
+											needLogin: true,
+											id: "equ-patrol-carryout.html",
+											url: "equ-patrol-carryout.html?planId=" + equinfo.PlanID + "&id=" + equinfo.ID + "&eqId=" + equinfo.EQID + "&planLogId=" + equinfo.PlanLogID + "&hasDone=" + (equinfo.State == 1 ? true : false)
+										})
+									}
+								});
+							}
+
+							break;
+						default:
+							break;
+					}
+				}
+				//扫码回调
+				window.ScanBack = function(obj) {
+					obj = JSON.parse(obj);
+					if(obj.isEmpty == true) {
+						mui.toast("该码为空码，请检查后再试")
+						return;
+					}
+					var exitInList = false;
+					$scope.data.forEach(function(item) {
+						if(item.MDCode == obj.codeValue) {
+							exitInList = true;
+							var url = ApiService.Api52 + "/api/v1/EqPatrolPlan/PatrolDetailsJudge?eqId=" + item.EQID + "&planId=" + item.PlanID + "&planLogId=" + item.PlanLogID + "&eqLogId=" + item.ID;
+							DataService.get(url).then(function(res) {
+								//								alert(JSON.stringify(res))
+								//res.State 1已巡检 2未巡检
+								Loading.hide();
+								//报废或删除
+								if(res.EqState == 9 || res.EqState == 2) {
+									if(res.State == 2) {
+										//未巡检的设备报废或删除，不进入，刷新列表
+										mui.toast("该设备已报废或被删除");
+										getPlanDetailsPageList();
+										RPCObserver.broadcast("refresh_msg_all_list");
+										RPCObserver.broadcast("equ-patrol-list-refresh");
+										return;
+									} else {
+										//已巡检的设备报废或删除，跳转详情页面
+										setTimeout(function() {
+											UtilsService.openWindow({
+												needLogin: true,
+												id: "equ-patrol-all-info.html",
+												url: "equ-patrol-all-info.html?planId=" + item.PlanID + "&id=" + item.ID + "&eqId=" + item.EQID + "&isEdit=true" + "&done=true"
+											})
+										}, 200)
+
+									}
+								} else {
+									setTimeout(function() {
+										UtilsService.openWindow({
+											needLogin: true,
+											id: "equ-patrol-carryout.html",
+											url: "equ-patrol-carryout.html?planId=" + item.PlanID + "&id=" + item.ID + "&eqId=" + item.EQID + "&hasDone=" + (item.State == 1 ? true : false)
+										})
+									}, 200)
+
+								}
+							});
+							return;
+						}
+					})
+					setTimeout(function() {
+						if(!exitInList) {
+							mui.toast("列表中没有此设备");
+						}
+					}, 300);
+				}
+
+				RPCObserver.on("patrol-equ-refresh", "viewRefresh");
+				window.viewRefresh = getPlanDetailsPageList;
+
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

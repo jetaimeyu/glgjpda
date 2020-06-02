@@ -1,0 +1,203 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title>单聊</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link rel="stylesheet" href="../../css/mui.css" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css">
+	<!--<link rel="stylesheet" href="../../css/mui.previewimage.css" />-->
+	<!--<link rel="stylesheet" href="../../css/mui.imageviewer.css" />-->
+	<link rel="stylesheet" href="chat.css" />
+</head>
+
+<body ng-controller="chatController">
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left mui-ellipsis"></a>
+		<a class="mui-action-back  back-title mui-ellipsis" ng-bind="chatData.chatName"></a>
+		<a class="mui-icon icon-more right-menu-icon" id="btn_more"></a>
+	</header>
+	<md-state-tip data-options="{msg:'消息',retry:event.reload}" ng-show="!chatData.isNetWork"></md-state-tip>
+	<div ng-show="chatData.isNetWork">
+		<div class="body_content">
+			<div id='sound-alert' class="rprogress">
+				<div class="rschedule"></div>
+				<div class="r-sigh">!</div>
+				<div id="audio_tips" class="rsalert">手指上滑，取消发送</div>
+			</div>
+			<div id="tmep_trans" style="display:none;"></div>
+			<md-state-tip data-options="{msg:'消息',retry:event.reload}" ng-show="!chatData.isNetWork"></md-state-tip>
+
+			<div class="mui-scroll-wrapper" id="chat_body" ng-show="chatData.isNetWork">
+				<div class="mui-scroll">
+					<div style="text-align: center;" id="content-loadding">
+						<img src="../../images/Emotion/loadding.gif" />
+					</div>
+					<div id="msg-repeat">
+						<!--<div ng-class="{'msg-item':true,'msg-item-self':item.SendID==chatData.UserID,'msg-item-chat':item.SendID!=chatData.UserID}" id="{{'msg-item-'+(item.MsgID || item.ID)}}" data-idx="{{$index}}" ng-repeat="item in chatData.msgList"  repeat-finish='{"rended":"event.isRended","event":"event.renderFinish"}'>-->
+						<!--<div class="time-split" ng-class="{'ng-hide':!event.isShowTime($index),'ng-show':event.isShowTime($index)}">-->
+						<!--<span ng-bind="event.getDate(item.SendTime)"></span> -->
+						<!--</div>-->
+						<!--&lt;!&ndash;<img class="msg-user-img mui-right" ng-if="item.SendID==chatData.UserID" src="http://pic.maidiyun.com/dXNlci9sb2dv_561.png?0.4040333496267361" />&ndash;&gt;-->
+
+						<!--<div class="msg-user-img mui-right" data-user="{{chatData.UserID}}" ng-style="{'background-image':'url('+ (chatData.UserID | getUserLogo:50:0) +')'}" ng-if="chatData.UserLogo && item.SendID==chatData.UserID">-->
+						<!--</div>-->
+						<!--&lt;!&ndash;<img class="msg-user-img mui-right" data-user="{{chatData.UserID}}" ng-src="{{chatData.UserID | getUserLogo:50:50}}" ng-if="chatData.UserLogo && item.SendID==chatData.UserID">&ndash;&gt;-->
+						<!--<div class="msg-user-img mui-right md-userCustomLogo" data-user="{{chatData.UserID}}" ng-if="!chatData.UserLogo && item.SendID==chatData.UserID" ng-bind="chatData.UserName | getUserCustomLogo"></div>-->
+
+						<!--<div class="msg-user-img" data-user="{{chatData.chatID}}" ng-style="{'background-image':'url('+ (chatData.chatID | getUserLogo:50:0) +')'}" ng-if="chatData.chatLogo && chatData.chatLogo!='false' && item.SendID!=chatData.UserID">-->
+						<!--</div>-->
+						<!--&lt;!&ndash;<img class="msg-user-img " data-user="{{chatData.chatID}}" ng-src="{{chatData.chatID | getUserLogo:50:50}}" ng-if="chatData.chatLogo && item.SendID!=chatData.UserID">&ndash;&gt;-->
+						<!--<div class="msg-user-img md-userCustomLogo" data-user="{{chatData.chatID}}" ng-if="(!chatData.chatLogo || chatData.chatLogo=='false') && item.SendID!=chatData.UserID" ng-bind="chatData.chatName | getUserCustomLogo"></div>-->
+
+						<!--&lt;!&ndash;<img class="msg-user-img" ng-if="item.SendID!=chatData.UserID" src="http://pic.maidiyun.com/dXNlci9sb2dv_561.png?0.4040333496267361" />&ndash;&gt;-->
+						<!--<div class="msg-content" ng-class="{'content-voice':item.Content.indexOf('[6,')==4,'content-event':item.Content.indexOf('[7,')==4,'content-attach':item.Content.indexOf('[5,')==4}">-->
+						<!--<div ng-if="item.SendState<2" class="content-exp resend" id="{{'content-exp-'+item.MsgID}}" data-state="{{item.SendState}}" data-idx="{{$index}}" data-type="{{item.RealType}}">-->
+						<!--<img src='../../images/Emotion/loadding.gif' ng-if="item.SendState==0" />-->
+						<!--<img src='../../images/Emotion/reSend.png' ng-if="item.SendState==1" />-->
+						<!--</div>-->
+						<!--<div class="msg-content-inner" ng-class="{'msg-content-image':item.Content.indexOf('[4,')==4}" ng-bind-html="event.transContent(item.Content,item.SendID==chatData.UserID)">-->
+						<!--</div>-->
+						<!--<div class="msg-content-angle"></div>-->
+						<!--</div>-->
+						<!--</div>-->
+					</div>
+				</div>
+
+			</div>
+			<pre id='text-pre'></pre>
+
+			<footer ng-show="chatData.isNetWork">
+				<div class="f-left" id="msg-type">
+					<div class="chat-voice" data-type="1"></div>
+				</div>
+				<div class="f-center">
+					<div contenteditable="true" id='chat-msg-text' class='input-text needsclick'></div>
+					<button id='msg-sound' type="button" class='input-sound' style="display: none;">按住 说话</button>
+				</div>
+				<div class="f-right">
+					<div id='emoji'>
+						<div class="emotion" type="button">
+
+						</div>
+					</div>
+
+					<div id="exption" data-type="1">
+						<div class="exption">
+
+						</div>
+					</div>
+					<div id="send-msg" class="send-msg">
+						<span>发送</span>
+					</div>
+				</div>
+			</footer>
+		</div>
+
+		<div class="sub-view" ng-show="chatData.isNetWork">
+			<div class="face-view mui-slider" ng-show="chatData.ShowType==1">
+				<div class="mui-slider-group">
+
+				</div>
+				<div class="mui-slider-indicator">
+
+				</div>
+			</div>
+			<div class="exption-view" ng-show="chatData.ShowType==2">
+				<ul class="mui-table-view mui-grid-view mui-grid-9">
+					<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3" data-type="photo">
+						<!--<span class="mui-icon mui-icon-home"></span>-->
+						<img src="../../images/chat/zhaopian.png" />
+						<div class="mui-media-body">图片</div>
+					</li>
+					<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3"  ng-show="chatData.CompID>0" data-type="yunFile">
+						<img src="../../images/chat/yunfile.png" />
+						<div class="mui-media-body">云文档</div>
+					</li>
+					<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3" data-type="file" style="display:none;" ng-class="{'mui-inline-block':chatData.isAndroid}">
+						<!--<span class="mui-icon mui-icon-home"></span>-->
+						<img src="../../images/chat/file.png" />
+						<div class="mui-media-body">文件</div>
+					</li>
+					<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3" data-type="card">
+						<img src="../../images/chat/mingpian.png" />
+						<div class="mui-media-body">名片</div>
+					</li>
+					<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3" data-type="fault">
+						<img src="../../images/chat/kehugongdan.png" />
+						<div class="mui-media-body">客户工单</div>
+					</li>
+					<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3" data-type="svideo">
+						<img src="../../images/chat/svideo.png" />
+						<div class="mui-media-body">短视频</div>
+					</li>
+					<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3" data-type="equ-fault" ng-show="chatData.CompID>0 && chatData.CompID==chatData.chatCompID">
+						<img src="../../images/chat/shebeigongdan.png" />
+						<div class="mui-media-body">设备工单</div>
+					</li>
+					<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3" data-type="custom" ng-show="chatData.CompID>0 && chatData.CompID==chatData.chatCompID">
+						<img src="../../images/chat/kehu.png" />
+						<div class="mui-media-body">客户</div>
+					</li>
+					
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<div id="sheet1" class="mui-popover mui-popover-bottom mui-popover-action ">
+		<ul class="mui-table-view">
+		  <li class="mui-table-view-cell" id="ac-view" style="display:none;">
+			<a>预览</a>
+		  </li>
+		  <li class="mui-table-view-cell" id="ac-copy" style="display:none;">
+			<a>复制</a>
+		  </li>
+		  <li class="mui-table-view-cell"  id="ac-open" style="display:none;">
+			<a>打开</a>
+		  </li>
+		  <li class="mui-table-view-cell" id="ac-down" style="display:none;">
+			<a>下载</a>
+		  </li>
+		  <li class="mui-table-view-cell" id="ac-todrive" style="display:none;">
+			<a>转存到云文档</a>
+			</li>
+			<li class="mui-table-view-cell" id="ac-qrcode" style="display:none;">
+				<a>识别二维码</a>
+				</li>
+		  <li class="mui-table-view-cell" id="ac-withdraw" style="display:none;">
+			<a>撤回</a>
+			</li>
+		
+		  <li class="mui-table-view-cell" id="ac-forward">
+			<a>转发</a> 
+		  </li>
+		</ul>
+		<!-- 取消菜单 -->
+		<ul class="mui-table-view">
+		  <li class="mui-table-view-cell">
+			<a href="#sheet1"><b>取消</b></a>
+		  </li>
+		</ul>
+	</div>
+
+
+	<script src="../../js/mui.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/rpc.js"></script>
+	<script type="text/javascript" src="../../images/Emotion/Emotion.js"></script>
+	<script type="text/javascript" src="transMessage.js"></script>
+	<script type="text/javascript" src="transEvent.js"></script>
+	<!--<script type="text/javascript" src="../../js/mui.zoom.js"></script>-->
+	<!--<script type="text/javascript" src="../../js/mui.previewimage.js"></script>-->
+	<!--<script type="text/javascript" src="../../js/mui.imageViewer.js"></script>-->
+
+	<!--<script type="text/javascript" src="../../js/previewImage.js"></script>-->
+	<script type="text/javascript" src="chat.js"></script>
+</body>
+
+</html>

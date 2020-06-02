@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	</head>
+	<style type="text/css">
+		.icon {
+			width: 16px;
+		}
+	</style>
+
+	<body ng-controller="equInventoryHeaderController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">设备巡检计划</a>
+			<a class="mui-pull-right menu-add" id="add" ng-click="add()">
+				<img class="icon" src="../../images/add.png" />
+			</a>
+			<a class="mui-pull-right menu-search" id="search" ng-click="search()">
+				<img class="icon" src="../../images/search.png" />
+			</a>
+		</header>
+
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("equInventoryHeaderController", ["$scope", "UtilsService", function($scope, UtilsService) {
+				mui.init({
+					subpages: [{
+						url: 'equ-patrol-list.html',
+						id: 'equ-patrol-list.html',
+						styles: {
+							top: '45px',
+							bottom: 0
+						}
+					}]
+				})
+				$scope.add = function() {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: "equ-patrol-edit.html",
+						url: "equ-patrol-edit.html"
+					});
+
+				}
+				$scope.state = -1;
+				$scope.search = function() {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: "equ-patrol-search.html",
+						url: "equ-patrol-search.html",
+						extras: {
+							callback: "selectType",
+							selectObj: {
+								state: $scope.state //1启用、2停用、3已结束
+							}
+						}
+					});
+				}
+				RpcServer.expose("RPC_equ_patrol", function(params) {
+					if(params) {
+						$scope.state = params.state;
+						$scope.$apply();
+					}
+				})
+			}]);
+
+			function selectType(obj) {
+				var appElement = document.querySelector('[ng-controller=equInventoryHeaderController]');
+				var $scope = angular.element(appElement).scope();
+				//				console.log(JSON.stringify(obj))
+				$scope.state = obj.state;
+				$scope.$apply();
+			}
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

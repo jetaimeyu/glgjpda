@@ -1,0 +1,108 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.icon {
+				width: 16px;
+			}
+			
+			.mui-bar-nav~.mui-content .mui-pull-top-pocket {
+				top: 44px!important;
+			}
+			
+			.mui-bar-nav~.has-tab .mui-pull-top-pocket {
+				top: 84px!important;
+			}
+			
+			.mui-table {
+				display: table!important;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="repairListController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left mui-ellipsis" ng-bind="paramTitle + '记录'" style="max-width: 85vw;"></a>
+			<!--<a class="mui-pull-right menu-add" id="add" ng-click="add()" style="display: none;" ng-class="{'mui-block':showadd}">
+				<img class="icon" src="../../images/add.png" />
+			</a>-->
+			<a class="mui-pull-right menu-search" id="search" ng-click="search()">
+				<img class="icon" src="../../images/search.png" />
+			</a>
+		</header>
+		<div class="mui-content" ng-class="{'has-tab':isLoad}">
+			<ul class="md-tab" top="84" ng-if="!(['Q49','Q51']|hasAuth)" style="display: none;" ng-class="{'mui-block':isLoad}">
+				<li class="md-tab-item md-active" href="service-all.html?type=my&id={{paramID}}&title={{encodeURIComponent(paramTitle)}}" winid="service-my.html">我提交的</li>
+				<li class="md-tab-item " href="service-all.html?type=at&id={{paramID}}&title={{encodeURIComponent(paramTitle)}}" winid="service-at.html">发给我的</li>
+				<li class="md-tab-item" href="service-all.html?type=department&id={{paramID}}&title={{encodeURIComponent(paramTitle)}}" winid="service-department.html" ng-if="['Q47','Q48','Q49','Q51'] | hasAuth">本部门的</li>
+				<li class="md-tab-item" href="service-all.html?type=departments&id={{paramID}}&title={{encodeURIComponent(paramTitle)}}" winid="service-departments.html" ng-if="['Q48','Q49','Q51'] | hasAuth">下级部门</li>
+		</ul>
+			<div id="slider" class="mui-slider mui-fullscreen" ng-if="(['Q49','Q51']|hasAuth)">
+				<div id="sliderSegmentedControl" class="mui-scroll-wrapper  mui-slider-indicator mui-segmented-control mui-segmented-control-inverted  " style="background: #fff; display: none;" ng-class="{'mui-block':isLoad}">
+					<div class="mui-scroll md-tab md-tab-block" top="84">
+						<a class="md-tab-item md-active" href="service-all.html?type=my&id={{paramID}}&title={{encodeURIComponent(paramTitle)}}" winid="service-my.html">我提交的</a>
+						<a class="md-tab-item " href="service-all.html?type=at&id={{paramID}}&title={{encodeURIComponent(paramTitle)}}" winid="service-at.html">发给我的</a>
+						
+						<a class="md-tab-item" href="service-all.html?type=department&id={{paramID}}&title={{encodeURIComponent(paramTitle)}}" winid="service-department.html" ng-if="['Q47','Q48','Q49','Q51'] | hasAuth">本部门的</a>
+						<a class="md-tab-item" href="service-all.html?type=departments&id={{paramID}}&title={{encodeURIComponent(paramTitle)}}" winid="service-departments.html" ng-if="['Q48','Q49','Q51'] | hasAuth">下级部门</a>
+						<a class="md-tab-item" href="service-all.html?type=all&id={{paramID}}&title={{encodeURIComponent(paramTitle)}}" winid="service-all.html" ng-if="['Q49','Q51'] | hasAuth">所有服务</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("repairListController", ["$scope", "UtilsService", "DataService", "ApiService", "$filter", "$timeout", function($scope, UtilsService, DataService, ApiService, $filter, $timeout) {
+				$timeout(function() {
+					$scope.showadd = true;
+					$scope.isLoad = $filter("hasAuth")('Q49') ? $filter("hasAuth")(['Q47', 'Q48', 'Q49', 'Q51']) : true;
+					
+				}, 100);
+				setTimeout(function() {
+					MdConfig.StartUsingTab();
+				}, 200);
+				var _curView = plus.webview.currentWebview();
+
+				$scope.paramID = _curView.dataId;
+				$scope.paramTitle = _curView.dataTitle;
+				
+
+				//跳转搜索页
+				$scope.search = function() {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'service-search.html',
+						url: 'service-search.html?id=' + $scope.paramID
+					});
+				};
+
+				//添加页面跳转
+				$scope.add = function() {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'service-edit.html',
+						url: 'service-edit.html?title='+encodeURIComponent($scope.paramTitle)+"&id="+$scope.paramID
+					});
+					return;
+				};
+			}]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

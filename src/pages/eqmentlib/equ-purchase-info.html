@@ -1,0 +1,427 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>购置详情</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.mui-scroll-wrapper {
+				padding-bottom: 70px;
+			}
+			
+			.data-group:first-child {
+				margin-top: 0;
+			}
+			
+			.equiFailSpan03 {
+				display: inline-block;
+				max-height: 2.8rem;
+				font-size: 1.4rem!important;
+				line-height: 1.7rem;
+				overflow: hidden;
+				vertical-align: middle;
+			}
+			
+			.equiFontColor {
+				color: #3296FA!important;
+			}
+			
+			.data-group .data-row .opt:not(.md-icon) {
+				min-width: 35px!important;
+				width: 43px;
+			}
+			
+			.icon-edit {
+				display: none;
+			}
+			
+			.data-group.hastitle .data-row:after {
+				left: 0;
+				right: 0;
+			}
+			
+			.hideLastLi {
+				height: 0px;
+			}
+			
+			.partDomUl.data-group {
+				margin-top: 0px!important;
+			}
+			
+			.partDomHead {
+				color: #000;
+				background-color: #F7F7F7;
+			}
+			
+			.partDomHead:after {
+				height: 0!important;
+			}
+			
+			.partDomList {
+				color: #929292!important;
+			}
+			
+			.md-info-bottom-bar li.mui-media {
+				width: 20vw!important;
+				background: rgba(255, 255, 255, 0.95);
+			}
+			
+			.md-info-bottom-bar li.mui-media:last-child {
+				border-right: 0px!important;
+				border-top-right-radius: 50px;
+				border-bottom-right-radius: 50px;
+			}
+			
+			.md-info-bottom-bar li.mui-media:first-child {
+				border-top-left-radius: 50px;
+				border-bottom-left-radius: 50px;
+			}
+			
+			.md-info-bottom-bar ul.mui-table-view {
+				margin: 0 auto;
+				box-shadow: 0px 0px 3px 1px rgba(138, 138, 138, 0.2);
+			}
+			
+			.md-info-bottom-bar {
+				padding: 20px 0px!important;
+			}
+			
+			.mui-table-view {
+				background: transparent!important;
+			}
+			
+			.data-group-p-title {
+				background: #F1F1F1;
+				padding: 12px 10px 9px 16px;
+				font-weight: normal;
+				color: #ccc;
+				text-align: left;
+				font-size: 1.4rem;
+				margin: 0;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="CompIntroController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">购置详情</a>
+			<a class="menu-more icon-more right-menu-icon-detail" ng-if="ishow&&user.UserID==Applicant" href="#popover" id="openPopover" style="display: none;" ng-class="{'mui-block':isLoad}"></a>
+			<!--<i class="mui-pull-right menu-more-share icon-share" ng-click="goFaultShare('share')" style="display: none;" ng-class="{'mui-block':isLoad}"></i>-->
+		</header>
+		<div class="mui-scroll-wrapper md-info-page" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<ul class="data-group">
+				<p class="data-group-tip data-group-p-title">申请信息</p>
+				<li class="data-row">
+					<label>申请人</label>
+					<div class="body">
+						<span ng-bind="ApplicantName"></span>
+					</div>
+				</li>
+
+				<li class="data-row">
+					<label>申请时间</label>
+					<div class="body">
+						<span ng-bind="ApplicationDate"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>审核人</label>
+					<div class="body">
+						<span ng-bind="AuditorName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>申请原因</label>
+					<div class="body">
+						<span ng-bind="Reason"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>申请到货时间</label>
+					<div class="body">
+						<span ng-bind="ArrivalDate"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>备注</label>
+					<div class="body">
+						<span ng-bind="Remarks"></span>
+					</div>
+				</li>
+
+			</ul>
+			<p class="data-group-tip data-group-p-title" ng-if="ApplyInfoList.length>0">设备信息</p>
+			<ul class="data-group" ng-repeat="items in ApplyInfoList">
+				<li class="data-row">
+					<label>设备名称</label>
+					<div class="body">
+						<span ng-bind="items.EqName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>设备型号</label>
+					<div class="body">
+						<span ng-bind="items.SkuName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>设备归类</label>
+					<div class="body">
+						<span ng-bind="items.CName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>供应商</label>
+					<div class="body">
+						<span ng-bind="items.SupplierName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>单价</label>
+					<div class="body">
+						<span ng-bind="items.UnitPrice?(items.UnitPrice || '')+' 元':(items.UnitPrice || '')"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>购买数量</label>
+					<div class="body">
+						<span ng-bind="items.BuyNums"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>预估总费用</label>
+					<div class="body">
+						<span ng-bind="items.TotalPrice?(items.TotalPrice || '')+' 元':(items.TotalPrice||'')"></span>
+					</div>
+				</li>
+			</ul>
+			<p class="data-group-tip data-group-p-title" ng-if="FlowRecordList.length>0">审核信息</p>
+			<ul class="data-group" ng-repeat="item in FlowRecordList">
+				<li class="data-row">
+					<label>审核人</label>
+					<div class="body">
+						<span ng-bind="item.UserName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>审核时间</label>
+					<div class="body">
+						<span ng-bind="item.CreateDate"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>审核结果</label>
+					<div class="body">
+						<span ng-bind="resulttype[item.Oper]"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>审核意见</label>
+					<div class="body">
+						<span ng-bind="item.Remarks"></span>
+					</div>
+				</li>
+			</ul>
+
+		</div>
+		<!--无网络或请求失败重试-->
+		<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+		<div id="popover" class="mui-popover menuDivModel">
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell" ng-click="tap('edit')" ng-if="State==1||State==3">
+					<a class="mui-icon icon-edit">
+						<font>修改</font>
+					</a>
+				</li>
+				<li class="mui-table-view-cell" ng-if="State==2">
+					<a class="mui-icon icon-undo" ng-click="quit()">
+						<font>撤销</font>
+					</a>
+				</li>
+				<li class="mui-table-view-cell" ng-if="State==1">
+					<a class="mui-icon icon-dustbin" ng-click="del()">
+						<font>删除</font>
+					</a>
+				</li>
+			</ul>
+		</div>
+
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../message/transMessage.js"></script>
+		<script type="text/javascript">
+			app.controller("CompIntroController", ["$scope", "$filter", "AuthService", "ApiService", "DataService", "UtilsService", "Loading", "RPCObserver", "ShareLogService", "CacheService",
+				function($scope, $filter, AuthService, ApiService, DataService, UtilsService, Loading, RPCObserver, ShareLogService, CacheService) {
+					//				var id = query("id");
+					$scope.ismy = query("ismy");
+					$scope.type = query('type');
+					
+					$scope.user = CacheService.get('user');
+
+					$scope.Applicant = 0;//申请人ID
+					$scope.ApplicantName = ""; //申请人
+					$scope.FlowRecordList = []; //审核信息列表
+					$scope.ApplyInfoList = []; //设备信息列表
+					$scope.ApplicationDate = ""; //申请时间
+					$scope.ArrivalDate = ""; //申请到货时间
+					$scope.Reason = ""; //申请原因
+					$scope.AuditorName = ""; //审核人
+					$scope.Remarks = ""; //申请备注
+					$scope.State = "";
+
+					//				无网络或请求失败重试,或已删除
+					$scope.retryModal = {
+						msg: "购置详情",
+						retry: getFaultData,
+						state: ''
+					};
+					$scope.resulttype = {
+						1: "已同意",
+						2: "已驳回"
+					}
+					var curUser = CacheService.get("user");
+					$scope.CurUserID = curUser.UserID;
+					var logid = query("logid") || 0;
+					//详情list
+					var urlList = ApiService.Api52 + "/api/v1/EqApply/GetApplyInfoFlowByAId?aId=" + query("id");
+					getFaultData()
+					
+					function getFaultData() {
+
+						Loading.show();
+
+						
+						logid && (urlList += '?logid=' + logid);
+						//					logid && (url += '?logid=' + logid);
+						DataService.get(urlList).then(function(res) {
+							
+							Loading.hide();
+							$scope.isLoad = true;
+							$scope.isNODelete = true;
+							$scope.retryModal.state = '';
+							if(res) {
+								$scope.Applicant = res.Applicant;
+								$scope.ApplicantName = res.ApplicantName
+								$scope.FlowRecordList = res.FlowRecordList
+								$scope.ApplicationDate = res.ApplicationDate
+								$scope.ArrivalDate = res.ArrivalDate
+								$scope.ApplyInfoList = res.ApplyInfoList
+								$scope.Reason = res.Reason
+								$scope.AuditorName = res.AuditorName
+								$scope.Remarks = res.Remarks
+								$scope.State = res.State
+
+								$scope.OddNumbers = res.OddNumbers;
+								$scope.ID = res.ID;
+
+								//是否显示菜单
+								if($scope.State == 1 || $scope.State == 3) {
+									$scope.ishow = true
+								}
+								if($scope.State == 1) {
+									$scope.ishow = true
+								}
+								if($scope.State == 2) {
+									$scope.ishow = true
+								}
+							}
+						}, function(error) {
+
+						});
+					};
+
+					$scope.del = function() {
+						mui.confirm("确认删除吗？", function(e) {
+							if(e.index == 0) {
+								var url = ApiService.Api52 + "/api/v1/EqApply/DeleteEqApply/" + query("id");
+								DataService.get(url).then(function(res) {
+									RPCObserver.broadcast('refresh_purchase_list',$scope.type); //刷新申请列表
+
+									mui('#popover').popover('hide');
+									mui.back();
+								}, function(error) {
+									mui('#popover').popover('hide');
+								});
+							} else {
+								mui('#popover').popover('hide');
+							}
+						});
+					}
+					//撤销
+					$scope.quit = function() {
+						mui.confirm("确认撤销吗？", function(e) {
+							if(e.index == 0) {
+								//获取订单详情查看审核状态
+								DataService.get(urlList).then(function(res) {
+//									console.log(res);
+									if(res.State==3||res.State==4){
+										mui.toast('当前工单已审核完成');
+										RPCObserver.broadcast('refresh_purchase_list',$scope.type); //刷新申请列表
+										mui('#popover').popover('hide');
+										mui.back();
+										return;
+									}
+									var url = ApiService.Api52 + "/api/v1/EqApply/UpdateApplyStateByID/" + $scope.ID + '?state=1';
+									DataService.post(url).then(function(res) {
+											Loading.hide();
+											if(res) {
+												mui.toast('撤销成功');
+												RPCObserver.broadcast('refresh_purchase_list',$scope.type); //刷新申请列表
+												mui('#popover').popover('hide');
+												mui.back();
+											}
+										},
+										function(error) {
+											mui('#popover').popover('hide');
+									});
+								})
+								
+							} else {
+								mui('#popover').popover('hide');
+							}
+						});
+
+					}
+					RPCObserver.on('refresh_purchase_info', 'refresh_purchase_info');
+					window.refresh_purchase_info = function() {
+
+						getFaultData()
+
+					}
+
+					//刷新关闭popover
+					RPCObserver.on('close_popover', 'close_popover');
+					window.close_popover = function() {
+						mui('#popover').popover('hide');
+					}
+
+					//修改
+					$scope.tap = function(key) {
+						mui('#popover').popover('hide');
+						var url = {
+							edit: 'equ-purchase-edit.html?id=' + query("id")+'&type='+$scope.type,
+						};
+						UtilsService.openWindow({
+							needLogin: true,
+							id: url[key].substring(url[key].lastIndexOf('/') + 1, url[key].indexOf('?')),
+							url: url[key]
+						});
+					};
+
+				}
+			]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

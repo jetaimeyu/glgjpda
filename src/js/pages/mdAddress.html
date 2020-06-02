@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+	</head>
+
+	<body ng-controller="searchCtrl">
+		<div class="search_input" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<form ng-submit="search.result=[];search.doSearch()" style="height: 100%;">
+				<input type="search" placeholder="请输入搜索名称" ng-model="search.text" maxlength="50">
+				<span class="city color-gray-dark font-15" ng-click="changeCity()" ng-bind="location.city||'北京市'"></span>
+				<i class="icon-delete color-gray" ng-click="search.clearText()" ng-show='search.text' ng-class="{'mui-block':search.text}" style="display: none;"></i>
+				<span class="mui-action-back">取消</span>
+			</form>
+		</div>
+		<div class="search_group" ng-class="{'mui-block':isLoad}" style="display: none;" ng-if="loaded===false">
+			<div class="content">
+				<span ng-repeat="h in search.history" ng-click="search.text=h;search.doSearch()" ng-bind="h"></span>
+			</div>
+		</div>
+		<div id="pullrefresh" ng-show="search.result.length" ng-class="{'mui-block':isLoad,'search_res_android':isAdroid,'search_res_ios':!isAdroid}" style="display: none;" class="mui-content mui-scroll-wrapper">
+			<div class="mui-scroll">
+				<!--数据列表-->
+				<ul class="data-group">
+					<li class="data-row" ng-repeat="r in search.result" ng-click="openMap(r)">
+						<div class="body">
+							<i class="icon-location-2 color-gray-dark"></i>
+							<span class="name" ng-bind="r.name"></span>
+							<span class="addr color-gray-deep" ng-bind="r.address" ng-if="r.address"></span>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<md-no-data ng-show="loaded===true&&!search.result.length" ng-class="{'mui-block':loaded===true&&!search.result.length}" style="display: none;">暂无数据</md-no-data>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/utils.js"></script>
+		<script type="text/javascript" src="mdAddress.js"></script>
+		<style>
+			body,
+			.mui-content {
+				background-color: #ffffff;
+			}
+			
+			.city {
+				position: absolute;
+				left: 10px;
+				top: 10px;
+				max-width: 50px;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				-o-text-overflow: ellipsis;
+				overflow: hidden;
+			}
+			/*.city:after {
+				content: '';
+				width: 1px;
+				height: 20px;
+				background-color: #666666;
+				position: absolute;
+				top: 5px;
+				margin-left: 5px;
+			}*/
+			
+			.search_input input {
+				padding-left: 10px !important;
+				margin-left: 70px !important;
+				width: calc(100% - 130px) !important;
+			}
+			
+			.md-city-mobile .search_group {
+				padding: 5px 10px;
+				margin-top: 25px;
+				margin-left: -10px;
+			}
+			
+			.search_group .content {
+				display: inline-block;
+			}
+			
+			.search_group .content span {
+				display: inline-block;
+				text-align: center;
+				background-color: #F5F5F5;
+				margin-top: 5px;
+				margin-right: 5px;
+				line-height: 30px;
+				border-radius: 5px;
+				font-size: 1.5rem;
+				padding: 0 10px;
+				max-width: 50vw;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				-o-text-overflow: ellipsis;
+				overflow: hidden;
+			}
+			
+			.search_group .content span:last-child {
+				margin-right: 0px;
+			}
+			
+			.city {
+				position: absolute;
+				left: 10px;
+				top: 10px;
+				max-width: 50px;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				-o-text-overflow: ellipsis;
+				overflow: hidden;
+			}
+			
+			.md-form-field {
+				padding-left: 10px;
+				position: relative;
+			}
+			
+			.data-group .data-row .body {
+				padding-left: 10px;
+				position: relative;
+			}
+			
+			.data-group .data-row .body i {
+				position: absolute;
+				top: 50%;
+				transform: translateY(-50%);
+			}
+			
+			.data-group .data-row .body span {
+				display: inline-block;
+				width: calc(100% - 30px);
+				margin-left: 25px;
+			}
+			
+			.data-group .data-row .body .name {
+				line-height: 30px;
+				height: 30px;
+				font-size: 1.5rem;
+			}
+			
+			.data-group .data-row .body .addr {
+				line-height: 25px;
+				height: 25px;
+				font-size: 1.3rem;
+			}
+			.search_res_ios{
+				top: 45px;
+			}
+			.search_res_android{
+				margin-top: 45px;
+			}
+			
+			.empty-list {
+				margin-top: 30vh;
+			}
+		</style>
+	</body>
+
+</html>

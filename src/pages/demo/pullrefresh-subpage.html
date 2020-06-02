@@ -1,0 +1,43 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+	</head>
+
+	<body ng-controller="ParentPageController">
+		<div id="pullrefresh" ng-controller="pullrefreshController" class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}" >
+			<div class="mui-content">
+				<md-service-list ng-model="data"></md-service-list>
+				<md-no-data ng-show="data && data.length==0">暂无数据啊</md-no-data>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script>
+			app.controller("ParentPageController", ["$scope", "ApiService", "DataService", "Loading", "RPCObserver", function($scope, ApiService, DataService, Loading, RPCObserver) {
+			scope.pageIndex=0;
+				$scope.pageSize=20;
+				var url =  ApiService.Api50 + "/api/v2/Customer/GetCompCustomerServiceList";
+				console.log(url,"....")
+				$scope.url = url
+				
+				$scope.$on("refresh_pageindex",function(){
+					$scope.url = url+"?pageSize="+$scope.pageIndex+"&pageSize="+$scope.pageSize;
+				});
+			}]);
+			
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

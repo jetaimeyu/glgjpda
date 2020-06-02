@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<style type="text/css">
+
+		</style>
+	</head>
+
+	<body ng-controller="addPatrolController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">新增巡检类型</a>
+		</header>
+		<div class="mui-content">
+			<ul class="data-group">
+				<li class="data-row must">
+					<label>巡检类型</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="TypeName" class="needsclick" placeholder="请输入巡检类型名称" lenlimit="100"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>备注</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="Remark" class="needsclick" placeholder="请输入备注" lenlimit="300"></div>
+						</div>
+					</div>
+				</li>
+			</ul>
+			<div class="mui-content-padded" ng-click="save()" style="margin-top: 15px;">
+				<span class="mui-btn mui-btn-block">保存</span>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			app.controller("addPatrolController", ["$scope", "UtilsService", "ApiService", "DataService", "Loading", "RPCObserver",
+				function($scope, UtilsService, ApiService, DataService, Loading, RPCObserver) {
+					$scope.isLoad = true;
+					$scope.TypeName = "";
+					$scope.Remark = "";
+					var issaving = false;
+					$scope.save = function() {
+						if(issaving) return;
+						if($scope.TypeName.trim() == "") {
+							mui.toast("请输入巡检类型名称");
+							return;
+						}
+						if(!checkLengthUtil.check()) {
+							return false;
+						}
+						var postdata = {
+							"ID": 0,
+							"TypeName": $scope.TypeName,
+							"Remarks": $scope.Remark
+						}
+						issaving = true;
+						var url = ApiService.Api52 + "/api/v1/EqPatrolPlan/SaveEqPatrolType";
+						DataService.post(url, postdata).then(function(res) {
+							if(res) {
+								issaving = false;
+								mui.toast("保存巡检类型成功");
+								setTimeout(function() {
+									var ws = plus.webview.currentWebview();
+									ws.opener().evalJS(ws.callback + "()");
+									mui.back();
+								}, 800)
+							}
+
+						})
+					}
+
+				}
+			]);
+			mui.plusReady(function() {
+				//				document.getElementById('bottomx').style.top = (plus.display.resolutionHeight - 40) + "px";
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+				plus.webview.currentWebview().setStyle({
+					scrollIndicator: 'none'
+				});
+			});
+		</script>
+	</body>
+
+</html>

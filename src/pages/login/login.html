@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style>
+			.mui-action-login {
+				line-height: 45px;
+				font-size: 1.7rem!important;
+				padding: 0 16px!important;
+				margin-left: -12px;
+				margin-right: -10px;
+			}
+		</style>
+	</head>
+
+	<body id="login" ng-controller="loginCtrl">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-login mui-pull-left">登录</a>
+		</header>
+		<md-login data-callback="loginSuccess"></md-login>
+	</body>
+	<script src="../../js/angular.js"></script>
+	<script src="../../js/mui.min.js"></script>
+	<script src="../../js/common.js"></script>
+	<script src="../../js/utils.js"></script>
+	<script src="../../js/rpc.js"></script>
+	<script>
+		mui.init({
+			keyEventBind: {
+				backbutton: false //关闭back按键监听
+			}
+		});
+		RpcServer.expose("RPC_LoginSuccess", function() {
+			var preUserName = localGet("preUserName");
+			document.getElementById("loginName").value = preUserName ? preUserName.data || "" : "";
+
+			var prePhone = localGet("prePhone");
+			document.getElementById("phone").value = prePhone ? prePhone.data || "" : "";
+		})
+		app.controller("loginCtrl", ["$scope", "AuthService",
+			function($scope, AuthService) {
+				$scope.loginSuccess = function(userinfo) {
+					//注册信鸽推送
+					//plus.Push.registerPush(userinfo.UserID, userinfo.UserName);
+					RpcClient.invoke("message.html", "RPC_Login", userinfo);
+					//联系人页面刷新
+					//RpcClient.invoke("contactWind", "RPC_ReloadCurListData");
+					mui.openWindow({
+						id: 'tab.html'
+					});
+				}
+			}
+		]);
+
+		mui.plusReady(function() {
+			angular.bootstrap(document.getElementById("login"), ["MdTong"]);
+			plus.webview.currentWebview().setStyle({
+				softinputMode: "adjustResize"
+			});
+			//处理荣耀手机有时会自动光标到密码栏
+			plus.webview.currentWebview().addEventListener("show", function() {
+				document.activeElement.blur();
+			});
+		});
+	</script>
+
+</html>

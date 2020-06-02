@@ -1,0 +1,57 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/common.css">
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<link rel="stylesheet" href="pick-list.css" />
+		<style type="text/css">
+			.data-row {
+				margin-left: 15px;
+				margin-right: 15px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="PartInfolistController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">领料单</a>
+			<a class="mui-pull-right menu-add" id="add">
+				<img class="icon" src="../../images/add.png" ng-click="add()" />
+			</a>
+		</header>
+		<ul class="md-tab" top="84">
+			<li class="md-tab-item md-active" winid="pick-my.html" href="pick-list.html?type=my">我提交的</li>
+			<li class="md-tab-item " winid="pick-at.html" href="pick-list.html?type=at">发给我的</li>
+			
+			<li class="md-tab-item" winid="pick-all.html" href="pick-list.html?type=all">所有领料</li>
+		</ul>
+		<script type="text/javascript" src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("PartInfolistController", ["$scope", "UtilsService", function($scope, UtilsService) {
+				MdConfig.StartUsingTab();
+				$scope.add = function() {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'pick-newList.html',
+						url: 'pick-newList.html'
+					});
+				};
+
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,106 @@
+<ul class="data-group md-work-record">
+	<li class="mui-table-view-cell data-row mui-block" ng-repeat="item in model" ng-click="tap($event,'WorkInfo',item)">
+		<div class="body">
+			<span ng-if="listType=='at'&&item.IsRead==0" class="round"></span>
+			<div ng-class="{'margin-left-15':listType=='at'&&item.IsRead==0}">
+				<div class="mui-media-object mui-pull-left md-userCustomLogo ng-hide" ng-show="!item.ULogoIsExist" ng-bind="item.CreateUserName| getUserCustomLogo"></div>
+				<div class="avatar mui-media-object mui-pull-left md-userCustomLogo" ng-style="{'background-image':'url('+ (item.CreateUserID|getUserLogo:43:0) +')'}" ng-class="item.ULogoIsExist?'':'ng-hide'"></div>
+				<div class="infos">
+					<div class="names mui-ellipsis" ng-bind="item.CreateUserName"></div>
+					<div class="CreateDate" ng-bind="item.RecordDate"></div>
+					<span class="log-type font-12 mui-ellipsis" ng-bind="item.LogTypeName"></span>
+				</div>
+			</div>
+		</div>
+		<div class="work-content mui-ellipsis-2 font-15" ng-bind="item.IsHasAudio | formatWrokLogInfo:item.AudioLength:item.WorkContent"></div>
+		<div class="worklocation">
+			<i class="icon-location-2 font-13"></i>
+			<span ng-bind="item.Province | locationfilter:item.City:item.District:item.Address:item.Street"></span>
+		</div>
+	</li>
+</ul>
+<style type="text/css">
+
+	.md-work-record.data-group .data-row::after {
+		right: 10px;
+		left: 10px;
+	}
+	.md-work-record.data-group .data-row .body .round {
+		position: absolute;
+		width: 7px;
+		height: 7px!important;
+		border-radius: 50%;
+		top: 28px;
+		background-color: #3396FB;
+	}
+	
+	.md-work-record.data-group .data-row .body {
+		padding: 0px;
+	}
+	
+	.md-work-record.data-group .data-row {
+		padding: 10px 16px 10px 16px;
+	}
+	
+	.md-work-record.data-group:first-child {
+		margin-top: 0px;
+	}
+
+	.md-work-record .infos {
+		padding-left: 52px;
+		height: 43px;
+		line-height: 1;
+	}
+	
+	.md-work-record .names {
+		font-size: 1.5rem;
+		color: #000;
+		padding-top: 6px;
+		margin-bottom: 6px;
+		max-width: 45%;
+	}
+	
+	.md-work-record .CreateDate {
+		font-size: 1.2rem;
+		color: #AAAAAA;
+	}
+	
+	.md-work-record .work-content {
+		color: #000;
+		margin-top: 7px;
+		word-break: break-all;
+	}
+	
+	.md-work-record .worklocation {
+		margin-top: 6px;
+		color: #AAAAAA!important;
+		font-size: 1.2rem;
+		line-height: 1.4rem;
+	}
+	
+	.md-work-record .avatar {
+		height: 43px;
+		width: 43px;
+		border-radius: 50%;
+	}
+	
+	.md-work-record div.md-userCustomLogo {
+		width: 43px!important;
+		height: 43px!important;
+		line-height: 43px!important;
+		background-size: cover;
+	}
+	
+	.md-work-record .log-type {
+		position: absolute;
+		top: 16px;
+		right: 16px;
+		color: #3296FA!important;
+		display: inline-block;
+		max-width: 35%;
+	}
+	
+	.md-work-record .margin-left-15 {
+		margin-left: 15px!important;
+	}
+</style>

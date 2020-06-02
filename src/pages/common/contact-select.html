@@ -1,0 +1,249 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="contact-common.css" />
+		<style>
+			.btn-login {
+				margin: 0 auto 0;
+				height: 35px;
+				line-height: 35px;
+				text-align: center;
+				background: #3296FA;
+				color: #fff;
+				width: 170px;
+				border-radius: 3px;
+				font-size: 1.6rem;
+			}
+			
+			.btn-login a {
+				width: 100%;
+				height: 100%;
+				color: #FFFFFF;
+				display: block;
+			}
+			
+			.tip-login {
+				text-align: center;
+				padding-top: 20px;
+			}
+			
+			.tip-login :nth-child(2) {
+				margin-bottom: 10px;
+				margin-top: 20px;
+				font-size: 1.5rem;
+				color: #323232;
+				line-height: 1.5rem;
+			}
+			
+			.tip-login :last-child {
+				margin-bottom: 20px;
+				font-size: 1.2rem;
+				color: #B5B5B5;
+				line-height: 1.2rem;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="ContactSelectController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">选择人员</a>
+		</header>
+		<ul class="md-tab" top="84" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<li class="md-tab-item" ng-class="{'md-active':type!='org'}" href="recent-contacts.html?action={{action}}&multiselect={{multiselect}}" winid="RecentContacts.html">最近联系人</li>
+			<li class="md-tab-item" href="resources.html?action={{action}}&multiselect={{multiselect}}" winid="resources.html">好友</li>
+			<li class="md-tab-item" ng-class="{'md-active':type==='org'}" href="org.html?action={{action}}&multiselect={{multiselect}}&must={{must}}&hideself={{hideself}}&isView={{isView}}" winid="org-select.html" ng-if="curUser.CompID>0">组织架构</li>
+			<li class="md-tab-item" ng-class="{'md-active':type==='group'}" href="group-chat.html?action={{action}}&multiselect={{multiselect}}&must={{must}}&hideself={{hideself}}&isView={{isView}}" winid="group-chat.html" ng-if="isGroup">群组</li>
+		</ul>
+		<md-select-footer type="'user'" is-view="isView" ng-model="selectObj" submit="save()" ng-class="{'mui-block':action=='select'&&multiselect=='true'}" style="display: none;"></md-select-footer>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("ContactSelectController", ["$scope", "CacheService", "RPCObserver", function($scope, CacheService, RPCObserver) {
+				if(CacheService.get('user')) {
+					$scope.action = query("action");
+					$scope.must = query("must");
+					$scope.multiselect = query("multiselect");
+					$scope.hideself = query("hideself");
+					$scope.type = query("type");
+					$scope.curUser = CacheService.get("user");
+					$scope.isGroup = query("isGroup");
+					//是否使用优先级姓名
+					$scope.isView=query("isView");
+					var bannedUsers = plus.webview.currentWebview().bannedUsers;
+					
+
+					$scope.selectObj = [];
+					setTimeout(function() {
+						StartUsingTab();
+						$scope.isLoad = true;
+						$scope.$apply();
+					}, 100);
+					//仅用于选择组织架构中的人员
+					if($scope.type == "org") {
+						document.querySelector(".md-tab").setAttribute("top", "44");
+					}
+					if($scope.action == "select") {
+						//页面用于选择时空出footer的高度
+						$scope.multiselect == 'true' && document.querySelector(".md-tab").setAttribute("bottom", "46");
+						//接受已选择的参数
+						$scope.selectObj = plus.webview.currentWebview().selectObj;
+						
+					}
+					//rpc
+					RpcServer.expose("RPC_SelectUserInfo", function(params) {
+						mui.each(params, function(index, item) {
+							if(!item.UserID) {
+								params.splice(index, 1);
+							}
+						})
+						RPCObserver.broadcast("SyncSelectedData", params);
+						RpcClient.invoke("org-select.html", "RPC_SelectUserRefresh", params);
+						RpcClient.invoke("resources.html", "RPC_SelectUserRefresh", params);
+						RpcClient.invoke("RecentContacts.html", "RPC_SelectUserRefresh", params);
+						RpcClient.invoke("search-user.html", "RPC_SelectUserRefresh", params);
+						RpcClient.invoke("search-resource.html", "RPC_SelectUserRefresh", params);
+						$scope.selectObj = params;
+						$scope.$apply();
+						if($scope.multiselect != 'true') {
+							var view = plus.webview.currentWebview();
+							var opener = view.opener();
+							if(view.callback) {
+								opener.evalJS(view.callback + "(" + JSON.stringify($scope.selectObj) + ")");
+							}
+							mui.back();
+						}
+						return;
+					})
+				}
+				//刷新登陆
+				RpcServer.expose("RPC_RefreshLogin", function(params) {
+					if(params) {
+						MdConfig.StartUsingTab();
+					}
+					$scope.$apply();
+					//获取当前的页签，并确认隐藏、显示
+					var tab = document.body.querySelector("md-tab-item.md-active");
+					tab && plus.webview.show(tab.getAttribute("winid"));
+				});
+				//取消
+				$scope.cancel = function() {
+					mui.back();
+				}
+				//确定
+				$scope.save = function() {
+					var appElement = document.querySelector('[ng-controller=ContactSelectController]');
+					var $scope = angular.element(appElement).scope();
+
+					$scope.selectObj.forEach(function(user) {
+						if(user.ViewName && !user.RealName)
+							user.RealName = user.ViewName;
+					});
+
+					if($scope.selectObj.length == 0 && $scope.must == "true") {
+						mui.toast("请选择一个人员");
+						return;
+					}
+					var view = plus.webview.currentWebview();
+					var opener = view.opener();
+					if(view.callback) {
+						opener.evalJS(view.callback + "(" + JSON.stringify($scope.selectObj) + ")");
+					}
+					mui.back();
+				}
+
+				/**
+				 * 启用tab页签
+				 */
+				function StartUsingTab() {
+					//切换tab页签
+					mui('.md-tab').on('tap', '.md-tab-item', function() {
+						if(this.classList.contains("md-active")) {
+							return;
+						}
+						//隐藏当前显示的
+						var tab = this.parentElement.querySelector(".md-active");
+
+						if(tab) {
+							var href = tab.getAttribute("href");
+
+							if(href.substr(0, 1) == "#") {
+								document.body.querySelector(href).style.display = "none";
+							} else {
+								plus.webview.hide(tab.getAttribute("winid") || href)
+							}
+							tab.classList.remove("md-active");
+						}
+						//激活点击的
+						activeSubPage(this);
+					});
+					//显示指定页签
+					function activeSubPage($) {
+						$.classList.add("md-active");
+						var href = $.getAttribute("href");
+
+						if(href.substr(0, 1) == "#") {
+							document.body.querySelector(href).style.display = "";
+						} else {
+							createSubPage({
+								href: href,
+								winid: $.getAttribute("winid"),
+								top: $.parentElement.getAttribute("top"),
+								bottom: $.parentElement.getAttribute("bottom"),
+								extras: {
+									selectObj: $scope.selectObj,
+									bannedUsers: bannedUsers
+								}
+							})
+						}
+					}
+					//创建或显示标签页的内容(href, winid, top, bottom
+					function createSubPage(options) {
+						var win = plus.webview.getWebviewById(options.winid || options.href);
+						if(!win) {
+							var styles = {
+								popGesture: "none",
+								top: (options.top || 0) + "px",
+								bottom: (options.bottom || 0) + "px"
+							};
+							if(mui.os.android && ["5.0", "5.1"].indexOf(mui.os.version) >= 0) {
+								styles.hardwareAccelerated = false;
+							}
+							win = plus.webview.create(options.href, options.winid || options.href, styles, options.extras);
+							plus.webview.currentWebview().append(win);
+						}
+						win.show();
+					}
+
+					//默认激活当前的tab页签
+					var activeTab = document.body.querySelector(".md-tab-item.md-active");
+
+					if(activeTab) {
+						activeSubPage(activeTab);
+
+						var tabList = document.body.querySelectorAll(".md-tab-item:not(.md-active)[href^='#']");
+						var i = tabList.length;
+						while(i--) {
+							document.body.querySelector(tabList[i].getAttribute("href")).style.display = "none";
+						}
+					}
+				}
+			}]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

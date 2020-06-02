@@ -1,0 +1,48 @@
+<div class="photo file" ng-if="canadd">
+	<div class="img-body" ng-click="add()">
+		<i class="icon-add color-blue"></i>
+	</div>
+</div>
+<div class="photo file" ng-repeat="img in images track by $index">
+	<div class="img-body">
+		<img class="img" ng-style="{'background-image':'url(' + (getPreSrc(img) | filePathReg) +')'}" ng-click="preview($index)" ng-src="{{localUrl+'/images/imgPre.png'}}" />
+	</div>
+	<img ng-if="!readonly" class="media-del" src="{{localUrl}}/images/delete.png" ng-click="delete($index)">
+</div>
+<style>
+	.photo.file .icon-add {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+	}
+	
+	.photo.file .img-body {
+		position: relative;
+		overflow: hidden;
+		height: 50px;
+		background-color: #eaf6fe;
+	}
+	
+	.photo {
+		width: 50px;
+		height: 50px;
+		margin-right: 14px;
+		/*display: block;
+		float:left;*/
+	}
+	
+	.photo.file .media-del {
+		position: absolute;
+		left: 35px;
+		top: 5px;
+		width: 25px;
+		height: 25px;
+		padding: 5px;
+	}
+	
+	.photo.file .img{
+		height: 100%;
+		background-size: cover;
+	}
+</style>

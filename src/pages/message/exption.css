@@ -1,0 +1,44 @@
+body, .mui-content{
+	background-color: #F7F7F7;
+}
+.mui-content {
+	padding-top: 8px;
+	background: #F7F7F7;
+}
+
+
+.mui-content>.mui-table-view:first-child
+{
+	margin-top:0px;
+}
+
+.mui-grid-view.mui-grid-9 .mui-media
+{
+	background:#F7F7F7;
+}
+
+.mui-grid-view.mui-grid-9 .mui-media img{
+	width:46px;
+}
+
+.mui-grid-view.mui-grid-9
+{
+	border:none;
+	background-color: #F7F7F7;
+}
+.mui-grid-view.mui-grid-9 .mui-table-view-cell
+{
+	border:none;
+	padding:7px 20px;
+}
+
+.mui-table-view.mui-grid-view .mui-table-view-cell .mui-media-body
+{
+	font-size:12px;
+	color:#323232;
+	margin-top: 2px;
+}
+.mui-grid-view.mui-grid-9 .mui-table-view-cell.mui-active
+{
+	background-color:#F7F7F7!important;
+}

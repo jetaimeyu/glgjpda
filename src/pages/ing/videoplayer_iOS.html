@@ -1,0 +1,85 @@
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../css/common.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript">
+			var video = null;
+			var playing = false;
+			// H5 plus事件处理
+			function plusReady() {
+				plus.navigator.setFullscreen(true);
+				var src = plus.webview.currentWebview().src;
+				var videoId = plus.webview.currentWebview().videoId;
+				console.log(src + "," + videoId)
+				video = document.getElementById("video");
+				video.src = src;
+				plus.nativeUI.showWaiting('视频资源加载中');
+				video.onended = function() {
+					plus.navigator.setFullscreen(false);
+				};
+				video.onplay  = function(){
+					plus.nativeUI.closeWaiting();
+					plus.navigator.setFullscreen(true);
+				}
+				video.onpause = function(){
+					plus.navigator.setFullscreen(false);
+				}
+				video.play();
+				var fn_back = mui.back;
+				mui.back = function() {
+					plus.navigator.setFullscreen(false);
+					fn_back();
+				}
+
+				function videoError(e) {
+					switch(e.target.error.code) {
+						case e.target.error.MEDIA_ERR_ABORTED:
+							alert('You aborted the video playback.');
+							break;
+						case e.target.error.MEDIA_ERR_NETWORK:
+							alert('A network error caused the video download to fail part-way.');
+							break;
+						case e.target.error.MEDIA_ERR_DECODE:
+							alert(
+								'The video playback was aborted due to a corruption problem or because the video used features your browser did not support.'
+							);
+							break;
+						case e.target.error.MEDIA_ERR_SRC_NOT_SUPPORTED:
+							alert(
+								'The video could not be loaded, either because the server or network failed or because the format is not supported.'
+							);
+							break;
+						default:
+							alert('An unknown error occurred.');
+							break;
+					}
+
+					plus.nativeUI.alert("无效的视频资源", function() {
+						mui.back();
+					});
+				}
+			}
+			document.addEventListener('plusready', plusReady, false);
+		</script>
+
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">返回</a>
+		</header>
+		<div style="margin-top: 44px;height: 100%;overflow: hidden;">
+			<div style="display:table-cell;vertical-align:middle;" onclick="fn_back();">
+				<video id="video" style="width:100%;" autoplay controls x-webkit-airplay="true" preload="metadata" onerror="videoError(event);"></video>
+			</div>
+		</div>
+	</body>
+
+</html>

@@ -1,0 +1,92 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../../css/common.css" />
+		<link rel="stylesheet" href="../../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.icon {
+				width: 16px;
+			}
+				.mui-bar-nav~.mui-content .mui-pull-top-pocket {
+				top: 44px!important;
+			}
+			
+			.mui-bar-nav~.has-tab .mui-pull-top-pocket {
+				top: 84px!important;
+			}
+			.partDomHead{
+			 padding: 10px 15px;
+			 padding-bottom: 0;
+			 flex-direction: column;
+			 justify-content: flex-start!important;
+			 align-items: flex-start!important;
+			}
+			.li_wraper{
+				display: flex;
+				width: 100%;
+			}
+			.partDomList{
+				padding: 0 15px!important;
+			}
+			.text-center{
+				text-align: center!important;
+			}
+			.total-count{
+				color: #369bfa;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="pointListController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">积分</a>
+		</header>
+		<div id="pullrefresh" ng-controller="pullrefreshController" class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<div class="mui-content">
+				<md-jf-point ng-model="data"></md-jf-point>
+				
+				<md-no-data ng-show="data && data.length==0">暂无数据</md-no-data>
+			</div> 
+		</div>
+		<!--无网络或请求失败重试-->
+		<!--<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>-->
+		
+	<script type="text/javascript" src="../../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../../js/common.js"></script>
+		<script type="text/javascript" src="../../../js/utils.js"></script>
+		<script type="text/javascript">
+			app.controller("pointListController", ["$scope","$rootScope", "UtilsService","ApiService","$filter","RPCObserver", function($scope,$rootScope, UtilsService,ApiService,$filter,RPCObserver) {
+               $scope.isLoad=false; 
+               $scope.pageIndex = 0;
+				$scope.pageSize = 10;
+				function init() {
+					var url = ApiService.Api52 +"/api/v1/Reg/GetUserIntegral?page=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize;
+					
+					$scope.url = url;
+				}
+
+				$scope.$on('refresh_pageindex', init);
+
+//				RPCObserver.on('refresh_mat_debug_list', 'refresh_mat_debug_list');
+//				window.refresh_mat_debug_list = function() {
+//					$scope.$broadcast('md_pullrefresh');
+//				};
+			}]);
+			mui.plusReady(function() {
+				plus.webview.currentWebview().setStyle({
+					scrollIndicator: 'none'
+				});
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

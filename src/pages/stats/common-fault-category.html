@@ -1,0 +1,465 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>常用故障</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="../../css/selecttime.css" />
+		<link rel="stylesheet" href="../../css/mui.loading.css" />
+		<link rel="stylesheet" href="../../css/mpicker.css" />
+		<link href="../../css/mui.picker.min.css" rel="stylesheet" />
+		<link href="../../css/mui.poppicker.css" rel="stylesheet" />
+		<link rel="stylesheet" href="common-fault-category.css" />
+
+	</head>
+
+	<body ng-controller="CompIntroController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">常见故障</a>
+		</header>
+		<div class="mui-content">
+			<div class="map_container">
+				<div class="map_tools">
+					<ul class="data-group">
+						<li class="data-row">
+
+							<i class=" icon-zuo" ng-click="event.datePlus()"></i>
+							<p class="color-black font-12" id="a_date_view" ng-click="event.chooseDate()" ng-bind="domData.curDate.view">
+							</p>
+							<i class="  icon-you" ng-click="event.dateAdd()"></i>
+						</li>
+						<li class="data-row prod" ng-click="event.selectProd()">
+							<p class="opt md-icon">
+								<span id="delPro" class="mui-icon mui-icon-closeempty" style="display:none" ng-class="{'mui-block':prodInfo.ProdName}" ng-click="event.delProd($event)"></span>
+								<!--ng-if="!prodInfo.ProdName"-->
+								<i class="redpointer"></i>
+								<i class="icon-right"></i>
+							</p>
+							<div class="body-prod text-left" id="prodname" ng-bind="prodInfo.ProdName || '所有产品'">
+							</div>
+						</li>
+						<li class="data-row prod " ng-if="prodInfo.SkuName">
+							<div class="body-prod text-left sku-name" ng-bind="'型号：'+prodInfo.SkuName"></div>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div id="slider" class="mui-slider mui-fullscreen" ng-style="{'top':prodInfo.SkuName?'163px':'126px'}">
+				<div id="sliderSegmentedControl" class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted md-tab-group" style="background-color: #FFFFFF;margin-bottom:0px">
+					<a class="mui-control-item md-active" href="#item1mobile" style="font-size: 1.5rem;">
+						故障描述
+					</a>
+					<a class="mui-control-item" href="#item2mobile" style="font-size: 1.5rem;">
+						维修内容
+					</a>
+					<a class="mui-control-item" href="#item3mobile" style="font-size: 1.5rem;">
+						维修结果
+					</a>
+				</div>
+				<div id="sliderProgressBar" class="mui-slider-progress-bar mui-col-xs-4"></div>
+				<div class="mui-slider-group">
+					<div id="item1mobile" class="mui-slider-item mui-control-content mui-active">
+						<div id="scroll1" class="mui-scroll-wrapper" style="background: #EFEFEF;">
+							<div id="gzfl" class="mui-scroll" ng-show="dataDesc&&dataDesc.length>0">
+								<div style="background: #FFF;">
+									<div class="chart" id="descChart" style="height: 261px;"></div>
+								</div>
+								<md-fault-category-list ng-model="dataDesc" data-type="matType" data-prod="prodInfo" data-dateobj="{isYearOrMonth:isYearOrMonth,dataYear:dataYear,dataMonth:dataMonth}"></md-fault-category-list>
+							</div>
+							<md-no-data ng-show="dataDesc&&dataDesc.length==0">暂无数据</md-no-data>
+						</div>
+					</div>
+					<div id="item2mobile" class="mui-slider-item mui-control-content">
+						<div id="scroll2" class="mui-scroll-wrapper" style="background: #EFEFEF;">
+							<div id="zrpd" class="mui-scroll" ng-show="dataContent&&dataContent.length>0">
+								<div style="background: #FFF;" >
+									<div class="chart" id="contentChart" style="height: 261px;"></div>
+								</div>
+							<md-fault-category-list ng-model="dataContent" data-type="matType" data-prod="prodInfo" data-dateobj="{isYearOrMonth:isYearOrMonth,dataYear:dataYear,dataMonth:dataMonth}"></md-fault-category-list>
+							</div>
+							<md-no-data ng-show="dataContent&&dataContent.length==0">暂无数据</md-no-data>
+						</div>
+					</div>
+					<div id="item3mobile" class="mui-slider-item mui-control-content">
+						<div id="scroll3" class="mui-scroll-wrapper" style="background: #EFEFEF;">
+							<div id="matResult" class="mui-scroll" ng-show="dataResult&&dataResult.length>0">
+								<div style="background: #FFF;">
+									<div class="chart" id="resultChart" style="height: 261px;"></div>
+								</div>
+								<md-fault-category-list ng-model="dataResult" data-type="matType" data-prod="prodInfo" data-dateobj="{isYearOrMonth:isYearOrMonth,dataYear:dataYear,dataMonth:dataMonth}"></md-fault-category-list>
+							</div>
+							<md-no-data ng-show="dataResult&&dataResult.length==0">暂无数据</md-no-data>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/jquery.min.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script src="../../js/echarts.min.js"></script>
+		<script type="text/javascript">
+			mui.init({
+				swipeBack: false
+			});
+			var limit = 6
+			//故障描述
+			var descOption = {
+				calculable: false,
+				series: [{
+					type: 'pie',
+					radius: '60%',
+					center: ['50%', '50%'],
+					label: {
+						normal: {
+							formatter: '{b}\n{d}%',
+							fontSize: 11,
+						}
+					},
+					data: []
+				}]
+			}
+			//维修内容
+			var contentOption = {
+				calculable: false,
+				series: [{
+					type: 'pie',
+					radius: '60%',
+					center: ['50%', '50%'],
+					label: {
+						normal: {
+							formatter: '{b}\n{d}%',
+							fontSize: 11,
+						}
+					},
+					data: []
+				}]
+			}
+			//维修结果
+			var resultOption = {
+				calculable: false,
+				series: [{
+					type: 'pie',
+					radius: '60%',
+					center: ['50%', '50%'],
+					label: {
+						normal: {
+							formatter: '{b}\n{d}%',
+							fontSize: 11,
+						}
+					},
+					data: []
+				}]
+			}
+			var descChart = echarts.init(document.getElementById('descChart'));
+			var contentChart = echarts.init(document.getElementById('contentChart'));
+			var resultChart = echarts.init(document.getElementById('resultChart'));
+			var colors = [
+				'#6DC5CE', '#EFBB13', '#F46800', '#53BF8B', '#8192D6',
+				'#D9B3E6', '#83FCD8', '#666600', '#FFCCCC', '#9999CC',
+				'#00B0F0', '#82ABBA', '#A2B4BA', '#631399'
+			];
+			var _curDate = new Date();
+			var curDate = {
+				quarter: {
+					"1": "一季度",
+					"2": "二季度",
+					"3": "三季度",
+					"4": "四季度"
+				},
+				curYear: _curDate.getFullYear(),
+				curValue: _curDate.getMonth(),
+				curType: "month",
+				view: _curDate.getFullYear() + "年" + (_curDate.getMonth() + 1) + "月"
+			};
+
+			$("#a_date_view").text(curDate.view);
+			app.controller("CompIntroController", ["$scope", "$filter", "AuthService", "ApiService", "DataService", "UtilsService", "ChatUserService", "Loading", "RPCObserver", "ShareLogService", "CacheService", "DatePickerService",  function($scope, $filter, AuthService, ApiService, DataService, UtilsService, ChatUserService, Loading, RPCObserver, ShareLogService, CacheService, DatePickerService) {
+				$scope.isLoad = false;
+				$scope.datas = null;
+				$scope.matType = 3; //默认故障描述,1维修内容 2维修结果 3故障描述
+				$scope.isYearOrMonth = 3; //默认按月加载，1年 2季度 3月
+				$scope.dataMonth = curDate.curValue + 1; //默认加载当前月
+				$scope.dataYear = curDate.curYear; //默认加载当前年
+				$scope.prodInfo = ""
+				//$scope.prodId="";//产品编号
+				//$scope.skuId="";//型号
+				getMatCategoryData();
+
+				function getMatCategoryData() {
+					var url = ApiService.Api50 + "/api/v1/Statistics/GetCommonFaultStatistics?type=" + $scope.matType + "&isYearOrMonth=" + $scope.isYearOrMonth + "&year=" + $scope.dataYear + "&month=" + $scope.dataMonth;
+					$scope.prodInfo.ProdID && (url += "&prodId=" + $scope.prodInfo.ProdID)
+					$scope.prodInfo.SkuID && (url += "&skuId=" + $scope.prodInfo.SkuID)
+					DataService.get(url).then(function(res) {
+						if(res) {
+							$scope.datas == null && ($scope.datas = []);
+							var pieData = [];
+							var index = 0;
+							for(var i in res) {
+								if(res[i].Num > 0) {
+									if(index < colors.length) {
+										var col = colors[index];
+									} else {
+										var col = getColor();
+									}
+									var paramsNameNumber = res[i].Name.length;
+									var rowNumber = Math.ceil(paramsNameNumber / 7); //换行数
+									var paramsStr=res[i].Name.replace(/[\r\n]/g,"");//去掉字符串中的换行
+									var newParamsName = "";// 最终拼接成的字符串
+									if(paramsNameNumber> 7) {
+										/** 循环每一行,p表示行 */
+										for(var p = 0; p < rowNumber; p++) {
+											var tempStr = ""; // 表示每一次截取的字符串
+											var start = p * 7; // 开始截取的位置
+											var end = start + 7; // 结束截取的位置
+											// 此处特殊处理最后一行的索引值
+											if(p == rowNumber - 1) {
+												// 最后一次不换行
+												tempStr =  paramsStr.substring(start, paramsNameNumber);
+											} else {
+												// 每一次拼接字符串并换行
+												tempStr =  paramsStr.substring(start, end) + "\n";
+											}
+											newParamsName += tempStr; // 最终拼成的字符串
+										}
+									}else{
+										newParamsName = paramsStr;
+									}
+									var bujian = {
+										name: newParamsName,
+										value: res[i].Num,
+										itemStyle: {
+											normal: {
+												color: col
+											}
+										}
+									}
+									res[i].color = col;
+									pieData.push(bujian);
+									$scope.datas.push(res[i]);
+									index++;
+								}
+							}
+							if($scope.matType == 2) {
+								resultOption.series[0].data = pieData;
+								resultChart.setOption(resultOption);
+								$scope.dataResult=$scope.datas;
+							} else if($scope.matType == 1) {
+								contentOption.series[0].data = pieData;
+								contentChart.setOption(contentOption);
+								$scope.dataContent=$scope.datas;
+							} else {
+								descOption.series[0].data = pieData;
+								descChart.setOption(descOption);
+								$scope.dataDesc=$scope.datas;
+							}
+							//$timeout(function(){
+							$scope.isLoad = true;
+							//},500)
+
+						}
+					}, function(error) {
+						$scope.isLoad = true;
+						$scope.datas == null && ($scope.datas = []);
+					})
+				}
+				//标签切换
+				//				mui(".mui-slider-indicator ").on("tap", ".mui-control-item", function() {
+				//					if($scope.matType == this.getAttribute("dataId")) return;
+				//
+				//					$scope.matType = this.getAttribute("dataId");
+				//					$scope.datas = null;
+				//					$scope.isLoad = false;
+				//					//console.log(this.getAttribute("dataId"))
+				//					getMatCategoryData();
+				//				});
+				document.getElementById('slider').addEventListener('slide', function(e) {
+					//console.log(JSON.stringify(e.detail.slideNumber))
+					$scope.datas = null;
+					//descOption.series[0].data=[];
+					//$scope.isLoad = false;
+					if(e.detail.slideNumber === 1) {
+						$scope.matType = 1;
+					} else if(e.detail.slideNumber === 2) {
+						$scope.matType = 2;
+					} else if(e.detail.slideNumber === 0) {
+						$scope.matType = 3;
+
+					}
+					getMatCategoryData();
+				});
+				//日期选择
+				$scope.domData = {
+					curDate: curDate,
+				};
+				$scope.event = {
+					chooseDate: function() {
+						var _date = $scope.domData.curDate;
+						DatePickerService.getTime(_date.curYear, _date.curValue, _date.curType, limit).then(function(data) {
+							//console.log(JSON.stringify(data))
+							_date.curYear = data.year;
+							_date.curType = data.type;
+							_date.curValue = data.value;
+							_date.startDate = data.startDate;
+							_date.endDate = data.endDate;
+							_date.view = data.view;
+							if(_date.curType == 'year') {
+								$scope.isYearOrMonth = 1;
+								$scope.dataMonth = 0;
+							} else if(_date.curType == 'quarter') {
+								$scope.isYearOrMonth = 2;
+								$scope.dataMonth = _date.curValue;
+							} else if(_date.curType == 'month') {
+								$scope.isYearOrMonth = 3;
+								$scope.dataMonth = parseInt(_date.curValue) + 1;
+							}
+							$scope.dataYear = _date.curYear;
+							$scope.datas = null;
+							getMatCategoryData();
+						});
+					},
+					datePlus: function() {
+						var _date = $scope.domData.curDate;
+						var _date = $scope.domData.curDate;
+						var realYear = parseInt(_curDate.getFullYear());
+						var curYear = parseInt(_date.curYear); //2017-12-08 11:09:49--20171208 00:00:00
+						if((realYear - curYear) == limit-1) {
+							if((_date.curValue == 1) && (_date.curType == "quarter")) {
+								mui.toast("只能查看最近"+limit+"年的数据");
+								return;
+							} else if((_date.curValue == 0) && (_date.curType == "month")) {
+								mui.toast("只能查看最近"+limit+"年的数据");
+								return;
+							} else if(_date.curType == "year") {
+								mui.toast("只能查看最近"+limit+"年的数据");
+								return;
+							}
+						}
+						switch(_date.curType) {
+							case 'year':
+								_date.curYear = parseInt(_date.curYear) - 1;
+								$scope.dataYear = curDate.curYear;
+								break;
+							case 'quarter':
+								_date.curValue = parseInt(_date.curValue) - 1;
+								if(_date.curValue == 0) {
+									_date.curValue = 4;
+									_date.curYear -= 1;
+									$scope.dataYear = curDate.curYear;
+								}
+								$scope.dataMonth = _date.curValue;
+								break;
+							case 'month':
+								_date.curValue = parseInt(_date.curValue) - 1;
+								if(_date.curValue == -1) {
+									_date.curValue = 11;
+									_date.curYear -= 1;
+									$scope.dataYear = curDate.curYear;
+								}
+								$scope.dataMonth = parseInt(_date.curValue) + 1;
+								break;
+						};
+						$scope.datas = null;
+						$scope.event.getDateRange(function() {
+							getMatCategoryData();
+						});
+
+					},
+					dateAdd: function() {
+						var _date = $scope.domData.curDate;
+						var realYear = parseInt(_curDate.getFullYear());
+						var curYear = parseInt(_date.curYear); //2017-12-08 11:09:49--20171208 00:00:00
+						if((realYear - curYear) == 0) {
+							if((_date.curValue == 4) && (_date.curType == "quarter")) {
+								mui.toast("只能查看最近"+limit+"年的数据");
+								return;
+							} else if((_date.curValue == 11) && (_date.curType == "month")) {
+								mui.toast("只能查看最近"+limit+"年的数据");
+								return;
+							} else if(_date.curType == "year") {
+								mui.toast("只能查看最近"+limit+"年的数据");
+								return;
+							}
+						}
+						switch(_date.curType) {
+							case 'year':
+								_date.curYear = parseInt(_date.curYear) + 1;
+								$scope.dataYear = _date.curYear;
+								break;
+							case 'quarter':
+								_date.curValue = parseInt(_date.curValue) + 1;
+								if(_date.curValue == 5) {
+									_date.curValue = 1;
+									_date.curYear += 1;
+									$scope.dataYear = _date.curYear;
+								}
+								$scope.dataMonth = _date.curValue;
+								break;
+							case 'month':
+								_date.curValue = parseInt(_date.curValue) + 1;
+								if(_date.curValue == 12) {
+									_date.curValue = 0;
+									_date.curYear += 1;
+									$scope.dataYear = _date.curYear;
+								}
+								$scope.dataMonth = parseInt(_date.curValue) + 1;
+								break;
+						}
+						$scope.datas = null;
+						$scope.event.getDateRange(function() {
+							getMatCategoryData();
+						});
+					},
+					getDateRange: function(callback) {
+						var _date = $scope.domData.curDate;
+						DatePickerService.getDateRange(parseInt(_date.curYear), parseInt(_date.curValue), _date.curType, function(startDate, endDate, view) {
+							_date.startDate = startDate;
+							_date.endDate = endDate;
+							_date.view = view;
+							typeof callback == "function" && (callback());
+						});
+					},
+					selectProd: function() {
+						UtilsService.openWindow({
+							id: "problib-index.html",
+							url: "../problib/index.html?state=selsku&isall=true",
+							extras: {
+								selectObj: $scope.prodInfo,
+								callback: 'faultEquCallback'
+							}
+						})
+					},
+					delProd: function(event) {
+						event.stopPropagation();
+						$scope.prodInfo = "";
+						$scope.datas = null;
+						getMatCategoryData();
+					}
+				};
+
+				//选择产品回调事件
+				window.faultEquCallback = function(res) {
+					//console.log(JSON.stringify(res))
+					$scope.prodInfo = res;
+					$scope.$apply();
+					$scope.datas = null;
+					getMatCategoryData();
+				};
+
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

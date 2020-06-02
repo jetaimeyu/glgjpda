@@ -1,0 +1,341 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style>
+			.mui-card {
+				border-radius: 5px;
+				box-shadow: none;
+			}
+			
+			.mui-card-content-inner {
+				padding: 17px 15px 7px 15px;
+			}
+			
+			.click-none:active {
+				background-color: #FFFFFF !important;
+			}
+			
+			.mui-card:active {
+				background-color: #F7F7F7!important;
+			}
+			
+			.card {
+				left: 20px;
+				top: 18px;
+				position: absolute;
+				width: 40px;
+				height: 40px;
+			}
+			
+			.title {
+				margin-left: 60px;
+				display: -moz-inline-box;
+				display: inline-block;
+			}
+			
+			.lh28 {
+				line-height: 28px;
+			}
+			
+			.slt {
+				right: 15px;
+				top: 30px;
+				position: absolute;
+			}
+			/*#btnRefreshPrice:before {
+				content: "";
+				border-left: 1px solid #CCCCCC;
+				margin-right: 10px;
+				padding-top: -2px;
+			}
+			
+			#btnRefreshPrice:active {
+				color: #CCCCCC !important;
+			}*/
+		</style>
+	</head>
+
+	<body ng-controller="payController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">收银台</a>
+		</header>
+
+		<div class="mui-content" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<div class="mui-card">
+				<div class="mui-card-content">
+					<div class="mui-card-content-inner click-none" style="padding:10px 17px;">
+						<span style="margin-right: 15px;">需支付</span>
+						<span class="color-red-md font-17">￥{{price}}</span>
+						<!--<span id="btnRefreshPrice" class="float-right color-blue">刷新价格</span>-->
+					</div>
+					<!--<div class="mui-card-content-inner click-none" style="padding:10px 17px;" ms-visible="PayMoney==0">
+						<span style="margin-right: 15px;">已付全款</span>
+					</div>-->
+				</div>
+			</div>
+			<div class="mui-card pay_mode" data-type="alipay">
+				<div class="mui-card-content addOrder">
+					<div class="mui-card-content-inner mui-text-left">
+						<img class="card" src="../../images/pay/alipay.png" />
+						<div class="title">
+							<span class="font-14">使用手机支付宝支付</span>
+							<p class="font-12" style="margin-right: 30px;">推荐有支付宝账号的用户使用</p>
+						</div>
+						<i ng-if="CurPayType=='wxpay'||CurPayType==''" class="icon-round color-gray-deep font-22 slt"></i>
+						<i ng-if="CurPayType=='alipay'" class="icon-state-normal color-green-light font-22 slt"></i>
+					</div>
+				</div>
+			</div>
+			<div class="mui-card pay_mode" data-type="wxpay" style="opacity: 0.6;">
+				<div class="mui-card-content addOrder">
+					<div class="mui-card-content-inner mui-text-left">
+						<img class="card" src="../../images/pay/wxpay.png" />
+						<div class="title">
+							<span class="font-14">使用手机微信支付</span>
+							<p class="font-12" style="margin-right: 30px;">推荐安装微信5.0以上版本的用户使用</p>
+						</div>
+						<i ng-if="CurPayType=='alipay'||CurPayType==''" class="icon-round color-gray-deep font-22 slt"></i>
+						<i ng-if="CurPayType=='wxpay'" class="icon-state-normal color-green-light font-22 slt"></i>
+					</div>
+				</div>
+			</div>
+			<div class="mui-content-padded">
+				<button id="btnPay" ng-click="confirmPayment()" class="mui-btn mui-btn-primary mui-btn-block" style="border: 1px solid #3296FA;">确定支付</button>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script>
+			app.controller("payController", ["$scope", "UtilsService", "ApiService", "DataService", "MapService", "RPCObserver", "Loading", "CacheService",
+				function($scope, UtilsService, ApiService, DataService, MapService, RPCObserver, Loading, CacheService) {
+					var user = CacheService.get('user');
+					$scope.price = query("price");
+					$scope.goodid = query("goodid");
+					$scope.uid = query("uid"); //收货人id
+					$scope.receverInfo = {};
+					$scope.CurPayType = "alipay"; //当前支付方式
+					$scope.SysPayType = {}; //手机支持的支付方式
+					$scope.AliPay = true; //是否支持支付宝支付
+					$scope.WxPay = true; //是否支持微信支付
+					$scope.isLoad = true;
+					//获取收货人信息
+					var url = ApiService.CRM + "/api/v1/Customer/GetCustomerLinkManByID/" + $scope.uid;
+					DataService.get(url).then(function(res) {
+						$scope.receverInfo = res;
+						Loading.hide();
+					}, function(error) {
+
+					});
+					//支付方式选择事件
+					mui(".mui-content").on("tap", ".pay_mode", function() {
+						var type = this.getAttribute("data-type");
+						var pay_mode = document.getElementsByClassName("pay_mode");
+						switch(type) {
+							case "alipay":
+								$scope.CurPayType = "alipay";
+								break;
+							case "wxpay":
+								mui.toast("暂仅支持支付宝支付")
+								//$scope.CurPayType = "wxpay";
+								break;
+						}
+						$scope.$apply();
+					});
+
+					//确认支付
+					$scope.confirmPayment = function() {
+						//						mui.toast("支付功能开发中，敬请期待！");
+						//						return;
+						if(!$scope.CurPayType) {
+							mui.toast("请选择支付方式");
+							return;
+						}
+						//如果未安装支付宝
+						if($scope.CurPayType == "alipay" && !$scope.AliPay) {
+							plus.nativeUI.confirm('检测到系统未安装“支付宝”，无法完成支付操作，是否立即安装？', function(e) {
+								if(e.index == 0) {
+									$scope.SysPayType["alipay"].installService();
+								}
+							}, "支付宝");
+							return;
+						}
+
+						//如果未安装微信
+						if($scope.CurPayType == "wxpay" && !$scope.WxPay) {
+							plus.nativeUI.confirm('检测到系统未安装“微信”，无法完成支付操作，是否立即安装？', function(e) {
+								if(e.index == 0) {
+									$scope.SysPayType["wxpay"].installService();
+								}
+							}, "微信");
+							return;
+						}
+						//接口
+
+						var payurl = "";
+						if($scope.CurPayType == "alipay") {
+							payurl = "http://pay.maidiyun.com/CustCareMobilePay.ashx?paymoney=" + $scope.price;
+						} else if($scope.CurPayType == "wxpay") {
+							//payurl = "http://222.175.121.187:9991/WxPay.ashx?OrderNo=" + res.PayNumber + "&PaymentNo=" + res.PaySerial;
+						}
+						ajaxData(payurl, null, function(payRes) {
+							plus.payment.request($scope.SysPayType[$scope.CurPayType], payRes, function(result) {
+									console.log("result:" + JSON.stringify(result));
+									var postData = {
+										"ID": 0,
+										"CommodityId": $scope.goodid,
+										"Address": $scope.receverInfo.ReceiverAddress,
+										"LinkMan": $scope.receverInfo.ReceiverName,
+										"LinkPhone": $scope.receverInfo.ReceiverPhone,
+										"OrderState": 1,
+										"PayNum": 1,
+										"TotalSum": $scope.price,
+										"PayMethod": $scope.CurPayType
+									};
+									console.log(JSON.stringify(postData));
+									var succUrl = ApiService.Api50 + "/api/v1/MdtMicroMart/SaveCommodityOrder";
+									DataService.post(succUrl, postData).then(function(res) {
+										if(res) {
+											var innerWs = openWindow("paySuccess.html", {
+												OrderIds: res
+											});
+											innerWs.addEventListener('show', function() {
+												innerWs.opener().close("none");
+											}, false);
+										}
+									}, function(error) {
+
+									});
+								},
+								function(error) {
+									console.log(JSON.stringify(error))
+									var postData = {
+										"ID": 0,
+										"CommodityId": $scope.goodid,
+										"Address": $scope.receverInfo.ReceiverAddress,
+										"LinkMan": $scope.receverInfo.ReceiverName,
+										"LinkPhone": $scope.receverInfo.ReceiverPhone,
+										"OrderState": 0,
+										"PayNum": 1,
+										"TotalSum": $scope.price,
+										"PayMethod": $scope.CurPayType
+									};
+									console.log(JSON.stringify(postData));
+									var succUrl = ApiService.Api50 + "/api/v1/MdtMicroMart/SaveCommodityOrder";
+									DataService.post(succUrl, postData).then(function(res) {
+										if(res) {
+											var innerWs = openWindow("payFailure.html", {
+												msg: error.message
+											});
+											innerWs.addEventListener('show', function() {
+												innerWs.opener().close("none");
+											}, false);
+										}
+									}, function(error) {
+
+									});
+								});
+						}, "get");
+
+					};
+
+					function ajaxData(url, data, callback, ajaxType, needToken, isAsync, contentType) {
+						if(typeof(data) == 'object') {
+							data = JSON.stringify(data);
+						}
+						//验证是否需要加token
+						var header = {
+							'Content-Type': contentType || 'application/json'
+						};
+						if(needToken) {
+							header.Authorization = "Bearer  " + user.Token;
+						}
+						if(!isAsync && isAsync != false) {
+							isAsync = true;
+						}
+
+						mui.ajax({
+							headers: header,
+							type: ajaxType,
+							url: url,
+							async: isAsync,
+							data: data,
+							timeout: 10000,
+							success: function(data) {
+								callback(data);
+							},
+							error: function(xhr, type, errorThrown) {
+								var msg;
+								switch(type) {
+									case "timeout":
+										msg = "连接超时，请检查你的网络设置";
+										break;
+									case "error":
+										msg = "请求失败，请稍后再试";
+										break;
+									case "abort":
+										msg = "请求失败，请检查你的网络设置"; //"请求被终止,请求已被取消";
+										break;
+									case "parsererror":
+										msg = "无法解析此请求";
+										break;
+								}
+								callback({
+									State: -99,
+									ErrorMessage: msg
+								});
+							}
+						});
+					};
+				}
+			]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+				var appElement = document.querySelector('[ng-controller=payController]');
+				var $scope = angular.element(appElement).scope();
+
+				getPays();
+				//判断支付方式是否有效
+				function getPays() {
+					plus.payment.getChannels(function(channels) {
+						var pays = [];
+						for(var i = 0; i < channels.length; i++) {
+							var channel = channels[i];
+							if(channel.id == 'qhpay' || channel.id == 'qihoo') { // 过滤掉不支持的支付通道：暂不支持360相关支付
+								continue;
+							}
+							$scope.SysPayType[channel.id] = channel;
+							checkServices(channel);
+						}
+					}, function(e) {
+						outLine('获取支付通道失败：' + e.message);
+					});
+				};
+
+				// 检测是否安装支付服务
+				function checkServices(pc) {
+					if(!pc.serviceReady) {
+						switch(pc.id) {
+							case 'alipay':
+								$scope.AliPay = false;
+								break;
+							case 'wxpay':
+								$scope.WxPay = false;
+								break;
+						}
+					}
+				};
+			});
+		</script>
+	</body>
+
+</html>

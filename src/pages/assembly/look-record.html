@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="../../css/common.css">
+		<style type="text/css">
+
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav ms-controller" ms-controller="ass">
+			<a class="mui-action-back mui-icon icon-back mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title mui-action-back" style="padding-left: 0!important;">装配记录</h1>
+		</header>
+		<div class="mui-content"></div>
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/avalon.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript">
+			real_code = '';
+			mui.init({
+				subpages: [{
+					url: 'look-sub.html?id=' + query('id') + '&w=' + query('w') + '&g=' + query('g'),
+					id: 'look-sub.html',
+					styles: {
+						top: '45px',
+						bottom: '0px',
+					}
+				}]
+			});
+			var appVm = avalon.define({
+				$id: "ass",
+				GroupID: query('id') || 0, //小组ID
+				WorkShopName: query('w') || '', //车间
+				GroupName: query('g') || ''
+			})
+			mui.plusReady(function() {
+				var mui_back = mui.back;
+				var opener = null;
+				mui.back = function() {
+					if(!opener) {
+						opener = plus.webview.getWebviewById('index.html');
+					}
+					mui.fire(opener, "refreshData")
+					mui_back();
+					//openWindow('assembly.html?id=' + appVm.GroupID + '&w=' + query('w') + '&g=' + query('g'), {}, 'assembly.html')
+				}
+			})
+
+		</script>
+	</body>
+
+</html>

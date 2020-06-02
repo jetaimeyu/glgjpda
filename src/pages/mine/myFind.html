@@ -1,0 +1,134 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<link href="../../css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	<style>
+		#segmentedControl {
+			left: -10px;
+		}
+
+		.mui-segmented-control .mui-control-item {
+			line-height: 27px;
+			width: 80px;
+		}
+
+		.menu-add {
+			top: -29px;
+		}
+	</style>
+</head>
+
+<body ng-controller="bodyCtl">
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left" ng-bind="UserInfo.CompID==0?'资源圈':''"></a>
+		<div id="segmentedControl" class="mui-segmented-control" ng-if="UserInfo.CompID>0">
+			<a class="mui-control-item mui-active" id="mine-circle-header">
+				资源圈
+			</a>
+			<a class="mui-control-item" id="mine-ing-list">
+				设计圈
+			</a>
+		</div>
+		<a class=" mui-pull-right menu-add" id="add" ng-click="recordVideo('mine-circle-header')" style="display: none;"
+				ng-class="{'mui-block':canPublish && activeTab=='mine-circle-header'}">
+				<img class="icon" style="width: 16px;" src="../../images/equ/equ-video.png" />
+			</a>
+	</header>
+	<script src="../../js/mui.min.js"></script>
+	<script src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script src="../../js/utils.js"></script>
+	<script type="text/javascript">
+		app.controller("bodyCtl", ["$scope", "CacheService", "UtilsService", "$filter", "RPCObserver", "ApiService",
+			"DataService",
+			function ($scope, CacheService, UtilsService, $filter, RPCObserver, ApiService, DataService) {
+
+				var user = CacheService.get('user');
+				$scope.UserInfo = user;
+				$scope.canPublish = false;
+				$scope.activeTab = '';
+
+				var curView = plus.webview.currentWebview();
+				var subpage_style = {
+					top: '45px',
+					bottom: '0px'
+				};
+
+				var subViews = [{
+					url: "ing-list.html?isTitle=false",
+					id: "mine-ing-list"
+				}];
+
+
+
+				window.canPublish = function (canPublish) {
+					$scope.canPublish = canPublish;
+					$scope.$apply();
+				}
+
+				$scope.active = function (id) {
+					if ($scope.activeTab == id)
+						return;
+					$scope.activeTab = id;
+
+					curView.children().forEach(function (item) {
+						if (item.id == id) {
+							item.show();
+						} else {
+							item.hide();
+						}
+					});
+				};
+
+				$scope.recordVideo = function (id) {
+					plus.webview.getWebviewById(id).evalJS("recordVideo()")
+				};
+
+
+				if ($scope.UserInfo.CompID > 0) {
+					subViews.push({
+						url: "../ing/resource-my-circle.html?isTitle=false",
+						id: "mine-circle-header"
+					});
+
+				}
+
+				for (var i = 0, len = subViews.length; i < len; i++) {
+					if (!plus.webview.getWebviewById(subViews[i].id)) {
+						var sub = plus.webview.create(subViews[i].url, subViews[i].id, subpage_style);
+						sub.hide();
+
+						curView.append(sub);
+					}
+				}
+
+				setTimeout(function () {
+					if ($scope.UserInfo.CompID > 0) {
+						$scope.active("mine-circle-header");
+
+						mui("#segmentedControl").on("tap",".mui-control-item",function(){
+							$scope.active(this.id);
+						})
+					} else {
+						$scope.active("mine-ing-list");
+					}
+				}, 200);
+
+			}
+		]);
+
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+		});
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>扫码统计</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.scanlisthead .md-tab-block .md-tab-item {
+				padding: 0 86px;
+			}
+			
+			.mui-bar-nav~.mui-content .mui-pull-top-pocket {
+				top: 84px;
+			}
+			
+			.icon {
+				width: 16px;
+				height: 14.5px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="scanList">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left" ng-bind="showMyData?'我的统计':'全部统计'"></a>
+			<a class="mui-pull-right menu-add font-14" ng-if="hasAuth" ng-click="changeType()">
+				<span ng-bind="showMyData?'按企业':'按人员'"></span>
+				<!--<img class="icon" src="../../images/equ/equ-video.png" />-->
+			</a>
+		</header>
+		<div class="mui-content scanlisthead">
+			<ul class="md-tab" top="84" style="display: none;" ng-class="{'mui-block':isLoad}">
+				<li class="md-tab-item md-active" href="scan-list-sub.html?type=day&auth={{hasAuth}}" winid="scan-list-day.html">日统计</li>
+				<li class="md-tab-item" href="scan-list-sub.html?type=month&auth={{hasAuth}}" winid="scan-list-month.html">月统计</li>
+			</ul>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript">
+			app.controller("scanList", ["$scope", "ApiService", "DataService", "CacheService", "RPCObserver", "$filter", function($scope, ApiService, DataService, CacheService, RPCObserver, $filter) {
+				$scope.isLoad = true;
+				//获取admin或者管理员权限
+				$scope.hasAuth = false;
+				$scope.showMyData = true;
+				$scope.userId = CacheService.get("user").UserID;
+
+				$scope.changeType = function() {
+					$scope.showMyData = !$scope.showMyData;
+					RPCObserver.broadcast("rpc_dataTypeChange");
+				}
+
+				if($filter("hasMenuAuth")("syyy", "fwcx")) {
+					if($filter("hasMenuAuth")("syyy", "fwcx", "sjcx", "dmtj")) {
+						$scope.hasAuth = true;
+						$scope.hasAuth && ($scope.showMyData = false);
+					}
+				}
+
+				setTimeout(function() {
+					MdConfig.StartUsingTab();
+				}, 500);
+			}]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

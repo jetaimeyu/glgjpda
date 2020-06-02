@@ -1,0 +1,58 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.icon {
+				width: 16px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="EquWarehouseListHeadController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">资产报废</a>
+			<a class="mui-pull-right menu-search" id="search" ng-click="search()">
+				<img class="icon" src="../../images/search.png" />
+			</a>
+		</header>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script>
+			app.controller("EquWarehouseListHeadController", ["$scope", "UtilsService", function($scope, UtilsService) {
+				mui.init({
+					subpages: [{
+						url: 'equ-scrapping-list.html',
+						id: 'equ-scrapping-list.html',
+						styles: {
+							top: '44px',
+							bottom: '0px',
+						}
+					}]
+				});
+				//跳转
+				$scope.search = function() {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'equ-scrapping-search.html',
+						url: 'equ-scrapping-search.html'
+					});
+				};
+
+			}]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

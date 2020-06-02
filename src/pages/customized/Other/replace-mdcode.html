@@ -1,0 +1,311 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../../css/common.css" />
+		<link rel="stylesheet" href="../../../icon-font/iconfont.css" />
+
+	</head>
+	<style type="text/css">
+		.data-group:first-child {
+			margin-top: 0;
+		}
+		/*更多按钮*/
+		
+		.vertical-right {
+			height: 22px;
+			width: 1px;
+			background: #EAEAEA;
+			margin-right: 48px;
+			position: absolute;
+			right: 0;
+			top: 50%;
+			margin-top: -11px;
+		}
+		
+		.icon-chat-single {
+			color: #3296FA;
+		}
+		
+		.menu-more {
+			z-index: 20;
+			padding: 13px 6px 13px 10px
+		}
+		
+		.mui-table-view-cell {
+			overflow: visible;
+		}
+		
+		#popover .mui-table-view-cell {
+			overflow: hidden;
+		}
+		
+		li .mui-media {
+			display: flex;
+			align-items: center;
+		}
+		
+		img.imgslist {
+			width: 16%;
+			background-size: cover;
+		}
+		
+		.mui-media-body {
+			position: relative;
+			left: 16px;
+			width: 84%;
+		}
+		
+		.productName {
+			font-size: 1.5rem;
+			color: #000;
+			margin-top: 2px;
+			line-height: initial;
+			max-width: 90%;
+		}
+		
+		.productType {
+			font-size: 1.2rem;
+			color: #AAA;
+			max-width: 90%;
+		}
+	</style>
+
+	<body ng-controller="EquMaintenanceController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">更换物联码</a>
+		</header>
+		<div class="mui-content">
+			<p class="data-group-tip" style="padding-top: 10px; padding-left: 14px;">旧物联码信息</p>
+			<ul class="data-group">
+				<li class="mui-table-view-cell data-row must">
+					<label>旧物联码</label>
+					<p ng-show="!OldMdCode" class="opt md-icon-more select-opt" ng-click="scanA()">
+						<span>扫码</span>
+					</p>
+					<p ng-show="OldMdCode" class="opt md-icon-more select-opt" ng-click="scanA()">
+						<span>清空</span>
+					</p>
+
+					<div class="body">
+						<span class="placeholder" ng-show="!OldMdCode">请扫描旧物联码</span>
+						<span ng-bind="OldMdCode" ng-show="OldMdCode"></span>
+					</div>
+
+				</li>
+
+				<li class="mui-table-view-cell" ng-class="{'mui-block':isLoad}" style="display: none;">
+					<div class="mui-media">
+						<img src="../../../images/imgPre.png" ng-style="{'background-image':'url('+ ( Prod  | getProdLogo:56:56) +')'}" class="imgslist" />
+						<div class="mui-media-body" ng-click="edit(prodItem)">
+							<p class='productName mui-ellipsis-2' ng-bind="ProdName"></p>
+							<p class='productType mui-ellipsis' ng-bind="SkuName"></p>
+						</div>
+					</div>
+				</li>
+
+			</ul>
+			<p class="data-group-tip" style="padding-top: 10px; padding-left: 14px;">新物联码信息</p>
+			<ul class="data-group">
+				<li class="mui-table-view-cell data-row must">
+					<label>新物联码</label>
+					<p ng-show="!NewCode" class="opt md-icon-more select-opt" ng-click="scanB()">
+						<span>扫码</span>
+					</p>
+					<p ng-show="NewCode" ng-show="OldMdCode" class="opt md-icon-more select-opt" ng-click="scanB()">
+						<span>清空</span>
+					</p>
+					<div class="body">
+						<span class="placeholder" ng-show="!NewCode">请扫描新物联码</span>
+						<span ng-bind="NewCode" ng-show="NewCode"></span>
+					</div>
+
+				</li>
+
+			</ul>
+			<div class="mui-content-padded" ng-click="save()">
+				<span class="mui-btn mui-btn-block">确认更换</span>
+			</div>
+		</div>
+		<!--无网络或请求失败重试-->
+		<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+		<script type="text/javascript" src="../../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../../js/common.js"></script>
+		<script type="text/javascript" src="../../../js/utils.js"></script>
+		<script type="text/javascript" src="../../../js/push.js"></script>
+		<script type="text/javascript" src="../../../js/rpc.js"></script>
+		<!--<script type="text/javascript" src="../../message/transMessage.js"></script>-->
+
+		<script>
+			app.controller("EquMaintenanceController", ["$scope", "ApiService", "DataService", "UtilsService", "CacheService", "DatePickerService", "AuthService", "Loading", "$timeout", "ChatUserService", "$filter", "RPCObserver", function($scope, ApiService, DataService, UtilsService, CacheService, DatePickerService, AuthService, Loading, $timeout, ChatUserService, $filter, RPCObserver) {
+				$scope.Prod = {};
+				$scope.OldMdCode = "";
+				$scope.NewCode = "";
+				$scope.ProdName = "";
+				$scope.SkuName = "";
+				var curUser = CacheService.get("user");
+				var receiveNotification = function(event) {
+					if(plus.os.name == 'Android') {
+						var code = event.arguments;
+						if(code.indexOf('?') >= 0) {
+							code = code.split('?')[1];
+						}
+						if(!$scope.OldMdCode){
+							var temp = {codeValue:code}
+							ScanBackA(JSON.stringify(temp));
+						}else if(!$scope.NewCode){
+							ScanBackB(code);
+						}
+					}
+				};
+				document.addEventListener("push.receiveNotification", receiveNotification, false);
+				$scope.scanA = function() {
+					if($scope.OldMdCode){
+					$scope.OldMdCode="";
+					$scope.Prod = {};
+					$scope.isLoad = false;
+					return;
+				}
+					openWindow("../../scan/scan.html", {
+						callback: 'ScanBackA',
+					}, 'scan.html');
+				}
+				$scope.scanB = function() {
+				if($scope.NewCode){
+				$scope.NewCode="";
+				return;
+				}
+					openWindow("../../scan/scan.html", {
+						callback: 'ScanBackB',
+						type:'bindnewcode' 
+					}, 'scan.html');
+				}
+				window.ScanBackA = function(obj) {
+					Loading.show();
+					obj = JSON.parse(obj);
+					setTimeout(function() {
+						var url = ApiService.Api45 + "/api/v1.0/MdCode/CheckMdCode?code=" + obj.codeValue;
+						DataService.get(url).then(function(res) {
+							if(res) {
+								if (res.State == 6) {
+									mui.toast(res.Data)
+									Loading.hide();
+									return
+								}
+								loadProdInfo(obj.codeValue);
+							}
+						}, function() {
+								$scope.isLoad = false;
+						})
+					}, 500);
+				}
+				window.ScanBackB = function(obj) {
+					setTimeout(function() {
+						checkMdCode(obj)
+					}, 800);
+				}
+				var saving = false;
+				//加载
+				function loadProdInfo(code) {
+					Loading.show();
+					$scope.isLoad = true;
+					var url = ApiService.Api45 + "/api/v1.0/MdCode/GetProdInfoByMdCode?code=" + code;
+					DataService.get(url).then(function(res) {
+						if(res) {
+							if(res.CompID != curUser.CompID){
+								Loading.hide();
+								return mui.toast("请扫描本企业产品"); 
+							}
+							$scope.Prod = res;
+							$scope.OldMdCode = code;
+							$scope.ProdName = res.ProdName;
+							$scope.SkuName = res.SkuName;
+							$scope.isLoad = true;
+							$scope.isLoad = true;
+							Loading.hide();
+						}
+					}, function() {
+						$scope.isLoad = false;
+
+					})
+				}
+
+				function checkMdCode(code) {
+					console.log(code)
+					Loading.show();
+					var url = ApiService.Api45 + "/api/v1.0/MdCode/CheckMdCode?code=" + code;
+					DataService.get(url).then(function(res) {
+						if(res.State==3) {
+							$scope.NewCode = code;
+							Loading.hide();
+						}else if(res.State == 6){
+							mui.toast(res.Data)
+							Loading.hide();
+						}
+						else { //不是产品码，提示
+							mui.toast("请扫描正确的迈迪国标通用物联码");
+							Loading.hide();
+						}
+					}, function(e) {
+						$scope.isLoad = false;
+						Loading.hide();
+
+					})
+				}
+				//保存更改
+				$scope.save = function() {
+					if(saving) {
+						return;
+					}
+					if(!$scope.OldMdCode){
+					mui.toast("旧物联码不能为空")
+					return;
+				}
+				if(!$scope.NewCode){
+					mui.toast("新物联码不能为空")
+					return;
+				}
+				if($scope.OldMdCode==$scope.NewCode){
+					mui.toast("新物联码不能和旧物联码相同");
+					return;
+				}
+					if(!checkLengthUtil.check()) {
+						return false;
+					}
+					saving = true;
+					
+					submitData()
+					
+				}
+			function submitData() {
+					var url = ApiService.Api45 + "/api/v2.0/MdCode/HandleDamageCode?damageCode="+$scope.OldMdCode+"&newCode="+$scope.NewCode;;
+					
+					
+					DataService.get(url).then(function(res) {
+						saving = false;
+						Loading.hide();
+						if(res) {
+							UtilsService.saveModal(function() {
+						saving = false;
+						mui.back();
+					}
+					);
+						}
+					}, function(err) {
+						mui.toast(err)
+					});
+				}
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

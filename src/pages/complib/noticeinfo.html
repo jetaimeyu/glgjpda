@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title>公告详情</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<link rel="stylesheet" href="../../css/mui.min.css" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	<style type="text/css">
+		.data-group:first-child {
+			margin-top: 0px !important;
+		}
+
+		.notice-body p {
+			margin-bottom: 0 !important;
+			color: #333 !important;
+		}
+
+		.text-center {
+			text-align: center;
+
+		}
+
+		.data-group .data-row .notice-title {
+			margin: 10px 0;
+			margin-bottom: 0;
+		}
+
+		.text-left {
+			text-align: left;
+
+		}
+
+		.text-right {
+			text-align: right;
+
+		}
+
+		.self-body {
+			padding: 0 !important;
+		}
+
+		.data-group .self-data-row {
+			height: 24px;
+			min-height: 24px;
+		}
+
+		.notice-body img {
+			max-width: 100%;
+			height: auto;
+		}
+
+		.md-inline {
+			display: inline !important;
+		}
+		.attach-process{
+			position: absolute;
+			bottom: -9px;
+			left: 11px;
+			right: 10px;
+		}
+	</style>
+</head>
+
+<body ng-controller="securingServicesDetail">
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left">公告详情</a>
+		<a class="menu-more icon-more right-menu-icon-detail" ng-class="{'mui-block':isShowAdd}" style="display: none;"
+			href="#popover" id="openPopover" ng-if="data.Content"></a>
+	</header>
+	<div class="mui-scroll-wrapper md-info-page" ng-class="{'mui-block':isLoad}" style="display: none;">
+
+		<ul class="data-group">
+
+			<li class="data-row">
+				<div class="body col-12 text-center font-20 notice-title">
+					<div ng-bind="data.Title" class="text-center"></div>
+				</div>
+			</li>
+		</ul>
+		<ul class="data-group " style="margin: 0;">
+			<li class="data-row self-data-row">
+
+				<div class="body self-body text-left font-13">
+					<label>发布时间:</label>
+					<span ng-bind="data.PublishTime"></span>
+				</div>
+			</li>
+		</ul>
+		<ul class="data-group  " style="margin: 0;">
+			<li class="data-row self-data-row">
+
+				<div class="body self-body text-left font-13">
+					<label>公告类型:</label>
+					<span ng-bind="data.Text"></span>
+				</div>
+			</li>
+		</ul>
+		<ul class="data-group " style="margin: 0;">
+			<li class="data-row">
+
+				<div class="body notice-body text-left" style="padding-left: 15px;">
+					<md-compile data-template="data.Content"></md-compile>
+					<!--<span ng-bind-html="data.Content"></span>-->
+				</div>
+			</li>
+		</ul>
+
+		<ul class="data-group">
+			<li class="data-row" id="yunfile_{{prodItem.ID}}" ng-repeat="prodItem in data.YunFiles" >
+				<p class="opt md-icon font-15" >
+					<span class="color-blue font-12" style="display:none" ng-click="view(prodItem)"
+						ng-class="{'md-inline':videoView.indexOf(prodItem.FileExt)>=0 || offcieView.indexOf(prodItem.FileExt)>=0} ">预览</span>
+					<span class="color-blue font-12" ng-click="openFile(prodItem)">打开</span>
+				</p>
+				<div class="body" style="padding-left:15px;" ng-if="imgView.indexOf(prodItem.FileExt)<0"
+					ng-style="{'margin-right':(videoView.indexOf(prodItem.FileExt)>=0 || offcieView.indexOf(prodItem.FileExt)>=0)?'75px':'45px'}"
+					ng-bind="prodItem.FileName+prodItem.FileExt">
+				</div>
+				<div class="body" style="padding-left:15px;" ng-if="imgView.indexOf(prodItem.FileExt)>=0">
+					<img class="imageview-native" style="max-height: 50px" ; fullpath="{{ApiDown+prodItem.FilePath}}"
+						ng-src="{{ApiDown+prodItem.FilePath}}" />
+				</div>
+				<p class="attach-process"></p>
+			</li>
+		</ul>
+
+	</div>
+	<!--无网络或请求失败重试-->
+	<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+	<div id="popover" class="mui-popover menuDivModel">
+		<ul class="mui-table-view">
+			<li class="mui-table-view-cell" ng-click="debugDelect()">
+				<a class="mui-icon icon-dustbin">
+					<font>删除</font>
+				</a>
+			</li>
+		</ul>
+	</div>
+	<script type="text/javascript" src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/xss.min.js"></script>
+	<script type="text/javascript">
+		app.controller("securingServicesDetail", ["$scope", "ApiService", "DataService", "UtilsService", "Loading",
+			"AuthService", "$filter", "RPCObserver",
+			function ($scope, ApiService, DataService, UtilsService, Loading, AuthService, $filter, RPCObserver) {
+				$scope.isShowAdd = $filter("hasAuth")(['Q18']);
+				$scope.retryModal = {
+					msg: "公告详情",
+					retry: init,
+					state: ''
+				}
+				$scope.data = {
+					Content: ""
+				}
+
+				$scope.ApiDown = ApiService.Down;
+				$scope.offcieView = offcieView;
+				$scope.videoView = videoView;
+				$scope.imgView = imgView;
+
+				init()
+
+
+				$scope.view = function (item) {
+					var url = "../message/yun-file-view.html";
+					if ($scope.videoView.indexOf(item.FileExt) >= 0) {
+						if (plus.os.name == "Android") {
+							plus.Push.playVideo(ApiService.Down + item.FilePath, item.FileName + item.FileExt)
+							return;
+						} else {
+							url = "../message/yun-video-view.html";
+						}
+					} else if (item.FileExt.toLowerCase() == ".pdf") {
+						url = "../message/yun-file-pdf.html";
+					}
+					UtilsService.openWindow({
+						url: url,
+						id: "yun-file-view.html",
+						extras: {
+							data: {
+								FileName: item.FileName + item.FileExt,
+								FileUrl: ApiService.Down + item.FilePath
+							}
+						}
+					});
+				};
+
+				$scope.openFile = function (item) {
+					openFile(item.FileName+item.FileExt,item.FileGuid,item.FilePath,document.querySelector("#yunfile_"+item.ID))
+				};
+
+				var openFile = function (fileName, filePath, dataFile, isDown) {
+					var dirName = "_doc/downloads/" + filePath + "/";
+					var isNetWork = isNetWorkCanUse();
+
+					if (dataFile.startsWith("file://")) {
+						dirName = "";
+						fileName = dataFile;
+					}
+
+					fileName = fileName.replace(/\'/g, "\\'")
+
+					if (isDown.getAttribute("data-value") == "down") {
+						return;
+					}
+
+					plus.io.resolveLocalFileSystemURL(dirName + (fileName), function (entry) {
+							plus.runtime.openFile(dirName + fileName, {
+								top: 10,
+								left: 10,
+								width: 200,
+								height: 200
+							}, function (e) {
+								mui.toast("无法打开此文件！");
+							});
+						}, function () {
+							downFile(dataFile,dirName,fileName,isDown,filePath)
+						});
+				}
+
+				var downFile = function(dataFile,dirName,fileName,isDown,filePath){
+					isDown.setAttribute("data-value", "down");
+					UtilsService.downLoadFile(encodeURI(dataFile), dirName + fileName,
+					isDown.getAttribute("id")).then(function () {
+						isDown.setAttribute("data-value", "true");
+						openFile(fileName,filePath,dataFile,isDown);
+					}, function () {
+						isDown.setAttribute("data-value", "false");
+					});
+				}
+
+				function init() {
+					Loading.show();
+					var url = ApiService.Api52 + "/api/v1/News/MdtCoUnewsInfoByCompFirst?newsId=" + query('id');
+					DataService.get(url).then(function (res) {
+						if (res) {
+							Loading.hide();
+							$scope.isLoad = true;
+							$scope.data = res;
+							$scope.data.Content = res.Content.replace(/http:\/\/api3.maidiyun.com/g,
+								ApiService.Api30).replace(/\/\/mdcloud.maidiyun.com\/50/g, ApiService
+								.Api50);
+
+							setTimeout(function () {
+								previewImages();
+							}, 200);
+						}
+					}, function (error) {
+						$scope.retryModal.state = error.State;
+					});
+				}
+				RPCObserver.on("refresh_inventory_info", "refresh_inventory_info")
+				window.refresh_inventory_info = function () {
+					init()
+				}
+				$scope.debugDelect = function () {
+					mui('#popover').popover('hide');
+					mui.confirm("确认删除吗？", function (e) {
+						if (e.index == 0) {
+							var url = ApiService.Api52 + "/api/v1/News/DeleteMdtCoUnews/" + query("id");
+							DataService.get(url).then(function (res) {
+								//刷新
+								RPCObserver.broadcast('refresh_equ_fault_list');
+								RPCObserver.broadcast('refresh_inventory_info')
+
+								mui.back();
+							});
+						}
+					});
+				}
+				//修改 跳转
+				$scope.debugModify = function () {
+					mui('#popover').popover('toggle');
+					UtilsService.openWindow({
+						needLogin: true,
+						id: "notice-edit.html",
+						url: "notice-edit.html?id=" + query("id")
+					});
+				};
+
+			}
+		]);
+
+		// 初始化
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+		});
+	</script>
+</body>
+
+</html>

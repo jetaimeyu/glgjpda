@@ -1,0 +1,227 @@
+<!--维修领料 scz-->
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/common.css">
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<link rel="stylesheet" href="pick-list.css" />
+	</head>
+
+	<body ng-controller="pullrefreshroller">
+		<div id="pullrefresh" class="mui-scroll-wrapper" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<div class="mui-content">
+				<ul class="data-group prodlist" ng-repeat="itemlist in partList" style="background: transparent;">
+					<li class="data-row prodtime">
+						<span ng-bind="itemlist.CreateDate" class="font-13"></label>
+					<!--<span class="pickHeader pickUserName"><span ng-repeat="user in itemlist.Users" ng-bind="user.Name" ng-click="sendMsg(user)"></span></span>-->
+						<!--<span class="pickHeader pickDetails" ng-click="pickDetail(itemlist.ID)">详情</span>-->
+					</li>
+					<li class="mui-table-view-cell data-row prodgoodslist" ng-repeat="item in itemlist.Details">
+						<div class="body mui-grid-view  mui-row" ng-click="pickDetail(itemlist.ID)">
+							<div class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6 mui-ellipsis-2 width50 font-13">
+								<span ng-bind="item.MaterialName" class="mui-ellipsis-2 font-13 MaterialName" ng-if="item.MaterialName"></span>
+								<span ng-bind="'型号'+ ':' + ' ' + item.Spec" class="mui-ellipsis-2 Spec font-13" ng-if="item.Spec"></span>
+								<span ng-bind="'图号'+ ':' + ' ' + item.DwgNo" class="mui-ellipsis-2 DwgNo font-13" ng-if="item.DwgNo"></span>
+							</div>
+							<div class="mui-table-view-cell mui-media mui-col-xs-2 mui-col-sm-2 mui-ellipsis-2 width20 font-13" ng-bind="item.Nums+'件'" style="padding: 0 8px;"></div>
+							<div class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-4 mui-ellipsis-2 width30 font-13" ng-bind="item.Remark"></div>
+						</div>
+
+					</li>
+				</ul>
+				<md-no-data ng-show="partList==''">暂无数据</md-no-data>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("pullrefreshroller", ["$scope", "ApiService", "DataService", "UtilsService", "ChatUserService", "Loading", function($scope, ApiService, DataService, UtilsService, ChatUserService, Loading) {
+				$scope.pageIndex = 0; //页数
+				$scope.pageSize = 10; //每页数量
+				var networkCanUse = true;
+				$scope.partList = null;
+				$scope.isLoad = false;
+				$scope.listType = query("type");
+				Loading.show();
+				//跳转
+				$scope.add = function() {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'part-replacement.html',
+						url: 'part-replacement.html',
+						extras: {
+							addEquRecord: plus.webview.currentWebview().addEquRecord || ''
+						}
+					});
+				};
+				//详情跳转
+				$scope.pickDetail = function(ID) {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'pick-detailsList.html',
+						url: 'pick-detailsList.html?id=' + ID
+					});
+				};
+				//领料跳转
+				$scope.pickItem = function(pickItem) {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: "pick-detailsEdit.html",
+						url: "pick-detailsEdit.html",
+						extras: {
+							newPick: pickItem
+						}
+					});
+				};
+				//发消息
+				$scope.sendMsg = function(user) {
+					ChatUserService.tap({
+						chatId: user.ID,
+						chatName: user.Name,
+						hasLogo: user.ULogoIsExist,
+						chatCompId: user.CompID
+					});
+				};
+
+				function getPartInfo(type) {
+					var url = ApiService.Api50 + "/api/v1/MatWorkOrder/GetMatReceiveMaterialsList?page=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize;
+					if($scope.listType == 'at') url = ApiService.Api50 + "/api/v1/MatWorkOrder/GetMaterialsListSendForMe?page=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize;
+					if($scope.listType == 'my') url = ApiService.Api50 + "/api/v1/MatWorkOrder/GetMyMaterialsList?page=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize;
+
+					DataService.get(url).then(function(res) {
+						if(type == "down" || $scope.pageIndex == 1) {
+							$scope.partList = [];
+						}
+						Loading.hide();
+						$scope.isLoad = true;
+						networkCanUse = true;
+						$scope.partList = $scope.partList.concat(res.Data);
+
+						var resDataRows = [];
+						for(var i = 0; i < $scope.partList.length; i++) {
+							resDataRows = resDataRows.concat($scope.partList[i].Details);
+						}
+
+						mui("#pullrefresh").pullRefresh() && mui('#pullrefresh').pullRefresh().refresh(true);
+						var isEnd = resDataRows.length >= res.TotalCount;
+						if(mui("#pullrefresh").pullRefresh()) {
+							if(type == "down") {
+								mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
+								mui("#pullrefresh").pullRefresh().endPullupToRefresh(isEnd && resDataRows.length > 0);
+							} else {
+								mui("#pullrefresh").pullRefresh().endPullupToRefresh(isEnd && resDataRows.length > 0);
+							}
+						}
+						var tip = document.querySelector('.mui-pull-bottom-pocket');
+						if(tip) {
+							if(resDataRows.length == 0) {
+								tip.classList.contains('mui-visibility') && tip.classList.remove('mui-visibility');
+								tip.classList.contains('mui-block') && tip.classList.remove('mui-block');
+							} else {
+								!tip.classList.contains('mui-visibility') && tip.classList.add('mui-visibility');
+								!tip.classList.contains('mui-block') && tip.classList.add('mui-block');
+							}
+						}
+					}, function() {
+						$scope.isLoad = true;
+						networkCanUse = false;
+						if(mui("#pullrefresh").pullRefresh()) {
+							setTimeout(function() {
+								if(type == "down") {
+									mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
+								} else {
+									mui("#pullrefresh").pullRefresh().endPullupToRefresh(false);
+								}
+							}, 800)
+						}
+					})
+				}
+				//删除 的rpc
+				RpcServer.expose("RPC_FaultDelectPactInfo", function(params) {
+					if(params.id > 0) {
+						var data = $scope.partList.find(function(item) {
+							return item.Date == params.date;
+						});
+						if(data) {
+							var item = data.DataRows.find(function(item) {
+								return item.ID == params.id;
+							});
+							item && getPartInfo();
+						} else {
+							getPartInfo();
+						}
+					} else {
+						getPartInfo();
+					}
+				});
+				//修改 的rpc
+				RpcServer.expose("RPC_FaultMaintenancePactInfo", function(params) {
+					if(params.id > 0) {
+						var item;
+						for(var i = 0; i < $scope.partList.length; i++) {
+							item = $scope.partList[i].DataRows.find(function(item) {
+								return item.ID == params.id;
+							});
+							break;
+						}
+						item && getPartInfo();
+					} else {
+						getPartInfo();
+					}
+				});
+				//修改详情
+				RpcServer.expose("RPC_PickMainDetails", function(params) {
+					if(params.state == "main") {
+						getPartInfo();
+						$scope.$apply();
+					}
+				});
+				//删除详情
+				RpcServer.expose("RPC_PickDelDetails", function(params) {
+					downpullRefresh();
+				});
+				//下拉刷新
+				function downpullRefresh() {
+					$scope.pageIndex = 1; //页数
+					getPartInfo("down");
+				};
+				//上拉加载
+				function uppullRefresh() {
+					if(networkCanUse) {
+						$scope.pageIndex++; //页数
+					}
+					getPartInfo();
+				};
+
+				//下拉刷新,上拉加载
+				setTimeout(function() {
+					mui.init({
+						pullRefresh: {
+							container: '#pullrefresh',
+							up: {
+								auto: true,
+								callback: uppullRefresh
+							},
+							down: {
+								callback: downpullRefresh
+							}
+						}
+					});
+				});
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

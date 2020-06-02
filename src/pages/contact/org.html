@@ -1,0 +1,88 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<link rel="stylesheet" href="contact-common.css" />
+		<style>
+			.top47 {
+				margin-top: 47px
+			}
+			
+			.top88 {
+				margin-top: 88px
+			}
+			
+			.top82 {
+				margin-top: 82px
+			}
+		</style>
+	</head>
+
+	<body ng-controller="ContactOrgController">
+		<!--搜索框部分-->
+		<div class="search-box">
+			<div class="search-body">
+				<span class="mui-icon mui-icon-search" method="search"></span>
+			</div>
+			<div class="search-placeholder" ng-click="doSearchUser()">
+				<i class="mui-icon mui-icon-search"></i>
+				<span class="placeholder">搜索</span>
+			</div>
+		</div>
+		<!--导航目录部分-->
+		<div id="res-slide" class="top-thin-line mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted nav-bar" ng-class="{'mui-block':isLoad}" ng-show="isLoad&&navDirData.length>1" style="display: none;">
+			<div class="mui-scroll" style="height: 35px;">
+				<a class="mui-control-item" ng-repeat="dir in navDirData" ng-class="{'mui-active':dir.ID==OrgID}" ng-attr-orgid="{{dir.ID}}" ng-attr-index="{{$index}}">
+					<span class="icon iconfont icon-right color-gray-deep" style="margin-left: 2px;" ng-show="$index>0"></span>
+					<span class="group-name" ng-bind="dir.OrgName"></span>
+				</a>
+			</div>
+		</div>
+		<div id="slider" class="mui-scroll-wrapper" style="display:none;" ng-class="{'mui-block':isLoad,'top47':navDirData.length<2,'top88':navDirData.length>1&&data[OrgID].deps.length!=0,'top82':navDirData.length>1&&(data[OrgID].deps.length==0||!data[OrgID].deps)}">
+			<!--目录部分-->
+			<ul class="data-group" ng-show="data[OrgID] && data[OrgID].deps.length>0" style="margin-top: 0;">
+				<li class="mui-table-view-cell data-row  dir-row" ng-repeat="dept in data[OrgID].deps" ng-click="clickDir(dept.ID,dept.OrgName)">
+					<label style="width: auto;line-height: 27px;" class="mui-ellipsis">
+						<i class="icon-bumenguanli">
+							<span ng-style="{'top':ios?0:'5px'}" class="dir_name mui-ellipsis" ng-bind="' '+dept.OrgName"></span>
+						</i>
+						<span class="dir_num" ng-bind="'('+dept.OrgPersonNums+')'"></span>
+					</label>
+					<p class="opt md-icon icon-right"></p>
+				</li>
+			</ul>
+			<!--<ul class="data-group" ng-show="data[OrgID] && data[OrgID].deps.length>0" style="margin-top: 0;">
+				<li class="mui-table-view-cell data-row dir-row" ng-repeat="dept in data[OrgID].deps" ng-click="clickDir(dept.ID,dept.OrgName)">
+					<label style="width:85vw" class="mui-ellipsis">
+						<i class="icon-bumenguanli">
+							<span style="width:85vw;margin-left: 4px;" class="mui-ellipsis" ng-bind="' '+dept.OrgName+'('+dept.OrgPersonNums+')'"></span>
+						</i>
+					</label>
+					<p class="opt md-icon icon-right"></p>
+				</li>
+			</ul>-->
+			<!--联系人部分-->
+			<div ng-show="data[OrgID] && data[OrgID].users.length>0" ng-style="{'margin-top':data[OrgID].deps.length==0?'0px':'8px'}">
+				<md-user-list ng-model="data[OrgID].users"></md-user-list>
+			</div>
+			<md-no-data ng-show="(data[OrgID].deps.length==0 && data[OrgID].users.length==0)||(!data[OrgID].deps&&data[OrgID].users) || !data">暂无数据</md-no-data>
+		</div>
+		<!--无网络或请求失败重试-->
+		<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+		<script src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="org.js"></script>
+	</body>
+
+</html>

@@ -1,0 +1,188 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.icon {
+				width: 16px;
+			}
+			
+			.data-group .data-row .body {
+				padding: 10px 16px;
+			}
+			
+			.equInspSpan {
+				font-size: 1.5rem!important;
+				line-height: 17px;
+				color: #000;
+				margin-bottom: 8px!important;
+			}
+			
+			.equInspP {
+				font-size: 1.2rem!important;
+				line-height: 14px;
+				color: #AAAAAA!important;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="EqMaListModController">
+		<div class="mui-content">
+			<div id="pullrefresh" class="mui-scroll-wrapper" style="display: none;" ng-class="{'mui-block':isLoad}">
+				<div class="mui-content">
+					<ul class="data-group" style="margin-top: 0px;">
+						<li class="mui-table-view-cell data-row" ng-repeat="item in data" ng-click="tap(item)">
+							<div class="body">
+								<span class="equInspSpan mui-ellipsis-2" style="color: #000000;" ng-bind="item.Content"></span>
+								<p class="equInspP">
+									<span class="font-12" style="color: #AAAAAA;" ng-bind="item.CreateDate"></span>
+									<md-chat-user-list ng-model="item.user"></md-chat-user-list>
+									<span ng-if="userid!=item.MaintainUserID" ng-bind="item.MaintainUserName" ng-click="tap($event,item)"></span>
+									<span ng-if="userid==item.MaintainUserID" ng-bind="item.MaintainUserName"></span>
+								</p>
+							</div>
+						</li>
+					</ul>
+					<md-no-data ng-show="data&&data.length==0">暂无数据</md-no-data>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script>
+			app.controller("EqMaListModController", ["$scope", "ApiService", "DataService", "UtilsService", "CacheService", "Loading",
+				function($scope, ApiService, DataService, UtilsService, CacheService, Loading) {
+					$scope.data = null || [];
+					pageIndex = 0;
+					pageSize = 10;
+					var curUser = CacheService.get("user");
+					$scope.userid = curUser.UserID;
+					//设备id
+					$scope.equipmentId = query("equid");
+					$scope.Network = true;
+					//上拉下拉加载
+					setTimeout(function() {
+						mui.init({
+							pullRefresh: {
+								container: '#pullrefresh',
+								up: {
+									auto: true,
+									callback: pullupRefresh,
+									contentnomore: "无更多保养记录",
+								},
+								down: {
+									callback: pulldownRefresh
+								}
+							}
+						});
+					});
+					//上拉加载
+					function pullupRefresh() {
+						$scope.Network && pageIndex++;
+						//加载数据
+						getPagedEqOverhaulList("up");
+					};
+					//下拉刷新具体业务实现
+					function pulldownRefresh() {
+						pageIndex = 1;
+						//加载数据
+						getPagedEqOverhaulList("down");
+					}
+
+					//分页获取我的设备保养信息列表
+					function getPagedEqOverhaulList(type) {
+						var url = ApiService.Api52 + "/api/v1/EqMaintain/GetEqInfoMaintainList?pageIndex=" + pageIndex + "&pageSize=" + pageSize + "&eqId=" + $scope.equipmentId;
+						DataService.get(url).then(function(res) {
+							if(res) {
+								Loading.hide();
+								$scope.isLoad = true;
+								mui.each(res.DataRows, function(index, item) {
+									item.user = [{
+										ID: item.PersonLiableID,
+										Name: item.PersonLiableName,
+										ULogoIsExist: item.ULogoIsExist,
+										CompID: item.PersonLiableCompID
+									}];
+								});
+								if(type == "down") {
+									$scope.data = res.DataRows;
+								} else {
+									$scope.data = $scope.data.concat(res.DataRows);
+								}
+								var isEnd = $scope.data.length >= res.TotalCount;
+								if(mui("#pullrefresh").pullRefresh()) {
+									if(type == "down") {
+										mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
+										mui('#pullrefresh').pullRefresh().refresh(true);
+										mui("#pullrefresh").pullRefresh().endPullupToRefresh(isEnd);
+									} else {
+										mui("#pullrefresh").pullRefresh().endPullupToRefresh(isEnd);
+									}
+								};
+								var tip = document.querySelector('.mui-pull-bottom-pocket');
+								if(tip) {
+									if($scope.data.length == 0) {
+										tip.classList.contains('mui-visibility') && tip.classList.remove('mui-visibility');
+										tip.classList.contains('mui-block') && tip.classList.remove('mui-block');
+									} else {
+										!tip.classList.contains('mui-visibility') && tip.classList.add('mui-visibility');
+										!tip.classList.contains('mui-block') && tip.classList.add('mui-block');
+									}
+								}
+							}
+						}, function() {
+							$scope.Network = false;
+							if(mui("#pullrefresh").pullRefresh()) {
+								mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
+								mui('#pullrefresh').pullRefresh().endPullupToRefresh(false);
+							}
+						})
+					}
+
+					//删除 的rpc
+					RpcServer.expose("RPC_FaultDelectInsp", function() {
+						pulldownRefresh();
+					})
+
+					//刷新
+					RpcServer.expose("RPC_EqPreserveListRefresh", function() {
+						pulldownRefresh();
+					})
+
+					$scope.tap = function(item) {
+						UtilsService.openWindow({
+							needLogin: true,
+							id: "equ-preserveView.html",
+							url: "equ-preserveView.html?id=" + item.ID
+						});
+					}
+					$scope.chat = function(event, user) {
+						event.stopPropagation();
+						if($scope.userid == user.ID) {
+							mui.toast('不能与自己会话');
+						} else {
+							ChatUserService.tap({
+								chatId: user.MaintainUserID,
+								chatName: user.MaintainUserName,
+								hasLogo: user.ULogoIsExist
+							});
+						}
+					};
+				}
+			]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

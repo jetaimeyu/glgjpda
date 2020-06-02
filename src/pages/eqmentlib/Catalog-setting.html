@@ -1,0 +1,148 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style>
+			/*第一个data-row高度，行高 左 上内边距 */
+			
+			.data-avatar .data-row .body {
+				padding: 8px 16px;
+			}
+			/*更改头像span样式 */
+			
+			.data-group:first-child label.modified {
+				padding-left: 120px;
+				width: auto;
+				color: #3296FA;
+				font-size: 1.4rem;
+			}
+			
+			.data-group .data-row .body>span,
+			.data-group .data-row .body input {
+				color: #323223;
+			}
+			/*按钮*/
+			
+			.btn-submit {
+				margin: 40px 16px 0 16px;
+			}
+			
+			.btn-submit span {
+				background-color: #fff;
+				border-color: #ccc;
+				color: #323232;
+				font-size: 1.6rem;
+				background: rgba(255, 255, 255, 0.5);
+			}
+		</style>
+	</head>
+
+	<body ng-controller="CatalogSettingController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">设备归类</a>
+			<a class="right-menu-words" id="save" ng-click="saveInfo()">保存</a>
+		</header>
+		<div class="mui-content">
+			<ul class="data-group">
+				<li class="data-row must">
+					<label class="label-gray">设备归类</label>
+					<div class="body">
+						<input id="dirName" ng-model="catalogname" type="text" placeholder="请输入设备归类" lenlimit="50" />
+					</div>
+				</li>
+			</ul>
+			<div class="btn-submit" ng-click="DataDirDel()">
+				<span class="mui-btn mui-btn-block">删除设备归类</span>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script>
+			app.controller("CatalogSettingController", ["$scope", "ApiService", "DataService", "UtilsService", "CacheService", "Loading", "RPCObserver", function($scope, ApiService, DataService, UtilsService, CacheService, Loading, RPCObserver) {
+				var ws = plus.webview.currentWebview();
+				var catalog = ws.catalog;
+				$scope.catalogID = catalog.ID;
+				$scope.catalogname = catalog.catalogname;
+				$scope.ParDirID = catalog.ParDirID;
+				$scope.billKey = "B23";
+				var saving = false; //保存状态
+				//删除归类
+				$scope.DataDirDel = function() {
+					mui.confirm("确认删除吗？", function(e) {
+						if(e.index == 0) {
+							var url = ApiService.Api50 + "/api/v1/Equipment/DeleteEqInfoDir?catalogId=" + $scope.catalogID;
+							DataService.get(url).then(function(res) {
+								RPCObserver.broadcast('refresh_equ_dir_del', {
+									id: $scope.catalogID
+								});
+								mui.toast("设备归类已删除");
+								mui.back();
+							});
+						}
+					});
+				};
+
+				//保存
+				$scope.saveInfo = function() {
+					if(saving) {
+						return;
+					};
+					if(!$scope.catalogname) {
+						mui.toast("归类名称不能为空");
+						return;
+					}
+					//验证填字符长度
+					if(!checkLengthUtil.check()) {
+						return false;
+					}
+					saving = true;
+					var postdata = {
+						"ID": $scope.catalogID,
+						"ParDirID": $scope.ParDirID,
+						"DirName": $scope.catalogname
+					}
+					var url = ApiService.Api47 + "/api/v1.0/Data/DataDirSave?pId=" + $scope.ParDirID + "&billKey=" + $scope.billKey;
+					DataService.post(url, postdata).then(function(res) {
+						setTimeout(function() {
+							saving = false;
+						}, 600)
+						//调用rpc更新
+						RPCObserver.broadcast('refresh_equ_dir_edit', {
+							id: $scope.catalogID,
+							name: $scope.catalogname
+						});
+						RpcClient.invoke("equ-list-menus.html", "RPC_OrgEditOrDelInfo", {
+							"state": "edit",
+							"id": $scope.catalogID,
+							"name": $scope.catalogname
+						});
+						mui.toast("修改成功");
+						mui.back();
+					}, function(error) {
+						saving = false;
+						error.State == -1 && mui.toast("网络异常", {
+							duration: 1300,
+							type: 'div'
+						});
+					});
+				};
+			}]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+				plus.webview.currentWebview().setStyle({
+					softinputMode: "adjustResize"
+				});
+			});
+		</script>
+	</body>
+
+</html>

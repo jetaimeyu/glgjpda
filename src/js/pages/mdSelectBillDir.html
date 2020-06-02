@@ -1,0 +1,174 @@
+<!--导航目录部分-->
+<div id="res-slide" class="top-thin-line mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted nav-bar" ng-show="navDirData.length>1">
+	<div class="mui-scroll">
+		<a class="item" ng-class="{'mui-active':$index==navDirData.length-1}" ng-repeat="dir in navDirData" ng-click="loadDirList(dir,$index)">
+			<span class="icon iconfont icon-right color-gray-deep" ng-show="$index>0"></span>
+			<span class="group-name" ng-bind="dir.DirName"></span>
+		</a>
+	</div>
+</div>
+<div id="slider" class="mui-scroll-wrapper" ng-style="{'position': 'initial','margin-top': navDirData.length>1?'95px':'54px'}" style="margin-bottom: 50px;">
+	<ul class="data-group" ng-if="dirList.length">
+		<li class="mui-table-view-cell data-row" ng-repeat="dir in dirList" ng-click="choose(dir)">
+			<i class="icon-roundcheckfill color-blue left-10" ng-if="dir.ID==selectedDir.ID"></i>
+			<i class="icon-round color-gray left-10" ng-if="dir.ID!=selectedDir.ID"></i>
+			<span class="name">{{dir.DirName}}</span>
+			<i class="icon-right color-gray-dark" ng-if="dir.IsChildDirs==1" ng-click="loadDirList(dir);$event.stopPropagation();"></i>
+		</li>
+	</ul>
+	<md-no-data ng-show="loaded&&!dirList.length">暂无数据</md-no-data>
+</div>
+<div class="dir_btns">
+	<span class="cancel" ng-click="cancel()">取消</span>
+	<span class="select" ng-click="select()">确定</span>
+</div>
+<style>
+	.md-modal-content {
+		background-color: #EAEAEA !important;
+		padding: 10px 0px !important;
+	}
+	/*伪元素(底线)控制*/
+	/*去掉ul上下边线*/
+	
+	.data-group:before,
+	.data-group:after {
+		height: 0;
+	}
+	/*li边线离左右距离、边线颜色*/
+	
+	.data-group .data-row:after {
+		left: 0px;
+		right: 0px;
+		background-color: #EAEAEA;
+	}
+	/*ul上下间距*/
+	
+	.data-group {
+		margin-top: 0px;
+	}
+	
+	.data-group .data-row {}
+	
+	.data-group .data-row .icon-right {
+		position: absolute;
+		right: 0px;
+		padding: 7px 10px;
+		top: 50%;
+		transform: translateY(-50%);
+		font-size: 1.5rem;
+	}
+	
+	.data-group .data-row .name {
+		margin-left: 35px;
+		font-size: 1.5rem;
+		line-height: 40px;
+		max-width: 80vw;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		-o-text-overflow: ellipsis;
+		overflow: hidden;
+		display: block;
+	}
+	
+	.data-group .data-row .left-10 {
+		position: absolute;
+		left: 5px;
+		padding: 5px;
+		top: 50%;
+		transform: translateY(-50%);
+		font-size: 1.8rem;
+	}
+	
+	.data-group .data-row .opt,
+	.data-group .data-row .body.arrow:after {
+		padding: 10px 16px 11px 10px;
+		color: #AEAEAE!important;
+	}
+	
+	#res-slide {
+		background: #fff;
+		overflow: hidden;
+		height: 40px;
+		position: fixed;
+		margin-top: 54px;
+	}
+	
+	.top-thin-line:before {
+		background-color: #ECECEC;
+	}
+	
+	.mui-segmented-control.mui-segmented-control-inverted .item {
+		color: #169BD5;
+		z-index: 999;
+	}
+	
+	.mui-segmented-control.mui-segmented-control-inverted .item.mui-active {
+		color: #9A9A9C;
+		background: none;
+		border: none;
+	}
+	
+	.mui-segmented-control .item {
+		padding: 0px !important;
+		line-height: 40px;
+	}
+	
+	.mui-slider .mui-segmented-control.mui-segmented-control-inverted~.mui-slider-group .item {
+		border-top: none;
+	}
+	
+	.mui-slider-indicator {
+		border-bottom: 1px solid #c8c7cc;
+	}
+	
+	.mui-segmented-control .item>span {
+		font-size: 14px;
+	}
+	
+	.mui-segmented-control .item .group-name {
+		margin-left: 10px;
+		margin-right: 10px;
+	}
+	
+	#slider .data-group .data-row .body {
+		padding-left: 10px;
+	}
+	
+	.dir_btns {
+		position: fixed;
+		left: 0;
+		right: 0;
+		height: 40px;
+		bottom: 0px;
+	}
+	
+	.dir_btns span {
+		line-height: 40px;
+		width: 50%;
+		font-size: 1.4rem;
+		text-align: center;
+		display: inline-block;
+		float: left;
+		position: relative;
+		border-top: 1px solid #eee;
+		background-color: #fff;
+	}
+	
+	.dir_btns .cancel {
+		color: #B1B1B1;
+	}
+	
+	.dir_btns .cancel:after {
+		content: '';
+		position: absolute;
+		right: 0;
+		width: 1px;
+		line-height: 50%;
+		background-color: #eee;
+		height: 100%;
+	}
+	
+	.dir_btns .select {
+		color: #0ae;
+	}
+</style>

@@ -1,0 +1,175 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="utf-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link href="css/mui.css" rel="stylesheet" />
+</head>
+
+<body ng-controller="BodyCtl">
+	<script src="js/mui.js"></script>
+	<script src="js/angular.min.js"></script>
+	<script src="js/utils.js"></script>
+	<script src="js/rpc.js"></script>
+	<script src="js/common.js"></script>
+
+	<script type="text/javascript">
+		mui.init();
+		app.controller("BodyCtl", ["$scope", "UtilsService", "DataService", "ApiService", "RPCObserver", function (
+			$scope, UtilsService, DataService, ApiService, RPCObserver) {
+
+			$scope.compId = 0;
+			$scope.userId = 0;
+			$scope.userInfo = null;
+			$scope.coInfo = null;
+			$scope.regCount = 0;
+
+			RpcServer.expose("RPC_Register_code", function (userInfo) {
+				// $scope.compId = userInfo.CompID;
+				// $scope.userId = userInfo.UserID;
+				// $scope.userInfo = userInfo;
+
+				// getCompInfo();
+			});
+
+			//获取企业的详情
+			var getCompInfo = function () {
+				var url = ApiService.Api40 + "/api/Comp/GetInfo?compid=" + $scope.compId;
+				DataService.get(url).then(function (res) {
+					$scope.coInfo = res;
+					checkCompCode();
+				})
+			}
+
+			//检查企业是否注册到国家物联码中心
+			var checkCompCode = function () {
+				if ($scope.regCount == 2) {
+					return;
+				}
+				var url = ApiService.Api45 + "/api/v2/Comp/CheckECodeRegState?compId=" + $scope.compId;
+				DataService.get(url).then(function (res) {
+					if (res) {
+						//receiveCode();
+					} else {
+						registerCode();
+					}
+				});
+			};
+
+			$scope.dataPk = "";
+			//注册到国家物联码中心
+			var registerCode = function () {
+				var url = ApiService.Api45 + "/api/v2/Comp/EcodeCompRegistered?compId=" + $scope.compId +
+					"&requestCount=0&userId=" + $scope.userId;
+				DataService.get(url).then(function (res) {
+					$scope.dataPk = res;
+					checkRegisterState();
+				}, function () {
+					checkCompCode();
+				});
+			};
+
+			//检查是否注册成功
+			var checkRegisterState = function () {
+				var url = ApiService.Api45 + "/api/v2/Comp/GetSyncInfo?key=" + $scope.dataPk;
+				DataService.get(url).then(function (res) {
+					if (res && res.length >= 4 && res.substr(-4) == "[04]") {
+						$scope.regCount++;
+						checkCompCode();
+					} else if (res && res.length >= 4 && res.substr(-4) == "[06]") {
+						//receiveCode();
+					} else {
+						setTimeout(function () {
+							checkRegisterState();
+						}, 500);
+					}
+				})
+			};
+
+			//领取迈迪码
+			var receiveCode = function () {
+				getDirList(function (dirId) {
+					var url = ApiService.Api42 + "/api/Order/SubmitBuyMdCodeOrder";
+					var _postData = {
+						"Data": {
+							"CompID": $scope.userId,
+							"MaterialID": 1,
+							"BuyNums": 10
+						},
+						"OrderFrom": 0,
+						"AddressID": dirId
+					};
+					DataService.post(url, _postData).then(function () {
+
+					}, function () {
+						setTimeout(function () {
+							receiveCode();
+						}, 180000);
+					});
+				})
+			};
+
+			//获取收货地址
+			var getDirList = function (callback) {
+				var url = ApiService.Api42 + "/api/PostAddr/GetList";
+				DataService.get(url).then(function (res) {
+					if (res.length > 0) {
+						callback(res[0].ID);
+					} else {
+						AddDir(callback);
+					}
+				}, function () {
+					AddDir(callback);
+				});
+			};
+
+			//默认注册收货地址
+			var AddDir = function (callback) {
+				var url = ApiService.Api42 + "/api/PostAddr/Add";
+
+				var _postData = {
+					"ID": 0,
+					"UserID": $scope.userId,
+					"ProvinceCode": "",
+					"Province": $scope.coInfo.Province,
+					"CityCode": "",
+					"City": $scope.coInfo.City,
+					"District": $scope.coInfo.District,
+					"Address": $scope.coInfo.Address,
+					"Street": "",
+					"MapLng": $scope.coInfo.Address.MapLng,
+					"MapLat": $scope.coInfo.Address.MapLat,
+					"RecvUserName": $scope.coInfo.LinkMan,
+					"LinkPhone": $scope.coInfo.LinkPhone,
+					"ZipCode": "",
+					"IsDefault": "0"
+				};
+				DataService.post(url, _postData).then(function (res) {
+					callback(res);
+				}, function () {
+					AddDir(callback);
+				});
+			}
+
+		}]);
+
+
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			RpcServer.expose("RPC_pre_single_chat", function (data) {
+				if (data.chatId) {
+					plus.webview.create("pages/message/chat.html", "chat-" + data.chatId, {}, data).hide();
+				}
+			});
+			RpcServer.expose("RPC_pre_group_chat", function (data) {
+				if (data.GroupCode) {
+					plus.webview.create("pages/message/chat-group.html", "chat-group-" + data.GroupCode, {}, data).hide();
+				}
+			});
+		});
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,127 @@
+/*第一个data-row高度，行高 左 上内边距 */
+
+.data-avatar .data-row .body {
+	padding: 8px 16px;
+}
+
+.data-group:first-child .data-row {
+	height: 64px;
+}
+
+
+/*更改头像span样式 */
+
+.data-group:first-child label.modified {
+	position: absolute;
+	top: 50%;
+	-webkit-transform: translateY(-50%);
+	transform: translateY(-50%);
+	padding-left: 60px;
+	width: auto;
+	color: #3296FA;
+	font-size: 1.4rem;
+}
+
+.data-group.data-avatar {
+	margin-top: 0;
+}
+
+.avatar {
+	width: 48px;
+	height: 48px;
+	border-radius: 48px;
+	float: left;
+	background-size: cover;
+}
+
+img[src=""] {
+	opacity: 0;
+}
+
+.mui-table-view-cell.data-row{
+	padding:0px;
+}
+
+.item-industry 
+{
+	border: 1px solid #f1f1f1!important;
+    padding: 2px 5px!important;
+    border-radius: 4px!important;
+    margin-right: 5px!important;
+}
+
+.extend-body .data-group-tip
+{
+	margin-top: 6px;
+}
+
+
+
+.part-group .data-row:after {
+	left: 0px;
+	right: 0px;
+}
+
+.btn-group .btn-col {
+	color: #3296FA;
+	font-size: 1.4rem;
+}
+
+.part-group .data-row .body .cell {
+	font-size: 1.4rem !important;
+}
+
+.part-group :after {
+	height: 0;
+}
+
+.mui-switch {
+	width: 35px;
+	height: 20px;
+}
+
+.mui-switch .mui-switch-handle {
+	width: 18px;
+	height: 18px;
+}
+
+.mui-switch-blue.mui-active {
+	border: 2px solid #3296fa;
+	background-color: #3296fa;
+}
+
+.photo.file .icon-add {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.photo.file .img-body {
+	position: relative;
+	overflow: hidden;
+	height: 50px;
+	background-color: #eaf6fe;
+}
+
+.photo {
+	width: 50px;
+	height: 50px;
+	margin-right: 14px;
+	/*display: block;
+	float:left;*/
+}
+
+.photo.file .media-del {
+	position: absolute;
+	left: 35px;
+	top: 5px;
+	width: 25px;
+	height: 25px;
+	padding: 5px;
+}
+
+.photo.file .img{
+	height: 100%;
+	background-size: cover;
+}

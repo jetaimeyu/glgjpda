@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<link rel="stylesheet" href="../../css/mui.min.css" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	<style>
+		.text-dot {
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+		}
+
+		.product {
+			/*为定位数量位置*/
+			position: relative;
+		}
+
+		.product-avatar {
+			height: 30px;
+			width: 30px;
+			background-size: 30px 30px;
+		}
+
+		.data-wrap {
+			background-color: #fff;
+		}
+
+		.data-item {
+			padding: 14px 16px 10px;
+			font-size: 1.5rem;
+			line-height: 17px;
+			position: relative;
+		}
+
+		/*.data-item:active {
+			background-color: #F7F7F7;
+		}*/
+
+		.data-item::after {
+			position: absolute;
+			left: 10px;
+			right: 10px;
+			bottom: 0;
+			height: 1px;
+			content: '';
+			-webkit-transform: scaleY(0.5);
+			transform: scaleY(0.5);
+			background-color: #EAEAEA;
+		}
+
+		/* .user-name {
+            margin-top: 0;
+            font-size: 1.5rem;
+            line-height: 17px;
+            font-weight: normal;
+            color: #000000;
+            margin-bottom: 10px;
+        } */
+
+		.product {
+			background-color: #F7F7F7;
+			padding: 10px;
+			margin-bottom: 10px;
+
+		}
+
+		.flex-product {
+			display: flex;
+			box-sizing: border-box;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		.product-avatar {
+			height: 40px;
+			width: 40px;
+			background-color: #FFF;
+			background-repeat: no-repeat;
+			background-size: cover;
+			float: left;
+		}
+
+		.product-info {
+			margin-left: 50px;
+			color: #AAAAAA;
+		}
+
+		.product-name {
+			margin-top: 0;
+			font-size: 1.5rem;
+			line-height: 17px;
+			margin-bottom: 10px;
+			margin-right: 2px;
+			max-width: 80%;
+		}
+
+		.product-type-wrap {
+			font-size: 1.2rem;
+			line-height: 14px;
+			color: #8f8f94;
+		}
+
+		.product-type-item {
+			display: inline-block;
+			max-width: 30vw;
+			margin-right: 10px;
+			vertical-align: top;
+		}
+
+		.operte-item {
+			display: inline-block;
+			font-size: 1.2rem;
+			line-height: 14px;
+			max-width: 30%;
+			margin-right: 10px;
+			color: #AAAAAA;
+		}
+
+		.operate-info .mark {
+			padding: 2px 4px;
+			background-color: deepskyblue;
+			color: #FFF;
+			font-size: 1.2rem;
+			line-height: 17px;
+			float: right;
+		}
+
+		.operate-info .active-mark {
+			background-color: rgb(57, 175, 57);
+		}
+
+		#tab-type {
+			margin-top: 0px;
+		}
+
+		.product .total-count {
+			position: absolute;
+			top: 40%;
+			right: 10px;
+			color: #8f8f94;
+		}
+
+		.changed {
+			width: 40px;
+			height: 20px;
+			line-height: 21px;
+			font-size: 1rem;
+			color: #E01717;
+			border: 1px solid #E01717;
+			border-radius: 4px;
+			text-align: center;
+
+			box-sizing: border-box;
+		}
+
+		.new-icon {
+			display: inline-block;
+		}
+
+		.new-icon img {
+			width: 21px;
+			height: 12px;
+
+		}
+
+		.new-icon-img {
+			width: 21px;
+			height: 12px;
+		}
+
+		.product-name-box {
+			display: flex;
+			justify-content: flex-start;
+			align-items: center;
+			margin-bottom: 10px;
+		}
+
+		.slef-name {
+			padding: 0;
+			margin: 0;
+			margin-right: 2px;
+		}
+
+		.self-h5 {
+			max-width: 150px;
+			overflow: hidden;
+
+
+		}
+
+		.product-link {
+			float: right;
+			color: #3296FA;
+		}
+	</style>
+</head>
+
+<body ng-controller="partsList">
+	<div id="tab-type" class="md-tab data-group" style="display: none;" ng-class="{'mui-block':TapLoad}">
+		<div class="md-tab-item" ng-class="{'md-active':TabType=='1'}" href="#tab1">配件清单</div>
+		<div class="md-tab-item" ng-class="{'md-active':TabType=='2'}" href="#tab2">配件汇总</div>
+	</div>
+	<div id="pullrefresh" class="mui-scroll-wrapper" style="display: none;" ng-class="{'mui-block':isLoad}">
+		<div class="mui-content" style="margin-top: 40px; margin-bottom: 40px;">
+			<div id="#tab1" class="prod-details skudetails firstTab" ng-show="TabType=='1'">
+				<ul class="data-wrap">
+					<li ng-repeat="item in data" class="data-item mui-table-view-cell" ng-click="tap(item)">
+						<!-- <h1 class="user-name text-dot" ng-bind="item.CustomerName"></h1> -->
+						<div class="product flex-product">
+							<div class="pr-wrap">
+								<span class="product-avatar"
+									ng-style="{'background-image':'url('+ (item | getProdLogo:40:0) +')'}"></span>
+								<div class="product-info">
+									<div class="product-name-box">
+										<h5 class="product-name slef-name text-dot self-h5" ng-bind="item.PartProdName"></h5>
+									</div>
+									<div class="product-type-wrap">
+										<span class="product-type-item text-dot" ng-bind="item.PartSkuName"></span>
+										<span class="product-type-item">/</span>
+										<span class="product-type-item text-dot" ng-bind="item.PartProdInnerCode"></span>
+									</div>
+								</div>
+							</div>
+							<span class="product-link" ng-click="tap(item,$event)">配件详情</span>
+							<span class="changed" ng-if="item.AssembleType == 2">换件</span>
+						</div>
+
+						<div class="operate-info">
+							<span class="operte-item text-dot" ng-bind="item.GroupName"
+								ng-style="{'margin-right':item.GroupName==''?'0px':'10px'}"></span>
+							<span class="operte-item text-dot" ng-bind="item.UserName"></span>
+							<span class="operte-item text-dot" ng-bind="item.AssembleDate"></span>
+							<!-- <span class="mark" ng-class="{'active-mark':item.isChange}" ng-bind="item.isChange?'正常组装':'已经更换'"></span> -->
+						</div>
+					</li>
+				</ul>
+				<md-no-data ng-show="data && data.length==0">暂无数据</md-no-data>
+			</div>
+			<div id="#tab2" class="prod-details skudetails" ng-show="TabType=='2'" style="margin-bottom: 40px;">
+				<ul class="data-wrap">
+					<li ng-repeat="item in TotalCountList" class="data-item mui-table-view-cell" ng-click="Tapcount(item)">
+						<!-- <h1 class="user-name text-dot" ng-bind="item.CustomerName"></h1> -->
+						<div class="product">
+							<span class="product-avatar"
+								ng-style="{'background-image':'url('+ (item | getProdLogo:40:0) +')'}"></span>
+							<div class="product-info">
+								<h5 class="product-name text-dot" ng-bind="item.PartProdName"></h5>
+								<div class="product-type-wrap">
+									<span class="product-type-item text-dot" ng-bind="item.PartSkuName"></span>
+								</div>
+							</div>
+							<div class="total-count font-15" ng-bind="'×' + item.count"></div>
+						</div>
+					</li>
+				</ul>
+				<md-no-data ng-show="TotalCountList && TotalCountList.length==0">暂无数据</md-no-data>
+			</div>
+		</div>
+		<!--无网络或请求失败重试-->
+		<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+	</div>
+
+	<script type="text/javascript" src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/rpc.js"></script>
+	<script type="text/javascript">
+		app.controller("partsList", ["$scope", "ApiService", "DataService", "Loading", "UtilsService", "RPCObserver","CacheService" ,function ($scope,
+			ApiService, DataService, Loading, UtilsService, RPCObserver,CacheService) {
+			$scope.partProdName = query("partProdName");
+			$scope.partSkuName = query("partSkuName");
+			$scope.hostProdId = query("hostProdId") || '';
+			$scope.hostSkuId = query("hostSkuId") || '';
+			var curUser = CacheService.get('user');
+			$scope.tapID = query("tapID") || "";
+			var innerCodeName=curUser.InnerCodeName || '出厂编号';
+			$scope.hostInnerCode = query("innercode") == 'undefined' ? "" : query("innercode");
+			$scope.TapLoad = true;
+			if ($scope.tapID != "") {
+				$scope.isLoad = false;
+				$scope.TapLoad = false;
+				document.querySelector(".mui-content").style.marginTop = "0px";
+				getAssembleListByHostMdCode();
+			};
+
+			$scope.data = null;
+			$scope.TabType = "1";
+			$scope.TotalCountList = "";
+
+			//无网络或请求失败重试
+			$scope.retryModal = {
+				msg: "零配件清单",
+				retry: getAssembleListByHostMdCode,
+				state: ""
+			}
+			// 显示logding菊花图
+			Loading.show();
+			$scope.tap = function (item, e) {
+				if (e) {
+					e.preventDefault()
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'assemble-info.html',
+						url: '../aftersale/assemble-info.html?id=' + item.ID
+					});
+				} else {
+					if (item.AssembleType == 2) {
+						UtilsService.openWindow({
+							needLogin: true,
+							id: 'mat-part-info.html',
+							url: '../aftersale/mat-part-info.html?id=' + item.LinkID
+						});
+					}
+					if (item.AssembleType == 1) {
+						$scope.params = {
+							CompID: query('CompID') || '',
+							EqJane: query('EqJane') || '',
+							LogoIsExist: query('LogoIsExist') || '',
+							ProdName: query('ProdName') || '',
+							SkuName: query('SkuName') || ''
+						}
+						if(item.PartMDCode){
+							UtilsService.openWindow({
+								needLogin: true,
+								id: 'scanDetails.html',
+								url: './scanDetails.html?ProdID=' + item.PartProdID + '&SkuID=' + item.PartSkuID + '&ProdName=' + item.PartProdName + '&SkuName=' + item.PartSkuName + '&ProdInnerCode=' + item.PartProdInnerCode + '&MDCode=' + item.PartMDCode + '&LogoIsExist=' + item.LogoIsExist + '&CompID=' + $scope.params.CompID + '&EqJane=' + $scope.params.EqJane + '&CompName=' + query("CompName") + '&CodeCreateUserName=' + query("CodeCreateUserName"),
+							});
+						}else{
+							UtilsService.openWindow({
+								needLogin: true,
+								id: 'prodinfo-head.html',
+//								url: './scanDetails.html?ProdID=' + item.PartProdID + '&SkuID=' + item.PartSkuID + '&ProdName=' + item.PartProdName + '&SkuName=' + item.PartSkuName + '&ProdInnerCode=' + item.PartProdInnerCode + '&MDCode=' + item.PartMDCode + '&LogoIsExist=' + item.LogoIsExist + '&CompID=' + $scope.params.CompID + '&EqJane=' + $scope.params.EqJane + '&CompName=' + query("CompName") + '&CodeCreateUserName=' + query("CodeCreateUserName"),
+								url:'prodinfo-head.html?prodId=' + item.PartProdID+ "&SkuID=" + item.PartSkuID + "&MdCode=" + item.PartMDCode + "&ProdInnerCode=" + item.PartProdInnerCode + "&InnerCodeName=" + innerCodeName
+							});
+						}
+						
+					}
+				}
+			};
+
+			function getAssembleListByHostMdCode() {
+				var url = ApiService.Api52 + "/api/v1/Assemble/GetAssembleListByHostMdCode?hostMdCode=" + query("mdcode") + "&hostInnerCode=" + $scope.hostInnerCode + "&hostProdId=" + $scope.hostProdId + "&hostSkuId=" + $scope.hostSkuId + "&partProdName=" + $scope.partProdName + "&partSkuName=" + $scope.partSkuName;
+				DataService.get(url).then(function (res) {
+
+					$scope.retryModal.state = '';
+					Loading.hide();
+					$scope.isLoad = true;
+					if (res) {
+						$scope.data = res
+					}
+				}, function (error) {
+					$scope.retryModal.state = error.State;
+				})
+			};
+
+			function getAssembleGroupByHostMdCode() {
+				var url = ApiService.Api50 + "/api/v1/Assemble/GetAssembleGroupByHostMdCode?hostMdCode=" + query("mdcode") + "&hostInnerCode=" + $scope.hostInnerCode + "&hostProdId=" + $scope.hostProdId + "&hostSkuId=" + $scope.hostSkuId;
+				DataService.get(url).then(function (res) {
+					$scope.retryModal.state = '';
+					Loading.hide();
+					$scope.isLoad = true;
+					if (res) {
+						$scope.TotalCountList = res
+					}
+				}, function (error) {
+					$scope.retryModal.state = error.State;
+				})
+			};
+			if ($scope.tapID == "") {
+				setTimeout(function () {
+					mui("#tab-type").on("tap", ".md-tab-item", function () {
+						if (this.getAttribute("href") == "#tab1") {
+							$scope.TabType = "1"
+						} else if (this.getAttribute("href") == "#tab2") {
+							$scope.TabType = "2"
+						}
+						$scope.$apply();
+
+					});
+					getAssembleListByHostMdCode();
+					getAssembleGroupByHostMdCode();
+				});
+			}
+
+			$scope.Tapcount = function (item) {
+				UtilsService.openWindow({
+					needLogin: true,
+					id: 'parts-list.html',
+					url: 'parts-list.html?partProdName=' + encodeURIComponent(item.PartProdName) + "&partSkuName=" + encodeURIComponent(item.PartSkuName) + "&tapID=1" + "&mdcode=" + query("mdcode") + "&innercode=" + query("innercode")
+				});
+
+			};
+			RPCObserver.on('refresh_parts_list_sub', 'refresh_parts_list_sub');
+			window.refresh_parts_list_sub = function () {
+				getAssembleListByHostMdCode();
+				getAssembleGroupByHostMdCode();
+			}
+
+		}]);
+
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+		});
+	</script>
+</body>
+
+</html>

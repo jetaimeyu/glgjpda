@@ -1,0 +1,75 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link href="../../css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	<style type="text/css">
+		.icon {
+			width: 16px;
+		}
+	</style>
+</head>
+
+<body ng-controller="EquWarehouseListHeadController">
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left">我的云文档</a>
+		<a class="right-menu-words"  ng-click="addDir()">
+			新增
+		</a>
+	</header>
+	<script type="text/javascript" src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/rpc.js"></script>
+	<script>
+		app.controller("EquWarehouseListHeadController", ["$scope", "UtilsService", function ($scope, UtilsService) {
+			setTimeout(function () {
+				mui.init({
+					subpages: [{
+						url: 'yun-file-list.html',
+						id: 'yun-file-list.html',
+						styles: {
+							top: '44px',
+							bottom: '0px',
+						}
+					}]
+				});
+			});
+
+			setTimeout(function() {
+				var subView = plus.webview.getWebviewById('yun-file-list.html');
+
+				$scope.addDir=function(){
+					subView.evalJS("addDir()");
+				};
+				
+				var oldBack = mui.back;
+
+				mui.back = function(){
+					subView.evalJS("canback()")
+				}
+
+				var view  = plus.webview.currentWebview();
+
+				window.sendFile = function(){
+					var listView = plus.webview.getWebviewById("md-selected-list.html");
+					listView && (listView.close("none"));
+					view.close("slide-out-right");
+				}
+				
+			}, 300);
+
+		}]);
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+		});
+	</script>
+</body>
+
+</html>

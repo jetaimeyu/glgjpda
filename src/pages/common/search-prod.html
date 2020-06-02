@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+	</head>
+
+	<body ng-controller="searchCtrl">
+		<div class="search_input">
+			<form ng-submit="search.doSearch()" style="height: 100%;">
+				<a class="mui-action-back mui-icon icon-back mui-pull-left"></a>
+				<input type="search" placeholder="请输入搜索名称" ng-model="search.text" maxlength="50">
+				<i class="icon-search-thin color-gray-dark"></i>
+				<i class="icon-delete color-gray" ng-click="search.text='';searchProds=[];loaded=false;" ng-show='search.text' ng-class="{'mui-block':search.text}" style="display: none;"></i>
+				<span ng-click="search.doSearch()">搜索</span>
+			</form>
+		</div>
+		<div class="search_group" ng-if="!loaded">
+			<div class="content">
+				<span ng-repeat="h in search.history" ng-click="search.text=h;search.doSearch()" ng-bind="h"></span>
+			</div>
+		</div>
+		<div ng-if="searchProds.length" class="search_res">
+			<ul class="data-group">
+				<li class="data-row" ng-repeat="p in searchProds" ng-click="openSku(p)">
+					<div class="body">
+						<img class="size60 float-left border-f2 bg-f2 mr10" src="{{imgUrl}}/prod/logo/{{p.ProdID}}_60x60.jpg" />
+						<span class="font-15 prodname">{{p.ProdName}}</span>
+						<span class="color-gray cname">{{p.CName}}</span>
+						<i class="opt md-icon icon-right"></i>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<md-no-data ng-show="loaded===true&&!searchProds.length" ng-class="{'mui-block':loaded===true&&!searchProds.length}" style="display: none;">暂无数据</md-no-data>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>	
+		<script src="../../js/mui.min.js"></script>		
+		<script src="../../js/utils.js"></script>
+		<script type="text/javascript" src="search-prod.js"></script>		
+		<style>
+			
+			.data-group .data-row .body {
+				padding-left: 10px;
+			}
+			
+			.data-group .data-row .body .prodname,
+			.cname {
+				max-width: 70vw;
+				overflow: hidden;
+				display: block;
+				margin-left: 70px !important;
+			}
+		</style>
+	</body>
+
+</html>

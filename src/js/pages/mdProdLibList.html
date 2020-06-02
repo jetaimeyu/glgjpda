@@ -1,0 +1,73 @@
+<!--产品库list-->
+<ul class="mui-table-view prodLibUl mui-scroll">
+	<li class="mui-table-view-cell mui-media" ng-repeat="prodItem in model" ng-click="tap(prodItem)">
+		<p class="opt md-icon font-15">
+			<span class="icon-right"></span>
+		</p>
+		<div>
+			<img src="../../images/imgPre.png" ng-style="{'background-image':'url('+ (prodItem | getProdLogo:56:0) +')'}" class="imgslist" />
+			<div class="mui-media-body">
+				<p class='productName mui-ellipsis-2' ng-bind="prodItem.ProdName"></p>
+				<p class='productType mui-ellipsis' ng-show="prodItem.Count==1" ng-bind="'型号：'+prodItem.SkuInfo.SkuName"></p>
+				<p class='productType mui-ellipsis' ng-show="prodItem.Count!=1" ng-bind="prodItem.Count+'个型号'"></p>
+			</div>
+		</div>
+	</li>
+</ul>
+<style type="text/css">
+	.prodLibUl.mui-table-view:after {
+		height: 0px!important;
+	}
+	
+	.imgslist {
+		float: left;
+		width: 56px;
+		height: 56px;
+		background-size: cover!important;
+		position: absolute;
+		top: 50%;
+		-webkit-transform: translateY(-50%);
+		transform: translateY(-50%);
+		overflow: hidden;
+		margin: 0;
+	}
+	
+	.prodLibUl .mui-table-view-cell {
+		padding: 8px 16px!important;
+	}
+	
+	.prodLibUl .mui-media-body {
+		position: relative;
+		left: 70px;
+	}
+	
+	.prodLibUl .productName {
+		font-size: 1.5rem;
+		color: #000;
+		margin-top: 2px;
+		margin-bottom: 10px;
+		line-height: initial;
+		max-width: 75%;
+	}
+	
+	.prodLibUl .productType {
+		font-size: 1.2rem;
+		color: #AAA;
+		max-width: 75%;
+	}
+	
+	.prodLibUl .opt {
+		color: #AEAEAE;
+		position: absolute;
+		top: 50%;
+		right: 10px;
+		-webkit-transform: translateY(-50%);
+		transform: translateY(-50%);
+		overflow: hidden;
+		margin: 0px;
+	}
+	
+	.mui-table-view-cell:after {
+		left: 0px;
+	}
+</style>

@@ -1,0 +1,158 @@
+<!DOCTYPE HTML>
+<html id="MdTong">
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+	<title></title>
+	<link rel="stylesheet" href="../../css/mui.min.css" type="text/css" charset="utf-8" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	<style type="text/css">
+		html {
+			width: 100%;
+			height: 100%;
+		}
+
+		body {
+			height: 100%;
+			background-color: transparent;
+		}
+
+		.mui-popover .mui-popover-arrow {
+			left: auto;
+			right: -6px !important
+		}
+
+		.mui-table-view-cell:after {
+			position: absolute;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			height: 1px;
+			content: '';
+			-webkit-transform: scaleY(.5);
+			transform: scaleY(.5);
+			background-color: #ccc;
+		}
+
+		.mui-popover .mui-popover-arrow:after {
+			top: 22px;
+			left: 0;
+			width: 15px;
+			height: 15px;
+		}
+	</style>
+</head>
+
+<body ng-controller="MenuchatController">
+	<a style="display: block;height: 100%; background:url(../../images/mask.png);"></a>
+	<div id="topPopover" class="mui-popover pop-menu" style="position:fixed ;top: 43px;right:9px;">
+		<div class="mui-popover-arrow" style="top: -25px;"></div>
+		<ul class="mui-table-view" style="color: #fff;right: 0;">
+			<li class="mui-table-view-cell popover" style="text-align: left;" data-type="1">
+				<a class="mui-icon icon-personal">
+					<font>资料</font>
+				</a>
+			</li>
+			<li class="mui-table-view-cell popover" style="text-align: left;" data-type="2">
+				<a class="mui-icon icon-clock">
+					<font>聊天记录</font>
+				</a>
+			</li>
+		</ul>
+	</div>
+</body>
+<script type="text/javascript" src="../../js/angular.min.js"></script>
+<script src="../../js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" src="../../js/common.js"></script>
+<script type="text/javascript" src="../../js/utils.js"></script>
+<script type="text/javascript">
+	app.controller("MenuchatController", ["$scope", "UtilsService", function ($scope, UtilsService) {
+
+		$scope.domData = {
+
+		};
+		var ws = plus.webview.currentWebview();
+		var oldBack = mui.back;
+		mui.back = function () {
+			ws.hide();
+		};
+
+		var dom = {
+			properties: {
+				GroupCode: "",
+				GroupName: ""
+			},
+			init: function () {
+				this.webView.init();
+				this.content.init();
+			},
+			webView: {
+				cur: "",
+				init: function () {
+					this.cur = plus.webview.currentWebview();
+					dom.properties.GroupCode = this.cur.GroupCode;
+					dom.properties.GroupName = this.cur.GroupName;
+					$scope.domData = dom.properties;
+					this.event();
+				},
+				event: function () {
+					window.addEventListener("tap", function () {
+						dom.webView.cur.hide();
+					})
+					window.addEventListener("dragstart", function () {
+						dom.webView.cur.hide();
+					})
+				}
+			},
+			content: {
+				init: function () {
+					this.event();
+				},
+				event: function () {
+					mui(".mui-table-view").on("tap", "li", function () {
+						UtilsService.clearWindow();
+						var type = this.getAttribute("data-type");
+						switch (type) {
+							case "1":
+								var url = "../message/group-info.html";
+								dom.event.openWindow(url, "group-info.html", {
+									GroupCode: dom.properties.GroupCode,
+									GroupName: dom.properties.GroupName
+								});
+								break;
+							case "2":
+								var url = "../message/chat-group-record.html";
+								dom.event.openWindow(url, "chat-group-record.html", {
+									GroupCode: dom.properties.GroupCode,
+									GroupName: dom.properties.GroupName
+								});
+								break;
+						}
+					});
+				}
+			},
+			event: {
+				openWindow: function (url, id, data) {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: id,
+						url: url,
+						extras: data
+					});
+				}
+			}
+
+		};
+
+		dom.init();
+
+	}]);
+
+	mui.plusReady(function () {
+		angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+	});
+</script>
+
+</html>

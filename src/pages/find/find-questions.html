@@ -1,0 +1,281 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>发现</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/common.css">
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<style type="text/css">
+			.findQuestion .data-group:first-child {
+				margin-top: 0px;
+			}
+			
+			.findQuestion .mui-content {
+				position: absolute;
+				top: 0px;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				overflow: auto;
+			}
+			
+			
+			#article-body {
+				width: 100%;
+				min-height: 220px;
+				box-sizing: border-box;
+				padding: 10px;
+				color: #444;
+				text-align: center;
+				background-color: #ffffff;
+			}
+			
+			#article-body img {
+				max-width: 100%;
+				height: auto;
+			}
+			
+			.Eleditor-mask {
+				overflow: hidden!important;
+			}
+			.Eleditor-placeholder{
+				padding-bottom: 50px;
+				text-align: left;
+			}
+			.mui-checkbox input[type=checkbox]:before, .mui-radio input[type=radio]:before{
+				font-size: 26px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="findQuestionController" class="findQuestion">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left" ng-bind="headTitle"></a>
+			<a class="right-menu-words" ng-click="saveBtn()">发布</a>
+		</header>
+		<div class="mui-content" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<ul class="data-group">
+				<li class="data-row must" ng-if="type!='5'">
+					<label ng-bind="title"></label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="data.questionTitle" class="needsclick" placeholder="{{title}}" lenlimit="500"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row must" ng-if="type=='5'">
+					<label>配件企业名称</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="data.questionTitle" class="needsclick" placeholder="请输入您需要的配件模型生成企业" lenlimit="500"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row must" ng-if="type=='5'">
+					<label>联系人</label>
+					<div class="body">
+						<div class="">
+							<input type="text" name="" ng-model="data.linkName" placeholder="请输入联系人" maxlength="20"/>
+						</div>
+					</div>
+				</li>
+				<li class="data-row must" ng-if="type=='5'">
+					<label>联系电话</label>
+					<div class="body">
+						<div class="">
+							<input type="tel" name="" ng-model="data.linkPhone" placeholder="请输入联系电话" maxlength="15"/>
+						</div>
+					</div>
+				</li>
+				<li class="data-row must" ng-if="type=='5'">
+					<label>职务</label>
+					<div class="body">
+						<div class="">
+							<input type="text" name="" ng-model="data.linkJob" placeholder="请输入联系人职务" maxlength="20"/>
+						</div>
+					</div>
+				</li>
+
+				<li class="data-row must" ng-if="type=='8'">
+					<label>悬赏价格</label>
+					<div class="body">
+						<div class="">
+							<input type="number"  onkeyup= "if( ! /^d*(?:.d{0,2})?$/.test(this.value)){mui.toast('只能输入数字，小数点后只能保留两位');this.value='';}" name="" ng-model="data.Price" placeholder="请输入悬赏价格" maxlength="20"/>
+						</div>
+					</div>
+				</li>
+
+			</ul>
+			<!-- 内容编辑区域 -->
+			<p class="font-13" style="padding-top: 15px;padding-left: 15px;">问题描述</p>
+			<div id="article-body"></div>
+			<p class="font-13" style="padding-left: 15px;">
+				<div class="mui-input-row mui-checkbox mui-left">
+					<div class="font-14" id="agreement" style="background: white;padding: 7px 15px;padding-left: 50px;color: #999;line-height: 20px;">
+						<span>回帖仅楼主可看</span>
+					</div>
+					<input id="agreement_checkbox" name="checkbox" type="checkbox"  />
+				</div>
+			</p>
+
+		</div>
+		<!--无网络或请求失败重试-->
+		<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+		<script type="text/javascript" src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script src="../../Eleditor-master/jquery.min.js"></script>
+		<!-- 引入百度上传插件 -->
+		<script src="../../Eleditor-master/webuploader.min.js"></script>
+		<!-- 插件核心 -->
+		<script src="../../Eleditor-master/Eleditor.js"></script>
+		<script type="text/javascript">
+			app.controller("findQuestionController", ["$scope", "ApiService", "UtilsService", "DataService", "Loading", "RPCObserver",
+				function($scope, ApiService, UtilsService, DataService, Loading ,RPCObserver) {
+				
+					$scope.type = query("type"); //2问答 5模型4加工3 吐槽
+					$scope.isLoad = true;
+					$scope.title = '';
+					$scope.data = {
+						questionTitle:"",
+						linkName:"",
+						linkPhone:"",
+						linkJob:""
+					};
+					$scope.isSubcontract = false;
+					var questionId;
+					switch($scope.type) {
+						case '2':
+							$scope.title = "问题标题";
+							$scope.headTitle = "我要提问"
+							break;
+						case '3':
+							$scope.title = "尽情吐槽";
+							$scope.headTitle = "意见建议"
+							break;
+						case '4':
+							$scope.title = "需求标题";
+							$scope.headTitle = "我要外协";
+							//$scope.isSee = true;
+							document.querySelector("#agreement_checkbox").disabled=true;
+							$scope.isSubcontract = true;
+							break;
+						case '5':
+							$scope.headTitle = "我要模型";
+							break;
+						case '7':
+							$scope.headTitle = "我要求助";
+							$scope.title = "求助标题";
+							break;
+						default:
+							break;
+					}
+					/*实例化一个编辑器*/
+					var artEditor = new Eleditor({
+						el: '#article-body',
+						uploader: function() {
+							/*必须返回一个Promise对象，成功返回url，失败返回错误信息*/
+							return new Promise(function(_resolve, _reject) {
+								UtilsService.chooseImage(false).then(function(res) {
+									var localFile = res[0].FilePath;
+									var fileName = localFile.substr(localFile.lastIndexOf('/') + 1, localFile.length - localFile.lastIndexOf('/'));
+									var url = ApiService.Api50 + "/api/v1/File/UploadRichTextPic";
+									var task = plus.uploader.createUpload(url, {
+										method: "post"
+									}, function(t, status) {
+										if(status == 200 && JSON.parse(t.responseText).State == 1) {
+											_resolve(ApiService.Api50 + "/api/v1/RichTextPic/" + JSON.parse(t.responseText).Data + ".jpg");
+										} else {
+											_reject('上传失败!');
+										}
+									});
+									task.addFile(localFile, {
+										key: fileName
+									});
+									task.start();
+								});
+							});
+						}
+					});
+					var isSave=false;
+					var url = ApiService.Api50 + "/api/v1/QA/QusSave";
+					$scope.saveBtn = function() {
+						document.activeElement.blur();
+						if(isSave) {
+							return;
+						}
+						if($scope.data.questionTitle.trim() == '') {
+							mui.toast("请输入" + $scope.title);
+							return;
+						}
+						var input = document.querySelector("#agreement_checkbox");
+						var isChecked=1;
+						if(!input.checked) {
+							isChecked= 0;
+						}
+						var _content = artEditor.getContent();
+						var saveData = {
+							"QTitle": $scope.data.questionTitle,
+							"QContent": _content,
+							"Type": $scope.type,
+							"IsSecret": isChecked
+						};
+						isSave = true;
+						Loading.show();
+						DataService.post(url, saveData).then(function(res) {
+							Loading.hide();
+							isSave = false;
+							if(res) {
+								questionId = res;
+								if($scope.type==5){
+									saveModel(questionId);
+								}else{
+									mui.toast("发布成功");
+									RPCObserver.broadcast('refresh_ing_list');
+									setTimeout(function(){
+										mui.back();
+									},300);
+								}
+							}
+						})
+					}
+					//模型内容保存
+					var urlModel = ApiService.Api50 + "/api/v1/QA/AnswerSave";
+					var saveModel = function(qid) {
+						urlModel += "?qId=" + qid;
+						if(!$scope.data.linkName || !$scope.data.linkPhone || !$scope.data.linkJob) {
+							return;
+						}
+						var modelData = {
+							"AContent": "需求联系人信息<br>" + "联系人:" + $scope.data.linkName + "<br>联系人电话:" + $scope.data.linkPhone + "<br>联系人职务:" + $scope.data.linkJob,
+							"IsPay": 0,
+							"IsSecret": 1,
+						}
+						DataService.post(urlModel, modelData).then(function(res) {
+							if(res) {
+								mui.toast("发布成功");
+								RPCObserver.broadcast('refresh_ing_list');
+								setTimeout(function(){
+										mui.back();
+									},300);						
+							}
+						})
+					}
+				}
+			]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+				plus.webview.currentWebview().setStyle({
+					softinputMode: "adjustResize"
+				});
+			});
+		</script>
+	</body>
+
+</html>

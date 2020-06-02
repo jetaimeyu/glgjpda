@@ -1,0 +1,193 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="product-list.css" />
+	</head>
+
+	<body ng-controller="productListController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">礼品列表</a>
+			<a class="right-menu-words" id="order">我的订单</a>
+		</header>
+		<div class="catalog-line" style="display: none;position: fixed;z-index: 10;width: 100%;margin-top: 42px;" ng-class="{'mui-block':isLoad}">
+			<div class="catalog-box mui-media mui-col-xs-3 mui-col-sm-3 mui-pull-left" ng-repeat="catalog in catalogArr">
+				<div class="mui-media-object catalog-name mui-ellipsis" ng-class="{'catalog-name-sel':selectedCatalog==catalog.ID}" ng-bind="catalog.CName" ng-click="clickCatalog(catalog.ID)"></div>
+			</div>
+			<div class="catalog-box mui-media mui-col-xs-3 mui-col-sm-3 mui-pull-left">
+				<div class="mui-media-object catalog-name font-12 color-gray-deep" style="line-height: 20px;">更多商品<br />敬请期待</div>
+			</div>
+		</div>
+		<div class="mui-inner-wrap" style="margin-top: 2px;display: none;" ng-class="{'mui-block':isLoad}">
+			<div id="pullrefresh" class="mui-content mui-scroll-wrapper" style="padding-top: 120px;" ng-show="prods">
+				<div class="mui-scroll">
+					<ul class="mui-table-view mui-grid-view">
+						<li class="mui-table-view-cell mui-media mui-col-xs-6" ng-repeat="prod in prods" ng-click="ProdDetails(prod)">
+							<div class="imgbox">
+								<!--ng-src="{{prod | getLogo}}"-->
+								<img class="mui-media-object" ng-src="{{Down+prod.Files[0].FilePath}}" onerror="this.src='http://pic.maidiyun.com/cGtnL2xvZ28=_0_200x200.jpg'" style="object-fit: cover;min-height:100%">
+							</div>
+							<div class="mui-media-body">
+								<div class="prod-name" ng-bind="prod.Name"></div>
+								<div class="prod-price">
+									<span class="icon">￥</span><span class="price" ng-bind="prod.Price"></span>
+								</div>
+								<!--<div class="prod-price" ng-show="!(prod | getPrice)&&isShowInquiry==1">询价</div>
+								<div class="prod-price" ng-show="!(prod | getPrice)&&isShowInquiry!=1">暂无价格</div>-->
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<md-no-data ng-show="prods&&prods.length==0">暂无礼品数据</md-no-data>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+
+		<script>
+			app.controller("productListController", ["$scope", "UtilsService", "ApiService", "DataService", "MapService", "RPCObserver", "Loading",
+				function($scope, UtilsService, ApiService, DataService, MapService, RPCObserver, Loading) {
+					$scope.Down = ApiService.Api50 + "/api/v1/File/DownLoadPic?filePath=";
+					//产品目录列表
+					$scope.catalogArr = [];
+					//收货人
+					$scope.uid = query("uid");
+					$scope.selectedCatalog = 0;
+					getCommodityClassList();
+					//产品列表
+					$scope.prods = [];
+					//每页条数
+					var pageSize = 10;
+					//当前页数
+					var pageIndex = 0;
+					setTimeout(function() {
+						mui.init({
+							pullRefresh: {
+								container: '#pullrefresh',
+								up: {
+									auto: false,
+									callback: pullupRefresh
+								}
+							}
+						});
+					});
+
+					//产品上拉加载
+					function pullupRefresh() {
+						pageIndex++;
+						//加载产品
+						loadProduct();
+					}
+					document.body.querySelector("#order").addEventListener("tap", function() {
+						UtilsService.openWindow({
+							needLogin: true,
+							id: "myOrderList.html",
+							url: "myOrderList.html"
+						});
+					})
+					//获取分类列表
+					function getCommodityClassList() {
+						var url = ApiService.Api50 + "/api/v1/MdtMicroMart/GetCommodityClassList";
+						DataService.get(url).then(function(res) {
+							$scope.isLoad = true;
+							$scope.catalogArr = res.DataRow;
+							$scope.selectedCatalog = $scope.catalogArr[0].ID;
+							loadProduct('refresh');
+						})
+					}
+					//加载产品
+					function loadProduct(refresh) {
+						var url = ApiService.Api50 + "/api/v1/MdtMicroMart/GetCommodityList?classId=" + $scope.selectedCatalog + "&pageIndex=" + pageIndex + "&pageSize=" + pageSize;
+						DataService.get(url).then(function(res) {
+							$scope.isLoad = true;
+							if(res) {
+								$scope.prods == null && ($scope.prods = []);
+								refresh && ($scope.prods = []);
+								$scope.prods = $scope.prods.concat(res.DataRow);
+								var isEnd = $scope.prods.length >= res.TotalCount;
+								mui("#pullrefresh").pullRefresh() && mui("#pullrefresh").pullRefresh().endPullupToRefresh(isEnd);
+								var tip = document.querySelector('.mui-pull-bottom-pocket');
+								if(tip) {
+									if($scope.prods.length == 0) {
+										tip.classList.contains('mui-visibility') && tip.classList.remove('mui-visibility');
+										tip.classList.contains('mui-block') && tip.classList.remove('mui-block');
+									} else {
+										!tip.classList.contains('mui-visibility') && tip.classList.add('mui-visibility');
+										!tip.classList.contains('mui-block') && tip.classList.add('mui-block');
+									}
+								}
+							}
+							Loading.hide();
+						})
+					}
+					//点击目录
+					$scope.clickCatalog = function(id) {
+						if($scope.selectedCatalog == id) return;
+						$scope.selectedCatalog = id;
+						pageIndex = 1;
+						loadProduct('refresh');
+					}
+
+					//跳转详情
+					$scope.ProdDetails = function(prod) {
+						UtilsService.openWindow({
+							id: "gift-info.html",
+							url: "gift-info.html",
+							extras: {
+								giftInfo: prod,
+								uid: $scope.uid
+							}
+						})
+					}
+				}
+			]);
+
+			//获取产品图片
+			app.filter('getLogo', ["ApiService", function(ApiService) {
+				return function(item) {
+					if(item.IsNew == 0) {
+						return ApiService.Pic + "/cGtnL2xvZ28=_" + item.ProdID + "_200x200.jpg";
+					} else {
+						return ApiService.Img + "/prod/logo/" + item.ProdID + "_0x0.jpg";
+					}
+				}
+			}]);
+
+			//过滤产品价格
+			app.filter('getPrice', function() {
+				return function(item) {
+					var price = "";
+					if(item.MinPrice > 0 || item.MaxPrice > 0) {
+						if(item.MinPrice == item.MaxPrice) {
+							price = item.MinPrice;
+						} else {
+							if(item.MinPrice > 0 && item.MaxPrice > 0) {
+								price = item.MinPrice + "~" + item.MaxPrice
+							} else if(item.MinPrice > 0) {
+								price = item.MinPrice;
+							} else if(item.MaxPrice > 0) {
+								price = "0" + "~" + item.MaxPrice;
+							}
+						}
+					}
+					return price;
+				}
+			});
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

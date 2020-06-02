@@ -1,0 +1,54 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link href="../../css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	<link rel="stylesheet" href="../../css/mui.loading.css" />
+	<link rel="stylesheet" href="prodTrack.css" />
+</head>
+
+<body ng-controller="prodTrackCtl">
+	<div class="mui-content">
+		<div class="map_container">
+			<div id="map">
+
+			</div>
+			<div class="prod-info" style="display: none" ng-class="{'mui-block':domData.prodInfo}">
+				<ul class="data-group" style="margin-top:0px">
+					<li class="data-row mui-table-view-cell" ng-click="event.openProd()">
+						<p class="opt md-icon icon-right"></p>
+						<div class="body">
+							<md-prod-logo style="float:left;margin-right: 10px;" ng-model="domData.prodInfo" data-width="66" data-height="66"></md-prod-logo>
+							<div class="mui-media-body">
+								<p class='productName mui-ellipsis' style="color:#000;font-size:15px;margin-top:5px;" ng-bind="domData.prodInfo.ProdName"></p>
+								<p class='productType mui-ellipsis' style="font-size: 12px;" ng-show="domData.prodInfo.SkuName" ng-bind="'型号：'+domData.prodInfo.SkuName"></p>
+								<p class='productType mui-ellipsis' style="font-size: 12px;" ng-show="domData.prodInfo.InnerCode" ng-bind="domData.InnerCodeName+'：'+domData.prodInfo.InnerCode"></p>
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<script src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/angular.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/json.js"></script>
+	<script type="text/javascript" src="../../js/jquery.min.js"></script>
+	<script type="text/javascript" src="../../js/mPicker.min.js"></script>
+	<!--<script type="text/javascript" src="https://api.map.baidu.com/api?ak=W6WIQmkWMM7fHZ1bQzONDGwimUikfaPU&type=lite&v=1.0"></script>-->
+	<script type="text/javascript" src="https://api.map.baidu.com/api?v=3.0&ak=W6WIQmkWMM7fHZ1bQzONDGwimUikfaPU"></script>
+	<script type="text/javascript" src="http://lbsyun.baidu.com/jsdemo/data/points-sample-data.js"></script>
+	<script type="text/javascript" src="../../js/mui.loading.js"></script>
+	<script type="text/javascript" src="prodTrack.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<link href="../../css/mui.min.css" rel="stylesheet" />
+	<link href="../../css/common.css" rel="stylesheet" />
+	<link href="message.css" rel="stylesheet" />
+	<link href="../../icon-font/iconfont.css" rel="stylesheet" />
+	<style>
+		.mui-content>.mui-table-view:first-child {
+			margin-top: 0;
+		}
+	</style>
+</head>
+
+<body ng-controller="MessageController">
+	<div id="tmep_trans" style="display:none;"></div>
+	<!--<md-state-tip data-options="{msg:'消息',retry:event.reload}" ng-show="!domData.isNetWork"></md-state-tip>-->
+	<div class="load-message">
+		<i class="mui-spinner"></i> 正在加载数据...
+	</div>
+	<div id="pullrefresh" class="mui-fullscreen">
+		<!-- class="mui-content mui-scroll-wrapper" -->
+		<div class="message_state" style="display:none;" ng-click="event.reload()"
+			ng-class="{'mui-block':domData.State==1}">
+			<img src="../../images/icon-warning.png" /><span>网络不给力，点击重新加载</span>
+		</div>
+		<div class="mui-scroll">
+			<div class="message_state state_reload" style="display:none;">
+				<i class="mui-spinner"></i><span style="top:-2px;">正在拉取消息</span>
+			</div>
+			<ul class="mui-table-view mui-table-view-chevron recent-contract-list ng-hide"
+				ng-class="{'lastRow-no-bottom':$index==domData.msgList.length-1}" ng-show="domData.msgList.length>0">
+				<li class="mui-table-view-cell mui-media " ng-repeat="item in domData.msgList | orderBy:'-SendTime'"
+					ng-switch="item.MsgType">
+					<ul>
+						<li class="item_body" ng-switch-when="0" ng-if="item.ChatType=='Person'" data-type="0"
+							id="{{'msg-'+item.OppoID}}" data-oid="{{item.OppoID}}" data-compId="{{item.OppoCompID}}"
+							data-idx="{{$index}}" data-name="{{item.OppoName}}" data-logo="{{item.ULogoIsExist}}">
+							<div class="mui-slider-right mui-disabled">
+								<a class="mui-btn mui-btn-red btn-delete">删除</a>
+								<!-- <a class="mui-btn mui-btn-yellow btn-trip">行程</a> -->
+							</div>
+							<div class="mui-slider-handle" style="transform: translate(0px, 0px);">
+								<div class="mui-media-object mui-pull-left user-img">
+									<div class="div-img"
+										ng-style="{'background-image':'url('+ (item.OppoID | getUserLogo2:100:100) +')'}"
+										ng-if="item.ULogoIsExist==true || item.ULogoIsExist=='true'">
+									</div>
+									<!--<img ng-src="{{item.OppoID | getUserLogo:50:50}}" ng-if="item.ULogoIsExist">-->
+									<div class="md-userCustomLogo"
+										ng-if="item.ULogoIsExist==false || item.ULogoIsExist=='false'"
+										ng-bind="item.OppoName | getUserCustomLogo"></div>
+								</div>
+
+								<div class="mui-media-body">
+									<div class="mui-media-ex-username mui-ellipsis" ng-bind="item.OppoName"></div>
+									<p class="mui-ellipsis"><span class="icon-pen color-red-md"
+											ng-if="domData.draft[item.OppoID]"></span><span
+											ng-bind-html="event.transContent(item)"></span></p>
+								</div>
+								<div class="mui-media-ex-time">
+									<p ng-bind="event.getDate(item.SendTime)"></p>
+								</div>
+								<div class="mui-media-ex-count mui-badge  mui-badge-danger mui-badge-red"
+									ng-show="item.UnReadCount>0" ng-bind="item.UnReadCount>99?'99+':item.UnReadCount">
+								</div>
+							</div>
+						</li>
+						<li class="item_body" ng-switch-when="0" ng-if="item.ChatType=='Group'" data-type="Group"
+							id="{{'msg-'+item.GroupCode}}" data-oid="{{item.GroupCode}}" data-idx="{{$index}}"
+							data-name="{{item.GroupName}}">
+							<div class="mui-slider-right mui-disabled">
+								<a class="mui-btn mui-btn-red btn-delete">删除</a>
+							</div>
+							<div class="mui-slider-handle" style="transform: translate(0px, 0px);">
+								<div class="mui-media-object mui-pull-left user-img">
+									<img class="coverImg"
+										ng-src="{{domData.Api50+'/api/v1/MsgGroupPic/'+item.GroupCode+'_60x60.jpg'}}">
+								</div>
+
+								<div class="mui-media-body">
+									<div class="mui-media-ex-username mui-ellipsis" ng-bind="item.GroupName"></div>
+									<p class="mui-ellipsis"><span style='float:left' class="icon-pen color-red-md"
+											ng-if="domData.draft[item.GroupCode]"></span><span
+											ng-bind-html="event.transContent(item,item.SendName)"></span></p>
+								</div>
+								<div class="mui-media-ex-time">
+									<p ng-bind="event.getDate(item.SendTime)"></p>
+								</div>
+								<div class="mui-media-ex-count mui-badge  mui-badge-danger"
+									ng-class="{'mui-badge-blue':item.IsSilence,'mui-badge-red':!item.IsSilence}"
+									ng-show="item.UnReadCount>0" ng-bind="item.UnReadCount>99?'99+':item.UnReadCount">
+								</div>
+							</div>
+						</li>
+						<li class="item_body" ng-switch-when="2" data-type="2">
+							<div class="mui-slider-handle" style="transform: translate(0px, 0px);">
+								<div class="mui-media-object mui-pull-left">
+									<img class="size50" src="../../images/work_notice.png" />
+								</div>
+								<div class="mui-media-body">
+									<div class="mui-media-ex-username mui-ellipsis">工作通知</div>
+									<p class="mui-ellipsis" ng-bind-html="event.transContent(item)"></p>
+								</div>
+								<div class="mui-media-ex-time" ng-if="item.SendTime">
+									<p ng-bind="event.getDate(item.SendTime)"></p>
+								</div>
+								<div class="mui-media-ex-count mui-badge  mui-badge-danger mui-badge-red"
+									ng-show="item.UnReadCount>0" ng-bind="item.UnReadCount>99?'99+':item.UnReadCount">0
+								</div>
+							</div>
+						</li>
+						<li class="item_body " ng-switch-when="1" data-type="1">
+							<div class="mui-slider-handle" style="transform: translate(0px, 0px);">
+								<div class="mui-media-object mui-pull-left">
+									<img class="size50" src="../../images/system_messages.png" />
+								</div>
+
+								<div class="mui-media-body">
+									<div class="mui-media-ex-username mui-ellipsis">系统通知</div>
+									<p class="mui-ellipsis" ng-bind-html="event.transContent(item)"></p>
+								</div>
+								<div class="mui-media-ex-time" ng-if="item.SendTime">
+									<p ng-bind="event.getDate(item.SendTime)"></p>
+								</div>
+
+								<div class="mui-media-ex-count mui-badge  mui-badge-danger mui-badge-red"
+									ng-show="item.UnReadCount>0" ng-bind="item.UnReadCount>99?'99+':item.UnReadCount">0
+								</div>
+							</div>
+						</li>
+						<li class="item_body " ng-switch-when="3" data-type="3">
+							<div class="mui-slider-handle" style="transform: translate(0px, 0px);">
+								<div class="mui-media-object mui-pull-left">
+									<img class="size50" src="../../images/Q&A.png" />
+								</div>
+
+								<div class="mui-media-body">
+									<div class="mui-media-ex-username mui-ellipsis">设计圈</div>
+									<p class="mui-ellipsis" ng-bind-html="event.transContent(item)"></p>
+								</div>
+								<div class="mui-media-ex-time" ng-if="item.SendTime">
+									<p ng-bind="event.getDate(item.SendTime)"></p>
+								</div>
+
+								<div class="mui-media-ex-count mui-badge  mui-badge-danger mui-badge-red"
+									ng-show="item.UnReadCount>0" ng-bind="item.UnReadCount>99?'99+':item.UnReadCount">0
+								</div>
+							</div>
+						</li>
+						<li class="item_body mui-btn" ng-switch-when="4" data-type="4">
+							<div class="mui-slider-handle" style="transform: translate(0px, 0px);">
+								<div class="mui-media-object mui-pull-left">
+									<img class="size50" src="../../images/group_notice.png" />
+								</div>
+
+								<div class="mui-media-body">
+									<div class="mui-media-ex-username mui-ellipsis">群通知</div>
+									<p class="mui-ellipsis" ng-bind-html="event.transContent(item)"></p>
+								</div>
+								<div class="mui-media-ex-time" ng-if="item.SendTime">
+									<p ng-bind="event.getDate(item.SendTime)"></p>
+								</div>
+
+								<div class="mui-media-ex-count mui-badge  mui-badge-danger" ng-show="item.UnReadCount>0"
+									ng-bind="item.UnReadCount>99?'99+':item.UnReadCount">0
+								</div>
+							</div>
+						</li>
+					</ul>
+
+				</li>
+				<!--<li class="mui-table-view-cell mui-media item_body">
+
+					</li>
+					<li class="mui-table-view-cell mui-media item_body">
+
+					</li>
+					<li class="mui-table-view-cell mui-media item_body">
+
+					</li>
+					<li class="mui-table-view-cell mui-media item_body">
+
+					</li>-->
+			</ul>
+			<div class="empty-list mui-text-center ng-hide" style="margin-top:40%" ng-show="domData.msgList.length==0 && domData.isLoad">
+				<img src="../../images/complib/empty.png" style="width: 40vw;" />
+				<div class="empty-list-tips mt10">
+					<p class="color-gray-deep mui-text-center font-16">暂无聊天消息</p>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<script src="../../js/mui.js"></script>
+	<script src="../../js/angular.min.js"></script>
+	<script src="../../js/utils.js"></script>
+	<script src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/rpc.js"></script>
+	<script type="text/javascript" src="../../libs/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="../../libs/base64.min.js"></script>
+	<script type="text/javascript" src="../../libs/MD5.min.js"></script>
+	<script type="text/javascript" src="../../libs/pako.js"></script>
+	<script type="text/javascript" src="../../libs/amrnb.js"></script>
+	<!-- <script src="https://app.cloopen.com/im50/ytx-web-im-min-new-5.4.0.js"></script>	 -->
+	<!-- <Script type="text/javascript" src="../../libs/ytx-web-im.5.3.2r17.js"></Script> -->
+	<script type="text/javascript" src="../../libs/ytx-web-im.5.4.0r3.js"></script>
+	<script type="text/javascript" src="../../libs/YunIM.js"></script>
+	<script type="text/javascript" src="../../images/Emotion/Emotion.js"></script>
+	<script type="text/javascript" src="transMessage.js"></script>
+	<script type="text/javascript " src="message.js "></script>
+</body>
+
+</html>

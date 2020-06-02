@@ -1,0 +1,124 @@
+<ul class="data-group mdDervFaulList" style="margin-top: 0px;" >
+	<li class="mui-table-view-cell data-row mui-block" ng-repeat="fault in model">
+		<div class="bodyTxt" ng-click="tap('faultView',fault)">
+			<p class="recordTXT mui-ellipsis-2" style="margin-bottom: 10px;" ng-bind="fault.IsHasAudio | formatFaultInfo:fault.AudioLength:fault.Description"></p>
+			<div class="faultyDiv">
+				<img src="../../images/imgPre.png" ng-style="{'background-image':'url('+ (fault | getProdLogo:40:0) +')'}" class="imgslist" />
+				<div>
+					<p class='faultyP01 mui-ellipsis' ng-bind="fault.ProdName"></p>
+					<p class='faultyP02'><span class="faultySpan01 mui-ellipsis" ng-bind="fault.SkuName"></span><span class="faultySpan01 mui-ellipsis" ng-if="fault.ProdInnerCode">/</span><span class="faultySpan01 mui-ellipsis" ng-bind="fault.ProdInnerCode"></span></p>
+				</div>
+			</div>
+			<p class="recordSign font-12">
+				<span style="max-width: 30vw;" ng-bind="fault.CreateDate"></span>
+				<span class="equFaultType" ng-bind="fault.MatFaultTypeName"></span>
+			</p>
+		</div>
+	</li>
+</ul>
+<style type="text/css">
+			.data-group .data-row {
+				padding: 10px 16px;
+			}
+			
+			.data-group .data-row i {
+				line-height: 114px;
+				margin-right: 10px;
+			}
+			
+			.recordTXT {
+				font-size: 1.5rem;
+				line-height: 17px;
+				color: #000000;
+				margin-bottom: 8px;
+			}
+			
+			.recordSign {
+				margin-bottom: 0px;
+				font-size: 1.2rem;
+				line-height: 14px;
+				color: #AAAAAA;
+				/*CSS3弹性盒子*/
+				display: -ms-flex;
+				display: -webkit-flex;
+				display: flex;
+				-ms-flex-align: center;
+				-webkit-align-items: center;
+				-webkit-box-align: center;
+				align-items: center;
+			}
+			
+			.recordSign>span {
+				display: inline-block;
+				margin-right: 10px;
+			}
+			
+			.recordSign>span:last-child {
+				margin-right: 0;
+			}
+			
+			.equFaultType {
+				max-width: 50.0vw;
+				/*字符串截取*/
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				overflow: hidden;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				text-overflow: ellipsis;
+				-ms-text-overflow: ellipsis;
+			}
+			
+			i~.bodyTxt {
+				margin-left: 28px;
+			}
+			
+			.chekbox {
+				display: inline-block;
+				/*margin-right: 16px;*/
+				font-size: 20px;
+			}
+			
+			.faultyDiv {
+				padding: 10px;
+				margin-bottom: 10px;
+				border: 1px solid #F7F7F7;
+				background-color: #F7F7F7;
+			}
+			
+			.faultyDiv>img {
+				float: left;
+				width: 40px;
+				height: 40px;
+			}
+			
+			.faultyDiv>div {
+				margin-left: 50px;
+			}
+			
+			.faultyDiv .faultyP01 {
+				font-size: 1.5rem;
+				line-height: 17px;
+				color: #AAAAAA;
+				margin-bottom: 8px;
+			}
+			
+			.faultyDiv .faultyP02 {
+				margin-bottom: 0px;
+				line-height: 12px;
+			}
+			
+			.faultyDiv .faultySpan01 {
+				display: inline-block;
+				max-width: 30.0vw;
+				font-size: 1.2rem;
+				line-height: 14px;
+				color: #AAAAAA;
+				margin-right: 7px;
+			}			
+			.imgslist {
+				width: 40px;
+				height: 40px;
+				background-size: cover!important;
+			}
+		</style>

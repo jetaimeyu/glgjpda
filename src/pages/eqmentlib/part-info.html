@@ -1,0 +1,316 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style>
+			.data-group:first-child {
+				margin-top: 0;
+			}
+			/*最右侧图标边距样式*/
+			
+			.icon-chat-single {
+				color: #3296FA;
+			}
+			/*跟换人员列表 .body右边距*/
+			
+			.replacepeople {
+				padding-right: 0px!important;
+			}
+			/*更多按钮*/
+			
+			.menu-more {
+				z-index: 20;
+				padding: 13px;
+				margin-right: -8px;
+			}
+			
+			.vertical-right {
+				height: 22px;
+				width: 1px;
+				background: #EAEAEA;
+				margin-right: 48px;
+				position: absolute;
+				right: 0;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="EquInfoController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">更换配件详情</a>
+			<a class="mui-pull-right menu-more" href="#popover" id="openPopover" ng-class="{'mui-block':isLoad}" style="display: none;" ng-if="'Q10' | hasAuth:CreateUserID:CompID">
+				<span class="icon-more"></span>
+			</a>
+		</header>
+		<div class="mui-scroll-wrapper md-info-page" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<ul class="data-group">
+				<li class="data-row">
+					<label>配件</label>
+					<div class="body">
+						<span ng-bind="ProdName"></span>
+					</div>
+
+				</li>
+				<li class="data-row">
+					<label>型号</label>
+					<div class="body">
+						<span ng-bind="SkuName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>数量</label>
+					<div class="body">
+						<span ng-bind="Nums">
+					</div>
+				</li>
+				<li class="data-row" ng-if="Remark.length>0">
+					<label>备注</label>
+					<div class="body">
+						<span ng-bind="Remark"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<li class="data-row">
+					<label>更换时间</label>
+					<div class="body">
+						<span ng-bind="CreateDate"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>更换人</label>
+					<p class="opt md-icon font-15" ng-if="CreateUserID && CreateUserID!=equUserData.UserID" ng-click="sendMsg()">
+						<span class="icon-chat-single"></span>
+					</p>
+					<p class="vertical-right" ng-if="CreateUserID && CreateUserID!=equUserData.UserID"></p>
+					<div class="body replacepeople">
+						<span ng-bind="CrateUserName"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<li class="data-row mui-table-view-cell">
+					<label>维修工作</label>
+					<p class="opt md-icon font-15" ng-click="tap('repairView')">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="tap('repairView')">
+						<span ng-bind="EqRepair.RepairIsHasAudio | formatDeviceRepairInfo:EqRepair.RepairAudioLength:EqRepair.RepairDescription"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>维修时间</label>
+					<div class="body">
+						<span ng-bind="EqRepair.RepairDate"></span>
+					</div>
+				</li>
+				<li class="data-row mui-table-view-cell">
+					<label>设备故障</label>
+					<p class="opt md-icon font-15" ng-click="tap('faultInfo')">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="tap('faultInfo')">
+						<span ng-bind="Failure.FaultIsHasAudio | formatDeviceFaultInfo:Failure.FaultAudioLength:Failure.FaultDescription"></span>
+					</div>
+				</li>
+				<li class="data-row mui-table-view-cell">
+					<label>设备信息</label>
+					<p class="opt md-icon font-15" ng-click="tap('equdetail')">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="tap('equdetail')">
+						<span ng-bind="Equ.EqIdentifier | formatEquInfo:Equ.EqName:Equ.EqSkuName"></span>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<!--无网络或请求失败重试-->
+		<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+		<div id="popover" class="mui-popover menuDivModel">
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell" ng-click="edit()">
+					<a class="mui-icon icon-edit">
+						<font>修改</font>
+					</a>
+				</li>
+				<li class="mui-table-view-cell" ng-click="delectMain()">
+					<a class="mui-icon icon-dustbin">
+						<font>删除</font>
+					</a>
+				</li>
+			</ul>
+		</div>
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script>
+			app.controller("EquInfoController", ["$scope", "AuthService", "ApiService", "DataService", "CacheService", "UtilsService", "ChatUserService", "Loading", "RPCObserver", function($scope, AuthService, ApiService, DataService, CacheService, UtilsService, ChatUserService, Loading, RPCObserver) {
+				$scope.ProdName = ""; //设备名称
+				$scope.SkuName = ""; //设备型号
+				$scope.Nums = ""; //数量
+				$scope.Remark = ""; //备注
+				$scope.CreateDate = ""; //创建日期
+				$scope.CrateUserName = "";
+				$scope.CreateUserID = "";
+				$scope.ULogoIsExist = "";
+				$scope.CreateUserName = "";
+				$scope.CrateUserCompID = "";
+				$scope.EqRepair = {
+					EqRepairID: "", //维修ID
+					RepairDescription: "", //维修内容
+					RepairDate: "", //创建日期
+					RepairIsHasAudio: "", //维修语音
+					RepairAudioLength: "" //维修语音长度
+				};
+				$scope.Failure = {
+					EqWordOrderFailureID: "", //故障ID
+					FaultDescription: "", //故障描述
+					FaultIsHasAudio: "", //故障语音
+					FaultAudioLength: "" //故障语音长度
+				}
+				$scope.Equ = {
+					EqIdentifier: "",
+					EquipmentID: "", //设备ID
+					EqName: "", //设备名称
+					EqSkuName: "" //设备型号
+				}
+
+				//无网络或请求失败重试
+				$scope.retryModal = {
+					msg: "更换配件详情",
+					retry: getPartInfo,
+					state: ""
+				}
+
+				function getPartInfo() {
+					Loading.show();
+					var url = ApiService.Api50 + "/api/v2/MatWorkOrder/GetEqRepairPartsInfo?repairPartsId=" + query("id");
+					DataService.get(url).then(function(res) {
+						$scope.retryModal.state = "";
+						if(res) {
+							$scope.ProdName = res.ProdName;
+							$scope.SkuName = res.SkuName;
+							$scope.Nums = res.Nums;
+							$scope.Remark = res.Remark;
+							$scope.CreateDate = res.CreateDate;
+							$scope.CrateUserName = res.CreateUserName;
+							$scope.CreateUserID = res.CreateUserID;
+							$scope.ULogoIsExist = res.ULogoIsExist;
+							$scope.CreateUserName = res.CreateUserName;
+							$scope.CrateUserCompID = res.CrateUserCompID;
+							$scope.EqRepair.EqRepairID = res.EqRepairID;
+							$scope.EqRepair.RepairDescription = res.RepairDescription;
+							$scope.EqRepair.RepairDate = res.RepairDate;
+							$scope.EqRepair.RepairIsHasAudio = res.RepairIsHasAudio;
+							$scope.EqRepair.RepairAudioLength = res.RepairAudioLength;
+							$scope.Failure.EqWordOrderFailureID = res.EqWordOrderFailureID;
+							$scope.Failure.FaultDescription = res.FaultDescription;
+							$scope.Failure.FaultIsHasAudio = res.FaultIsHasAudio;
+							$scope.Failure.FaultAudioLength = res.FaultAudioLength;
+							$scope.Equ.EqIdentifier = res.EqIdentifier;
+							$scope.Equ.EquipmentID = res.EquipmentID;
+							$scope.Equ.EqName = res.EqName;
+							$scope.Equ.EqSkuName = res.EqSkuName;
+							$scope.isLoad = true;
+							Loading.hide();
+						}
+					}, function() {
+						$scope.retryModal.state = true;
+					});
+				}
+				//设备人员选择
+				AuthService.getAuth().then(function(res) {
+					$scope.equUserData = res;
+					getPartInfo();
+				});
+				//跳转
+				$scope.tap = function(key) {
+					var url = {
+						faultInfo: 'fault-info.html?id=' + $scope.Failure.EqWordOrderFailureID,
+						equdetail: 'equ-details.html?equid=' + $scope.Equ.EquipmentID,
+						repairView: 'equ-repairView.html?id=' + $scope.EqRepair.EqRepairID
+					};
+					UtilsService.openWindow({
+						needLogin: true,
+						id: url[key],
+						url: url[key]
+					});
+				};
+				//跳转
+				$scope.edit = function(key) {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'part-edit.html',
+						url: '../eqmentlib/part-edit.html?id=' + query("id"),
+						extras: {
+							mainData: {
+								"EqRepairID": $scope.EqRepair.EqRepairID,
+								"EqWordOrderFailureID": $scope.Failure.EqWordOrderFailureID,
+								"EquipmentID": $scope.Equ.EquipmentID,
+								"EqIdentifier": $scope.Equ.EqIdentifier
+							}
+						}
+
+					});
+					mui('#popover').popover('hide');
+				};
+				$scope.delectMain = function() {
+					mui.confirm("确认删除吗？", function(e) {
+						if(e.index == 0) {
+							var url = ApiService.Api50 + "/api/v1/MatWorkOrder/DelMatRepairPartsById?repairPartsId=" + query("id");
+							DataService.get(url).then(function(res) {
+								RPCObserver.broadcast('refresh_equ_parts_list');
+								RPCObserver.broadcast('refresh_equ_fault_repair');
+								//刷新 维修详情
+								RPCObserver.broadcast('refresh_equ_repair_info');
+								RPCObserver.broadcast('refresh_equ_info_pact');
+								RpcClient.invoke("prod-info.html", "Rpc_refWorks");
+								mui('#popover').popover('hide');
+								mui.back();
+							});
+						} else {
+							mui('#popover').popover('hide');
+						}
+					});
+				};
+				//发消息
+				$scope.sendMsg = function() {
+					var data = {
+						chatId: $scope.CreateUserID, //CreateUserID
+						chatName: $scope.CreateUserName, //CreateUserName
+						hasLogo: $scope.ULogoIsExist, //ULogoIsExist
+						chatCompId: $scope.CrateUserCompID //CrateUserCompID
+					};
+					ChatUserService.tap(data);
+					event.stopPropagation();
+					return false;
+				};
+
+				//刷新 rpc注册
+				RPCObserver.on('refresh_equ_part_info', 'partEditRefresh');
+				window.partEditRefresh = function() {
+					getPartInfo();
+					mui('#popover').popover('hide');
+				};
+				//刷新关闭popover
+				RPCObserver.on('close_popover', 'close_popover');
+				window.close_popover = function() {
+					mui('#popover').popover('hide');
+				};
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

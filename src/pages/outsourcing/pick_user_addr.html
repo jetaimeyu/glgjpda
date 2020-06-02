@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../js/mescroll/mescroll.min.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="pick_user_addr.css" />
+	</head>
+
+	<body ms-controller="myCtl">
+		<header class="mui-bar mui-bar-nav ">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">选择收货地址</a>
+		</header>
+		<div class="mui-content">
+			<div class=" addr-header">
+				<span class="mui-pull-left">收货地址</span>
+				<span class="mui-pull-right" id="add-addr">+增加收货地址</span>
+			</div>
+
+		</div>
+		<div class="mui-fullscreen mescroll" id="mescroll">
+			<ul class="data-group">
+				<li class="data-row" ms-for="index,item in address" ms-attr="{'data-idx':index}">
+					<div class="body" ms-attr="{'data-idx':index}">
+						<div class="opt_left">
+								<div class="selected_box" ms-if="(item.IsDefault=='1' && parentData.PostID ==item.ID) || parentData.PostID ==item.ID">
+									<img src="../../images/icon_choosedx2.png" />
+								</div>
+						</div>
+						<div class="body">
+							<div class="user-name">
+								<span class="font-15" ms-text="item.RecvUserName" ms-class="[(item.IsDefault=='1' && parentData.PostID ==item.ID) || parentData.PostID ==item.ID?'':'color-black']"></span>
+								<span class="font-15 user-phone " ms-text="item.LinkPhone" ms-class="[(item.IsDefault=='1' && parentData.PostID ==item.ID) || parentData.PostID ==item.ID?'':'color-black']"></span>
+							</div>
+							<div class="address" ms-text="contractAddress(item.Province,item.City,item.District,item.Address)">
+								 
+							</div>
+						</div>
+						<div class="opt_right edit-addr" >
+							<img src="../../images/icon_editx2.png"/>
+						</div>
+					</div>
+				</li>
+			</ul>
+			
+			<div class="mescroll-empty" id="mescroll-empty"></div>
+		</div>
+
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/avalon.js"></script>
+		<script type="text/javascript" src="../../js/mescroll/mescroll.js"></script>
+		<script type="text/javascript" src="pick_user_addr.js"></script>
+	</body>
+
+</html>

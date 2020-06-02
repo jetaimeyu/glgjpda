@@ -1,0 +1,85 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="chat-record-search.css" />
+	</head>
+
+	<body ng-controller="chatRecordSearchController">
+
+		<div class="search_input">
+			<form ng-submit="event.doSearch()">
+				<a class="mui-action-back mui-icon icon-back mui-pull-left"></a>
+				<input type="search" placeholder="请输入关键字" ng-model="search.text" maxlength="50">
+				<i class="icon-search-thin color-gray-dark"></i>
+				<i class="icon-delete color-gray"  style="display: none;" ng-class="{'mui-block':search.text}" ng-click="event.deleteSearch()"></i>
+				<span ng-click="event.doSearch()" >搜索</span>
+			</form>
+		</div>
+
+		<md-state-tip data-options="{msg:'消息',retry:event.reload}" ng-show="!search.isNetWork"></md-state-tip>
+
+		<div class="mui-scroll-wrapper" id="chat_body">
+			<div class="mui-scroll" >
+				<ul class="mui-table-view mui-table-view-chevron recent-contract-list ng-hide" ng-class="{'lastRow-no-bottom':$index==domData.msgList.length-1}" ng-show="search.msgList.length>0">
+					<li class="mui-table-view-cell mui-media" ng-repeat="item in search.msgList">
+						<div class="item_body"  data-value="{{item.ID}}" id="{{'msg-'+item.ID}}" ng-if="item.SendID==search.UserID">
+							<div class="mui-media-object mui-pull-left user-img">
+								<div class="div-img" ng-style="{'background-image':'url('+ (item.SendID | getUserLogo:50:0) +')'}" ng-if="search.UserLogo">
+								</div>
+								<!--<img ng-src="{{item.OppoID | getUserLogo:50:50}}" ng-if="item.ULogoIsExist">-->
+								<div class="md-userCustomLogo" ng-if="!search.UserLogo" ng-bind="search.UserName | getUserCustomLogo"></div>
+							</div>
+
+							<div class="mui-media-body">
+								<div class="mui-media-ex-username mui-ellipsis" ng-bind="search.UserName"></div>
+								<p class="mui-ellipsis" ng-bind-html="event.transContent(item.Content)"></p>
+							</div>
+							<div class="mui-media-ex-time">
+								<p ng-bind="event.getDate(item.SendTime)"></p>
+							</div>
+						</div>
+
+						<div class="item_body"  data-value="{{item.ID}}"  id="{{'msg-'+item.ID}}" ng-if="item.SendID==search.chatID">
+							<div class="mui-media-object mui-pull-left user-img">
+								<div class="div-img" ng-style="{'background-image':'url('+ (item.SendID | getUserLogo:50:0) +')'}" ng-if="search.chatLogo">
+								</div>
+								<!--<img ng-src="{{item.OppoID | getUserLogo:50:50}}" ng-if="item.ULogoIsExist">-->
+								<div class="md-userCustomLogo" ng-if="!search.chatLogo" ng-bind="search.chatName | getUserCustomLogo"></div>
+							</div>
+
+							<div class="mui-media-body">
+								<div class="mui-media-ex-username mui-ellipsis" ng-bind="search.chatName"></div>
+								<p class="mui-ellipsis" ng-bind-html="event.transContent(item.Content)"></p>
+							</div>
+							<div class="mui-media-ex-time">
+								<p ng-bind="event.getDate(item.SendTime)"></p>
+							</div>
+						</div>
+					</li>
+				</ul>
+
+				<div style="text-align: center; padding: 15px 0px;display:none;" id="content-loadding-bt"><img src="../../images/Emotion/loadding.gif" /></div>
+
+				<div class="no-content ng-hide" ng-show="search.isShowNoContent">
+					没有找到"<span style='color: green' id="no-key"></span>"相关结果
+				</div>
+			</div>
+		</div>
+
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../images/Emotion/Emotion.js" ></script>
+		<script type="text/javascript" src="transMessage.js"></script>
+		<script type="text/javascript" src="chat-record-search.js"></script>
+	</body>
+
+</html>

@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>需求详情</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../js/mescroll/mescroll.min.css" rel="stylesheet" />
+		<link href="../../css/common.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.mdt_demand {
+				padding-top: 9.5px;
+				padding-left: 9.5px;
+				padding-right: 9.5px;
+				background: #fff;
+			}
+			
+			.mdt_demand_details {
+				font-size: 1.4rem;
+				color: #333;
+				word-wrap: break-word;
+				word-break: break-all;
+			}
+			
+			.flex-container {
+				width: 100%;
+				display: -ms-flex;
+				display: -webkit-flex;
+				display: flex;
+				-ms-flex-align: center;
+				-webkit-align-items: center;
+				-webkit-box-align: center;
+				align-items: center;
+				justify-content: space-between;
+			}
+			
+			.mdt_demand_require {
+				background: #fff;
+				overflow: hidden;
+				margin-top: 5px;
+			}
+			
+			.flex-container-req1 {
+				width: 100%;
+				display: -ms-flex;
+				display: -webkit-flex;
+				display: flex;
+				-ms-flex-align: center;
+				-webkit-align-items: center;
+				-webkit-box-align: center;
+				align-items: center;
+				justify-content: space-between;
+				margin-bottom: 5px;
+			}
+			
+			.flex-container-req2 {
+				width: 100%;
+				display: -ms-flex;
+				display: -webkit-flex;
+				display: flex;
+				-ms-flex-align: center;
+				-webkit-align-items: center;
+				-webkit-box-align: center;
+				align-items: center;
+				min-height: 11.5px;
+				margin-top: 5px;
+			}
+			
+			.flex-item {
+				font-size: 12px;
+				color: #666;
+				line-height: 14px;
+			}
+			
+			.mdt_votes {
+				color: #C90000;
+			}
+			
+			.mdt_votes_request {
+				text-align: center;
+				color: #169BD5;
+				font-size: 1.5rem;
+				margin-bottom: 17.5px;
+				margin-top: 8.5px;
+				font-weight: normal;
+			}
+			
+			.mdt_request_photos {
+				margin-top: 7px;
+				overflow: hidden;
+				margin-bottom: 7px;
+				margin-left: 0px;
+				margin-right: 0px;
+			}
+			
+			.mdt_request_photos li {
+				float: left;
+				width: 44.5px;
+				height: 44.5px;
+				border: solid 1px #ccc;
+				margin-right: 5.5px;
+				margin-bottom: 5.5px;
+			}
+			
+			.mdt_request_photos li img {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+			}
+			
+			.mdt_bottom {
+				height: 49px;
+				background: #fff;
+				position: fixed;
+				width: 100%;
+				bottom: 0;
+				display: -ms-flex;
+				display: -webkit-flex;
+				display: flex;
+				-ms-flex-align: center;
+				-webkit-align-items: center;
+				-webkit-box-align: center;
+				align-items: center;
+				font-size: 0.4rem;
+				justify-content: space-between;
+			}
+			
+			.mdt_price_list {
+				height: 8.6px;
+				width: 100%;
+				display: -ms-flex;
+				display: -webkit-flex;
+				display: flex;
+				-ms-flex-align: center;
+				-webkit-align-items: center;
+				-webkit-box-align: center;
+				align-items: center;
+				margin-top: 15px;
+				height: 32px;
+			}
+			
+			.mdt_price1 {
+				color: #666666;
+				font-size: 1.2rem;
+			}
+			
+			.mdt_price2 {
+				font-size: 1.2rem;
+				background: #CDE8FD;
+				height: 32px;
+				color: #169BD5;
+				width: 6.8rem;
+				text-align: center;
+				float: left;
+				line-height: 32px;
+				margin-right: 7.5px;
+			}
+			
+			.mdt_price3 {
+				font-size: 1.2rem;
+				background: #169BD5;
+				height: 32px;
+				color: #fff;
+				width: 68px;
+				text-align: center;
+				float: left;
+				line-height: 32px
+			}
+			
+			.mdt_price_list span {
+				color: #C90000;
+			}
+			
+			.mdt_bottom input {
+				margin-bottom: 0px;
+				padding: 0;
+				color: #DC0000;
+				border: none;
+				font-size: 1.4rem;
+				padding-left: 6px;
+				padding-right: 6px;
+			}
+			
+			.mdt_bottom div:nth-child(1) {
+				width: 155px
+			}
+			
+			.mdt_bottom div:nth-child(1)>div:first-child {
+				float: left;
+				color: #666;
+				margin-left: 10.5px;
+				width: 45px;
+				font-size: 1.5rem;
+				line-height: 49px;
+			}
+			
+			.mdt_bottom div:nth-child(1)>div:last-child {
+				float: left;
+				width: 80px!important;
+				background-color: #FFFFFF;
+				/*flex: 1;*/
+			}
+			
+			.mdt_bottom div:nth-child(1)>div:last-child input {
+				display: inline-block;
+				width: 80px!important;
+				height: 30px!important;
+				background-color: #F3F3F3;
+			}
+			
+			.mdt_bottom div:nth-child(2) {
+				width: 110px;
+				text-align: center;
+				color: #fff;
+				background: #DC0000;
+				height: 100%;
+				line-height: 49px;
+				font-size: 1.5rem;
+			}
+			
+			.mdt_bottom div:nth-child(3) {
+				float: right;
+				width: 110px;
+				text-align: center;
+				color: #fff;
+				background: #A8B4BD;
+				height: 100%;
+				line-height: 49px;
+				font-size: 1.5rem;
+			}
+			
+			.mdt_expland {}
+			
+			.mdt_block {
+				overflow: hidden;
+				line-height: 18px;
+				height: 20px;
+				margin-top: 1.15rem;
+			}
+			
+			.mdt_block_tip {
+				font-size: 1.2rem;
+				color: #666666;
+				background: #F0F0F0;
+				float: left;
+				margin-right: 5px;
+				margin-bottom: 3px;
+				height: 18.5px;
+				padding-left: 7.5px;
+				padding-right: 7.5px;
+				border-radius: 3px;
+			}
+			
+			.mdt_block_tip02 {
+				max-width: 145px;
+				font-size: 1.2rem;
+				color: #666666;
+				background: #F0F0F0;
+				float: left;
+				margin-right: 5px;
+				/*margin-bottom: 3px;*/
+				/*height: 18.5px;*/
+				line-height: 1.2rem;
+				/*padding-left: 7.5px;
+				padding-right: 7.5px;*/
+				padding: 4.5px 7.5px 5.5px 7.5px;
+				border-radius: 3px;
+				/*字符串截取*/
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				overflow: hidden;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				text-overflow: ellipsis;
+				-ms-text-overflow: ellipsis;
+				-o-text-overflow: ellipsis;
+			}
+			
+			.mui-table-view .mui-media-body {
+				font-size: 1.4rem;
+			}
+			
+			.mui-table-view-cell {
+				background-color: #FFFFFF;
+				border-bottom: 1px solid #F0F0F0;
+			}
+			
+			.mui-table-view-cell p {
+				margin-bottom: 0;
+				font-size: 1.2rem;
+				line-height: 16px;
+			}
+			
+			.mui-table-view .mui-media-object {
+				background: none;
+				border: 0px;
+				border-radius: 50%;
+			}
+			
+			.mui-table-view:before,
+			.mui-table-view-cell:after {
+				height: 0px;
+				/*	background-color: #fff;*/
+			}
+			
+			html,
+			body {
+				font-size: 62.5%;
+			}
+			
+			.mdt_demand_companyvotes {
+				margin-top: 8px;
+				overflow: hidden;
+				padding-left: 9px;
+				padding-right: 9px;
+				background: #fff;
+				text-align: center;
+				font-size: 1.5rem;
+				color: #169BD5;
+				padding-top: 8.5px;
+			}
+			
+			.mui-table-view:after {
+				background-color: #fff;
+			}
+			
+			.mdt_compname {
+				font-size: 1.2rem;
+				background: #E8E8E8;
+				float: left;
+				height: 24px;
+				line-height: 24px;
+				padding-left: 15px;
+				padding-right: 15px;
+				border-radius: 2px;
+				display: -webkit-box;
+				-webkit-box-orient: vertical;
+				-webkit-line-clamp: 1;
+				overflow: hidden;
+			}
+			
+			.flex_containerOpt {
+				justify-content: center;
+				width: 100%;
+				display: -ms-flex;
+				display: -webkit-flex;
+				display: flex;
+				-ms-flex-align: center;
+				-webkit-align-items: center;
+				-webkit-box-align: center;
+				align-items: center;
+				padding-bottom: 9px;
+			}
+			
+			.ms-controller {
+				visibility: hidden
+			}
+			
+			.mui-popover a {
+				font-size: 14px;
+			}
+			
+			.mui-popover {
+				color: #333333;
+				min-width: 30vw;
+			}
+			
+			.mui-table-view:before {
+				background-color: #fff;
+			}
+			
+			#expandopen_btn {
+				padding-top: 9px;
+			}
+		</style>
+		<style type="text/css">
+			.mui-preview-image.mui-fullscreen {
+				position: fixed;
+				z-index: 20;
+				background-color: #000;
+			}
+			
+			.mui-preview-header,
+			.mui-preview-footer {
+				position: absolute;
+				width: 100%;
+				left: 0;
+				z-index: 10;
+			}
+			
+			.mui-preview-header {
+				height: 44px;
+				top: 0;
+			}
+			
+			.mui-preview-footer {
+				height: 50px;
+				bottom: 0px;
+			}
+			
+			.mui-preview-header .mui-preview-indicator {
+				display: block;
+				line-height: 25px;
+				color: #fff;
+				text-align: center;
+				margin: 15px auto 4;
+				width: 70px;
+				background-color: rgba(0, 0, 0, 0.4);
+				border-radius: 12px;
+				font-size: 16px;
+			}
+			
+			.mui-preview-image {
+				display: none;
+				-webkit-animation-duration: 0.5s;
+				animation-duration: 0.5s;
+				-webkit-animation-fill-mode: both;
+				animation-fill-mode: both;
+			}
+			
+			.mui-preview-image.mui-preview-in {
+				-webkit-animation-name: fadeIn;
+				animation-name: fadeIn;
+			}
+			
+			.mui-preview-image.mui-preview-out {
+				background: none;
+				-webkit-animation-name: fadeOut;
+				animation-name: fadeOut;
+			}
+			
+			.mui-preview-image.mui-preview-out .mui-preview-header,
+			.mui-preview-image.mui-preview-out .mui-preview-footer {
+				display: none;
+			}
+			
+			.mui-zoom-scroller {
+				position: absolute;
+				display: -webkit-box;
+				display: -webkit-flex;
+				display: flex;
+				-webkit-box-align: center;
+				-webkit-align-items: center;
+				align-items: center;
+				-webkit-box-pack: center;
+				-webkit-justify-content: center;
+				justify-content: center;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				top: 0;
+				width: 100%;
+				height: 100%;
+				margin: 0;
+				-webkit-backface-visibility: hidden;
+			}
+			
+			.mui-zoom {
+				-webkit-transform-style: preserve-3d;
+				transform-style: preserve-3d;
+			}
+			
+			.mui-slider .mui-slider-group .mui-slider-item img {
+				width: auto;
+				height: auto;
+				max-width: 100%;
+				max-height: 100%;
+			}
+			
+			.mui-android-4-1 .mui-slider .mui-slider-group .mui-slider-item img {
+				width: 100%;
+			}
+			
+			.mui-android-4-1 .mui-slider.mui-preview-image .mui-slider-group .mui-slider-item {
+				display: inline-table;
+			}
+			
+			.mui-android-4-1 .mui-slider.mui-preview-image .mui-zoom-scroller img {
+				display: table-cell;
+				vertical-align: middle;
+			}
+			
+			.mui-preview-loading {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				top: 0;
+				left: 0;
+				display: none;
+			}
+			
+			.mui-preview-loading.mui-active {
+				display: block;
+			}
+			
+			.mui-preview-loading .mui-spinner-white {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				margin-left: -25px;
+				margin-top: -25px;
+				height: 50px;
+				width: 50px;
+			}
+			
+			.mui-preview-image img.mui-transitioning {
+				-webkit-transition: -webkit-transform 0.5s ease, opacity 0.5s ease;
+				transition: transform 0.5s ease, opacity 0.5s ease;
+			}
+			
+			@-webkit-keyframes fadeIn {
+				0% {
+					opacity: 0;
+				}
+				100% {
+					opacity: 1;
+				}
+			}
+			
+			@keyframes fadeIn {
+				0% {
+					opacity: 0;
+				}
+				100% {
+					opacity: 1;
+				}
+			}
+			
+			@-webkit-keyframes fadeOut {
+				0% {
+					opacity: 1;
+				}
+				100% {
+					opacity: 0;
+				}
+			}
+			
+			@keyframes fadeOut {
+				0% {
+					opacity: 1;
+				}
+				100% {
+					opacity: 0;
+				}
+			}
+			
+			p img {
+				max-width: 100%;
+				height: auto;
+			}
+			
+			.mui-table-view .zhongbiaotupian {
+				width: 80px;
+				height: 50px;
+				position: absolute;
+				top: 20px;
+				right: 50px;
+				z-index: 2;
+			}
+			
+			.zhongbiao {
+				width: 80px;
+				height: 50px;
+				position: absolute;
+				top: 55px;
+				right: 50px;
+				z-index: 3;
+			}
+			
+			.flex-container-req2 .flex-item:nth-child(1) {
+				width: 190px;
+			}
+			/*scz*/
+			
+			.mui-table-view {
+				background-color: transparent;
+			}
+			
+			.process_list_li {
+				background-color: #FFFFFF;
+			}
+			
+			.process_list {
+				width: 100%!important;
+			}
+			
+			.process_list>div:first-child {
+				width: 100%;
+				height: 35px;
+				display: -ms-flex;
+				display: -webkit-flex;
+				display: flex;
+				-ms-flex-align: center;
+				-webkit-align-items: center;
+				-webkit-box-align: center;
+				align-items: center;
+				position: relative;
+				border-bottom: 1px solid #E5E5E5;
+			}
+			
+			.process_list>div:last-child {
+				width: 100%;
+				/*height: 112px;*/
+				position: relative;
+			}
+			
+			.process_list>div:first-child>img {
+				float: left;
+				width: 19px;
+				height: 19px;
+				margin: 8px 8.5px 8px 10px;
+			}
+			
+			.process_list>div:first-child>span:nth-child(2) {
+				display: inline-block;
+				max-width: 145px;
+				font-size: 1.5rem;
+				float: left;
+				color: #333333;
+				/*字符串截取*/
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				overflow: hidden;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				text-overflow: ellipsis;
+				-ms-text-overflow: ellipsis;
+				-o-text-overflow: ellipsis;
+			}
+			
+			.process_list>div:first-child>span:nth-child(3) {
+				display: inline-block;
+				min-width: 72px;
+				font-size: 1.2rem;
+				position: absolute;
+				right: 10.5px;
+				line-height: 35px;
+				color: #666666;
+			}
+			
+			.process_list>div:last-child>p:first-child {
+				/*width: 325px;*/
+				/*margin: 15.5px 13px 10px 37.5px;*/
+				margin-bottom: 10px;
+				font-size: 1.3rem;
+				color: #666666;
+			}
+			
+			.process_list>div:last-child>span:nth-child(2) {
+				display: inline-block;
+				margin-left: 37px;
+				margin-right: 5px;
+				margin-bottom: 9.5px;
+			}
+			
+			.process_list>div:last-child>span:nth-child(3) {
+				/*margin-bottom: 9.5px;*/
+			}
+			
+			.process_list>div:last-child>span:nth-child(4) {
+				display: inline-block;
+				width: 100%;
+				/*height: 10px;*/
+				/*	margin-bottom: 15.5px;*/
+				padding-left: 38px;
+				font-size: 1.2rem;
+				line-height: 1.2rem;
+				/*float: left;*/
+				color: #999999;
+			}
+			
+			.mui-scroll {
+				margin-top: 8.5px;
+			}
+			
+			.mui-schedule {
+				position: absolute;
+				top: 84px;
+				;
+				left: 0px;
+				bottom: 0px;
+				right: 0px;
+			}
+			
+			.mescroll {
+				height: auto;
+			}
+		</style>
+	</head>
+
+	<body ms-controller="appCtl" class="ms-controller">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">需求详情</a>
+		</header>
+		<div class="mui-content">
+			<nav class="md-tab">
+				<a index="0" class="md-tab-item md-active">
+					<span class="mui-tab-label">需求详情</span>
+				</a>
+				<a index="1" class="md-tab-item">
+					<span class="mui-tab-label">加工进度</span>
+				</a>
+				<a index="2" class="md-tab-item" ms-visible="ifCreateCompany==1">
+					<span class="mui-tab-label">已投标企业</span>
+				</a>
+			</nav>
+		</div>
+		<!--需求详情-->
+		<div class="mdt_demand" ms-visible="selectIndex==0">
+			<img class="zhongbiao" style="top: 85px;" src="../../images/myoffer/zhongbiao.png" ms-visible="@Demand.State==2 && userComp!=Demand.CompID" />
+			<div class="mdt_demand_details">{{@Demand.DemandName}}</div>
+			<div class="mdt_demand_require">
+				<div class="flex-container-req1">
+					<a class="flex-item">
+						数量：{{@Demand.Amount}}件
+					</a>
+					<a class="flex-item">
+						预算：<span class="mdt_votes">{{@Demand.Budget}}</span>
+					</a>
+				</div>
+				<div class="flex-container-req1">
+					<a class="flex-item">
+						投标截止日期：{{@Demand.BidEndDate}}
+					</a>
+					<a class="flex-item">
+						期望交货日期：{{@Demand.PreDeliveryDate}}
+					</a>
+				</div>
+			</div>
+			<div class="bottom_line"></div>
+			<div class="mdt_demand_require" style="margin-top: 0px;">
+				<div class="flex-container-req2">
+					<a class="flex-item">
+						接单类型：<span ms-if="Demand.DemandType == 1">包工包料</span><span ms-if="Demand.DemandType != 1">来料加工</span>
+					</a>
+					<a class="flex-item">
+						料品主要材质：{{Demand.MaterialName|emptydisplay}}
+					</a>
+				</div>
+				<div class="flex-container-req2">
+					<a class="flex-item">
+						是否包含质保金：<span ms-if="Demand.IsHasWarranty == 0">不</span>包含质保金
+					</a>
+					<a class="flex-item">
+						是否含税：<span ms-if="Demand.IsHasTax == 0">不</span>含税
+					</a>
+				</div>
+				<div class="flex-container-req2">
+					<a class="flex-item">
+						是否包含违约金：<span ms-if="Demand.IsHasPenalty==0">不</span>包含违约金
+					</a>
+					<a class="flex-item">
+						是否包含运费：<span ms-if="Demand.IsHasTransferFee==0">不</span>含运费
+					</a>
+				</div>
+				<ul class="mdt_request_photos mui-content-padded">
+					<li ms-for="item in Demand.AttachmentList" ms-visible="item.Ext=='pdf'">
+						<img class="showpdf" src="../../images/addvideo.png" ms-attr="{'data-id':item.ID}" />
+					</li>
+					<li ms-for="item in Demand.AttachmentList" ms-visible="item.Ext!='pdf'">
+						<img ms-attr="{'src':getDemandLogo(item, '100x0'), 'data-preview-src':getDemandLogo(item, '0x0'), 'data-preview-group':'1'}" />
+					</li>
+
+				</ul>
+			</div>
+			<div class="bottom_line"></div>
+			<div class="mdt_demand_require" style="margin-top: 0px;">
+				<div class="flex-container-req2" style="margin-top: 9px;padding-bottom: 9px;">
+					<a class="flex-item" style="width: auto;">
+						收货地址：{{@Demand.fullAddr|emptydisplay}}
+					</a>
+				</div>
+				<div class="mdt_expland" ms-visible="ifExpand==1 && userComp == Demand.CompID">
+					<div class="flex_containerOpt" id="expandclose_btn">
+						<a class="flex-item" style="color: #169BD5;margin-right: 1.5rem;">
+							收起
+						</a>
+						<a class="flex-item">
+							<span class="icon-up" style="color: #169BD5;font-size: 1.4rem;"></span>
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--加工进度-->
+		<div class="mui-schedule mescroll" id="mescroll" ms-visible="selectIndex==1">
+			<ul class="mui-table-view">
+				<li class="schedule-cell process_list_li" ms-for="work in workShops" ms-attr="{'data-wid': @work.WorkShopID}">
+					<!--加工进度列表-->
+					<div class="process_list">
+						<div>
+							<img src="../../images/myoffer/icon_home.png" />
+							<span>{{@work.WorkShopName}}</span>
+							<span>共完成：{{@work.FinishQuantity}}</span>
+						</div>
+						<div style="padding:15px;">
+
+							<p style="word-wrap: break-word; word-break:break-all;" ms-visible="work.ProcessProgress" style="display:none;">{{@work.ProcessProgress}}</p>
+							<div ms-visible="work.IsHasAudio=='1' && work.AudioLength>0" style="display:none;margin-bottom: 10px;">
+								<div class="voice" ms-attr="{'data-id':work.ID}"><img src="../../images/voice.png"><span ms-text="work.AudioLength+'″'"></span></div>
+							</div>
+							<div style="width: 100%; margin-bottom: 3px;height: 22px;">
+								<span class="mdt_block_tip02">{{@work.JobName}}</span>
+								<span class="mdt_block_tip02">本次完成：{{@work.FinishQuantity}}</span>
+							</div>
+							<div style="font-size:1.2rem;line-height: 0px; margin-top: 15px;;">{{@work.CreateDate}}</div>
+						</div>
+					</div>
+				</li>
+			</ul>
+			<div class="mescroll-empty" id="mescroll-empty">
+
+			</div>
+			<!--<div class="empty-schedule" style="text-align: center;" ms-visible="workShops.length == 0">
+				<img src="../../images/myoffer/icon_data.png" width="128" height="154" style="margin: 69px auto 21px auto;">
+				<p>暂无加工进度</p>
+			</div>-->
+		</div>
+		<!--已投标企业-->
+		<ul class="mui-table-view" ms-visible="selectIndex==2">
+			<li class="mui-table-view-cell mui-media" ms-for="(index,item) in offerComp">
+				<img class="zhongbiaotupian" ms-visible="item.State==2" src="../../images/myoffer/zhongbiao.png" />
+				<a href="javascript:;" class="companyInfo" ms-attr="{'data-cid':item.JoinCompID, 'data-index': index}">
+					<img class="mui-media-object mui-pull-left" ms-attr="{src:picUrl+'/Y29tcC9sb2dv_' + item.JoinCompID + '_100x100.png'}" style="border: solid 1px #ccc;">
+					<div class="mui-media-body">
+						{{item.JoinCompName}}
+						<p>主营：{{item.MainProduct}}</p>
+					</div>
+					<div class="mdt_block" ms-visible="item.Tags.length>0">
+						<div class="mdt_block_tip" ms-for="tag in item.Tags">
+							{{tag.CName}}({{tag.Count}}台)
+						</div>
+					</div>
+				</a>
+				<div style="clear: both;"></div>
+				<div class="mdt_price_list" style="justify-content:space-between;">
+					<div class="mdt_price1">
+						报价：<span ms-text="getPrice(item.QuoteMoney)"></span>
+					</div>
+					<div>
+						<div class="mdt_price2 contactBtn" ms-attr="{'data-cid':item.JoinCompID}">
+							联系厂家
+						</div>
+						<div ms-visible="Demand.State == 1" class="mdt_price3 chooseBtn" ms-attr="{'data-jid':item.ID,'data-state':item.State}">
+							选为中标
+						</div>
+					</div>
+				</div>
+			</li>
+		</ul>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/mui.zoom.js"></script>
+		<script type="text/javascript" src="../../js/mui.previewimage.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/avalon.js"></script>
+		<script type="text/javascript" src="../../js/mescroll/mescroll.js"></script>
+		<script type="text/javascript" src="details.js"></script>
+	</body>
+
+</html>

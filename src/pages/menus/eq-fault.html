@@ -1,0 +1,143 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link rel="stylesheet" href="../../css/mui.min.css" type="text/css" charset="utf-8" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	<style type="text/css">
+		html {
+			width: 100%;
+			height: 100%;
+		}
+
+		body {
+			height: 100%;
+			background-color: transparent;
+		}
+	</style>
+</head>
+
+<body ng-controller="MenuController">
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script src="../../js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript">
+		app.controller("MenuController", ["$scope", "$Modal", "RPCObserver", "UtilsService", "ChooseService", function (
+			$scope, $Modal, RPCObserver, UtilsService, ChooseService) {
+
+			ChooseService.equFault(function (type, data) {
+				UtilsService.clearWindow();
+				if (type == 1) {
+					var _data = data;
+					//console.log(JSON.stringify(_data));
+					setTimeout(function () {
+						_data.EqID = _data.ID;
+						_data.EqSkuName = _data.SkuName;
+						_data.CompID = _data.SourceCompID;
+						_data.MDCode = _data.SourceMDCode;
+						_data.Maplat = _data.MapLat;
+						_data.Maplng = _data.MapLng;
+						_data.SkuID = _data.ProdSkuID;
+						
+						openFault(1, _data);
+					}, 500);
+				} else if (type == 2) {
+					//console.log(data);
+					data = JSON.parse(data);
+					setTimeout(function () {
+						var _data = {};
+						if (data.resType == 1) //产品
+						{
+							// data.resInfo.SkuName = decodeURIComponent(data.resInfo.SkuName).replace(/@squotes@/g, "'").replace(/@dquotes@/g, "\"");
+							// data.resInfo.ProdName = decodeURIComponent(data.resInfo.ProdName).replace(/@squotes@/g, "'").replace(/@dquotes@/g, "\"");
+
+							// _data = data.resInfo;
+							// _data.EqID = 0;
+							// _data.MDCode = data.codeValue;
+
+							plus.nativeUI.toast("请扫描设备码!");
+
+						} else if (data.resType == 2) { //设备
+							_data.EqID = data.resInfo.ID;
+							_data.EqName = data.resInfo.EqName;
+							_data.EqIdentifier = data.resInfo.EqIdentifier;
+							_data.EqSkuName = data.resInfo.SkuName;
+							_data.SourceMDCode = data.resInfo.SourceMDCode || "";
+							_data.Maplat = data.resInfo.MapLat; //纬度
+							_data.Maplng = data.resInfo.MapLng; //经度
+							_data.Address = data.resInfo.Address; //详细地址
+							_data.Province = data.resInfo.Province; //省
+							_data.City = data.resInfo.City; //市
+							_data.District = data.resInfo.District; //区
+							_data.Street = data.resInfo.Street; //街道
+							var _compId = "";
+							_data.EqJane = data.resInfo.EqJane;
+							data.resInfo.ProdInfo && (_compId = data.resInfo.ProdInfo.CompID);
+							_data.CompID = _compId;
+
+							_data.MDCode = data.codeValue;
+
+							if (data.resInfo.ProdInfo) {
+								_data.ProdID = data.resInfo.ProdInfo.ProdID;
+								_data.ProdName = data.resInfo.ProdInfo.ProdName;
+								_data.SkuID = data.resInfo.ProdInfo.SkuID;
+								_data.SkuName = data.resInfo.ProdInfo.SkuName;
+								_data.CompName = data.resInfo.ProdInfo.CompName;
+								_data.IsNew = data.resInfo.ProdInfo.IsNew;
+								_data.ProdInnerCode = data.resInfo.ProdInfo.ProdInnerCode;
+							}
+							openFault(2, _data);
+						}
+					}, 500);
+				}
+			}, false);
+
+			function openFault(type, data) {
+				var url = "../aftersale/mat-fault-submit.html";
+				var id = "mat-fault-submit.html";
+
+				var extras = {
+					prodInfo: data
+				};
+
+				// if (type == 1 || (type == 2 && !data.SourceMDCode)) {
+				// 	url = "fault-edit.html";
+				// 	id = "fault-edit.html";
+
+				// 	extras = {
+				// 		addEquRecord: data
+				// 	};
+				// }
+
+				UtilsService.openWindow({
+					needLogin: true,
+					id: id,
+					url: url,
+					extras: extras
+				});
+			};
+
+			var ws = plus.webview.currentWebview();
+			ws.setStyle({
+				mask: "none"
+			});
+			window.addEventListener("tap", function () {
+				ws.hide();
+			});
+			var mui_back = mui.back;
+			mui.back = function () {
+				ws.hide();
+			}
+		}]);
+
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+		});
+	</script>
+
+</html>

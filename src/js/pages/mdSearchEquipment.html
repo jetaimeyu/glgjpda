@@ -1,0 +1,73 @@
+<ul class="data-group data-title" ng-if="model.length>0">
+	<li class="data-row mui-table-view-cell" ng-repeat="item in model" ng-click="equDetails(item.ID)">
+		<p class="opt md-icon font-15">
+			<span class="icon-right"></span>
+		</p>
+		<div class="body">
+			<img src="../../images/imgPre.png" ng-style="{'background-image':'url('+ (item.AttachFilePath | getEquLogo:48:0) +')'}" class="imgslist mui-media-object mui-pull-left md-userCustomLogo" />
+			<div class="names mui-ellipsis" ng-bind="item.EqName"></div>
+			<div class="model mui-ellipsis" ng-bind="'型号 ' + ': ' + item.SkuName"></div>
+			<div class="numbers mui-ellipsis" ng-bind="'编号 ' + ': ' + item.EqIdentifier" style="line-height: 14px"></div>
+		</div>
+	</li>
+</ul>
+<style type="text/css">
+	.model,
+	.numbers {
+		font-size: 1.3rem;
+		color: #999999;
+		position: relative;
+		left: 15px;
+	}
+	
+	.names {
+		font-size: 1.6rem;
+		color: #323232;
+		position: relative;
+		left: 15px;
+	}
+	
+	.data-group .data-row:after {
+		right: 0px;
+	}
+	
+	
+	.data-group .data-row .body {
+		padding: 9px 10px 10px 16px;
+	}
+	
+	.search-title {
+		color: #888888!important;
+		font-size: 1.4rem!important;
+		left: 15px!important;
+	}
+	
+	label.prodnames {
+		left: 80px!important;
+		color: #323232!important;
+	}
+	
+	.imgslist {
+		float: left!important;
+		height: 48px!important;
+		width: 48px!important;
+		background-size: cover!important;
+	}
+	
+	.mui-ellipsis {
+		white-space: nowrap!important;
+	}
+	
+	.equ-title {
+		color: #323232;
+	}
+	
+	.equ-sub {
+		line-height: 16px;
+		color: #999999;
+	}
+	
+	p {
+		margin-bottom: 0px;
+	}
+</style>

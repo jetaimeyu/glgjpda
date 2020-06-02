@@ -1,0 +1,150 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link href="../../css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	<link rel="stylesheet" href="../../css/mui.loading.css" />
+	<style>
+
+		.industy-body
+	{
+		margin-top:10px;
+	}
+	.data-group {
+		margin-top: -5px;
+	}
+	
+	.data-group .data-row {
+		padding: 0 5px;
+		height: 40px;
+		line-height: 40px;
+	}
+	
+	.data-group .data-row .icon-right {
+		position: absolute;
+		right: 0px;
+		padding: 7px 10px;
+		top: 50%;
+		transform: translateY(-50%);
+		font-size: 1.5rem;
+	}
+	
+	.data-group .data-row .name {
+		margin-left: 35px;
+		font-size: 1.5rem;
+		max-width: calc(80vw - 20px);
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		display: block;
+	}
+	
+	.data-group .data-row i {
+		position: absolute;
+		left: 10px;
+		padding: 5px;
+		top: 50%;
+		transform: translateY(-50%);
+		font-size: 1.8rem;
+	}
+	
+	.data-group .data-row .opt,
+	.data-group .data-row .body.arrow:after {
+		padding: 10px 16px 11px 10px;
+		color: #AEAEAE!important;
+	}
+	</style>
+</head>
+
+<body ng-controller="bodyCtl">
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left">选择行业</a>
+		<a class="right-menu-words" ng-click="event.save()">保存</a>
+	</header>
+	<div class="mui-content" style="display: none;" ng-class="{'mui-block':isLoad}">
+		<div ng-repeat="item in dataList" class="industy-body">
+			<p class="data-group-tip" ng-bind="item.CName"></p>
+			<ul class="data-group">
+				<li class=" mui-table-view-cell data-row" ng-repeat="itemc in item.Childs" ng-click="event.choose(itemc)">
+					<span class="name">{{itemc.CName}}</span>
+					<i class="icon-roundcheckfill color-blue" ng-if="activeList.indexOf(itemc.CPath)>=0"></i>
+					<i class="icon-round color-gray" ng-if="activeList.indexOf(itemc.CPath)<0"></i>
+				</li>
+			</ul>
+		</div>
+	</div>
+
+	<script type="text/javascript" src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/rpc.js"></script>
+	<script type="text/javascript" src="../../js/mui.loading.js"></script>
+	<script>
+		app.controller("bodyCtl", ["$scope", "ApiService", "DataService", "UtilsService", "CacheService",
+			function ($scope, ApiService, DataService, UtilsService, CacheService) {
+
+				var curView = plus.webview.currentWebview();
+				$scope.dataList = [];
+				$scope.isLoad = false;
+
+				$scope.activeList = curView.IndList || [];
+				$scope.activeData = curView.IndData || [];
+
+				$scope.event = {
+					choose: function (item) {
+						var idx = $scope.activeList.indexOf(item.CPath);
+						if (idx >= 0) {
+							$scope.activeList.splice(idx, 1);
+							$scope.activeData.splice(idx, 1);
+						} else {
+							$scope.activeList.push(item.CPath);
+							$scope.activeData.push(item);
+						}
+					},
+					save: function () {
+						curView.opener().evalJS(curView.callback + "(" + JSON.stringify({
+							IndList: $scope.activeList,
+							IndData: $scope.activeData
+						}) + ")");
+
+						mui.back();
+					}
+				};
+
+
+
+				var curData = {
+					getIndustry: function () {
+						var url = ApiService.Api31 + "/basic/subclasses/?cpath=6383&cid=6383";
+
+						DataService.get(url).then(function (res) {
+							mui.hideLoading();
+							$scope.isLoad = true;
+
+							$scope.dataList = res;
+							console.info(res);
+						}, function (res) {
+							mui.hideLoading();
+						})
+					}
+				}
+
+				curData.getIndustry();
+			}
+		]);
+
+		mui.showLoading("", "div");
+
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+		});
+	</script>
+</body>
+
+</html>

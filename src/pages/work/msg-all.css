@@ -1,0 +1,274 @@
+body,
+.mui-content {
+	background-color: #FFFFFF;
+}
+
+.data-group .data-row .body {
+	padding: 10px 8px;
+}
+
+.data-group .data-row .body>span {
+	line-height: 19px;
+}
+
+.data-group .data-row .opt,
+.data-group .data-row .body.arrow:after {
+	padding: 10px 16px 11px 10px;
+	color: #AEAEAE!important;
+}
+
+.mediaDiv {
+	padding: 10px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	border: 1px solid #F7F7F7;
+	background-color: #F7F7F7;
+}
+
+.mediaDiv>img {
+	float: left;
+	width: 40px;
+	height: 40px;
+}
+
+.mediaDiv>div {
+	margin-left: 50px;
+}
+
+.mediaDiv .descP {
+	height: 1.7rem;
+	font-size: 1.2rem;
+	line-height: 1.7rem;
+	color: #AAAAAA;
+}
+
+.mediaDiv .descP-1 {
+	height: 1.7rem;
+	font-size: 1.2rem;
+	line-height: 1.7rem;
+	color: #AAAAAA;
+	margin-bottom: 9px;
+}
+
+.mediaDiv .descP-2 {
+	margin-bottom: 0px;
+	line-height: 1.2rem;
+	max-width: 90%;
+}
+
+.mediaDiv .faultySpan01 {
+	display: inline-block;
+	max-width: 45.0%;
+	font-size: 1.2rem;
+	line-height: 1.8rem;
+	color: #AAAAAA;
+	margin-right: 4px;
+}
+
+.imgslist {
+	width: 40px;
+	height: 40px;
+	background-size: cover!important;
+}
+
+.equ-imgslist {
+	float: left;
+	width: 55px;
+	height: 55px;
+	margin-right: 10px;
+	background-size: cover!important;
+}
+
+.equFaultType {
+	max-width: 50.0vw;
+	/*字符串截取*/
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	text-overflow: ellipsis;
+	-ms-text-overflow: ellipsis;
+	color: #AAAAAA;
+}
+
+.mui-table-view .mui-media-object {
+	border: none;
+}
+
+.mui-table-view:before,
+.mui-table-view:after {
+	content: none;
+}
+
+.mui-table-view .mui-table-view-cell {
+	padding: 8px 16px;
+	height: 71px;
+}
+
+.mui-table-view .mui-table-view-cell .mui-media-object {
+	line-height: 71px;
+	background-color: #FFFFFF;
+	width: 55px;
+	height: 55px;
+	max-width: 55px;
+	background-size: 50px;
+}
+
+.mui-ellipsis {
+	white-space: nowrap!important;
+}
+
+.equ-title {
+	/*line-height: 48px;*/
+	font-size: 1.5rem;
+	color: #000000;
+}
+
+.equ-sub {
+	line-height: 16px;
+	font-size: 1.2rem;
+	color: #AAAAAA;
+	font-family: MicrosoftYaHei;
+}
+
+
+/*worklog*/
+
+.names {
+	padding-right: 18px;
+	font-size: 1.5rem;
+	color: #000;
+	position: relative;
+	left: 8px;
+}
+
+.CreateDate {
+	font-size: 1.2rem;
+	color: #AAAAAA;
+	position: relative;
+	left: 8px;
+	top: 5px;
+}
+
+.work-content {
+	color: #000;
+	width: 100%;
+	padding-top: 8px;
+}
+
+.worklocation {
+	margin-left: 0!important;
+	margin-top: 10px;
+	color: #AAAAAA!important;
+	font-size: 1.2rem;
+}
+
+.avatar {
+	height: 43px;
+	width: 43px;
+	border-radius: 50%;
+}
+
+div.md-userCustomLogo {
+	width: 40px!important;
+	height: 40px!important;
+	line-height: 40px!important;
+	background-size: cover;
+	margin-left: 0;
+}
+
+.margin-right-60 {
+	margin-right: 60px;
+}
+
+.color-creat-info {
+	color: #AAAAAA;
+}
+
+.empty-list {
+	margin-top: 30vh!important;
+}
+
+.round {
+	position: absolute;
+	width: 7px;
+	height: 7px!important;
+	border-radius: 50%;
+	top: 15px;
+	background-color: #3396FB;
+}
+
+.margin-left-15 {
+	margin-left: 15px!important;
+}
+
+.data-group .readtype:after {
+	height: 0!important;
+}
+
+.md-tab-div {
+	position: relative;
+	height: 34px;
+}
+
+.md-tab-div .data-group {
+	margin-top: 0;
+	position: fixed;
+	top: 0;
+	z-index: 3;
+	width: 100%;
+}
+
+.md-tab-group {
+	width: 100%;
+	text-align: center;
+}
+
+.md-tab-group .md-tab-button {
+	display: inline-block;
+	font-size: 1rem;
+	color: #666666;
+	padding: 0 5px;
+}
+
+.md-tab-group .md-active {
+	color: #3396FB;
+	border-bottom: 1px solid #3396FB;
+	border-width: 1px;
+}
+
+#pullrefresh {
+	position: absolute;
+	top: 44px;
+	bottom: 0px;
+	right: 0px;
+	left: 0px;
+}
+
+.mescroll {
+	width: auto!important;
+	height: auto!important;
+}
+
+.data-group .check-data-li {
+	display: flex;
+	padding: 16px;
+	align-items: center;
+}
+
+.data-group .check-data-li .check-data-li-left {
+	width: 80%;
+	display: flex;
+	flex-direction: column;
+}
+
+.equ-name {
+	font-size: 15px;
+	color: #000;
+	margin-bottom: 5px;
+}
+
+.equ-params {
+	color: #666;
+}

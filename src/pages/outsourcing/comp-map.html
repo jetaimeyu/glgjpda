@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../js/swiper/swiper.min.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="comp-map.css" />
+	</head>
+
+	<body ms-controller="myCtl">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left"></a>
+			<div class="search-box">
+				<div class="search-body">
+					<input type="text" placeholder="搜索您周边的外协企业" readonly="true" ms-duplex="search.key || search.class.name || ''" ms-css="{'padding-right':search.key?'20px':'0px'}" />
+					<span class="mui-icon mui-icon-search"></span>
+					<i class="md-icon icon-close-3 clear-input" ms-visible="search.key || search.class.name" style="display:none;"></i>
+				</div>
+			</div>
+			<div class="nav_location font-15  mui-ellipsis" id="address_text" ms-text="curPosition.city"></div>
+		</header>
+		<div class="mui-fullscreen">
+			<div class="search-class" style="display:none">
+				<span ms-for="item in search.class" ms-text="item.name+'、'"></span>
+			</div>
+			<div class="gdmap" id="gdMap">
+
+			</div>
+			<div class="custom-tools">
+				<div class="tools-item demand">
+					<!--<div class="tools-item-body demand-edit" data-url="demand-edit.html" nl="1">
+						<img src="../../images/industry/p_demand.jpg" />
+					</div>-->
+					<div style="border-top:1px solid #ccc;"></div>
+					<div class="tools-item-body demand-list" data-url="demand-list.html" nl="1">
+						<img src="../../images/industry/m_demand.jpg" />
+					</div>
+				</div>
+			</div>
+			<div class="location_self">
+				<i class="icon-my-position color-blue"></i>
+			</div>
+			<div class="map_comp_list" style="visibility:hidden">
+				<div class="swiper-container">
+					<div class="swiper-wrapper" id="map_comp_list">
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/avalon.js"></script>
+		<script type="text/javascript" src='https://webapi.amap.com/maps?v=1.3&key=5d51864c1f16c48cce589e59497653f2'></script>
+		<script type="text/javascript" src="https://webapi.amap.com/ui/1.0/main.js?v=1.0.10"></script>
+		<script type="text/javascript" src="../../js/swiper/swiper.min.js"></script>
+		<script type="text/javascript" src="comp-map2.js"></script>
+	</body>
+
+</html>

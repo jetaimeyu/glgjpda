@@ -1,0 +1,113 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.icon {
+				width: 16px;
+			}
+				.mui-bar-nav~.mui-content .mui-pull-top-pocket {
+				top: 44px!important;
+			}
+			
+			.mui-bar-nav~.has-tab .mui-pull-top-pocket {
+				top: 84px!important;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="inspListController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">客户服务</a>
+			<a class="mui-pull-right menu-add" id="add" ng-click="add()" ng-if="'Q55' | hasAuth" style="display: none;" ng-class="{'mui-block':showadd}">
+				<img class="icon" src="../../images/add.png" />
+			</a>
+			<a class="mui-pull-right menu-search" ng-click="tap()">
+				<img class="icon" src="../../images/search.png" />
+			</a>
+		</header>
+		<!--<md-tab ng-model="tabs"></md-tab>-->
+		<div class="mui-content" ng-class="{'has-tab':isLoad}">
+			<ul class="md-tab" top="84"  ng-if="!(['Q54','Q56']|hasAuth)" style="display: none;" ng-class="{'mui-block':isLoad}">
+				<li class="md-tab-item md-active" href="customer-all.html?authType=1" winid="customer-all.html-1">我提交的</li>
+				<li class="md-tab-item" href="customer-all.html?authType=5" winid="customer-all.html-5">发给我的</li>
+				<li class="md-tab-item" href="customer-all.html?authType=2" winid="customer-all.html-2" ng-if="['Q52','Q53','Q54','Q56'] | hasAuth">本部门的</li>
+				<li class="md-tab-item" href="customer-all.html?authType=3" winid="customer-all.html-3" ng-if="['Q53','Q54','Q56'] | hasAuth">下级部门</li>
+			</ul>
+			<div id="slider" class="mui-slider mui-fullscreen" ng-if="(['Q54','Q56']|hasAuth)">
+				<div id="sliderSegmentedControl" class="mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted " style="background: #fff;display: none;" ng-class="{'mui-block':isLoad}">
+					<div class="mui-scroll md-tab " top="84">
+						<a class="md-tab-item md-active" href="customer-all.html?authType=1" winid="customer-all.html-1">我提交的</a>
+						<a class="md-tab-item" href="customer-all.html?authType=5" winid="customer-all.html-5">发给我的</a>
+						<a class="md-tab-item" href="customer-all.html?authType=2" winid="customer-all.html-2" ng-if="['Q52','Q53','Q54','Q56'] | hasAuth">本部门的</a>
+						<a class="md-tab-item" href="customer-all.html?authType=3" winid="customer-all.html-3" ng-if="['Q53','Q54','Q56'] | hasAuth">下级部门</a>
+						<a class="md-tab-item all-item" href="customer-all.html?authType=4" winid="customer-all.html-4" ng-if="['Q54','Q56'] | hasAuth">所有客户</a>
+					</div>
+				</div>
+				<div class="md-tab-block-line">
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript">
+			app.controller("inspListController", ["$scope", "UtilsService","$filter", function($scope, UtilsService,$filter) {
+				$scope.showadd = true
+				//				$scope.tabs = [{
+				//					url: "customer-all.html?authType=1",
+				//					id: "customer-all.html-1",
+				//					title: "我提交的"
+				//				}, {
+				//					url: "customer-all.html?authType=5",
+				//					id: "customer-all.html-5",
+				//					title: "发给我的"
+				//				},{
+				//					url: "customer-all.html?authType=2",
+				//					id: "customer-all.html-2",
+				//					title: "本部门的",
+				//					auth: ['Q52','Q53','Q54','Q56']
+				//				}, {
+				//					url: "customer-all.html?authType=3",
+				//					id: "customer-all.html-3",
+				//					title: "下级部门",
+				//					auth: ['Q53','Q54','Q56']
+				//				}, {
+				//					url: "customer-all.html?authType=4",
+				//					id: "customer-all.html-4",
+				//					title: "所有客户",
+				//					auth: ['Q54','Q56']
+				//				}];
+				$scope.isLoad = $filter("hasAuth")('Q53') ? $filter("hasAuth")(['Q52','Q53','Q54','Q56']) : true;
+				setTimeout(function() {
+					MdConfig.StartUsingTab();
+				}, 200)
+				$scope.tap = function() {
+					UtilsService.openWindow({
+						id: "customer-search.html",
+						url: "customer-search.html"
+					});
+				};
+				$scope.add = function() {
+					UtilsService.openWindow({
+						id: "customer-edit.html",
+						url: "customer-edit.html"
+					});
+				}
+			}]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

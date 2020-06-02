@@ -1,0 +1,38 @@
+.map_container {
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    right: 0px;
+    left: 0px;
+}
+
+.map_container #map {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+}
+
+.prod-info {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    min-height: 70px;
+    z-index: 9999;
+}
+
+.prod-info .data-group {
+    background: rgba(255, 255, 255, 0.7);
+    -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .4);
+    border-radius: 7px;
+}
+
+.prod-info .data-group .data-row .body {
+    padding-left: 10px;
+}
+
+.prod-info .data-group .data-row {
+    height: 75px;
+}

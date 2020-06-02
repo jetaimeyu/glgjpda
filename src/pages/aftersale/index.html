@@ -1,0 +1,43 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="index.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	</head>
+  
+	<body ng-controller="EqController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">售后服务</a>
+		</header>
+		<div class="mui-content" ng-class="{'mui-block':loaded}" style="display: none;">
+			<div class="index-banner">
+				<img src="../../images/eqmentlib/after-banner.png"/>
+			</div>
+			<div class="common-application" ng-repeat="mod in CommonApp">
+				<div class="application-title" ng-hide="!mod.title">
+					<span ng-bind="mod.title"></span>
+					<span class="float-right"></span>
+				</div>
+				<div class="application-1f mui-grid-view mui-grid-9">
+					<div ng-repeat="app in mod.menus" ng-style="{'margin-top':($index>3)?'25px':'0'}" ng-click="tap(app.action)" class="application-list mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+						<img ng-src="{{app.icon}}" />
+						<div ng-bind="app.title"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/angular.min.js"></script>
+		<script src="../../js/common.js"></script>
+		<script src="../../js/rpc.js"></script>
+		<script src="index.js"></script>
+	</body>
+
+</html>

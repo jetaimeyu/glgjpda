@@ -1,0 +1,84 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/common.css">
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<link rel="stylesheet" href="pick-list.css" />
+		<style type="text/css">
+			.data-row {
+				margin-left: 15px;
+				margin-right: 15px;
+			}
+			
+			.statistics-row~.mui-content .mui-pull-top-pocket {
+				top: 84px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="PartInfolistController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">故障维修</a>
+		</header>
+		<div class="statistics-row" style="margin-top: 44px; display: none;" ng-if="year" ng-class="{'mui-block':domShow}">
+			<div class="content">
+				<div>
+					<span ng-bind="year + '年'"></span>
+					<span ng-bind="quarters[quarter] + '季度'" ng-if="quarter"></span>
+					<span ng-bind="month + '月'" ng-if="month"></span>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("PartInfolistController", ["$scope", "UtilsService", "$timeout", function($scope, UtilsService, $timeout) {
+				$timeout(function() {
+					$scope.domShow = true;
+				}, 100)
+				$scope.quarters = {
+					1: '一',
+					2: '二',
+					3: '三',
+					4: '四'
+				};
+				$scope.year = query("year") || "";
+				$scope.quarter = query("quarter") || "";
+				$scope.month = query("month") || "";
+				$scope.orgid = query("orgid") || "";
+				$scope.userid = query("userid") || "";
+				$scope.iseval = query("iseval") || 0;
+				$scope.descid = query("descid") || "";
+				$scope.resultid = query("resultid") || "";
+				$scope.prodCompId = query("prodCompId") || "";
+				$scope.repairUserId = query("repairUserId") || "";
+				$scope.prodid = query("prodid") || "";
+				$scope.skuid = query("skuid") || "";
+				//创建子页面的下拉刷新
+				mui.init({
+					subpages: [{
+						id: "mat-repair-all.html", //内容页面标志
+						url: 'mat-repair-all.html?type=all&year=' + $scope.year + "&quarter=" + $scope.quarter + "&month=" + $scope.month + "&orgid=" + $scope.orgid + "&userid=" + $scope.userid + "&descid=" + $scope.descid +"&resultid=" + $scope.resultid + "&iseval=" + $scope.iseval + "&prodCompId=" + $scope.prodCompId + "&repairUserId=" + $scope.repairUserId + "&prodid=" + $scope.prodid + "&skuid=" + $scope.skuid,
+						styles: {
+							top: $scope.year ? '96px' : '44px',
+							bottom: '0px',
+						}
+					}]
+				});
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

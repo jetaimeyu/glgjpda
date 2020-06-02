@@ -1,0 +1,79 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<link rel="stylesheet" href="../contact/contact-common.css" />
+		<style>
+			.top47 {
+				margin-top: 47px
+			}
+			
+			.top30 {
+				margin-top: 30px;
+			}
+			.top8 {
+				margin-top: -8px;
+			}
+			
+			.top36 {
+				/*36px*/
+				margin-top: 1px;
+			}
+			
+			#res-slide {
+				z-index: 9999;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="NewprodLibraryListController">
+		<!--导航目录部分-->
+		<div id="res-slide" class="top-thin-line mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted nav-bar" ng-class="{'mui-block':isLoad}" ng-show="isLoad&&navDirData.length>1" style="display: none;">
+			<div class="mui-scroll" style="height: 35px;text-align: left;position: absolute;">
+				<a class="mui-control-item" ng-repeat="dir in navDirData" ng-class="{'mui-active':dir.ID==OrgID}" ng-attr-orgid="{{dir.ID}}" ng-attr-index="{{$index}}">
+					<span class="icon iconfont icon-right color-gray-deep" style="margin-left: 2px;" ng-show="$index>0"></span>
+					<span class="group-name" ng-bind="dir.OrgName"></span>
+				</a>
+			</div>
+		</div>
+		<div id="pullrefresh" class="mui-scroll-wrapper mui-content mui-fullscreen" style="display:none;" ng-class="{'mui-block':isLoad,'top36':navDirData.length>1&&data[OrgID].deps.ChildDir.length!=0,'top8':!ios&&(navDirData.length>1&&(data[OrgID].deps.ChildDir.length==0||!data[OrgID].deps.ChildDir)),'top30':ios&&(navDirData.length>1&&(data[OrgID].deps.ChildDir.length==0||!data[OrgID].deps.ChildDir))}">
+
+			<div class="scroll-body">
+				<!--目录部分-->
+				<ul class="data-group" ng-show="data[OrgID] && data[OrgID].deps.ChildDir.length>0" ng-style="{'margin-top':ios&&navDirData.length>1?'40px':'4px'}">
+					<li class="mui-table-view-cell data-row  dir-row" ng-repeat="dept in data[OrgID].deps.ChildDir" ng-click="clickDir(dept.ID,dept.SName)">
+						<label style="width: auto;line-height: 27px;" class="mui-ellipsis">
+						<i class="icon-list">
+							<span ng-style="{'top':ios?0:'4px'}" class="dir_name mui-ellipsis" ng-bind="' '+dept.SName"></span>
+						</i>
+						<!--<span class="dir_num" ng-bind="'('+dept.ResCount+')'"></span>-->
+					</label>
+						<p class="opt md-icon icon-right"></p>
+					</li>
+				</ul>
+				<!--产品部分-->
+				<div ng-show="data[OrgID] && data[OrgID].prods.length>0" ng-style="{'margin-top':data[OrgID].ChildDir.length==0?'0px':'10px'}">
+					<md-prod-lib-list ng-model="data[OrgID].prods" state="state" type="'normal'"></md-prod-lib-list>
+				</div>
+			</div>
+			<md-no-data ng-show="(data[OrgID].deps.ChildDir.length==0 && data[OrgID].prods.length==0)||(!data[OrgID].deps&&data[OrgID].prods==0) || !data">暂无数据</md-no-data>
+		</div>
+		<!--无网络或请求失败重试-->
+		<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+		<script src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="prod-List.js"></script>
+	</body>
+
+</html>

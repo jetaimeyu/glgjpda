@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<style type="text/css">
+			.history {
+				padding: 16px 16px 6px 0;
+				zoom: 1;
+			}
+			
+			.history:after {
+				content: "\0020";
+				display: block;
+				height: 0;
+				clear: both;
+			}
+			
+			.history .history-item {
+				float: left;
+				font-size: 1.3rem;
+				line-height: 1.3rem;
+				color: #323232;
+				padding: 7.5px 15px;
+				margin: 0 0 10px 10px;
+				border-radius: 6px;
+				background-color: #FFF;
+			}
+			
+			.text-dot {
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				overflow: hidden;
+			}
+			
+			.product-avatar {
+				height: 30px;
+				width: 30px;
+				background-size: 30px 30px;
+			}
+			
+			.data-wrap {
+				background-color: #fff;
+			}
+			
+			.data-item {
+				padding: 14px 16px 10px;
+				font-size: 1.5rem;
+				line-height: 17px;
+				position: relative;
+			}
+			/*.data-item:active {
+			background-color: #F7F7F7;
+		}*/
+			
+			.data-item::after {
+				position: absolute;
+				left: 10px;
+				right: 10px;
+				bottom: 0;
+				height: 1px;
+				content: '';
+				-webkit-transform: scaleY(0.5);
+				transform: scaleY(0.5);
+				background-color: #EAEAEA;
+			}
+			
+			.user-name {
+				margin-top: 0;
+				font-size: 1.5rem;
+				line-height: 17px;
+				font-weight: normal;
+				color: #000000;
+				margin-bottom: 10px;
+			}
+			
+			.product {
+				background-color: #F7F7F7;
+				padding: 10px;
+				margin-bottom: 10px;
+			}
+			
+			.product-avatar {
+				height: 40px;
+				width: 40px;
+				background-color: #FFF;
+				background-repeat: no-repeat;
+				background-size: cover;
+				float: left;
+			}
+			
+			.product-info {
+				margin-left: 50px;
+				color: #AAAAAA;
+			}
+			
+			.product-name {
+				margin-top: 0;
+				font-size: 1.5rem;
+				line-height: 17px;
+				margin-bottom: 10px;
+			}
+			
+			.product-type-wrap {
+				font-size: 1.2rem;
+				line-height: 14px;
+				color: #8f8f94;
+			}
+			
+			.product-type-item {
+				display: inline-block;
+				max-width: 20vw;
+				margin-right: 10px;
+				vertical-align: top;
+			}
+			
+			.operte-item {
+				float: left;
+				font-size: 1.2rem;
+				line-height: 14px;
+				max-width: 24%;
+				margin-right: 3%;
+				color: #AAAAAA;
+			}
+			
+			.extended-warranty {
+				max-width: 44%;
+				margin-right: 0;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="searchMatPart">
+		<!-- 列表页 -->
+		<div ng-class="{'mui-block':domShow}" style="display: none;" ng-style="{'margin-bottom':action=='select'?'40px':'0px'}">
+			<!-- 搜索栏 -->
+			<div class="search_input">
+				<form ng-submit="search.doSearch()">
+					<a class="mui-action-back mui-icon icon-back mui-pull-left"></a>
+					<input type="search" placeholder="请输入产品名称" maxlength="50" ng-model="searchText">
+					<i class="icon-search-thin color-gray-dark"></i>
+					<i class="icon-delete color-gray" ng-click="search.deleteSearch()" ng-show='searchText'></i>
+					<span ng-click="search.doSearch()">搜索</span>
+				</form>
+			</div>
+
+			<!-- 搜索历史记录 -->
+			<div class="search_group" ng-show="domShowHistory">
+				<div class="content">
+					<span ng-repeat="item in history" ng-bind="item" ng-click="search.searchSpan(item)"></span>
+				</div>
+			</div>
+			<div id="pullrefresh" class="mui-scroll-wrapper" style="display: none;" ng-class="{'mui-block':!domShowHistory}">
+				<div class="mui-content" style="padding-top: 48px;">
+					<ul class="data-wrap">
+						<li ng-repeat="item in data" class="data-item mui-table-view-cell" ng-click="tap(item)">
+							<h1 class="user-name text-dot" ng-bind="item.CustomerName"></h1>
+							<div class="product">
+								<span class="product-avatar" ng-style="{'background-image':'url('+ (item | getProdLogo:40:0) +')'}"></span>
+								<div class="product-info">
+									<h5 class="product-name text-dot" ng-bind="item.ProdName"></h5>
+									<div class="product-type-wrap">
+										<span class="product-type-item text-dot" ng-bind="item.SkuName"></span>
+										<span class="product-type-item" ng-if="item.ProdInnerCode">/</span>
+										<span class="product-type-item text-dot" ng-bind="item.ProdInnerCode"></span>
+									</div>
+								</div>
+							</div>
+							<div class="operate-info">
+								<span class="operte-item text-dot" ng-bind="item.CreateUser"></span>
+								<span class="operte-item text-dot" ng-bind="item.CreateDate"></span>
+								<span class="operte-item extended-warranty text-dot" ng-bind="'延保:'+item.ExtendedWarranty + DateType[item.ExtendWarrantyUnit]"></span>
+							</div>
+						</li>
+					</ul>
+					<md-no-data ng-show="!domShowHistory && data && data.length==0">暂无数据</md-no-data>
+					<!--无网络或请求失败重试-->
+					<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+				</div>
+			</div>
+		</div>
+		<script src="../../js/angular.min.js"></script>
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("searchMatPart", ["$scope", "ApiService", "AuthService", "CacheService", "DataService",
+				"UtilsService", "Loading", "$timeout",
+				function($scope, ApiService, AuthService, CacheService, DataService, UtilsService, Loading,
+					$timeout) {
+
+					Loading.show(); // 调键盘事件事件有点长
+					showInput(); //弹出键盘
+					Loading.hide();
+
+					$scope.domShow = true; // 初始化之完成之后才显示dom 需要等待一段时间
+					$scope.domShowHistory = true;
+					$scope.searchText = ""
+					$scope.history = []
+					$scope.data = []
+					$scope.Network = true;
+
+					var userId = "";
+					AuthService.getAuth().then(function(res) {
+						userId = res.UserID;
+						$scope.search.getHistory();
+					});
+
+					var pageIndex = 0;
+					var pageSize = 10;
+
+					//下拉刷新,上拉加载
+					setTimeout(function() {
+						mui.init({
+							pullRefresh: {
+								container: '#pullrefresh',
+								up: {
+									callback: pullLoadingData,
+									contentnomore: "没有更多数据了"
+								},
+							}
+						});
+					});
+					$scope.search = {
+						getHistory: function() {
+							var temp = CacheService.get(userId + "_securing-services-search");
+							if(temp)
+								$scope.history = temp;
+							$scope.domShow = true;
+						},
+						doSearch: function(flag) {
+							!flag && ($scope.searchText = document.querySelector("input").value.trim());
+							if(!$scope.searchText) {
+								mui.toast("请输入产品名称！");
+								return;
+							}
+							Loading.show();
+							//关闭键盘
+							document.activeElement.blur();
+
+							// 删除重复搜索历史
+							var idx = $scope.history.indexOf($scope.searchText);
+							if(idx >= 0) {
+								$scope.history.splice(idx, 1);
+							}
+
+							//存储本地cach 每次搜索都删除最后一个 重新存储
+							if($scope.history.length == 10) {
+								$scope.history.splice(9, 1);
+							}
+
+							$scope.history.unshift($scope.searchText);
+
+							CacheService.set(userId + "_securing-services-search", $scope.history, true);
+							Loading.show();
+							$scope.isLoad = false;
+							$scope.data = null;
+							pageIndex = 0;
+							mui('#pullrefresh').pullRefresh().refresh(true);
+							mui("#pullrefresh").pullRefresh().pullupLoading();
+						},
+						//点击历史span搜索
+						searchSpan: function(item) {
+							$scope.searchText = item;
+							$timeout(function() {
+								$scope.search.doSearch();
+							}, 100)
+						},
+						//删除搜索
+						deleteSearch: function() {
+							$scope.searchText = '';
+							$scope.domShowHistory = true;
+						}
+					};
+
+					// 上拉加载
+					function pullLoadingData() {
+						$scope.Network && pageIndex++;
+						// 加载数据
+						getData("up");
+					}
+
+					// 获取数据
+					function getData() {
+						$scope.domShowHistory = false; // 隐藏
+						var mdCode = query('mdCode') || ''
+
+						var url = ApiService.Api50 + "/api/v2/Prod/GetPagedPkgWarrantyDelayLogList?pageIndex=" +
+							pageIndex + "&pageSize=" + pageSize + "&mdCode=" + mdCode + "&keyWords=" + encodeURIComponent($scope.searchText);
+						DataService.get(url).then(function(res) {
+							if(res) {
+								Loading.hide();
+								$scope.isLoad = true;
+								$scope.data == null && ($scope.data = []);
+								$scope.data = $scope.data.concat(res.DataRows);
+								// 是否有更多数据
+								var isEnd = $scope.data.length >= res.TotalCount;
+								if(mui("#pullrefresh").pullRefresh()) {
+									mui("#pullrefresh").pullRefresh().endPullupToRefresh(isEnd);
+								}
+								var tip = document.querySelector('.mui-pull-bottom-pocket');
+								if(tip) {
+									if($scope.data.length == 0) {
+										tip.classList.contains('mui-visibility') && tip.classList.remove('mui-visibility');
+										tip.classList.contains('mui-block') && tip.classList.remove('mui-block');
+									} else {
+										!tip.classList.contains('mui-visibility') && tip.classList.add('mui-visibility');
+										!tip.classList.contains('mui-block') && tip.classList.add('mui-block');
+									}
+								}
+							}
+						}, function(err) {
+							$scope.Network = false;
+							$scope.isLoad = true;
+							if(mui("#pullrefresh").pullRefresh()) {
+								mui("#pullrefresh").pullRefresh().endPulldownToRefresh();
+								mui("#pullrefresh").pullRefresh().endPullupToRefresh(false);
+							}
+						})
+					}
+
+					$scope.tap = function(item) {
+						var url = 'securing-services-info.html?id=' + item.ID;
+						UtilsService.openWindow({
+							needLogin: true,
+							id: "securing-services-info.html",
+							url: url
+						});
+					}
+				}
+			]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+				var style = {
+					scrollIndicator: 'none'
+				};
+				mui.os.android && (style.softinputMode = 'adjustResize');
+				plus.webview.currentWebview().setStyle(style);
+			});
+		</script>
+	</body>
+
+</html>

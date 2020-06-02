@@ -1,0 +1,166 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	</head>
+
+	<body ng-controller="iteminfoController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">点检项目详情</a>
+			<a class="menu-more icon-more right-menu-icon-detail" href="#popover"></a>
+		</header>
+		<div class="mui-scroll-wrapper md-info-page" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<ul class="data-group mt0">
+				<li class="data-row">
+					<label>点检项名称</label>
+					<div class="body">
+						<span ng-bind="equiMain.ItemName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>记录方式</label>
+					<div class="body">
+						<span ng-bind="types[equiMain.Type]"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="equiMain.ItemValue">
+					<label>选择项</label>
+					<div class="body">
+						<span ng-bind="equiMain.ItemValue"></span>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<div id="popover" class="mui-popover menuDivModel">
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell" ng-click="edit()">
+					<a class="mui-icon icon-edit">
+						<font>修改</font>
+					</a>
+				</li>
+				<li class="mui-table-view-cell" ng-click="delete()">
+					<a class="mui-icon icon-dustbin">
+						<font>删除</font>
+					</a>
+				</li>
+			</ul>
+		</div>
+		<!--无网络或请求失败重试-->
+		<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+		<!-- 修改删除 —— 右上角 -->
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script>
+			app.controller("iteminfoController", ["$scope", "AuthService", "ApiService", "DataService", "UtilsService", "Loading", "ChatUserService", "RPCObserver", "ShareLogService", "CacheService", function($scope, AuthService, ApiService, DataService, UtilsService, Loading, ChatUserService, RPCObserver, ShareLogService, CacheService) {
+				//无网络或请求失败重试,或已删除
+				$scope.retryModal = {
+					msg: "设备巡检",
+					retry: GetEqOverhaulInfoById,
+					state: ''
+				}
+				var id = query("id") || 0;
+				$scope.equiMain = "";
+				$scope.types = {
+					4: '勾选',
+					2: '数字 ',
+					101: '列表',
+					19: '文字描述',
+				};
+				// 页面接收的参数
+				// $scope.selectObj = plus.webview.currentWebview().selectObj;
+				// if($scope.multiselect != 'true') {
+				// 			var view = plus.webview.currentWebview();
+				// 			var opener = view.opener();
+				// 			if(view.callback) {
+				// 				opener.evalJS(view.callback + "(" + JSON.stringify($scope.selectObj) + ")");
+				// 			}
+				// 			mui.back();
+				// 			return;
+				// 		}
+				//获取巡检数据
+				function GetEqOverhaulInfoById() {
+					Loading.show();
+					var url = ApiService.Api50 + "/api/v1/Equipment/GetEqOverhaulStandardItemById/" + id;
+
+					DataService.get(url).then(function(res) {
+
+						$scope.retryModal.state = '';
+						$scope.equiMain = res;
+
+						Loading.hide();
+						$scope.isLoad = true;
+					}, function(error) {
+					
+						$scope.retryModal.state = error.State;
+					});
+				};
+
+				GetEqOverhaulInfoById();
+
+				RPCObserver.on('refresh_mat_worklog_info', 'refresh_mat_worklog_info');
+				window.refresh_mat_worklog_info = GetEqOverhaulInfoById;
+				
+				//编辑
+				$scope.edit = function() {
+					mui('#popover').popover('hide');
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'insp-rule-item-edit.html',
+						url: 'insp-rule-item-edit.html?id=' + id,
+						extras:{
+							itemdata:$scope.equiMain
+						} 
+					});
+				};
+
+				//删除
+				$scope.delete = function() {
+					mui('#popover').popover('hide');
+					Loading.show()
+					mui.confirm("确认删除吗？", function(e) {
+						if(e.index == 0) {
+							var url = ApiService.Api50 + "/api/v1/Equipment/DeleteEqOverhaulStandardItemById/" + id + "?standardId=" + $scope.equiMain.StandardID;
+							DataService.get(url).then(function() {
+								Loading.hide()
+								RPCObserver.broadcast('refresh_insp_rule_lnfo') // 更新巡检标准详情页 巡检项目点检信息
+								mui.toast("删除成功");
+								mui.back();
+							});
+						}
+					},function(){
+						Loading.hide()
+					});
+				};
+
+				//项目
+				$scope.item = function(item) {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'insp-rule-edit.html',
+						url: 'insp-rule-edit.html?id=' + id
+					});
+				}
+
+				//刷新关闭popover
+				RPCObserver.on('close_popover', 'close_popover');
+				window.close_popover = function() {
+					mui('#popover').popover('hide');
+				};
+			}]);
+
+			// 初始化
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

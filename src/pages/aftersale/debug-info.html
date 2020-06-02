@@ -1,0 +1,472 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.data-group:first-child {
+				margin-top: 0px!important;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="MatDebugInfoController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left mui-ellipsis" style="max-width: 70vw;" ng-bind="title + '详情'"></a>
+			<a class="menu-more icon-more right-menu-icon-detail" href="#popover" id="openPopover" style="display: none;" ng-class="{'mui-block':isLoad}" ng-if="'Q31' | hasAuth:debugInfoData.CreateUserID:debugInfoData.CompID"></a>
+			<i class="mui-pull-right menu-more-share-mat icon-share" ng-click="goDebugShare()" style="display: none;" ng-class="{'mui-block':isLoad}"></i>
+		</header>
+		<div class="mui-scroll-wrapper md-info-page" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<ul class="data-group">
+				<li class="data-row" ng-if="debugInfoData.JobContent">
+					<label>工作内容</label>
+					<div class="body">
+						<span ng-bind="debugInfoData.JobContent"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="debugInfoData.FilterPlateType&&ISJJComp">
+					<label>滤板类型</label>
+					<div class="body">
+						<span ng-bind="debugInfoData.FilterPlateType"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="debugInfoData.FilterClothType&&ISJJComp">
+					<label>滤布型号</label>
+					<div class="body">
+						<span ng-bind="debugInfoData.FilterClothType"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="debugInfoData.FilterTechDes&&ISJJComp">
+					<label>过滤工艺描述</label>
+					<div class="body">
+						<span ng-bind="debugInfoData.FilterTechDes"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="debugInfoData.ProblemDes&&ISJJComp">
+					<label>现场问题描述</label>
+					<div class="body">
+						<span ng-bind="debugInfoData.ProblemDes"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="debugInfoData.WorkResult&&ISJJComp">
+					<label>工作结果</label>
+					<div class="body">
+						<span ng-bind="debugInfoData.WorkResult"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="debugInfoData.CustSuggest&&ISJJComp">
+					<label>客户意见建议</label>
+					<div class="body">
+						<span ng-bind="debugInfoData.CustSuggest"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="audio.FileSize">
+					<label>语音描述</label>
+					<div class="body">
+						<md-audio audio="audio" readonly="true"></md-audio>
+					</div>
+				</li>
+				<li class="data-row" ng-if="imageList.length!=0||videoList.length!=0">
+					<div class="body attach" style="padding-left: 16px;">
+						<md-image ng-if="imageList.length!=0" images="imageList" readonly="true"></md-image>
+						<md-video ng-if="videoList.length!=0" videos="videoList" readonly="true"></md-video>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>调试人员</label>
+					<div class="body">
+						<md-chat-user-list ng-model="debugInfoData.DebugUsers"></md-chat-user-list>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<p class="data-group-tip">相关设备</p>
+				<li class="data-row mui-table-view-cell">
+					<label>故障设备</label>
+					<p class="opt md-icon font-15" ng-click="prodInfos(prodInfo.ProdID)">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="prodInfos(prodInfo.ProdID)">
+						<span ng-bind="prodInfo.ProdName | formatProdInfo:prodInfo.SkuName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label ng-bind="InnerCodeName"></label>
+					<div class="body">
+						<span ng-bind="prodInfo.InnerCode"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>设备数量</label>
+					<div class="body">
+						<span ng-bind="prodInfo.Quantity || 1"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group" ng-repeat="groupParams in debugInfoData.DebugParams" style="margin-top: 8px;">
+				<p class="data-group-tip" ng-bind="groupParams[0].ParamName" ng-if="groupParams[0].IsGroup==1&&groupParams[1]"></p>
+				<li class="data-row" ng-repeat="param in groupParams" ng-if="param.IsGroup==0">
+					<label ng-bind="param.ParamName"></label>
+					<div class="body">
+						<span ng-bind="param.ParamDefault"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<p class="data-group-tip">相关客户</p>
+				<li class="data-row mui-table-view-cell">
+					<label>客户</label>
+					<p class="opt md-icon font-15" ng-click="selectCustomerInfo(debugInfoData.CustomerID)">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="selectCustomerInfo(debugInfoData.CustomerID)">
+						<span ng-bind="debugInfoData.CustomerName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>联系人</label>
+					<div class="body">
+						<span ng-bind="debugInfoData.LinkName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>联系电话</label>
+					<i class="opt md-icon icon-tel" id="iphone" style="color: #3296FA;"></i>
+					<div class="body">
+						<span ng-bind="debugInfoData.LinkPhone"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group" ng-if="debugInfoData.Users.length>0">
+				<li class="data-row">
+					<label>已抄送给</label>
+					<div class="body">
+						<md-chat-user-list ng-model="debugInfoData.Users"></md-chat-user-list>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<li class="data-row">
+					<label>记录人</label>
+					<p class="opt md-icon" ng-if="debugInfoData.CreateUserID!=CurUserID" ng-click="sendMsg(debugInfoData.CreateUserID, debugInfoData.CreateUserName, debugInfoData.ULogoIsExist, debugInfoData.CompID)">
+						<span class="icon-chat-single font-15 color-blue"></span>
+					</p>
+					<div class="body">
+						<span ng-bind="debugInfoData.CreateUserName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>记录日期</label>
+					<div class="body">
+						<span ng-bind="debugInfoData.CreateDate"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<li class="data-row">
+					<i class="opt md-icon icon-position" style="color: #3296FA;"></i>
+					<label>调试地点</label>
+					<div class="body">
+						<span ng-bind="debugInfoData.Province | locationfilter:debugInfoData.City:debugInfoData.District:debugInfoData.Address:debugInfoData.Street"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group" ng-show="exist">
+				<p class="data-group-tip">工单下载</p>
+				<li class="data-row">
+					<span style="margin-left: 16px;width: 75vw;padding: 5px" class="mui-ellipsis-2" ng-bind="debugInfoData.CustomerName + prodInfo.SkuName + debugUsers + (debugInfoData.ParamTypeName || '默认模板') + debugInfoData.CreateDate + '.pdf'"></span>
+					<p class="opt md-icon-more" style="color: green;" ng-click="openFile()">打开</p>
+				</li>
+			</ul>
+			<div class="mui-content-padded" style="margin-bottom: 20px;">
+				<button id="btnSave" class="mui-btn mui-btn-primary mui-btn-block" ng-click="print()" ng-if="ISJJComp">打印工单</button>
+			</div>
+		</div>
+		<!--无网络或请求失败重试-->
+		<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+		<div id="popover" class="mui-popover menuDivModel">
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell" ng-click="debugModify()">
+					<a class="mui-icon icon-edit">
+						<font>修改</font>
+					</a>
+				</li>
+				<li class="mui-table-view-cell" ng-click="debugDelect()">
+					<a class="mui-icon icon-dustbin">
+						<font>删除</font>
+					</a>
+				</li>
+			</ul>
+		</div>
+
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../message/transMessage.js"></script>
+		<script type="text/javascript">
+			app.controller("MatDebugInfoController", ["$scope", "AuthService", "ApiService", "DataService", "UtilsService", "ChatUserService", "Loading", "RPCObserver", "$filter", "ShareLogService", "CacheService",
+				function($scope, AuthService, ApiService, DataService, UtilsService, ChatUserService, Loading, RPCObserver, $filter, ShareLogService, CacheService) {
+					$scope.debugInfoData = null; //安装调试信息
+					$scope.prodInfo = null; //安装调试设备信息
+					$scope.title = query("title") || "安装调试";
+					$scope.debugId = query("id") || 0;
+					$scope.exist = false;
+
+					$scope.audio = {}; // 音频
+					$scope.imageList = []; //图片
+					$scope.videoList = []; //视频
+					$scope.SkuID = null; //
+					$scope.MdCode = null; //
+
+					$scope.users = ""; //人员信息
+					var logid = query("logid") || 0;
+					//无网络或请求失败重试
+					$scope.retryModal = {
+						msg: "安装调试详情",
+						retry: getProdDebugInfo,
+						state: ''
+					}
+
+					var curUser = CacheService.get("user");
+					$scope.CurUserID = curUser.UserID;
+					//景津定制
+					$scope.ISJJComp = curUser.CompID == 266;
+					$scope.sendMsg = function(userid, userName, hasLogo, compId) {
+						ChatUserService.tap({
+							chatId: userid,
+							chatName: userName,
+							hasLogo: hasLogo,
+							chatCompId: compId
+						});
+					};
+					//获取安装调试详情
+					function getProdDebugInfo() {
+						Loading.show();
+						var url = ApiService.Api50 + "/api/v1/ProdDebug/GetProdDebugInfo?prodDebugId=" + query("id");
+						DataService.get(url).then(function(res) {
+							Loading.hide();
+							$scope.isLoad = true;
+							$scope.retryModal.state = '';
+							if(res) {
+								$scope.debugInfoData = JSON.parse(JSON.stringify(res));
+								$scope.debugInfoData.DebugParams = [];
+								res.DebugParams.forEach(function(item) {
+									if(item.IsGroup == 1) {
+										$scope.debugInfoData.DebugParams.push([]);
+									}
+									var len = $scope.debugInfoData.DebugParams.length;
+									len == 0 && $scope.debugInfoData.DebugParams.push([item]);
+									len > 0 && $scope.debugInfoData.DebugParams[len - 1].push(item);
+								})
+
+								$scope.prodInfo = {
+									ProdID: res.ProdID,
+									ProdName: res.ProdName,
+									SkuName: res.SkuName,
+									MdCode: res.MdCode,
+									InnerCode: res.InnerCode,
+									IsNew: res.IsNew,
+									Quantity: res.Quantity
+								}
+
+								$scope.audio = res.ArmAttach; //音频
+								$scope.imageList = res.ImgAttach; //图片
+								$scope.videoList = res.VideoAttach; //视频
+								$scope.SkuID = res.SkuID;
+								$scope.MdCode = res.MdCode;
+
+								$scope.debugUsers = $scope.debugInfoData.DebugUsers.map(function(item) {
+									return item.Name;
+								}).join(',');
+
+								localPath = "_doc/DebugOrder/" + $scope.debugInfoData.CustomerName + $scope.prodInfo.SkuName + $scope.debugUsers + ($scope.debugInfoData.ParamTypeName || '默认模板') + $scope.debugInfoData.CreateDate + ".pdf";
+							}
+						}, function(error) {
+							$scope.retryModal.state = error.State;
+						});
+					};
+					//设备人员选择
+					AuthService.getAuth().then(function(res) {
+						$scope.equUserData = res;
+						$scope.InnerCodeName = res.InnerCodeName || '出厂编号';
+						getProdDebugInfo();
+						logid && ShareLogService.add(logid, 5);
+					});
+					//修改 跳转
+					$scope.debugModify = function() {
+						$scope.$broadcast("stop_audio");
+						mui('#popover').popover('toggle');
+						UtilsService.openWindow({
+							needLogin: true,
+							id: "debug-edit.html",
+							url: "debug-edit.html?id=" + $scope.debugInfoData.ID
+						});
+					};
+					//跳转产品详情
+					$scope.prodInfos = function(id) {
+						UtilsService.openWindow({
+							needLogin: true,
+							id: 'prodinfo-head.html',
+							url: '../problib/prodinfo-head.html?prodId=' + id + "&SkuID=" + $scope.SkuID + "&MdCode=" + $scope.MdCode
+						});
+					};
+					//跳转客户详情
+					$scope.selectCustomerInfo = function(id) {
+						UtilsService.openWindow({
+							needLogin: true,
+							id: 'customer-info.html',
+							url: '../customer/customer-info.html?customerid=' + id
+						});
+					};
+					$scope.debugDelect = function() {
+						mui('#popover').popover('hide');
+						mui.confirm("确认删除吗？", function(e) {
+							if(e.index == 0) {
+								var url = ApiService.Api50 + "/api/v1/ProdDebug/DelProdDebug?prodDebugId=" + query("id");
+								DataService.get(url).then(function(res) {
+									//刷新 安装调试搜索
+									RPCObserver.broadcast('refresh_debug_search_list');
+									RPCObserver.broadcast("refresh_mat_debug_list");
+									//刷新客户详情-合计 列表
+									RPCObserver.broadcast("refresh_my_sxun");
+									// 客户信息刷新
+									RpcClient.invoke("customer-info.html", "RPC_BillViewRefresh", "customer");
+									mui.back();
+								});
+							}
+						});
+					}
+					//刷新页面数据
+					RpcServer.expose("RPC_DebugInfoRefresh", function(params) {
+						getProdDebugInfo();
+					});
+					//刷新关闭popover
+					RPCObserver.on('close_popover', 'close_popover');
+					window.close_popover = function() {
+						mui('#popover').popover('hide');
+					};
+					//详情分享
+					$scope.goDebugShare = function() {
+						UtilsService.openWindow({
+							needLogin: true,
+							id: "contact-select.html",
+							url: "../common/contact-select.html?action=select&must=true&multiselect=true&hideself=true",
+							extras: {
+								selectObj: [],
+								callback: 'shareDebug'
+							}
+						});
+					};
+					$scope.doPickShare = function(sltUsers) {
+						var obj = {
+							id: query("id"),
+							img: ApiService.Down + "/chat/debug.png",
+							title: "安装调试",
+							desc: $filter("formatFaultInfo")($scope.debugInfoData.IsHasAudio, $scope.debugInfoData.AudioLength, $scope.debugInfoData.JobContent)
+						}
+						UtilsService.shareMsg(obj, sltUsers).then(function() {
+							var userNames = [];
+							sltUsers.forEach(function(user) {
+
+								userNames.push(user.ViewName);
+
+								ChatUserService.send({
+									chatId: user.UserID,
+									chatName: user.ViewName,
+									chatCompId: user.EquipmentID,
+									hasLogo: curUser.ULogoIsExist,
+									chatLogo: user.ULogoIsExist,
+									type: 7,
+									content: {
+										eventName: "debug",
+										logo: ApiService.Down + "/chat/debug.png",
+										title: "安装调试",
+										desc: $filter("formatFaultInfo")($scope.debugInfoData.IsHasAudio, $scope.debugInfoData.AudioLength, $scope.debugInfoData.JobContent),
+										params: [query("id")]
+									}
+								});
+							})
+
+							mui.toast("成功分享给：" + userNames.join("，"));
+						});
+					}
+					//拨打电话
+					document.getElementById("iphone").addEventListener("tap", function() {
+						plus.device.dial($scope.debugInfoData.LinkPhone, false);
+						return false;
+					});
+					var curDate = new Date().Format("yyyy-MM-dd HH:mm:ss");
+					var serverPath = ApiService.Api50 + "/api/v1/MatWorkOrder/ExportInstallExcel?prodDebugId=" + $scope.debugId + "&compId=" + curUser.CompID;
+					var localPath = "_doc/DebugOrder/" + ".pdf";
+					$scope.print = function() {
+						mui.toast("正在下载...");
+						Loading.show();
+						downloadFile(serverPath, localPath, function(localfile, status) {
+							Loading.hide();
+							if(status == 200) {
+								mui.toast("下载成功");
+								plus.io.resolveLocalFileSystemURL(localPath, function(entry) {
+									$scope.exist = true;
+									$scope.$apply();
+									plus.runtime.openFile(localPath, {
+										top: 10,
+										left: 10,
+										width: 200,
+										height: 200
+									}, function(e) {
+										mui.toast("无法打开此文件！");
+									});
+								}, function() {
+									$scope.exist = false;
+									$scope.$apply();
+								});
+							} else {
+								mui.toast("下载失败");
+							}
+						})
+					};
+					//打开文件
+					$scope.openFile = function() {
+						plus.io.resolveLocalFileSystemURL(localPath, function(entry) {
+							plus.runtime.openFile(localPath, {
+								top: 10,
+								left: 10,
+								width: 200,
+								height: 200
+							}, function(e) {
+								mui.toast("无法打开此文件！");
+							});
+						}, function() {});
+					}
+
+					function LocalFileExist() {
+						plus.io.resolveLocalFileSystemURL(localPath, function(entry) {
+							$scope.exist = true;
+							$scope.$apply();
+						}, function() {
+							$scope.exist = false;
+							$scope.$apply();
+						});
+					}
+				}
+			]);
+
+			function shareDebug(sltObjs) {
+				var appElement = document.querySelector('[ng-controller=MatDebugInfoController]');
+				var $scope = angular.element(appElement).scope();
+				$scope.doPickShare(angular.copy(sltObjs));
+			}
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

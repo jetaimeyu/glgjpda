@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../../../css/mui.min.css">
+		<link rel="stylesheet" href="../../../css/common.css" />
+		<link rel="stylesheet" href="../../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.data-group .data-row label {
+				width: 120px;
+			}
+			
+			.data-group .data-row .opt:not(.md-icon):after {
+				width: 0;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="productionPlanInfoController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">生成计划详情</a>
+			<!--<h1 class="mui-title">生成计划详情</h1>-->
+		</header>
+		<div class="mui-scroll-wrapper " >
+			<div ng-repeat="(index,prodPlanInfo) in data.prodPlanInfo" class="mui-scroll" >
+				<ul class="data-group">
+					<li class="data-row">
+						<label>订单编号</label>
+						<div class="body">{{prodPlanInfo.ManualNo}}</div>
+					</li>
+					<li class="data-row">
+						<label>客户</label>
+						<div class="body">{{prodPlanInfo.CustomerName}}</div>
+					</li>
+					<li class="data-row">
+						<label>合同号</label>
+						<div class="body">{{prodPlanInfo.ContractNo}}</div>
+					</li>
+					<li class="data-row">
+						<label>订单下发时间</label>
+						<div class="body">{{getDateValue(prodPlanInfo.OrderTime)}}</div>
+					</li>
+					<li class="data-row">
+						<label>计划完成日期</label>
+						<div class="body">{{getDateValue(prodPlanInfo.PlanFinishDate)}}</div>
+					</li>
+					<li class="data-row">
+						<label>交货地址</label>
+						<div class="body">{{prodPlanInfo.DeliveryAddress}}</div>
+					</li>
+				</ul>
+				<p class="data-group-tip" ng-if="data.prodLogList&&data.prodLogList.length>0">生产日志</p>
+				<ul class="data-group" ng-if="data.prodLogList&&data.prodLogList.length>0">
+					<li class="data-row click-gray" id="prodInfo" ng-repeat="prodLog in data.prodLogList" ng-click="tap(prodLog.OrderLogId)">
+						<p class="opt md-icon">
+							<span class="icon-right"></span>
+						</p>
+						<div class="body">
+							<span class="title">{{prodLog.JobContent}}</span>
+							<p>
+								<span class="color-gray-dark">{{prodLog.RealName}}</span>
+								<span class="color-gray" style="float: right;">{{getDateValue(prodLog.ProduceDate)}}</span>
+							</p>
+						</div>
+					</li>
+				</ul>
+			</div>
+
+		</div>
+		<md-no-data ng-show="data.prodPlanInfo && data.prodPlanInfo.length==0">暂无数据</md-no-data>
+		<script type="text/javascript" src="../../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../../js/common.js"></script>
+		<script type="text/javascript" src="../../../js/utils.js"></script>
+		<script>
+			app.controller("productionPlanInfoController",["$scope","ApiService","DataService","UtilsService",function($scope,ApiService,DataService,UtilsService){			
+				$scope.data={
+					prodPlanInfo:"",
+					prodLogList: [],
+				};
+				var orderCode=query("code");
+				$scope.isLoad = false;
+				orderCode&&getProdPlanInfo();
+				function getProdPlanInfo(){
+					var url = ApiService.Api45+'/api/v1.1/Produce/GetProdOrderLog?OrderID=1&ManualNo=' + orderCode + '&pageIndex=1&pageSize=10000';
+					DataService.get(url).then(function(res) {
+//						console.log(JSON.stringify(res))
+						if(res){
+							$scope.isLoad = true;
+							$scope.datalist=res;
+							$scope.data.prodPlanInfo = res;
+							$scope.data.prodLogList=res.OrderLogs;
+						}
+					})
+					
+				}
+				$scope.getDateValue=function(date) {
+					return date.split(" ")[0] || "";
+				}
+				$scope.tap=function(id){
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'production-log-detail.html',
+						url: 'production-log-detail.html?orderLogId=' + id,
+
+					});
+				}
+				
+			}])	
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+</html>

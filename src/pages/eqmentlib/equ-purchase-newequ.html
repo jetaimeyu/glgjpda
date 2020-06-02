@@ -1,0 +1,221 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>新增购置设备</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	</head>
+
+	<body ng-controller="AddPurhaseEquController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">新增购置设备</a>
+		</header>
+		<div class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}" style="display: none;margin-bottom: 41px;">
+			<ul class="data-group">
+				<li class="data-row must">
+					<label>设备名称</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="EquName" class="needsclick" placeholder="请输入设备名称" lenlimit="30"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row must">
+					<label>设备型号</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="SkuName" class="needsclick" placeholder="请输入设备型号" lenlimit="30"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row must">
+					<label>设备归类</label>
+					<p class="opt md-icon font-15 icon-right" ng-click="tap('chooseCatalog')"></p>
+					<div class="body" ng-click="tap('chooseCatalog')">
+						<span ng-if="!EquCatalog.CatalogName" class="placeholder">请选择设备归类</span>
+						<span ng-if="EquCatalog.CatalogName" ng-bind="EquCatalog.CatalogName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>供应商</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="EquSupplier" class="needsclick" placeholder="请输入供应商名称" lenlimit="30"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row must">
+					<label>购买数量</label>
+					<div class="body">
+						<input type="text" id="BuyNums" style="width:100%;" ng-precision="0" input-decimal-kong ng-keyup="toRowTotalPrice()" lenlimit="4" maxlength="4" ng-model="BuyNums" placeholder="请输入购买数量">
+					</div>
+				</li>
+				<li class="data-row">
+					<label>单价</label>
+					<div class="body">
+						<div style="float: right;margin-right: 25%;">元</div>
+						<input style="max-width: 60%;" id="UnitPrice" type="text" ng-precision="2" input-decimal-kong ng-keyup="toRowTotalPrice()" lenlimit="9" maxlength="9" ng-model="UnitPrice" placeholder="请输入单价">
+					</div>
+				</li>
+				<li class="data-row">
+					<label>预计总费用</label>
+					<div class="body">
+						<div style="float: right;margin-right: 25%;">元</div>
+						<input style="max-width: 60%;" type="text" input-decimal ng-precision="2" maxlength="13" ng-model="TotalPrice" placeholder="请输入总费用">
+					</div>
+				</li>
+			</ul>
+		</div>
+		<footer class="btn-bottom" ng-click="tap('submit')">
+			<span>保存</span>
+		</footer>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../message/transMessage.js"></script>
+		<script>
+			app.controller("AddPurhaseEquController", ["$scope", "ApiService", "DataService", "UtilsService", "CacheService", "DatePickerService", "AuthService", "Loading", "$timeout", "$Modal", "$filter", "RPCObserver",
+				function($scope, ApiService, DataService, UtilsService, CacheService, DatePickerService, AuthService, Loading, $timeout, $Modal, $filter, RPCObserver) {
+					$timeout(function() {
+						$scope.isLoad = true;
+					}, 200);
+					$scope.EquName = "";
+					$scope.SkuName = "";
+					$scope.EquCatalog = {
+						CatalogID: 0,
+						CatalogName: "",
+						CatalogPath: ""
+					};
+					$scope.EquSupplier = "";
+					$scope.BuyNums = "";
+					$scope.UnitPrice = "";
+					$scope.TotalPrice = "";
+
+					$scope.tap = function(key) {
+						switch(key) {
+							case "chooseCatalog":
+								UtilsService.openWindow({
+									needLogin: true,
+									id: 'sel-clsification.html',
+									url: "sel-clsification.html",
+									extras: {
+										callback: "SelClsBack",
+										selected: {
+											id: $scope.EquCatalog.CatalogID,
+											name: $scope.EquCatalog.CatalogName,
+											pid: $scope.EquCatalog.CatalogPath && $scope.EquCatalog.CatalogPath.split("/").length > 1 ? $scope.EquCatalog.CatalogPath.split("/")[$scope.EquCatalog.CatalogPath.split("/").length - 2] : 0
+										},
+										billkey: "B23",
+										ismust: true
+									}
+								});
+								break;
+							case "submit":
+								submit();
+								break;
+							default:
+								break;
+						}
+					}
+
+					var saving = false;
+					//保存设备
+					function submit() {
+						document.activeElement.blur();
+						if(saving) {
+							return;
+						}
+						if(!checkLengthUtil.check()) {
+							return false;
+						}
+						if($scope.EquName.trim() == "") {
+							mui.toast("请输入设备名称");
+							return;
+						}
+						if($scope.SkuName.trim() == "") {
+							mui.toast("请输入设备型号");
+							return;
+						}
+						if($scope.EquCatalog.CatalogName.trim() == "") {
+							mui.toast("请选择设备归类");
+							return;
+						}
+						$scope.BuyNums = document.getElementById("BuyNums").value;
+						if($scope.BuyNums.trim() == "") {
+							mui.toast("请输入购买数量 ");
+							return;
+						}
+						if($scope.BuyNums.trim() == 0) {
+							mui.toast("购买数量不能为0");
+							return;
+						}
+						saving = true;
+						Loading.show();
+						var url = ApiService.Api52 + "/api/v1/EqApply/SaveEqPurchase";
+						var postdata = {
+							"EPID": 0,
+							"AID": 0,
+							"CompID": 0,
+							"EqName": $scope.EquName,
+							"SkuName": $scope.SkuName,
+							"CatalogName": $scope.EquCatalog.CatalogName,
+							"CatalogPath": $scope.EquCatalog.CatalogPath,
+							"CatalogID": $scope.EquCatalog.CatalogID,
+							"ProduceCompName": "",
+							"BuyNums": $scope.BuyNums,
+							"UnitPrice": $scope.UnitPrice,
+							"TotalPrice": $scope.TotalPrice,
+							"IsDel": 0,
+							"SupplierName": $scope.EquSupplier,
+						}
+						DataService.post(url, postdata).then(function(res) {
+							$scope.$broadcast("md_pullrefresh");
+							Loading.hide();
+							if(res) {
+								var view = plus.webview.currentWebview();
+								var opener = view.opener();
+								postdata.EPID = res.ID;
+								postdata.CompID = res.CompID;
+								if(view.callback) {
+									opener.evalJS(view.callback + "(" + JSON.stringify(postdata) + ")");
+								}
+								mui.toast("保存成功");
+								setTimeout(function() {
+									mui.back();
+									saving = false;
+								}, 400)
+
+							}
+						}, function(r) {
+							saving = false;
+						})
+					}
+
+					$scope.toRowTotalPrice = function() {
+						$scope.UnitPrice = document.getElementById("UnitPrice").value;
+						$scope.BuyNums = document.getElementById("BuyNums").value;
+						$scope.TotalPrice = $scope.UnitPrice && $scope.BuyNums ? parseFloat((Math.floor($scope.UnitPrice * 100) / 100 * $scope.BuyNums).toFixed(2)) : '';
+					}
+
+					window.SelClsBack = function(obj) {
+						$scope.EquCatalog.CatalogID = obj.ID;
+						$scope.EquCatalog.CatalogName = obj.DirName;
+						$scope.EquCatalog.CatalogPath = obj.Path;
+						$scope.$apply();
+					}
+				}
+			]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

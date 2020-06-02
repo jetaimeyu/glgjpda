@@ -1,0 +1,126 @@
+<div>
+	<div class="md-tree-node" ng-class="{'selected':_node==options.selected,'positioned':_node===options.positioned}" ng-repeat="_node in list track by _node.id">
+		<div class="md-tree-node-line line-vertical-top "></div>
+		<div class="md-tree-node-line line-vertical-bottom "></div>
+		<div ng-if="(_node.is_leaf === false||_node.is_leaf === 0 || _node.children.length)&&options.sortable!==false">
+			<div class="md-tree-node-more" ng-class="_node.expanded?'icon-expand':'icon-collapse'" ng-click="toggle_expand($event,_node)"></div>
+			<div ng-if="_node.expanded" class="md-tree-node-line line-vertical"></div>
+			<div class="md-tree-node-line line-transverse "></div>
+		</div>
+		<div ng-if="(_node.is_leaf !== false&&_node.is_leaf !== 0 && !_node.children.length)">
+			<div class="md-tree-node-leaf"></div>
+			<div class="md-tree-node-line line-transverse line-transverse-leaf"></div>
+		</div>
+		<div class="md-tree-node-template" ng-class="{'expanded':_node.expanded}" ng-click="node_select($event,_node,list);">
+			<span ng-if="options.multi&&_node.usable!==false" class="md-tree-node-multi" ng-class="options.selected.indexOf(_node)>=0?'color-theme icon-checkbox':'color-deep-gray icon-checkbox-off'">
+            </span>
+			<md-compile ng-if="template" data-template="template" data-xss="false"></md-compile>
+			<span ng-if="!template" ng-bind="_node.name">
+            </span>
+		</div>
+		<md-tree-node ng-if="_node.children.length&&(_node.expanded||options.expand_all)" data-template="template" data-load="load" data-options="options" data-list="_node.children"></md-tree-node>
+	</div>
+</div>
+<style>
+	.md-tree-node {
+		font-size:1.4rem;
+		line-height: 30px;
+		padding-left: 24px;
+		position: relative;
+	}
+	
+	.md-tree-node .md-tree-node-more {
+		width: 12px;
+		left: 24px;
+		text-align: center;
+		position: absolute;
+		color: #666666;
+	}
+	
+	.md-tree-node .md-tree-node-leaf {
+		width: 6px;
+		height: 6px;
+		background-color: #d4d4d4;
+		position: absolute;
+		border-radius: 50%;
+		transform: translate(-50%, -50%);
+		top: 50%;
+		left: 33px;
+	}
+	
+	.md-tree-node .md-tree-node-template {
+		display: inline-block;
+		margin-left: 12px;
+		padding: 0 5px;
+	}
+	
+	.md-tree-node .md-tree-node-template.selected {
+		background: #F4F4F4;
+	}
+	
+	.md-tree-node .md-tree-node-template .md-tree-node-multi {
+		width: 16px;
+		color: #999999;
+	}
+	
+	.md-tree-node .md-tree-node-template .md-tree-node-multi.checked {
+		color: #00AAEE;
+	}
+	
+	.md-tree-node .md-tree-node-template .md-tree-node-icon {
+		color: #00AAEE;
+	}
+	
+	.md-tree-node .md-tree-node-line {
+		position: absolute;
+		background: #d4d4d4;
+		transform: scaleX(0.5) translateX(-50%);
+	}
+	
+	.md-tree-node .md-tree-node-line.line-vertical {
+		width: 1px;
+		height: 9px;
+		left: 30px;
+		top: 21px;
+	}
+	
+	.md-tree-node .md-tree-node-line.line-vertical-top {
+		display: none;
+		width: 1px;
+		left: 6px;
+		top: 0;
+		height: 15px;
+	}
+	
+	.md-tree-node .md-tree-node-line.line-vertical-bottom {
+		display: none;
+		width: 1px;
+		left: 6px;
+		top: 15px;
+		bottom: 0;
+	}
+	
+	.md-tree-node .md-tree-node-line.line-transverse {
+		display: none;
+		height: 1px;
+		left: 6px;
+		width: 18px;
+		position: absolute;
+		top: 15px;
+		transform: scaleY(0.5) translateY(-50%);
+	}
+	
+	.md-tree-node .md-tree-node-line.line-transverse.line-transverse-leaf {
+		width: 22px;
+	}
+	
+	.md-tree-node .md-tree-node .line-transverse,
+	.md-tree-node .md-tree-node .line-vertical-top,
+	.md-tree-node .md-tree-node .line-vertical-bottom {
+		display: block;
+	}
+	
+	.md-tree-node:last-of-type>.line-vertical-bottom {
+		display: none;
+	}
+</style>

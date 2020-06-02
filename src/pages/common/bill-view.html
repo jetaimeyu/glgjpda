@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-cn" id="testForm">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="Expires" content="0">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-control" content="no-cache">
+		<meta http-equiv="Cache" content="no-cache">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="format-detection" content="telephone=no" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title ng-bind="title"></title>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../css/common.css" rel="stylesheet" />
+		<link href="../../bill/css/common.min.css?version=0.0.10" rel="stylesheet">
+		<link href="../../bill/css/app.min.css?v=24c62ec6f03283c50cff" rel="stylesheet">
+		<link href="../../icon-font/iconfont.css" rel="stylesheet" />
+		<style>
+			.md-modal .md-modal-content input[type='text'] {
+				margin-bottom: 0;
+				font-size: 1.3rem;
+			}
+			
+			.mui-bar {
+				z-index: 300
+			}
+			
+			.md-modal:not(.auto-size) {
+				top: 44px;
+			}
+			
+			.md-component .component-placeholder {
+				color: #B5B5B5;
+			}
+			
+			.mui-content {
+				background: #eee;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="TestFormCtl">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left" ng-bind="title"></a>
+		</header>
+		<div class="mui-content mui-fullscreen">
+			<md-bill-view data-options="{skinkey:skinkey,dataid:dataid,srchkey:srchkey,edit:edit,list:list}"></md-bill-view>
+		</div>
+		<script type="text/javascript" src="../../bill/script/libs.min.js?version=0.0.10"></script>
+		<script type="text/javascript" src="../../bill/script/common.min.js?version=0.0.10"></script>
+		<script type="text/javascript" src="../../bill/script/app.min.js?v=24c62ec6f03283c50cff"></script>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script>
+			var TestFormApp = angular.module('TestForm', ["Bill"]);
+			var scope;
+			TestFormApp.controller("TestFormCtl", ["$scope", "$Modal", "ApiService", function($scope, $Modal, ApiService) {
+				scope = $scope;
+				$scope.skinkey = query("skinkey");
+				$scope.dataid = query("dataid");
+				$scope.srchkey = query("srchkey");
+				$scope.funckey = query("funckey");
+				$scope.edit = function(_ret) {
+					openWindow("bill-edit.html?skinkey=" + _ret.skinkey + "&dataid=" + _ret.dataid + "&funckey=" + $scope.funckey);
+				};
+				$scope.list = function() {
+					//刷新表单列表页
+					switch($scope.funckey) {
+						case "mdt-equ-pos":
+							RpcClient.invoke("pos-list.html", "RPC_PosListRefresh");
+							break;
+						case "mdt-customer-manage":
+							RpcClient.invoke("customer-manage.html", "RPC_CustomerListRefresh");
+							RpcClient.invoke("search.html", "RPC_SearchListRefresh");
+							RpcClient.invoke("customer-search.html", "RPC_CustomerSearchListRefresh");
+							break;
+						case "mdt-supplier-manage":
+							if(query("type") == "manu") {
+
+							} else {
+								RpcClient.invoke("supplier-manage.html", "RPC_SupplierListRefresh");
+								RpcClient.invoke("search.html", "RPC_SearchListRefresh");
+								RpcClient.invoke("supplier-search.html", "RPC_SupplierSearchListRefresh");
+							}
+							break;
+						case "mdt-cust-linkman":
+							RpcClient.invoke("cusContact-manage.html", "RPC_CusContactListRefresh");
+							break;
+						default:
+							break;
+					}
+					mui_back();
+				};
+				$scope.title = "";
+				switch($scope.funckey) {
+					case "mdt-equ-pos":
+						$scope.title = "投产地详情";
+						break;
+					case "mdt-customer-manage":
+						$scope.title = "客户详情";
+						break;
+					case "mdt-supplier-manage":
+						$scope.title = query("type") == "manu" ? "生产厂家详情" : "供应商详情";
+						break;
+					case "mdt-cust-linkman":
+						$scope.title = "客户联系人详情";
+						break;
+				}
+				
+				//刷新
+				RpcServer.expose("RPC_BillViewRefresh", function() {
+					$scope.$broadcast('load_bill_view');
+				})
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("testForm"), ["TestForm"]);
+			});
+		</script>
+	</body>
+
+</html>

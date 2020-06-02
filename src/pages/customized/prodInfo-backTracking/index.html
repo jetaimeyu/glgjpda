@@ -1,0 +1,152 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<link rel="stylesheet" href="../../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../../css/common.css" />
+		<link rel="stylesheet" href="../../../icon-font/iconfont.css" />
+		<style type="text/css"></style>
+	</head>
+
+	<body ng-controller="BackTrackingController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">生产信息补录</a>
+		</header>
+		<div class="mui-scroll-wrapper md-info-page" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<div class="mui-content">
+				<div class="mui-content-padded" ng-click="scan()">
+					<button class="mui-btn mui-btn-primary mui-btn-block" style="border: none;">
+				<span class="md-icon icon-saoyisao"></span>
+				请扫描设备铭牌
+			</button>
+				</div>
+			</div>
+			<ul class="data-group click-gray" ng-if="ScanList.length>0" style="margin-top: 15px;">
+				<li class="data-row hasTrackProd" ng-repeat="prod in ScanList" mdcode="{{prod.MDCode}}" rid="{{prod.ID}}">
+					<p class="opt md-icon">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" style="padding-left: 16px;">
+						<span ng-bind="prod.InnerCode"></span>
+					</div>
+				</li>
+			</ul>
+		</div>
+
+		<script type="text/javascript" src="../../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../../js/common.js"></script>
+		<script type="text/javascript" src="../../../js/utils.js"></script>
+		<script type="text/javascript">
+			app.controller("BackTrackingController", ["$scope", "$filter", "AuthService", "ApiService", "DataService",
+				"UtilsService", "Loading", "RPCObserver", "CacheService",
+				function($scope, $filter, AuthService, ApiService, DataService, UtilsService, Loading,
+					RPCObserver, CacheService) {
+					var curUser = CacheService.get("user");
+					$scope.ScanList = [];
+					AuthService.getAuth().then(function(res) {
+						$scope.InnerCodeName = res.InnerCodeName || '出厂编号';
+					});
+					$scope.isLoad = true;
+
+					$scope.scan = function() {
+						//$filter.hasAuth()
+						UtilsService.openWindow({
+							needLogin: true,
+							id: 'scan.html',
+							url: '../../scan/scan.html',
+							extras: {
+								callback: "scanCB"
+							}
+						});
+					}
+
+					mui("body").on("tap", ".hasTrackProd", function() {
+						var code = this.getAttribute("mdcode");
+						var rid = this.getAttribute("rid");
+						UtilsService.openWindow({
+							id: 'produceInfo.html',
+							url: "produceInfo.html?code=" + code + "&rid=" + rid,
+							extras: {
+								callback: "saveProduceInfoCB"
+							}
+						});
+					})
+
+					window.scanCB = function(obj) {
+						obj = JSON.parse(obj);
+						if(obj.codeValue.indexOf("GZ")>=0){
+							mui.toast("请扫本企业产品码");
+							return;
+						}
+						setTimeout(function() {
+							UtilsService.openWindow({
+								needLogin: true,
+								id: 'produceInfo.html',
+								url: "produceInfo.html?code=" + obj.codeValue,
+								extras: {
+									callback: "saveProduceInfoCB"
+								}
+							});
+						}, 200)
+
+					}
+
+					//保存生产信息成功后的反馈
+					window.saveProduceInfoCB = function(id, innercode, mdcode) {
+						setTimeout(function() {
+							innercode = unescape(innercode);
+							if(id == 0) {
+								for(var i = 0; i < $scope.ScanList.length; i++) {
+									if($scope.ScanList[i].MDCode == mdcode) {
+										$scope.ScanList.splice(i, 1);
+									}
+								}
+								return;
+							}
+							if($scope.ScanList.length == 0) {
+								$scope.ScanList.push({
+									ID: id,
+									InnerCode: innercode,
+									MDCode: mdcode
+								});
+							} else {
+								var index = 0;
+								var isnew = true;
+								for(var i = 0; i < $scope.ScanList.length; i++) {
+									if($scope.ScanList[i].ID == id) {
+										index = i;
+										isnew = false;
+										$scope.ScanList.splice(i, 1);
+									}
+								}
+								if(isnew) {
+									$scope.ScanList.push({
+										ID: id,
+										InnerCode: innercode,
+										MDCode: mdcode
+									});
+								} else {
+									$scope.ScanList.splice(index, 0, {
+										ID: id,
+										InnerCode: innercode,
+										MDCode: mdcode
+									});
+								}
+							}
+							$scope.$apply();
+						}, 200);
+					}
+				}
+			]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

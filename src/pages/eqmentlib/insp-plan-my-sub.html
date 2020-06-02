@@ -1,0 +1,317 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style>
+			.data-group .data-row .body {
+				padding: 10px 16px;
+			}
+			
+			.equInspSpan {
+				line-height: 17px;
+				color: #000000;
+				margin-right: 20px;
+				margin-bottom: 8px!important;
+			}
+			
+			.equInspP {
+				font-size: 1.2rem!important;
+				line-height: 14px;
+				color: #AAAAAA!important;
+			}
+			
+			.ins-date {
+				position: absolute;
+				top: 8px;
+				right: 10px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="InspMyController">
+		<div id="pullrefresh" class="mui-scroll-wrapper" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<div class="mui-content">
+				<ul class="data-group" style="margin-top: 0px;">
+					<li class="mui-table-view-cell data-row" ng-repeat="item in data" ng-click="viewIns(item.ID)">
+						<div class="body">
+							<span class="equInspSpan mui-ellipsis-2 font-15" ng-bind="item.CheckContent"></span>
+							<span class="ins-date font-12" ng-bind="item.Date"></span>
+							<p class="equInspP">
+								<span class="font-12" ng-bind="item.CreateDate"></span>
+								<md-chat-user-list ng-repeat="per in item.Persons" ng-model="per.user"></md-chat-user-list>
+								<span class="font-12" ng-bind="item.Counts+'台'"></span>
+							</p>
+						</div>
+					</li>
+				</ul>
+				<md-no-data ng-show="data&&data.length==0">暂无数据</md-no-data>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script>
+			app.controller("InspMyController", ["$scope", "ApiService", "DataService", "Loading", "RPCObserver","UtilsService", function($scope, ApiService, DataService, Loading, RPCObserver,UtilsService) {
+				//数据列表
+				$scope.data = null || [];
+				pageIndex = 0;
+				pageSize = 10;
+				$scope.Network = true;
+				//跳转详情
+				$scope.viewIns = function(id){
+					UtilsService.openWindow({
+						needLogin: true,
+						id: "insp-plan-edit.html",
+						url: "insp-plan-edit.html?id="+id
+					});
+				};
+				setTimeout(function() {
+					mui.init({
+						pullRefresh: {
+							container: '#pullrefresh',
+							up: {
+								auto: true,
+								callback: pullupRefresh,
+								contentnomore: "无更多巡检计划",
+							},
+							down: {
+								callback: pulldownRefresh
+							}
+						}
+					});
+				})
+
+				Loading.show();
+
+				//上拉加载
+				function pullupRefresh() {
+					$scope.Network && pageIndex++;
+					//加载数据
+					getPagedMyInsPlanList("up");
+				};
+
+				//下拉刷新具体业务实现
+				function pulldownRefresh() {
+					pageIndex = 1;
+					//加载数据
+					getPagedMyInsPlanList("down");
+				}
+
+				//分页获取当前用户所有的设备巡检计划
+				function getPagedMyInsPlanList(type) {
+					var url = ApiService.Api50 + "/api/v1/Equipment/GetPagedEqOverhaulList?pageIndex=" + pageIndex + "&pageSize=" + pageSize + "&equipmentId=2018031600000004";
+					DataService.get(url).then(function(res) {
+						console.log(JSON.stringify(res))
+						res = {
+							"TotalCount": 3,
+							"DataRows": [{
+								"ID": 1,
+								"CheckContent": "巡检计划名称啊",
+								"Persons": [{
+									"PersonLiableID": 589,
+									"PersonLiableName": "王小儿",
+									"PersonLiableCompID": 11,
+									"ULogoIsExist": true
+								}, {
+									"PersonLiableID": 205,
+									"PersonLiableName": "BQY",
+									"PersonLiableCompID": 11,
+									"ULogoIsExist": true
+								}, {
+									"PersonLiableID": 205,
+									"PersonLiableName": "刘大夫",
+									"PersonLiableCompID": 11,
+									"ULogoIsExist": true
+								}],
+								"CreateDate": "2018-04-23",
+								"Counts": 6,
+								"Date": '今天'
+							}, {
+								"ID": 337,
+								"CheckContent": "下午去巡检",
+								"Persons": [{
+									"PersonLiableID": 205,
+									"PersonLiableName": "王小儿",
+									"PersonLiableCompID": 11,
+									"ULogoIsExist": true
+								}, {
+									"PersonLiableID": 205,
+									"PersonLiableName": "BQY",
+									"PersonLiableCompID": 11,
+									"ULogoIsExist": true
+								}, {
+									"PersonLiableID": 205,
+									"PersonLiableName": "刘大夫",
+									"PersonLiableCompID": 11,
+									"ULogoIsExist": true
+								}],
+								"CreateDate": "2018-04-21",
+								"Counts": 6,
+								"Date": '2天'
+							}, {
+								"ID": 337,
+								"CheckContent": "8888",
+								"Persons": [{
+									"PersonLiableID": 205,
+									"PersonLiableName": "王小儿",
+									"PersonLiableCompID": 11,
+									"ULogoIsExist": true
+								}],
+								"CreateDate": "2018-04-22",
+								"Counts": 6,
+								"Date": '25天'
+							}, {
+								"ID": 337,
+								"CheckContent": "8888",
+								"Persons": [{
+									"PersonLiableID": 205,
+									"PersonLiableName": "王小儿",
+									"PersonLiableCompID": 11,
+									"ULogoIsExist": true
+								}],
+								"CreateDate": "2018-04-22",
+								"Counts": 6,
+								"Date": '25天'
+							}, {
+								"ID": 337,
+								"CheckContent": "8888",
+								"Persons": [{
+									"PersonLiableID": 205,
+									"PersonLiableName": "王小儿",
+									"PersonLiableCompID": 11,
+									"ULogoIsExist": true
+								}],
+								"CreateDate": "2018-04-22",
+								"Counts": 6,
+								"Date": '25天'
+							}, {
+								"ID": 337,
+								"CheckContent": "8888",
+								"Persons": [{
+									"PersonLiableID": 205,
+									"PersonLiableName": "王小儿",
+									"PersonLiableCompID": 11,
+									"ULogoIsExist": true
+								}],
+								"CreateDate": "2018-04-22",
+								"Counts": 6,
+								"Date": '25天'
+							}, {
+								"ID": 337,
+								"CheckContent": "8888",
+								"Persons": [{
+									"PersonLiableID": 205,
+									"PersonLiableName": "王小儿",
+									"PersonLiableCompID": 11,
+									"ULogoIsExist": true
+								}],
+								"CreateDate": "2018-04-22",
+								"Counts": 6,
+								"Date": '25天'
+							}, {
+								"ID": 337,
+								"CheckContent": "8888",
+								"Persons": [{
+									"PersonLiableID": 205,
+									"PersonLiableName": "王小儿",
+									"PersonLiableCompID": 11,
+									"ULogoIsExist": true
+								}],
+								"CreateDate": "2018-04-22",
+								"Counts": 6,
+								"Date": '25天'
+							}, {
+								"ID": 337,
+								"CheckContent": "8888",
+								"Persons": [{
+									"PersonLiableID": 205,
+									"PersonLiableName": "王小儿",
+									"PersonLiableCompID": 11,
+									"ULogoIsExist": true
+								}],
+								"CreateDate": "2018-04-22",
+								"Counts": 6,
+								"Date": '25天'
+							}, {
+								"ID": 337,
+								"CheckContent": "8888",
+								"Persons": [{
+									"PersonLiableID": 205,
+									"PersonLiableName": "王小儿",
+									"PersonLiableCompID": 11,
+									"ULogoIsExist": true
+								}],
+								"CreateDate": "2018-04-22",
+								"Counts": 6,
+								"Date": '25天'
+							}]
+						}
+						if(res) {
+							Loading.hide();
+							$scope.isLoad = true;
+							//处理聊天人对象
+							mui.each(res.DataRows, function(index, item) {
+								mui.each(item.Persons, function(_index, _item) {
+									_item.user = [{
+										ID: _item.PersonLiableID,
+										Name: _item.PersonLiableName,
+										ULogoIsExist: _item.ULogoIsExist,
+										CompID: _item.PersonLiableCompID
+									}];
+								})
+							});
+							if(type == "down") {
+								$scope.data = res.DataRows;
+							} else {
+								$scope.data = $scope.data.concat(res.DataRows);
+							}
+							var isEnd = $scope.data.length >= res.TotalCount;
+							if(mui("#pullrefresh").pullRefresh()) {
+								if(type == "down") {
+									mui("#pullrefresh").pullRefresh().endPulldownToRefresh();
+									mui('#pullrefresh').pullRefresh().refresh(true);
+									mui("#pullrefresh").pullRefresh().endPullupToRefresh(isEnd);
+								} else {
+									mui("#pullrefresh").pullRefresh().endPullupToRefresh(isEnd);
+								}
+							}
+
+							var tip = document.querySelector('.mui-pull-bottom-pocket');
+							if(tip) {
+								if($scope.data.length == 0) {
+									tip.classList.contains('mui-visibility') && tip.classList.remove('mui-visibility');
+									tip.classList.contains('mui-block') && tip.classList.remove('mui-block');
+								} else {
+									!tip.classList.contains('mui-visibility') && tip.classList.add('mui-visibility');
+									!tip.classList.contains('mui-block') && tip.classList.add('mui-block');
+								}
+							}
+						}
+					}, function(error) {
+						$scope.Network = false;
+						if(mui("#pullrefresh").pullRefresh()) {
+							mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
+							mui("#pullrefresh").pullRefresh().endPullupToRefresh(false);
+						}
+
+					})
+				}
+				RPCObserver.on('refresh_equ_my_insp_list', 'refresh_equ_my_insp_list');
+				window.refresh_equ_my_insp_list = pulldownRefresh;
+
+			}]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

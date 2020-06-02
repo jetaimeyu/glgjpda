@@ -1,0 +1,110 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../css/common.css" />
+		<link rel="stylesheet" href="../icon-font/iconfont.css" />
+		<style type="text/css">
+			.spare-item,
+			.standard-item,
+			.scan-item {
+				margin-top: 8px;
+			}
+			
+			.itemlist {
+				height: 47px;
+				line-height: 47px;
+			}
+			
+			.icon-item {
+				display: inline-block;
+				padding: 0 16px;
+				padding-top: 4px;
+			}
+			
+			.itemlist label {
+				display: inline-block;
+				width: 96px!important;
+				left: 44px!important;
+				font-size: 1.6rem;
+				color: #323232!important;
+			}
+			
+			/*.data-group:before,
+			.data-group:after,
+			.data-group .data-row:after {
+				background-color: #ECECEC!important;
+			}*/
+			
+			.data-group .data-row:after {
+				left: 16px;
+			}
+			.data-group .data-row:last-child:after {
+				height: 0;
+			}
+			.data-group:before, .data-group:after{
+			height: 0;	
+			}
+			label.scaning {
+				width: 200px!important;
+			}
+			
+			img.arrowright {
+				margin-right: 10px;
+				margin-top: 0px;
+				width: 7px;
+			}
+			
+			.data-group .data-row .opt {
+				color: #C7C7CB;
+				padding-right: 12px;
+				line-height: 27px;
+				font-size: 1.6rem;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="findController">
+		<div class="mui-content">
+			<ul class="data-group spare-item">
+				<li class="data-row click-gray itemlist" ng-click="getSpareParts()">
+					<p class="opt md-icon">
+						<span class="icon-right"></span>
+					</p>
+					<span class="icon-item" style="padding-top: 3px;">
+						<img src="../images/shopping.png" style="width: 18px;"/>
+					</span>
+					<label>备品备件超市</label>
+				</li>
+				<li class="data-row click-gray itemlist">
+					<p class="opt md-icon">
+						<span class="icon-right"></span>
+					</p>
+					<span class="icon-item">
+						<img src="../images/expert.png" style="width: 20px;"/>
+					</span>
+					<label>维修专家库</label>
+				</li>
+			</ul>
+			<ul class="data-group scan-item">
+				<li class="data-row click-gray itemlist">
+					<p class="opt md-icon icon-right">
+					</p>
+					<span class="icon-item">
+						<img src="../images/scan.png" style="width: 18px;"/>
+					</span>
+					<label class="scaning">国标二维码标识服务体系</label>
+				</li>
+			</ul>
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/angular.min.js"></script>
+		<script src="../js/common.js"></script>
+		<script src="find/find.js"></script>
+	</body>
+
+</html>

@@ -1,0 +1,404 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<link rel="stylesheet" href="../../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../../css/common.css" />
+		<link rel="stylesheet" href="../../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.paramName {
+				padding: 5px 25px 5px 5px !important;
+				/*max-width: 80vw;*/
+				width: 100%;
+			}
+			
+			.paramNameEllipsis {
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+			
+			.mr15 {
+				margin-right: 15px!important;
+			}
+			
+			.empty-list {
+				/*margin-left: -25vw!important;*/
+			}
+		</style>
+	</head>
+
+	<body ng-controller="ProduceInfoController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">生产信息补录</a>
+		</header>
+		<div class="mui-scroll-wrapper md-info-page" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<ul class="data-group" ng-if="IsLoaded==2">
+				<li class="data-row must">
+					<label ng-bind="InnerCodeName"></label>
+					<div class="body">
+						<input id="innercode" type="text" maxlength="30" class="bg-f2 param" onkeyup="this.innerText=this.innerText.replace(/[\u4e00-\u9fa5]/ig,'')" ng-change="getProdProduceId()" ng-model="Info.ProdInnerCode" placeholder="请输入{{InnerCodeName}}" />
+						<!--<div class="edit" style="max-width: 100%;margin-right: 0;">
+							<div ng-model-div-text="Info.ProdInnerCode" class="needsclick" placeholder="请输入{{InnerCodeName}}" lenlimit="30"></div>
+						</div>-->
+					</div>
+				</li>
+				<li class="data-row">
+					<label>产品名称</label>
+					<div class="body">
+						<span ng-bind="Info.ProdName||'-'"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>型号</label>
+					<div class="body">
+						<span ng-bind="Info.SkuName||'-'"></span>
+					</div>
+				</li>
+				<li class="mui-table-view-cell data-row">
+					<label>生产日期</label>
+					<p class="opt md-icon font-15" ng-click="chooseDate()">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" data-options='{}' ng-click="chooseDate()">
+						<span ng-if="!Info.ProduceDate" class="placeholder">请选择生产日期</span>
+						<span ng-if="Info.ProduceDate" ng-bind="Info.ProduceDate"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group params" ng-if="ParamList.length>0&&IsLoaded==2">
+				<li class="data-row" ng-repeat="prop in ParamList" ng-class="{'must':prop.IsRequired==1}">
+					<label ng-bind="prop.ParamName"></label>
+					<div class="body" ng-click="propTap(prop,$index)">
+						<input style="padding: 2px 5px;" onkeyup="ValidateValue(this)" type="text" maxlength="1000" class="bg-f2 param" ng-if="prop.ParamType==0" ng-model="prop.ParamDefValue" ng-attr-paramname="{{prop.ParamName}}" placeholder="请输入参数值" />
+						<span class="opt md-icon icon-down mr15" ng-if="prop.ParamType==1"></span>
+						<input readonly="readonly" ng-if="prop.ParamType==1" ng-model="prop.ParamDefValue" class="bg-f2 param paramName" ng-class="{'paramNameEllipsis':IsIOS}" placeholder="请选择参数值" />
+					</div>
+				</li>
+			</ul>
+			<md-no-data ng-if="IsLoaded==1">暂无相关数据</md-no-data>
+			<md-no-data ng-if="IsLoaded==3"><p>不是贵企业产品 无权补录</p></md-no-data>
+			<div class="mui-content-padded" ng-if="IsLoaded==2">
+				<button class="mui-btn mui-btn-primary mui-btn-block" data-loading-text="提交中" data-loading-icon-position="right" ng-click="save($event)">保存生产信息</button>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../../js/common.js"></script>
+		<script type="text/javascript" src="../../../js/utils.js"></script>
+		<script type="text/javascript">
+			app.controller("ProduceInfoController", ["$scope", "$filter", "AuthService", "ApiService", "DataService",
+				"UtilsService", "Loading", "RPCObserver", "CacheService", "DatePickerService",
+				function($scope, $filter, AuthService, ApiService, DataService, UtilsService, Loading,
+					RPCObserver, CacheService, DatePickerService) {
+					$scope.Info = {};
+					$scope.ParamList = [];
+					AuthService.getAuth().then(function(res) {
+						$scope.CompID = res.CompID;
+						$scope.UserID = res.UserID;
+						$scope.InnerCodeName = res.InnerCodeName || '出厂编号';
+						loadProduceInfo();
+					});
+					$scope.RID = query("rid");
+					$scope.Postparamslist = []; //保存时传过去的生产信息参数
+					$scope.IsIOS = mui.os.ios ? true : false;
+					Loading.show();
+
+					//获取指定迈迪国标通用物联码的生产信息
+					function loadProduceInfo() {
+						//GetProdProduceInfoNewAll、GetProdProduceInfoNew奥美森
+						var url = ApiService.Api50 + "/api/v1/Produce/GetProdProduceInfo?mdcode=" + query("code") + "&compid=" + $scope.CompID; //GetProdProduceInfoNew
+						if($scope.CompID == 471||$scope.CompID == 37305) { //$scope.CompID == 471
+							url = ApiService.Api50 + "/api/v1/Produce/GetProdProduceInfoNewAll?mdcode=" + query("code") + "&compId=" + $scope.CompID;
+						}
+						DataService.get(url).then(function(r) {
+							Loading.hide();
+							$scope.isLoad = true;
+							if(r) {
+								if(r.produceInfo.ID == 0 && $scope.RID) {
+									mui.alert("该条生产信息数据已不存在", function() {
+										//回调函数
+										var view = plus.webview.currentWebview();
+										if(view.callback) {
+											var opener = view.opener();
+											opener.evalJS(view.callback + "('" + r.produceInfo.ID + "','','" + query("code") + "')");
+										}
+										mui.back();
+									});
+									return;
+								}
+//								console.log(JSON.stringify(r))
+								//不是本企业不能修改
+								if($scope.CompID != r.produceInfo.CompID) {
+									$scope.IsLoaded = 3;
+									return;
+								}
+								$scope.Info = r.produceInfo;
+//								console.log(JSON.stringify($scope.Info))
+								$scope.ParamList = r.ProduceParams;
+								$scope.IsLoaded = 2;				
+							} else {
+								$scope.IsLoaded = 1;
+								if(!isNetWorkCanUse()) {
+									mui.toast("连接网络失败，请检查网络连接");
+									return;
+								}
+								mui.alert("请扫描或输入正确的迈迪国标通用物联码", function() {
+									mui.back();
+								});
+							}
+
+						},function(e){
+							$scope.isLoad = true;
+							$scope.IsLoaded = 1;
+						})
+					}
+					var timer = null;
+					$scope.getProdProduceId=function(){
+						clearTimeout(timer)
+						if(!$scope.Info.ProdInnerCode){
+							return;
+						}
+						var url = ApiService.Api45 + "/api/v1.1/Produce/IsExistProduceInfo?prodId=" + $scope.Info.ProdID+ "&skuId=" + $scope.Info.SkuID+"&innerCode="+$scope.Info.ProdInnerCode;
+						timer = setTimeout(function() {
+							DataService.get(url).then(function(pId) {
+//							console.log(JSON.stringify(pId))
+								if(pId){
+									loadProduceInfoById(pId);
+								}
+	
+							},function(e){
+							
+							})
+						})
+						
+					}
+					//根据产品返回的id获取生成信息
+					function loadProduceInfoById(id){
+						Loading.show();
+						var url = ApiService.Api45 + "/api/v1.1/Produce/GetProduceInfoNew?ProduceID=" + id;
+						DataService.get(url).then(function(res) {
+//							console.log(JSON.stringify(res))
+							if(res&&res.produceInfo.MDCode){
+								mui.toast("该出厂编号已经与物联码绑定，请重新填写")
+								$scope.Info.ProdInnerCode="";
+								Loading.hide();
+								return;
+							}
+							
+							$scope.Info = res.produceInfo;
+							$scope.ParamList = res.ProduceParams;
+							
+							Loading.hide();
+						},function(e){
+							Loading.hide();
+						})
+					}
+					/***选择日期***/
+					$scope.chooseDate = function() {
+						var dDate = new Date();
+						var minDate = new Date();
+						minDate.setFullYear(2016, 0, 1);
+						var maxDate = new Date();
+						maxDate.setFullYear(2027, 11, 31);
+						DatePickerService.pickDate({
+							selected: $scope.Info.ProduceDate,
+							minDate: minDate,
+							maxDate: maxDate
+						}).then(function(res) {
+							$scope.Info.ProduceDate = res;
+						});
+					}
+
+					//选择生产信息的参数值
+					$scope.propTap = function(prop, index) {
+						var isDisabled = prop.IsDisabled; //是否禁用0:否;1:是
+						if(isDisabled == '1') {
+							return;
+						}
+						if(prop.ParamType != "1") {
+							return;
+						}
+						var param = $scope.ParamList[index];
+						var btns = [],
+							i = param.ParamsValues.length;
+
+						while(i--) {
+							btns.push({
+								title: param.ParamsValues[i].Name
+							});
+						}
+						plus.nativeUI.actionSheet({
+							cancel: "取消",
+							buttons: btns
+						}, function(e) {
+							if(e.index == 0) {
+								return;
+							}
+							$scope.ParamList[index].ParamDefValue = btns[e.index - 1].title;
+							$scope.$apply();
+						});
+
+					}
+					//根据内部码获取迈迪国标通用物联码
+					function getMdCodeByInnerCode(callback) {
+						Loading.show();
+						var url = ApiService.InnerCodeUrl + "/incode/getIn2MdCode?compId=" + $scope.CompID + "&inCode=" + encodeURIComponent(document.getElementById("innercode").value);
+						getAjaxData(url, function(reData) {
+							Loading.hide();
+							if(reData && reData.code == 200) {
+								if(reData.data.mdCode) {
+									if(reData.data.mdCode.mdCode != query("code")) {
+										//提示：已关联其他迈迪国标通用物联码
+										//mui.alert($scope.InnerCodeName + "重复，请修改后重试");1016注释
+									} else {
+										//提示：已关联此迈迪国标通用物联码，只保存基本信息，不更新内部码
+										callback();
+									}
+								} else {
+									//未关联其他迈迪国标通用物联码，可以保存
+									callback();
+									//更新内部码
+									//addInnerCode(callback);
+								}
+							} else {
+								mui.toast(reData.ErrorMessage);
+							}
+						}, false);
+					};
+					//更新内部码
+					function addInnerCode(callback) {
+						var url = ApiService.Api50 + "/api/v1/MdCode/SaveInnerCodeRelation";
+						var postdata = {
+							MDCode: query("code"),
+							CompID: $scope.CompID,
+							InnerCode: document.getElementById("innercode").value
+						};
+						postAjaxData(url, postdata, function(res) {
+							if(res && res.State == 1) {
+								callback();
+								//						if(res.Data) {
+								//							//console.log("设备编号已更新");
+								//						} else {
+								//							//console.log(res.ErrorMessage);
+								//						}
+							} else {
+								mui.alert(res.ErrorMessage)
+								//console.log("设备编号已更新失败");
+							}
+						}, false);
+					}
+					//必填项验证
+					function validateData() {
+						if(!document.getElementById("innercode").value.replace(/(^\s*)|(\s*$)/g, "")) {
+							mui.alert("请输入" + $scope.InnerCodeName + "！");
+							return false;
+						}
+						if(document.getElementById("innercode").value.replace(/(^\s*)|(\s*$)/g, "").indexOf(" ") >= 0) {
+							mui.alert($scope.InnerCodeName + "不允许输入空格！");
+							return false;
+						}
+						$scope.Postparamslist = [];
+						var pparams = {};
+						for(var i = 0; i < $scope.ParamList.length; i++) {
+							if($scope.ParamList[i].IsRequired == "1" && $scope.ParamList[i].IsDisabled == "0" && !$scope.ParamList[i].ParamDefValue) {
+								mui.alert("请" + ($scope.ParamList[i].ParamType == 0 ? "输入" : "选择") + $scope.ParamList[i].ParamName);
+								return false;
+							}
+							pparams.ID = $scope.ParamList[i].ID;
+							pparams.ParamID = $scope.ParamList[i].ParamId;
+							pparams.ProduceID = $scope.Info.ID;
+							pparams.ParamName = $scope.ParamList[i].ParamName;
+							pparams.ParamValue = $scope.ParamList[i].ParamDefValue;
+							pparams.SortID = $scope.ParamList[i].SortID;
+							pparams.CatalogID = $scope.ParamList[i].CatalogID;
+							$scope.Postparamslist.push(pparams);
+							pparams = {};
+						}
+						return true;
+					};
+					/**
+					 * 保存生产信息
+					 */
+					$scope.save = function(event) {
+						if(!validateData()) {
+							return;
+						}
+						mui(event.target).button('loading');
+						//先验证内部码是否绑定其他迈迪国标通用物联码
+						//getMdCodeByInnerCode(function() {});
+						saveProInfo(event);
+					}
+					//保存生产信息接口
+					function saveProInfo(event) {
+						//	var url = ApiService.Api45 + "/api/v1.1/Produce/SaveProduceInfoNew?compid=" + $scope.Info.CompID + "&userid=" + $scope.UserID;
+						var url = ApiService.Api50 + "/api/v1/Produce/SaveProduceInfoNew?compid=" + $scope.CompID + "&userid=" + $scope.UserID;
+						var postdata = {
+							ID: $scope.Info.ID || 0,
+							MDCode: query("code"),
+							ProdID: $scope.Info.ProdID,
+							ProdName: $scope.Info.ProdName,
+							SkuID: $scope.Info.SkuID,
+							SkuName: $scope.Info.SkuName,
+							SkuType: $scope.Info.SkuType || 0,
+							CompID: $scope.CompID,
+							ProdInnerCode: document.getElementById("innercode").value.replace(/(^\s*)|(\s*$)/g, ""),
+							ProduceDate: $scope.Info.ProduceDate,
+							ProduceParams: $scope.Postparamslist,
+							SelectParams: []
+						};
+						DataService.post(url, postdata).then(function(res) {
+							Loading.hide();
+							if(res) {
+								mui.toast("保存成功");
+								//回调函数
+								var view = plus.webview.currentWebview();
+								if(view.callback) {
+									var opener = view.opener();
+									opener.evalJS(view.callback + "('" + res + "','" + escape(postdata.ProdInnerCode) + "','" + query("code") + "')");
+								}
+								mui.back();
+								mui(event.target).button('reset');
+							} else {
+								mui.alert(res.ErrorMessage, function() {
+									Loading.hide();
+									mui(event.target).button('reset');
+								});
+							}
+
+						},function(){
+							mui(event.target).button('reset');
+						})
+					}
+
+					/**
+					 * 特殊符号验证
+					 * @param {Object} textbox
+					 */
+					window.ValidateValue = function(textbox) {
+						//"[`~!#$^&*()=|{}':;',\\[\\].<>/?~！#￥……&*（）——|{}【】‘；：”“'。，、？]‘’";
+						var IllegalString = "\\[//]\\[\\]$\^|*\'\"\+";
+						var textboxvalue = textbox.value;
+						var index = textboxvalue.length - 1;
+						var s = textbox.value.charAt(index);
+						var ParamName = textbox.getAttribute("paramname");
+						if(s != "" && IllegalString.indexOf(s) >= 0) {
+							mui.alert(ParamName + "不允许输入特殊符号：" + s, "提示", "我知道了");
+							s = textboxvalue.substring(0, index);
+							textbox.value = s;
+						}
+					}
+
+				}
+			]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

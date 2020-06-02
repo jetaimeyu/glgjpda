@@ -1,0 +1,111 @@
+.mui-scroll-wrapper {
+	padding-top: 5px;
+	top: 45px;
+	bottom: 0px;
+	padding-bottom: 15px;
+	background: #EFEFEF;
+	z-index: 200;
+	position: absolute;
+	overflow: hidden;
+	-webkit-overflow-scrolling: touch;
+	overflow: hidden;
+}
+
+.item_body {
+	position: relative;
+}
+
+.mui-table-view-chevron .mui-table-view-cell {
+	padding-right: 35px;
+}
+
+.mui-table-view .mui-table-view-cell .user-img {
+	/*	background-color: #3296FA;*/
+	border: none;
+}
+
+.mui-table-view .mui-table-view-cell .mui-media-object {
+	line-height: 50px;
+	max-width: 50px;
+	height: 50px;
+	border-radius: 50%;
+	background-color: #FFFFFF;
+	width: 50px;
+	height: 50px;
+	background-size: 50px;
+}
+
+.mui-table-view .mui-table-view-cell .user-img img {
+	border-radius: 50%;
+}
+
+.mui-table-view .mui-table-view-cell .user-img .div-img {
+	border-radius: 50%;
+	height: 50px;
+	background-size: cover;
+}
+
+.mui-table-view .mui-media-object.mui-pull-right {
+	margin-right: 5px;
+}
+
+.mui-table-view .mui-media-body {
+	padding-top: 4px;
+	font-size: 1.7rem;
+	color: #333;
+	white-space: normal;
+}
+
+.mui-media-ex-time {
+	position: absolute;
+	height: 20px;
+	top: 3px;
+	right: -16px;
+	text-align: right;
+}
+
+.mui-ellipsis {
+	white-space: nowrap !important;
+}
+
+.mui-media-ex-username {
+	font-size: 1.5rem;
+	color: #323232;
+	padding-right: 100px;
+	min-height: 21px;
+}
+
+.mui-table-view .mui-media-body p {
+	height: 20px;
+}
+
+.mui-media-body p {
+	font-size: 1.3rem;
+}
+
+.mui-media-body p {
+	color: #999;
+	margin-right: 15px;
+}
+
+.mui-media-ex-time p {
+	font-size: 1.3rem;
+}
+
+.mui-media-ex-time p {
+	color: #999;
+}
+
+.no-content {
+	padding: 100px 20px 0px 20px;
+	text-align: center;
+	font-size: 14px;
+	word-break: break-all;
+    word-spacing: inherit;
+    word-wrap: normal;
+}
+.chatFace {
+	height: 20px;
+	margin-top: -5px;
+	vertical-align: middle;
+}

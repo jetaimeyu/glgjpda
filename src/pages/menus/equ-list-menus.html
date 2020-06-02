@@ -1,0 +1,160 @@
+<!DOCTYPE HTML>
+<html id="MdTong">
+
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title></title>
+		<link rel="stylesheet" href="../../css/mui.min.css" type="text/css" charset="utf-8" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			html {
+				width: 100%;
+				height: 100%;
+			}
+			
+			body {
+				height: 100%;
+				background-color: transparent;
+			}
+			
+			.mui-table-view-cell:after {
+				position: absolute;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				height: 1px;
+				content: '';
+				-webkit-transform: scaleY(.5);
+				transform: scaleY(.5);
+				background-color: #ccc;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="EquListMenuController">
+		<a style="display: block;height: 100%; background:url(../../images/mask.png);"></a>
+		<div id="popover" class="mui-popover  pop-menu" style="position:fixed ;top: 46px;right:5px;">
+			<div class="mui-popover-arrow" style="top: -26px;"></div>
+			<ul class="mui-table-view" style="color: #fff;right: 0;">
+				<li class="mui-table-view-cell popover" style="text-align: left;" ng-click="tap('edit')">
+					<a class="mui-icon icon-edit" nl="1" open-type="common" winid="">
+						<font>新增资产</font>
+					</a>
+				</li>
+				<li class="mui-table-view-cell popover" style="text-align: left;" href="#popover" id="popover" ng-click="tap('classlist')" ng-if="'Q4' | hasAuth">
+					<a class="mui-icon icon-report" nl="1" open-type="common" winid="">
+						<font>新增归类</font>
+					</a>
+				</li>
+				<li class="mui-table-view-cell popover" style="text-align: left;" href="#popover" id="popover" ng-click="tap('posList')" ng-if="'Q4' | hasAuth">
+					<a class="mui-icon icon-record" nl="1" open-type="common" winid="">
+						<font>投产地维护</font>
+					</a>
+				</li>
+				<li class="mui-table-view-cell popover" style="text-align: left;" href="#popover" id="popover" ng-if="catalog.ID>0&&('Q5' | hasAuth)" ng-click="tap('catalog')">
+					<a class="mui-icon icon-report" nl="1" open-type="common" winid="">
+						<font>设置</font>
+					</a>
+				</li>
+			</ul>
+		</div>
+	</body>
+	<script src="../../js/mui.min.js"></script>
+	<script src="../../js/angular.min.js"></script>
+	<script src="../../js/common.js"></script>
+	<script src="../../js/rpc.js"></script>
+	<script type="text/javascript">
+		app.controller("EquListMenuController", ["$scope", "ApiService", "DataService", "CacheService", "UtilsService", function($scope, ApiService, DataService, CacheService, UtilsService) {
+			$scope.catalog = {} || '';
+			var currentWinid = "equ-all.html";
+			RpcServer.expose("RPC_GetCurrentWinid", function(params) {
+				currentWinid = params;
+			})
+			//弹窗
+			$scope.tap = function(key) {
+				switch(key) {
+					case "posList":
+					UtilsService.openWindow({
+							id: "../eqmentlib/pos-list.html",
+							url: "../eqmentlib/pos-list.html",
+						});
+					break;
+					case 'edit':
+						UtilsService.openWindow({
+							id: "../eqmentlib/equ-edit.html",
+							url: "../eqmentlib/equ-edit.html",
+						});
+						break;
+					case 'catalog':
+						RpcClient.invoke(currentWinid, "RPC_GetSelectCatalog", {}, function(res) {
+							$scope.catalog = res;
+							UtilsService.openWindow({
+								id: "Catalog-setting.html",
+								url: "../eqmentlib/Catalog-setting.html",
+								extras: {
+									catalog: res
+								}
+							});
+						})
+						break;
+					case 'classlist':
+						UtilsService.openWindow({
+							id: "catalog-add.html",
+							url: "../eqmentlib/catalog-add.html",
+							extras: {
+								catalog: $scope.catalog
+							}
+						});
+						break;
+					default:
+						break;
+				}
+				setTimeout(function(){
+					mui('#popover').popover('hide');
+				},1000)
+			};
+
+			RpcServer.expose("RPC_FaultSettingList", function(params) {
+				if(params) {
+					$scope.catalog = params;
+					$scope.$apply();
+				}
+			});
+
+			RpcServer.expose("RPC_OrgEditOrDelInfo", function(params) {
+				if(params.id && params.state == 'edit') {
+					$scope.catalog.catalogname = params.name;
+				}
+
+			});
+
+			//			$scope.classlist = function() {
+			//				RpcClient.invoke("equ-all.html", "RPC_FaultEditEquList");
+			//			};
+
+			RpcServer.expose("RPC_CatalogAddList", function(params) {
+				if(params) {
+					$scope.ParDirID = params;
+					$scope.$apply();
+				}
+			});
+
+		}]);
+		mui.plusReady(function() {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			ws = plus.webview.currentWebview();
+			ws.setStyle({
+				mask: "none"
+			});
+			window.addEventListener("tap", function() {
+				ws.hide();
+			})
+			window.addEventListener("dragstart", function() {
+				ws.hide();
+			})
+		});
+	</script>
+
+</html>

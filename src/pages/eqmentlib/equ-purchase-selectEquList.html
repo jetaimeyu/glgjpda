@@ -1,0 +1,105 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>选择购置设备</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.mui-pull-bottom-pocket,
+			.mui-pull-top-pocket {
+				/*left: 50px;*/
+			}
+			
+			.mui-pull-bottom-pocket {
+				bottom: 40px;
+			}
+			
+			.icon {
+				width: 16px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="equListController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">选择购置设备</a>
+			<!--<a class="mui-pull-right menu-search" id="search" ng-click="search()">
+				<img class="icon" src="../../images/search.png" />
+			</a>-->
+		</header>
+
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("equListController", ["$scope", "Loading", "UtilsService", "RPCObserver", "CacheService", "$filter", function($scope, Loading, UtilsService, RPCObserver, CacheService, $filter) {
+				//接受已选择的参数
+				$scope.selectEquArr = plus.webview.currentWebview().selectObj;
+				if(!($scope.selectEquArr instanceof Array)) {
+					if($scope.selectEquArr.ID) {
+						$scope.selectEquArr = [$scope.selectEquArr];
+					} else {
+						$scope.selectEquArr = [];
+					}
+				}
+				RPCObserver.on("RPC_FaultEquSelectInfo", "faultEquSelectInfo");
+				window.faultEquSelectInfo = function(params) {
+					$scope.selectEquArr = params;
+					$scope.$apply();
+					return;
+				}
+
+				$scope.search = function() {
+					$scope.search = function() {
+						UtilsService.openWindow({
+							needLogin: true,
+							id: 'equ-purchase-search.html',
+							url: 'equ-purchase-search.html?action=select&multiselect=true',
+							extras: {
+								selectArr: $scope.selectEquArr
+							}
+						});
+					}
+				}
+
+				RPCObserver.on("RPC_SelectPurchaseEqu", "selectCallback");
+				window.selectCallback = function() {
+					var view = plus.webview.currentWebview();
+					var opener = view.opener();
+					if(view.callback) {
+						opener.evalJS(view.callback + "(" + JSON.stringify($scope.selectEquArr) + ")");
+					}
+					mui.back();
+				}
+				mui.init({
+					subpages: [{
+						url: 'equ-purchase-equAll.html?action=select&multiselect=true',
+						id: 'equ-purchase-equAll.html',
+						styles: {
+							top: "44px",
+							bottom: "0px",
+							popGesture: "none"
+						},
+						extras: {
+							selectArr: $scope.selectEquArr,
+							selectCatArr: $scope.selectCatArr
+						}
+					}]
+				})
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	</head>
+	<style type="text/css">
+		.icon {
+			width: 16px;
+		}
+	</style>
+
+	<body ng-controller="pullrefreshController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">我的公告</a>
+			<a class="mui-pull-right menu-add fon" id="add" ng-click="add()" ng-if="(['Q18']|hasAuth)">
+				<img class="icon" src="../../images/add.png" />
+			</a>
+		</header>
+
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript">
+			app.controller("pullrefreshController", ["$scope", "UtilsService", function($scope, UtilsService) {
+				mui.init({
+					subpages: [{
+						url: 'compnotice-list.html',
+						id: 'compnotice-list.html',
+						styles: {
+							top: '45px',
+							bottom: 0
+						}
+					}]
+				})
+				$scope.add = function() {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'notice-edit.html',
+						url: 'notice-edit.html'
+					});
+				}
+			}]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

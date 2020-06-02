@@ -1,0 +1,67 @@
+<ul class="md-work-user-list mui-table-view mui-table-view-chevron">
+	<li class="mui-table-view-cell mui-pull-left mui-media" ng-repeat="user in model " ng-click="tap(user)">	
+
+		<div class="mui-media-object  md-img-round avatar" ng-style="{'background-image':'url('+ (user.CreateUserID | getUserLogo:50:0) +')'}" ng-if="user.ULogoIsExist"></div>
+		<div class="mui-media-object  md-userCustomLogo" ng-if="!user.ULogoIsExist" ng-bind="user.CreateUserName | getUserCustomLogo"></div>
+
+		<span class="mui-ellipsis news-title" ng-bind="user.CreateUserName"></span><span ng-style="{fontSize:(user.Count.toString().length>=3)?'1.2rem':'1.3rem'}"  class="mui-ellipsis news-title work-stat-count" ng-bind="'('+user.Count+')'"></span>
+	</li>
+</ul>
+<style>
+	.md-work-user-list .mui-table-view-cell i {
+		line-height: 48px;
+		margin-right: 10px;
+	}	
+	.md-work-user-list.mui-table-view .mui-media-object {
+		border: none;
+	}
+	.md-work-user-list.mui-table-view {
+		position: static;
+		background: #FFFFFF;
+		overflow: hidden;
+		padding: 7px 13px;
+	}
+	.md-work-user-list.mui-table-view:after {	
+		height: 0;		
+	}
+	.md-work-user-list.mui-table-view .mui-table-view-cell:after {		
+		height: 0;	
+	}
+	.md-work-user-list.mui-table-view .mui-table-view-cell {
+		padding: 12px 5px;
+		height: 102.5px;
+		margin: 5px 0.85%;
+		width: 23.3%;
+		text-align: center;
+		background-color: #EDEEEF;
+		border-radius: 3px;		
+	}	
+	.md-work-user-list.mui-table-view .mui-table-view-cell .mui-media-object {
+		line-height: 48px;
+		max-width: 48px;
+		border-radius: 50%;
+		background-color: transparent;
+		margin: 0 auto;
+		width: 48px;
+		height: 48px;
+		background-size: cover;
+	}	
+	.mui-ellipsis {
+		white-space: nowrap!important;
+	}
+	.news-title.work-stat-count{
+		color:#E01717;
+		width: auto;
+		min-width: 20px;
+		text-align: center;
+		
+	}
+	.news-title {
+		display: inline-block;
+		line-height: 48px;
+		font-size: 1.3rem;
+		color: #323232;
+		width: 65%;
+		text-align: center;
+	}		
+</style>

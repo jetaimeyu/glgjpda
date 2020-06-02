@@ -1,0 +1,192 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link href="../../css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+</head>
+
+<body ng-controller="selectCtl">
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		<h1 class="mui-title">选择</h1>
+	</header>
+	<div class="mui-content">
+		<ul class="data-group">
+			<li class="data-row">
+				<label>产品选择</label>
+				<p class="opt md-icon-more ">
+					<i class="icon-saoyisao " ng-click="event.scan('prod')"></i>
+					<i class="icon-right" ng-click="event.selectProd()"></i>
+				</p>
+				<div class="body" ng-click="event.selectProd()">
+					<span ng-if="!data.selectProd.ProdName">请选择产品</span>
+					<span ng-if="data.selectProd.ProdName" ng-bind="data.selectProd.ProdName"></span>
+				</div>
+			</li>
+			<li class="data-row">
+				<label>选择人员</label>
+				<p class="opt md-icon icon-right" ng-click="event.selectUser()">
+				</p>
+				<div class="body" ng-click="event.selectUser()">
+					<span class="placeholder" ng-show="data.sendUsers.length==0">请选择抄送人</span>
+					<span ng-show="data.sendUsers.length>0" ng-repeat="user in data.sendUsers" ng-bind="$index==0?user.ViewName:'，'+user.ViewName"></span>
+				</div>
+			</li>
+
+			<li class="data-row">
+				<label>设备多选</label>
+				<p class="opt  md-icon">
+					<i class="icon-right" ng-click="event.selectEqu(true)"></i>
+				</p>
+				<div class="body" ng-click="event.selectEqu(true)">
+					<span ng-if="data.selectEqus.length==0">请选择设备</span>
+
+					<p ng-repeat="item in data.selectEqus" ng-bind="item.EqName"></p>
+
+				</div>
+			</li>  
+			<li class="data-row">
+				<label>设备单选</label>
+				<p class="opt md-icon-more ">
+					<i class="icon-saoyisao " ng-click="event.scan('equ')"></i>
+					<i class="icon-right" ng-click="event.selectEqu(false)"></i>
+				</p>
+				<div class="body" ng-click="event.selectEqu(false)">
+					<span ng-if="!data.selectEqu.EqName">请选择设备</span>
+					<span ng-if="data.selectEqu.EqName" ng-bind="data.selectEqu.EqName"></span>
+				</div>
+			</li>
+
+			<li class="data-row">
+				<label>设备And目录</label>
+				<p class="opt md-icon">
+					<i class="icon-right" ng-click="event.selectEquAndDir()"></i>
+				</p>
+				<div class="body" ng-click="event.selectEquAndDir()">
+					<span ng-if="!data.selectEqu.EqName">请选择设备</span>
+					<span ng-if="data.selectEqu.EqName" ng-bind="data.selectEqu.EqName"></span>
+				</div>
+			</li>
+
+		</ul>
+	</div>
+	<script src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/angular.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript">
+		mui.init();
+
+		app.controller("selectCtl", ["$scope", "UtilsService", "$filter", "ChooseService", function ($scope, UtilsService,
+			$filter, ChooseService) {
+			console.log("select.............")
+			$scope.data = {
+				//抄送人
+				sendUsers: [],
+				selectProd: {},
+				selectEqus: [],
+				selectEqu: {},
+				selectEquAndDirs: []
+			};
+
+
+			$scope.event = {
+				/**
+				 * 选择抄送人
+				 * **/
+				selectUser: function () {
+					ChooseService.user({
+						isMulti: true,
+						selected: $scope.data.sendUsers,
+						callback: function (data) {
+							$scope.data.sendUsers = data;
+							$scope.$apply();
+						}
+					})
+				},
+				selectProd: function () {
+					ChooseService.prod({
+						selected: $scope.data.selectProd,
+						callback: function (data) {
+							$scope.data.selectProd = data;
+							$scope.$apply();
+						}
+					})
+				},
+				selectEqu: function (isMulti) {
+					ChooseService.equ({
+						isMulti: isMulti,
+						selected: isMulti ? $scope.data.selectEqus : $scope.data.selectEqu,
+						callback: function (data) {
+							console.log(JSON.stringify(data))
+							if (isMulti) {
+								$scope.data.selectEqus = data;
+							} else {
+								$scope.data.selectEqu = data;
+							}
+							$scope.$apply();
+						}
+					})
+				},
+				selectEquAndDir: function () {
+					ChooseService.equ({
+						isMulti: true,
+						selected: $scope.data.selectEquAndDirs,
+						isCatalog: true,
+						callback: function (data) {
+
+							$scope.$apply();
+						}
+					})
+				},
+				scan: function (type) {
+					ChooseService.scan({
+						callback: function (data) {
+							console.log(data);
+							data = JSON.parse(data);
+							switch (type) {
+								case 'prod':
+									$scope.data.selectProd.ProdName = data.resInfo.ProdName;
+									$scope.data.selectProd.SkuID = data.resInfo.SkuID;
+									$scope.data.selectProd.ProdID = data.resInfo.ProdID;
+									$scope.data.selectProd.SkuName = data.resInfo.SkuName;
+									$scope.data.selectProd.MdCode=data.codeValue;
+									$scope.data.selectProd.CompID = data.resInfo.CompID;
+									$scope.data.selectProd.CompName = data.resInfo.CompName;
+									$scope.data.selectProd.IsNew = data.resInfo.IsNew;
+									$scope.data.selectProd.LogoIsExist = data.resInfo.LogoIsExist;
+
+									$scope.$apply();
+									break;
+								case 'equ':
+									$scope.data.selectEqu.MdCode = data.codeValue;
+									$scope.data.selectEqu.ID = data.resInfo.ID;
+									$scope.data.selectEqu.CatalogPath = data.resInfo.CatalogPath;
+									$scope.data.selectEqu.CatalogID = data.resInfo.CatalogID;
+									$scope.data.selectEqu.CompID = data.resInfo.CompID;
+									$scope.data.selectEqu.EqIdentifier = data.resInfo.EqIdentifier;
+									$scope.data.selectEqu.EqName = data.resInfo.EqName;
+									$scope.data.selectEqu.SkuName = data.resInfo.SkuName;
+									$scope.data.selectEqu.CatalogName = data.resInfo.CatalogName;
+									$scope.$apply();
+									break;
+
+							}
+						}
+					})
+				}
+
+			};
+		}]);
+		//mui.plusReady(function () {
+			//初始化angular
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+	//	});
+	</script>
+</body>
+
+</html>

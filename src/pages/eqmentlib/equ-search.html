@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+	</head>
+	<style type="text/css">
+		.mui-table-view-cell:last-child {
+			/*margin-bottom: 40px;*/
+		}
+		
+		.search_group .title {
+			color: #3296FA;
+			font-size: 1.3rem;
+		}
+		
+		.search-content {
+			text-align: center;
+			/*position: fixed;*/
+			/*top: 44px;*/
+			/*background: #fff;*/
+			/*height: 100%;*/
+			width: 100%;
+			padding-top: 65px;
+		}
+		
+		.search-content .search-content-title {
+			color: #AFAFAF;
+			font-size: 1.4rem;
+		}
+		
+		.content-state {
+			margin-top: 15px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			flex-wrap: wrap;
+		}
+		
+		.content-state span {
+			display: inline-block;
+			width: 25vw;
+			margin-top: 35px;
+			color: #3296FA;
+			font-size: 1.5rem;
+			border-right: 1px solid #EAEAEA;
+		}
+		
+		.content-state span:nth-child(3),
+		.content-state span:last-child {
+			border-right: 0px;
+		}
+		
+		.content-state span:nth-child(1),
+		.content-state span:nth-child(2),
+		.content-state span:nth-child(3) {
+			margin-top: 0px;
+		}
+	</style>
+
+	<body ng-controller="searchCtrl">
+		<div ng-class="{'mui-block':domShowX}" style="display: none;">
+			<div class="search_input">
+				<form ng-submit="search.doSearch()">
+					<a class="mui-action-back mui-icon icon-back mui-pull-left"></a>
+					<input type="search" placeholder="请输入设备编号|名称" ng-model="search.text" maxlength="50">
+					<i class="icon-search-thin color-gray-dark"></i>
+					<i class="icon-delete color-gray" ng-click="search.deleteSearch()" ng-show='search.text'></i>
+					<span ng-click="search.doSearch()">搜索</span>
+				</form>
+			</div>
+			<div class="search_group" ng-if="domShow===false">
+				<div class="title">按设备状态搜索</div>
+				<div class="content">
+				<span ng-click="tap('4')">空闲</span>
+					<span ng-click="tap('1')">在用</span>
+					<span ng-click="tap('7')">维修</span>
+					<span ng-click="tap('3')">待售</span>
+					<span ng-click="tap('11')">租赁</span>
+					<span ng-click="tap('2')">保养</span>
+					<span ng-click="tap('9')">停用</span>
+				</div>
+			</div>
+			<div class="search_group" ng-if="domShow===false" style="margin-top: 0;">
+				<div class="title" ng-if="search.history.length>0">搜索历史</div>
+				<div class="content">
+					<span ng-repeat="h in search.history" ng-bind="h" ng-click="search.searchSpan(h)"></span>
+				</div>
+			</div>
+			<div id="pullrefresh" class="mui-scroll-wrapper" ng-class="{'mui-block':domShow}" style="display: none;" class="search_res">
+				<div class="mui-content" style="padding-top: 40px;">
+					<!--<div id="slider" ng-class="{'mui-block':domShow}" style="display: none;" class="search_res">-->
+					<md-device-list ng-model="allMain" action="action"></md-device-list>
+					<md-no-data ng-show="allMain && allMain.length==0" data-options="{type:'search'}">暂无数据</md-no-data>
+					<!--</div>-->
+				</div>
+			</div>
+		</div>
+		<!--<footer class="f_btns" ng-class="{'mui-block':action=='select'}" style="display: none;">
+			<a ng-click="cancel()">取消</a>
+			<a ng-click="save()">确定</a>
+		</footer>-->
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="equ-search.js"></script>
+	</body>
+
+</html>

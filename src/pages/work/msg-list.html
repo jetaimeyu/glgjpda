@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.mui-table-view:before,
+			.mui-table-view:after {
+				height: 0;
+			}
+			
+			.mui-table-view {
+				font-size: 1.3rem;
+				margin-top: 3px;
+				margin-left: 3px;
+			}
+			
+			.mui-table-view-cell {
+				padding: 11px 6px;
+				/*text-align: center;*/
+				color: #333333;
+				background-color: #EFEFEF;
+			}
+			
+			.mui-table-view .mui-table-view-cell.active {
+				background-color: #FFFFFF;
+				color: #108CEE;
+			}
+			
+			.mui-table-view .mui-table-view-cell:after {
+				left: 10px;
+				right: 10px;
+				background-color: #E2E2E2!important;
+			}
+			
+			.mui-table-view .mui-table-view-cell.active:after {
+				height: 0!important;
+			}
+			
+			li .mui-badge {
+				padding: 2px 4px;
+				color: #fff;
+				/* background: #E01717; */
+				background: #3296fa;
+				border-radius: 0;
+				right: 5px!important;
+				top: 48%!important;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="MsgListController">
+		<div class="mui-scroll-wrapper" ng-class="{'mui-block':loaded}" style="background-color: #EFEFEF;display: none;">
+			<ul class="mui-table-view">
+				<li ng-class="{'active':row.DataFrom==selectDatefrom}" class="mui-table-view-cell mui-ellipsis" ng-repeat="row in MsgList" ng-click="tap(row.DataFrom)">
+					<div ng-bind="row.Name" style="padding-right: 10px;"></div>
+					<div ng-show="UnReadCountObj[row.Name]>0" class="mui-badge" ng-bind="UnReadCountObj[row.Name]>99?'99+':UnReadCountObj[row.Name]"
+						 ng-style="{'margin-left':(row.DataFrom>8&&UnReadCountObj[row.Name]>9&&'-23px')||(row.DataFrom>8&&UnReadCountObj[row.Name]<10&&'-16px')}"></div>
+				</li>
+			</ul>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			app.controller("MsgListController", ["$scope", "ApiService", "DataService", "UtilsService", "CacheService", "Loading", "$filter", function($scope, ApiService, DataService, UtilsService, CacheService, Loading, $filter) {
+				//页签列表
+				$scope.MsgList = [{
+					"DataFrom": 4,
+					"Name": "故障工单"
+				}];
+				//未读
+				$scope.UnReadCountObj = {};
+
+				$scope.selectDatefrom = 4;
+
+				init();
+
+				function init() {
+					if($filter("hasMenuAuth")("tygn", "dwcl")) {
+						$filter("hasMenuAuth")("tygn", "dwcl", "dwhf") && $scope.MsgList.push({
+							"DataFrom": 6,
+							"Name": "待我回访"
+						});
+						$filter("hasMenuAuth")("tygn", "dwcl", "cqpg") && $scope.MsgList.push({
+							"Name": "超期派工",
+							"DataFrom": 9
+						});
+						$filter("hasMenuAuth")("tygn", "dwcl", "cqwx") && $scope.MsgList.push({
+							"Name": "超期维修",
+							"DataFrom": 10
+						});
+						$filter("hasMenuAuth")("tygn", "dwcl", "cqhf") && $scope.MsgList.push({
+							"Name": "超期回访",
+							"DataFrom": 11
+						});
+						$filter("hasModuleAuth")("mdcode") && $filter("hasMenuAuth")("tygn", "dwcl", "fwbj") && $scope.MsgList.push({
+							"Name": "防伪报警",
+							"DataFrom": 7
+						});
+						$filter("hasModuleAuth")("eq") && $filter("hasMenuAuth")("tygn", "dwcl") && $scope.MsgList.push({
+							"DataFrom": 5,
+							"Name": "待巡检设备"
+						});
+//						alert($filter("hasModuleAuth")("eq"))
+						$filter("hasModuleAuth")("eq") && $filter("hasMenuAuth")("tygn", "dwcl") && $scope.MsgList.push({
+							"DataFrom": 12,
+							"Name": "待保养设备"
+						});
+					}
+					if($filter("hasMenuAuth")("syyy", "sbgl")) {
+						$filter("hasModuleAuth")("eq") && $filter("hasMenuAuth")("syyy", "sbgl", "dpdjl") && $scope.MsgList.push({
+							"DataFrom": 13,
+							"Name": "待盘点设备"
+						});
+					}
+					if($filter("hasMenuAuth")("tygn","dwcl")) {
+						$filter("hasModuleAuth")("product") && $filter("hasMenuAuth")("tygn", "dwcl", "chjl") && $scope.MsgList.push({
+							"DataFrom": 19,
+							"Name": "窜货预警"
+						});
+					}
+					 
+//					$scope.MsgList.push({
+//							"DataFrom": 19,
+//							"Name": "窜货预警"
+//						});
+					
+
+					getMsgList();
+				}
+
+				//获取页签未读信息数量
+				function getMsgList(callback) {
+					var url = ApiService.Api52 + "/api/v1/Common/GetTaskWaitForMe";
+					DataService.get(url).then(function(res) {
+						Loading.hide();
+						$scope.UnReadCountObj = res;
+						$scope.loaded = true;
+						callback && callback();
+					});
+				};    
+
+				$scope.tap = function(datefrom) {
+					if(datefrom != $scope.selectDatefrom) {
+						$scope.selectDatefrom = datefrom;
+						RpcClient.invoke("msg-all.html", "RPC_Msg_Change", datefrom);
+					}
+				};
+				Loading.show();
+
+				//遮罩
+				var _mask;
+				if(!_mask) {
+					_mask = mui.createMask(function() {
+						return _mask.clickClose;
+					}); //callback为用户点击蒙版时自动执行的回调；
+					_mask[0].classList.add("mui-backdrop-transparency");
+				}
+				_mask.clickClose = false;
+				//遮罩控制
+				RpcServer.expose("RPC_MaskToggle", function() {
+					_mask.clickClose = !_mask.clickClose;
+					document.querySelector(".mui-backdrop") ? _mask.close() : _mask.show();
+					_mask.clickClose = !_mask.clickClose;
+					setTimeout(function() {
+						_mask.clickClose = true;
+						document.querySelector(".mui-backdrop") && _mask.close();
+						_mask.clickClose = false;
+					}, 2400);
+				})
+
+				//刷新未读
+				RpcServer.expose("RPC_UnreadRefresh", function(params) {
+					if(!params.DataFrom) {
+						$scope.UnReadCountObj['防伪报警'] - 1 < 0 ? 0 : $scope.UnReadCountObj['防伪报警']--;
+						$scope.$apply();
+						return;
+					}
+					$scope.MsgList.forEach(function(item) {
+						if(item.DataFrom == params.DataFrom) {
+							$scope.UnReadCountObj[item.Name] - 1 < 0 ? 0 : $scope.UnReadCountObj[item.Name]--;
+							$scope.$apply();
+						}
+					})
+				});
+
+				//聊天 刷新未读
+				RpcServer.expose("RPC_UnreadRefreshForChat", function(params) {
+					getMsgList(function() {
+						if(!params || params == undefined) return;
+						var hasUnread = $scope.MsgList.some(function(item) {
+							return item.DataFrom == params;
+						});
+
+						if(!hasUnread) {
+							$scope.selectIndex = 0;
+							RpcClient.invoke("msg-all.html", "RPC_Msg_Change", 0);
+						}
+					});
+				});
+
+			}]);
+			mui.init({
+				swipeBack: false,
+				keyEventBind: {
+					backbutton: false //关闭back按键监听
+				}
+			});
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

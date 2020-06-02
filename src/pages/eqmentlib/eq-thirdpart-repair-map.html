@@ -1,0 +1,73 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="../../css/selecttime.css" />
+		<link rel="stylesheet" href="../../css/mui.loading.css" />
+		<link rel="stylesheet" href="../../css/mpicker.css" />
+		<link rel="stylesheet" href="eq-thirdpart-repair-map.css" />
+	</head>
+
+	<body ng-controller="scanProdsCtl">
+		<div class="mui-content">
+			<div id="map_container">
+
+				<div class="map_tools">
+					<ul class="data-group">
+						<li class="data-row" ng-click="event.showChooseInfo()">
+							<p class="opt md-icon">
+								<i class="icon-right"></i>
+							</p>
+							<div class="body  mui-ellipsis text-left" style="margin-right: 0px;" ng-bind="domData.typeData[domData.type]">
+
+							</div>
+						</li>
+						<li class="data-row" id="showCityPickBody" ng-show="domData.type==0" style="display:none;">
+							<p class="opt md-icon">
+								<i class="icon-right"></i>
+							</p>
+							<div class="body quanguo mui-ellipsis text-left" id="showCityPicker" style="margin-right: 0px;" ng-bind="domData.city || domData.province">
+								全国
+							</div>
+						</li>
+					</ul>
+				</div>
+				<div class="div-info div-info-earechoose" ng-click="event.hideChooseInfo()" style="display:none;">
+					<div class="choose-body">
+						<ul class="data-group">
+							<li class="data-row" ng-repeat="item in domData.typeData" ng-click="event.choosedType($index)">
+								<div class="body" style="padding-left:10px;">
+									<i style="color:#F27800" class="icon-roundcheckfill left-10 ng-scope font-15" ng-if="domData.type==$index"></i>
+									<i class="icon-round color-gray font-15 ng-hide" ng-show="domData.type!=$index"></i><span ng-bind="item"></span>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<div id="map" class="map">
+
+				</div>
+			</div>
+		</div>
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/json.js"></script>
+		<script type="text/javascript" src="../../js/jquery.min.js"></script>
+		<script type="text/javascript" src="../../js/mPicker.min.js"></script>
+		<!--<script type="text/javascript" src="https://api.map.baidu.com/api?ak=W6WIQmkWMM7fHZ1bQzONDGwimUikfaPU&type=lite&v=1.0"></script>-->
+		<script type="text/javascript" src="https://api.map.baidu.com/api?v=3.0&ak=W6WIQmkWMM7fHZ1bQzONDGwimUikfaPU"></script>
+		<script type="text/javascript" src="http://lbsyun.baidu.com/jsdemo/data/points-sample-data.js"></script>
+		<script type="text/javascript" src="../../js/mui.loading.js"></script>
+		<script type="text/javascript" src="eq-thirdpart-repair-map.js"></script>
+	</body>
+
+</html>

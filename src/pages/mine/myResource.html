@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport"
+		content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<title></title>
+	<link href="../../css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css">
+	<link rel="stylesheet" href="../../css/mui.loading.css" />
+	<style type="text/css">
+		.mui-icon-back {
+			line-height: 44px;
+			margin-left: -17px !important;
+			color: #323232;
+			font-size: 2.7rem !important;
+		}
+
+		.mui-bar .mui-title {
+			left: 19px;
+			color: #323232;
+			font-weight: 420;
+			line-height: 46px;
+		}
+
+		.md-modal-content {
+			background-color: #EAEAEA !important;
+			padding: 10px 0px !important;
+		}
+
+		/*伪元素(底线)控制*/
+		/*去掉ul上下边线*/
+
+		.data-group:before,
+		.data-group:after {
+			height: 0;
+		}
+
+		/*li边线离左右距离、边线颜色*/
+
+		.data-group .data-row:after {
+			left: 0px;
+			right: 0px;
+			background-color: #EAEAEA;
+		}
+
+		/*ul上下间距*/
+
+		.data-group {
+			margin-top: 0px;
+		}
+
+		.data-group .data-row {}
+
+		.data-group .data-row .icon-right {
+			position: absolute;
+			right: 0px;
+			padding: 7px 10px;
+			top: 50%;
+			transform: translateY(-50%);
+			font-size: 1.5rem;
+		}
+
+		.data-group .data-row .name {
+			margin-left: 35px;
+			font-size: 1.5rem;
+			line-height: 40px;
+			max-width: calc(80vw - 20px);
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			-o-text-overflow: ellipsis;
+			overflow: hidden;
+			display: block;
+		}
+
+		.data-group .data-row .left-10 {
+			position: absolute;
+			left: 5px;
+			padding: 5px;
+			top: 50%;
+			transform: translateY(-50%);
+			font-size: 1.8rem;
+		}
+
+		.data-group .data-row .opt,
+		.data-group .data-row .body.arrow:after {
+			padding: 10px 16px 11px 10px;
+			color: #AEAEAE !important;
+		}
+
+		#res-slide {
+			background: #fff;
+			overflow: hidden;
+			height: 40px;
+			position: fixed;
+			margin-top: 54px;
+		}
+
+		#res-slide .mui-scroll {
+			padding-left: 10px;
+		}
+
+		.top-thin-line:before {
+			background-color: #ECECEC;
+		}
+
+		.mui-segmented-control.mui-segmented-control-inverted .item {
+			color: #169BD5;
+			z-index: 999;
+		}
+
+		.mui-segmented-control.mui-segmented-control-inverted .item.mui-active {
+			color: #9A9A9C;
+			background: none;
+			border: none;
+		}
+
+		.mui-segmented-control .item {
+			padding: 0px !important;
+			line-height: 40px;
+		}
+
+		.mui-slider .mui-segmented-control.mui-segmented-control-inverted~.mui-slider-group .item {
+			border-top: none;
+		}
+
+		.mui-slider-indicator {
+			border-bottom: 1px solid #c8c7cc;
+		}
+
+		.mui-segmented-control .item>span {
+			font-size: 14px;
+		}
+
+		/* .mui-segmented-control .item .group-name {
+				margin-left: 10px;
+				margin-right: 10px;
+			} */
+
+		#slider .data-group .data-row .body {
+			padding-left: 10px;
+		}
+
+		.dir_btns {
+			position: fixed;
+			left: 0;
+			right: 0;
+			height: 40px;
+			bottom: 0px;
+		}
+
+		.dir_btns span {
+			line-height: 40px;
+			width: 50%;
+			font-size: 1.4rem;
+			text-align: center;
+			display: inline-block;
+			float: left;
+			position: relative;
+			border-top: 1px solid #eee;
+			background-color: #fff;
+		}
+
+		.dir_btns .cancel {
+			color: #B1B1B1;
+		}
+
+		.dir_btns .cancel:after {
+			content: '';
+			position: absolute;
+			right: 0;
+			width: 1px;
+			line-height: 50%;
+			background-color: #eee;
+			height: 100%;
+		}
+
+		.dir_btns .select {
+			color: #0ae;
+		}
+
+		.menu-more {
+			z-index: 20;
+			padding: 13px 6px 13px 10px;
+		}
+
+		#aepopover {
+			/*min-width: 260px;*/
+			/*height: 370px;*/
+			top: 65% !important;
+			margin-top: -150px;
+			left: 50% !important;
+			margin-left: -141px;
+			border-radius: 3px;
+			background-color: #fff;
+		}
+
+		#aepopover .mui-popover .mui-popover-arrow {
+			display: none !important;
+		}
+
+		#aepopover .data-group:before {
+			height: 0;
+		}
+
+		#aepopover .data-group .data-row .body {
+			padding: 10px 5px 11px 10px;
+		}
+
+		#aepopover .data-group .data-row:after {
+			left: 10px;
+			right: 10px;
+			background-color: #E5E5E5;
+			height: 1px;
+		}
+
+		#aepopover .data-group .data-row.first:after {
+			left: 5px;
+			right: 5px;
+			background-color: #E5E5E5;
+		}
+
+		#aepopover .data-group .data-row.first {
+			min-height: 38px
+		}
+
+		#add_div {
+			margin: 12px 20px 12px 20px;
+		}
+
+		#add_div a {
+			background-color: #3296FA;
+			color: #fff;
+			padding: 5px 0;
+			border: 1px solid #3296FA;
+		}
+
+		.data-group .data-row .label-gray {
+			color: #333333;
+		}
+
+		.info-title {
+			margin-left: 10px;
+			line-height: 1;
+			color: #1f1f1f;
+		}
+
+		.title {
+			color: #1f1f1f;
+		}
+
+		.mdt_leftline {
+			width: 3px;
+			height: 14px;
+			background: #169BD5;
+			margin-top: -13px;
+			margin-left: -3px;
+		}
+
+		.data-group .data-row label {
+			width: 70px;
+		}
+
+		.auditorUL {
+			text-align: center;
+			margin-top: 0;
+		}
+
+		.auditorUL li {
+			line-height: 20px;
+			padding: 15px;
+			padding-right: 36px;
+			min-height: 50px !important;
+		}
+
+		.add-auditor {
+			color: #3296FA;
+			box-shadow: 0px -1px 3px 0px rgba(180, 180, 180, 0.5)
+		}
+
+		.md-modal {
+			z-index: 2000 !important;
+		}
+
+
+		.mui-table-view-cell .check {
+			line-height: 48px;
+			margin-right: 10px;
+		}
+
+		.unread {
+			position: absolute;
+			background: red;
+			width: 10px;
+			height: 10px;
+			border-radius: 50%;
+			left: 59px;
+			top: 11px;
+		}
+
+		.mui-table-view .mui-media-object {
+			border: none;
+		}
+
+		.mui-table-view:before,
+		.mui-table-view:after {
+			content: none;
+		}
+
+		.mui-table-view .mui-table-view-cell {
+			padding: 8px 16px;
+			/* height: 64px; */
+		}
+
+		.mui-table-view .mui-table-view-cell .mui-media-object {
+			line-height: 48px;
+			max-width: 50px;
+			border-radius: 50%;
+			background-color: #FFFFFF;
+			width: 48px;
+			height: 48px;
+			background-size: cover;
+		}
+
+		.mui-media-ex-username {
+			font-size: 1.5rem;
+			color: #323232;
+			padding-right: 58px;
+		}
+
+		.mui-ellipsis {
+			white-space: nowrap !important;
+		}
+
+		.news-title {
+			line-height: 48px;
+			font-size: 1.6rem;
+			color: #323232;
+		}
+
+		.mui-table-view .mui-table-view-cell label,
+		.mui-table-view .mui-table-view-cell .opt {
+			position: absolute;
+			top: 50%;
+			-webkit-transform: translateY(-50%);
+			transform: translateY(-50%);
+			overflow: hidden;
+			margin: 0;
+		}
+
+		.mui-table-view .mui-table-view-cell .opt,
+		.data-group .data-row .opt {
+			color: #AEAEAE;
+			top: 50%;
+		}
+
+		.mui-table-view .mui-table-view-cell .opt:active {
+			color: #169BD5;
+		}
+
+		.mui-table-view .mui-table-view-cell .opt,
+		.mui-table-view .mui-table-view-cell .body.arrow:after {
+			font-size: 1.7rem;
+			right: 1px;
+			padding: 10px 10px 11px 10px;
+		}
+
+		.mui-table-view-cell:after {
+			background-color: #ECECEC;
+		}
+
+		.mui-table-view .mui-table-view-cell:after {
+			left: 10px;
+			right: 10px;
+		}
+	</style>
+</head>
+
+<body ng-controller="selclsCtrl">
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left" ng-click="old_back()">我的资源</a>
+		<a class="mui-pull-right menu-more" href="#popover" id="openPopover">
+			<span class="icon-more"></span>
+		</a>
+	</header>
+	<div class="mui-content" style="display: none;" ng-class="{'mui-block':isLoad}">
+		<!--导航目录部分-->
+		<div id="res-slide"
+			class="top-thin-line mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted nav-bar"
+			ng-show="navDirData.length>1">
+			<div class="mui-scroll">
+				<a class="item" ng-class="{'mui-active':$index==navDirData.length-1}" ng-repeat="dir in navDirData"
+					ng-click="loadDirList(dir,$index)">
+					<span class="icon iconfont icon-right color-gray-deep" ng-show="$index>0"></span>
+					<span class="group-name" ng-bind="dir.GroupName"></span>
+				</a>
+			</div>
+		</div>
+		<div id="slider" class="mui-scroll-wrapper"
+			ng-style="{'position': 'initial','margin-top': navDirData.length>1?'54px':'10px'}"
+			style="margin-bottom: 50px;">
+			<ul class="data-group" ng-if="dirList.length">
+				<li class="mui-table-view-cell data-row" ng-repeat="dir in dirList"
+					ng-click="loadDirList(dir);$event.stopPropagation();">
+					<p class="opt md-icon icon-right"></p>
+					<div class="body">
+						{{dir.GroupName}}
+					</div>
+				</li>
+			</ul>
+			<ul class="mui-table-view mui-table-view-chevron" ng-if="dataList.length>0"
+				style="margin-top: 3px!important;">
+				<li class="mui-table-view-cell mui-media" ng-repeat="obj in dataList" ng-click="selectItem(obj)">
+					<i style="margin-top: 14px;" class="mui-pull-left font-18" ng-if="obj.ResType==1"
+						style="padding-left:15px;"
+						ng-class="{'icon-round color-gray':selectedIds.indexOf(obj.ResID)<0,'icon-roundcheckfill color-blue':selectedIds.indexOf(obj.ResID)>=0}"></i>
+					<div class="unread" ng-if="obj.UnReadCount>0&&CompID>0">
+					</div>
+					<div>
+						<div class="mui-media-object mui-pull-left md-img-round "
+							ng-style="{'background-image':'url('+ (obj.CompID | getCompLogo:100:100) +')'}"></div>
+						<div class="mui-clearfix " style="margin-right: 16px; ">
+							<div class="mui-ellipsis news-title " ng-bind="obj.CompName "></div>
+						</div>
+						<i class="opt md-icon icon-right "
+							ng-click="gotoComp(obj.CompID);$event.stopPropagation(); "></i>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<md-select-footer type="'file'" is-view="'true'" btn-text="'移动'" btn-text2="'删除'" ng-model="selectObj"
+			submit="moveRes()" btn-event2="deleteRes()">
+		</md-select-footer>
+		<md-no-data ng-show="loaded&&dataList.length==0&&dirList.length==0">暂无数据</md-no-data>
+	</div>
+	<div id="popover" class="mui-popover menuDivModel">
+		<ul class="mui-table-view">
+			<li class="mui-table-view-cell delLiAfter" ng-click="tap('add')">
+				<a class="mui-icon icon-add">
+					<font>新增目录</font>
+				</a>
+			</li>
+			<li ng-if="navDirData.length>1 && navDirData[navDirData.length-1].ResType==1"
+				class="mui-table-view-cell delLiAfter" ng-click="tap('delete')">
+				<a class="mui-icon icon-delete">
+					<font>删除目录</font>
+				</a>
+			</li>
+		</ul>
+	</div>
+	<!--新增、修改-->
+	<div id="aepopover" class="mui-popover" style="padding: 0 0px;">
+		<ul class="data-group" style="margin-top: 3px;">
+			<li class="data-row first">
+				<a class="opt md-icon icon-close" href="#aepopover">
+				</a>
+				<div class="body">
+					<div class="pdLeft100 mui-ellipsis info-title" ng-switch="EidtType">
+						<span class="color-gray-dark font-14" ng-switch-when="1">新增</span>
+						<span class="color-gray-dark font-14" ng-switch-when="2">新增子级</span>
+					</div>
+					<div class="mdt_leftline mui-pull-left"></div>
+				</div>
+			</li>
+			<li class="data-row must">
+				<label class="label-gray">分组类型</label>
+				<p class="opt md-icon font-15" ng-click="addApprovePerson()">
+					<span class="icon-right"></span>
+				</p>
+				<div class="body" ng-click="selGroupType()">
+					<span id="stateDescription" style="margin: 0px 10px"
+						ng-bind="groupType.id==-1?'请选择分组类型':groupType.name"
+						ng-style="{'color':groupType.id==-1?'#dddddd':'#666666'}"></span>
+				</div>
+			</li>
+			<li class="data-row must">
+				<label class="label-gray">分组名称</label>
+				<div class="body">
+					<div class="edit" style="margin: 0px 10px;border: 1px solid #f0f0f0;border-radius: 3px;">
+						<div class="needsclick" id="dirName" lenlimit='45' ng-bind="DirName" contenteditable="true"
+							placeholder="请输入分组名称"></div>
+					</div>
+				</div>
+			</li>
+		</ul>
+		<div id="add_div">
+			<a type="button" class="font-15 mui-btn mui-btn-block" ng-click="confirmChange()">确认</a>
+		</div>
+	</div>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/rpc.js"></script>
+	<script type="text/javascript" src="../../js/mui.loading.js"></script>
+	<script type="text/javascript" charset="utf-8">
+		app.controller("selclsCtrl", ["$scope", "UtilsService", "BillService", "ApiService", "DataService", "Loading",
+			"RPCObserver", "$Modal", "CacheService","$q",
+			function ($scope, UtilsService, BillService, ApiService, DataService, Loading, RPCObserver, $Modal,
+				CacheService,$q) {
+				$scope.isLoad = false;
+				//1、新增 2、新增子级 3、修改
+				$scope.EidtType = 1;
+				//是否显示新增子级、修改、删除（仅当目录被选中，并且选中目录在当前页面，才显示这三个菜单）
+				$scope.IshowNext = false;
+				$scope.DirName = "";
+				$scope.DirID = 0;
+				$scope.ParDirID = 0;
+				$scope.Path = "";
+				$scope.groupType = {
+					"id": -1,
+					"name": ""
+				}
+				$scope.dirList = [];
+				$scope.loaded = false;
+				//目录导航
+				$scope.navDirData = [];
+
+				$scope.dataList = [];
+				var saving = false; //保存状态
+
+				$scope.SelGroupID = 0;
+
+				$scope.curUser = CacheService.get("user");
+				$scope.CompID = $scope.curUser.CompID;
+
+
+				$scope.selectObj = [];
+				$scope.selectedIds = [];
+
+
+				$scope.selectItem = function (item) {
+					if ($scope.selectedIds.indexOf(item.ResID) >= 0) {
+						var idx = $scope.selectedIds.indexOf(item.ResID);
+						$scope.selectedIds.splice(idx, 1);
+						$scope.selectObj.splice(idx, 1);
+					} else {
+						$scope.selectedIds.push(item.ResID);
+						item.ViewName = item.CompName;
+						$scope.selectObj.push(item);
+					}
+
+					RPCObserver.broadcast('SyncSelectedData', $scope.selectObj);
+				};
+
+
+				$scope.moveRes = function () {
+					if ($scope.selectedIds.length == 0) {
+						mui.toast("请选择您要移动的数据！");
+						return;
+					}
+
+					UtilsService.openWindow({
+						id: 'maintenanceRes.html',
+						url: '../complib/maintenanceRes.html?ismust=1&type=1',
+						extras: {
+							selectObj: {
+								id: "",
+								name: ""
+							},
+							callback: 'getGroup'
+						}
+					});
+
+					// UtilsService.openWindow({
+					// 	id: "contact-select.html",
+					// 	url: "../common/contact-select.html?action=select&multiselect=false",
+					// 	extras: {
+					// 		selectObj: [],
+					// 		callback: "forwardback"
+					// 	}
+					// });
+				};
+
+				window.getGroup = function (res) {
+					if ($scope.navDirData[$scope.navDirData.length - 1].ID != res.ID) {
+						mui.showLoading("正在移动", "div");
+						var promises = [];
+						$scope.selectObj.forEach(function (item) {
+							promises.push(DataService.post(ApiService.Api50 +
+								"/api/v1/Resource/ResourceUpdateGroup?resourceId=" + item.ResID +
+								"&groupId=" + res.ID))
+						});
+						$q.all(promises).then(function (res) {
+								mui.hideLoading();
+								getCompData();
+								$scope.selectedIds = [];
+								$scope.selectObj = [];
+							}, function () {
+								mui.hideLoading();
+							})
+					}
+				}
+
+
+				$scope.deleteRes = function () {
+					if ($scope.selectedIds.length == 0) {
+						mui.toast("请选择您要删除的数据！");
+						return;
+					}
+
+					mui.confirm("确认删除吗？删除后不可恢复！", function (e) {
+						if (e.index == 0) {
+							mui.showLoading("正在删除", "div");
+							var promises = [];
+							$scope.selectObj.forEach(function (item) {
+								promises.push(DataService.post(ApiService.Api50 +
+									"/api/v1/Resource/ResourceDel?resourceId=" + item
+									.ResID))
+							});
+
+							$q.all(promises).then(function (res) {
+								mui.hideLoading();
+								getCompData();
+								$scope.selectedIds = [];
+								$scope.selectObj = [];
+							}, function () {
+								mui.hideLoading();
+							})
+						}
+					});
+
+
+				};
+
+
+				$scope.gotoComp = function (compid) {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'complib-index.html',
+						url: '../complib/index.html?compid=' + compid + "&tabidx=3&isResource=1"
+					});
+				};
+
+				RPCObserver.on('refresh_read_list', 'refresh_read_list')
+				window.refresh_read_list = function () {
+					getOrgList();
+					$scope.$apply()
+				}
+
+				//获取设备目录
+				function getOrgList() {
+					$scope.dataList = [];
+					var url = ApiService.Api50 + "/api/v1/Resource/ResGroupLayerList_Comp?pId=" + $scope.ParDirID;
+					DataService.get(url).then(function (res) {
+						if (res) {
+							$scope.loaded = true;
+							$scope.dirList = res;
+
+							getCompData();
+						}
+					})
+				}
+
+				function getCompData() {
+					if ($scope.navDirData.length == 1) {
+						return;
+					}
+					var groupId = $scope.navDirData[$scope.navDirData.length - 1].ID;
+					var url = ApiService.Api64 + "/api/v1/Resource/GetCompResourceList?groupId=" + groupId;
+
+					DataService.get(url).then(function (res) {
+						if (res) {
+
+							$scope.dataList = res;
+						}
+					}, function (error) {
+						$scope.retryModal.state = error.State;
+					})
+				}
+				getOrgList();
+				//跳转
+				$scope.tap = function (key) {
+					mui('#popover').popover('hide');
+					switch (key) {
+						case 'add':
+							$scope.EidtType = 1;
+							$scope.DirName = "";
+							mui("#aepopover").popover("toggle");
+							//								document.getElementById("dirName").focus();
+							break;
+						case 'addnext':
+							$scope.EidtType = 2;
+							$scope.DirName = "";
+							$scope.DirID = 0;
+							//当前目录是否有选中的目录
+							$scope.ParDirID = $scope.selectedDir.ID
+							mui("#aepopover").popover("toggle");
+							//								document.getElementById("dirName").focus();
+							break;
+						case "delete":
+							mui.confirm("确认删除吗？删除后不可恢复！", function (e) {
+								if (e.index == 0) {
+									mui.showLoading("正在删除", "div");
+									var url = ApiService.Api50 +
+										"/api/v1/Resource/ResGroupDel_Comp?groupId=" + $scope.navDirData[
+											$scope.navDirData.length - 1].ID;
+									DataService.post(url).then(function () {
+										mui.hideLoading();
+										mui.toast("删除成功！");
+										mui.back();
+										RefreshTabRerouce();
+									}, function (res) {
+										mui.hideLoading();
+									})
+								}
+							});
+							break;
+						default:
+							break;
+					}
+				};
+				// 获得输入框键盘焦点
+				var msgTextFocus = function (obj) {
+					obj.focus();
+					setTimeout(function () {
+						obj.focus();
+					}, 150);
+				}
+
+				// 光标移动到最后
+				function msgTextLastPos(obj) {
+					if (window.getSelection) { //ie11 10 9 ff safari
+						obj.focus(); //解决ff不获取焦点无法定位问题
+						var range = window.getSelection(); //创建range
+						range.selectAllChildren(obj); //range 选择obj下所有子内容
+						range.collapseToEnd(); //光标移至最后
+					} else if (document.selection) { //ie10 9 8 7 6 5
+						var range = document.selection.createRange(); //创建选择对象
+						//var range = document.body.createTextRange();
+						range.moveToElementText(obj); //range定位到obj
+						range.collapse(false); //光标移至最后
+						range.select();
+					}
+				}
+				//选择分组类型
+				$scope.selGroupType = function () {
+					$Modal.modal({
+						size: "small",
+						footer: false,
+						autoClose: true,
+						template: "<div style='max-height:55vh;overflow:auto;margin: -20px -10px -20px -10px;'><ul class='data-group auditorUL'><li class='data-row add-auditor' style='justify-content: center;'><span class='font-15'> 分组名称</span></li><li class='data-row mui-ellipsis-2' ng-click='selGroup(item)' ng-repeat='item in params.groupList' style='justify-content: center;'><p class='opt md-icon font-18 icon-check' style='padding-right: 10px;font-weight: bold;' ng-if='SelectedGroupID==item.id'></p><div style='overflow: hidden;'><span ng-bind='item.name'></span></div></ul></div>",
+						params: {
+							groupList: []
+						},
+						controller: ['$scope', function ($scope) {
+							var appElement = document.querySelector('[ng-controller=selclsCtrl]');
+							var $s = angular.element(appElement).scope();
+							$scope.SelectedGroupID = $s.groupType.id;
+							isModal = true;
+							$scope.$on("modal_close", function () {
+								isModal = false;
+								mui("#adpopover").off("tap", ".saveauditor");
+							});
+
+							$scope.params.groupList = [{
+								"id": 0,
+								"name": "产品"
+							}, {
+								"id": 1,
+								"name": "外协"
+							}, {
+								"id": 2,
+								"name": "服务"
+							}]; //0：默认（产品）1：外协 2：服务
+							$scope.selGroup = function (item) {
+								$s.groupType.id = item.id;
+								$s.groupType.name = item.name;
+								$scope.$modal.close();
+								document.getElementById("dirName").focus();
+							}
+
+						}]
+					}).show();
+				}
+				//确认添加、修改
+				$scope.confirmChange = function () {
+					if (saving) {
+						return;
+					};
+					if ($scope.groupType.id == -1) {
+						mui.toast("请选择分组类型");
+						return;
+					}
+					$scope.DirName = document.getElementById("dirName").innerText.trim();
+					if (!$scope.DirName) {
+						mui.toast("分组名称不能为空");
+						return;
+					}
+					//验证填字符长度
+					if (!checkLengthUtil.check()) {
+						return false;
+					}
+					mui("#aepopover").popover("hide");
+					var postdata = {
+						"groupName": $scope.DirName,
+						"pId": $scope.ParDirID
+					};
+					//经测试popover关闭需要时间，防止多次点击，所以延迟一秒
+					saving = true;
+					setTimeout(function () {
+						saving = false;
+					}, 1000);
+
+					var url = ApiService.Api50 + "/api/v1/Resource/ResGroupAdd_Comp?pId=" + $scope.ParDirID +
+						"&groupName=" + $scope.DirName + "&grouptype=" + $scope.groupType.id;
+					DataService.post(url).then(function (res) {
+						if ($scope.EidtType == 1) {
+							//新增
+							var obj = {
+								"GroupName": $scope.DirName,
+								"ID": res.ID
+							};
+							$scope.dirList.push(obj);
+							mui.toast("分组新增成功");
+							RefreshTabRerouce();
+						} else if ($scope.EidtType == 2) {
+							//新增子级
+							var obj = {
+								"GroupName": $scope.DirName,
+								"ID": $scope.ParDirID
+							};
+							$scope.dirList.forEach(function (item) {
+								if (item.ID == $scope.ParDirID) {
+									item.HasChildGroup = "true";
+								}
+							});
+							$scope.ParDirID = 0;
+							getOrgList();
+							mui.toast("子级分组已新增");
+							RefreshTabRerouce();
+						}
+						document.getElementById("dirName").blur();
+						mui('#popover').popover('hide');
+					});
+				};
+
+				function RefreshTabRerouce() {
+					RpcClient.invoke("compWind", "RPC_RefreshResource");
+				}
+
+				$scope.callBack = function (res) {
+					if (res) {
+						if (!$scope.selectedDir.ID) {
+							mui.toast("请选择分组！");
+							return;
+						};
+						ws.opener().evalJS(ws.callback + "(" + JSON.stringify($scope.selectedDir) + ")");
+						mui.back(true);
+					} else {
+						mui.back(true);
+					}
+				};
+				$scope.old_back = mui.back;
+				mui.back = function (flag) {
+					if (flag)
+						$scope.old_back();
+					else
+						$scope.$broadcast("back_dir");
+
+				};
+				$scope.$on("back_page", function (e, m) {
+					mui.back(true);
+				})
+
+				$scope.back = function () {
+					mui.back(true);
+				}
+
+
+				$scope.$on("back_dir", function (e, m) {
+					mui('#popover').popover('hide');
+					mui("#aepopover").popover("hide");
+					if ($scope.navDirData.length > 1) {
+						$scope.loadDirList($scope.navDirData[$scope.navDirData.length - 2], $scope.navDirData
+							.length - 2);
+					} else {
+						$scope.$emit("back_page");
+					}
+				})
+
+				$scope.loadDirList = function (dir, navIdx) {
+					Loading.show();
+					$scope.loaded = false;
+					$scope.ParDirID = dir.ID || 0;
+					getOrgList();
+					if (navIdx) {
+						//如果是最后一项，直接退出
+						if (navIdx == $scope.navDirData.length - 1) {
+							Loading.hide();
+							return;
+						}
+
+						//移除后续项
+						$scope.navDirData.splice(navIdx + 1, $scope.navDirData.length - navIdx - 1);
+					} else {
+						//如果是点击的第一项，清空导航
+						if (navIdx == 0)
+							$scope.navDirData.length = 0;
+
+						$scope.navDirData.push({
+							ID: dir.ID,
+							GroupName: dir.GroupName,
+							ResType:dir.ResType
+						});
+					}
+
+					if ($scope.dirList.length)
+						$scope.dirList.length = 0;
+
+					resScroll();
+
+					BillService.dataDirLevel(dir.ID).then(function (list) {
+						$scope.ParDirID = list.length > 0 ? list[0].ParDirID : 0;
+						$scope.dirList = list;
+						$scope.loaded = true;
+						Loading.hide();
+						$scope.isLoad = true;
+						if ($scope.selectedDir.ID && $scope.dirList.some(function (item) {
+								return item.ID == $scope.selectedDir.ID;
+							})) {
+							$scope.IshowNext = true;
+						} else {
+							$scope.IshowNext = false;
+						}
+					}, function () {
+						Loading.hide();
+						$scope.isLoad = true;
+					});
+				};
+				//导航栏滚动事件
+				function resScroll() {
+					setTimeout(function () {
+						if (mui("#res-slide")[0]) {
+							var width = mui("#res-slide")[0].clientWidth;
+							var scrollWidth = mui("#res-slide .mui-scroll")[0].clientWidth;
+							scrollto = 0;
+							if ((scrollWidth + 35) < width || width == 0) {
+								scrollto = 0;
+							} else {
+								scrollto = width - scrollWidth - 5;
+							}
+							mui('#res-slide').scroll().scrollTo(scrollto, 0, 0);
+						}
+					}, 100);
+				}
+				$scope.loadDirList({
+					ID: 0,
+					GroupName: "目录"
+				});
+
+				$scope.choose = function (dir) {
+					if ($scope.selectedDir.ID == 0 || $scope.selectedDir.ID != dir.ID) {
+						$scope.selectedDir = dir;
+					} else {
+						$scope.selectedDir = {
+							ID: 0
+						};
+					}
+					if ($scope.selectedDir.ID && $scope.dirList.some(function (item) {
+							return item.ID == $scope.selectedDir.ID;
+						})) {
+						$scope.IshowNext = true;
+					} else {
+						$scope.IshowNext = false;
+					}
+					$scope.groupType.id = dir.GroupType;
+					//								console.log($scope.groupType.id)
+					switch ($scope.groupType.id) {
+						case 0:
+							$scope.groupType.name = "产品";
+							break;
+						case 1:
+							$scope.groupType.name = "外协";
+							break;
+						case 2:
+							$scope.groupType.name = "服务";
+							break;
+						default:
+							break;
+					}
+				};
+				//当popover关闭的时候，清空已经填入的数据
+				mui('body').on('shown', '.mui-popover', function (e) {
+					//detail为当前popover元素
+					if (e.detail.id == 'aepopover' && $scope.EidtType != 3) {
+						document.getElementById("dirName").innerText = "";
+					}
+				});
+			}
+		]);
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			plus.webview.currentWebview().setStyle({
+				scrollIndicator: 'none'
+			});
+		});
+	</script>
+</body>
+
+</html>

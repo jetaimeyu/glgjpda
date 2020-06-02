@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html id="MdTong">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+	</head>
+	<style type="text/css">	
+		.mdApproveSearch .search_group .title {
+			color: #3296FA;
+			font-size: 1.3rem;
+		}
+		.mdApproveSearch .seclet-title {
+			color: #3296FA;
+		
+		}
+	</style>
+	<body ng-controller="equInventorySearchController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">搜索</a>
+		</header>
+		<div style="display: block;" class="mdApproveSearch" >
+			<div class="search_group" >
+				<div class="title">状态</div>
+				<div class="content">
+					<span ng-class="{'seclet-title':checkedState=='-1'}" ng-click="selectRow('-1')">全部</span>
+					<span ng-class="{'seclet-title':checkedState=='0'}" ng-click="selectRow('0')">待盘点</span>
+					<span ng-class="{'seclet-title':checkedState=='1'}" ng-click="selectRow('1')">盘点中</span>
+					<span ng-class="{'seclet-title':checkedState=='2'}" ng-click="selectRow('2')">已盘点</span>				
+				</div>
+			</div>
+		</div>
+		<!--<footer class="f_btns" >
+			<a ng-click="save('cancel')">取消</a>
+			<a ng-click="save('confirm')">确定</a>
+		</footer>-->
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("equInventorySearchController", ["$scope", "ApiService", "RPCObserver", function($scope, ApiService, RPCObserver) {
+				$scope.checkedState=-1;
+				var self = plus.webview.currentWebview();
+				if(self.selectObj){
+					$scope.checkedState=self.selectObj.state;
+				}
+				$scope.selectRow=function(key){
+//					if($scope.checkedState==key){
+//						$scope.checkedState=-1;
+//						return;
+//					}
+					$scope.checkedState=key;
+					//选中后返回
+					var obj={
+								"state":$scope.checkedState
+							}
+						RpcClient.invoke("equ-inventory-list.html", "RPC_equ_inventory", obj);
+						RpcClient.invoke("equ-inventory-list-header.html", "RPC_equ_inventory", obj);
+						var view=plus.webview.currentWebview();
+						var opener=view.opener();
+						if(view.callback){
+							opener.evalJS(view.callback+"(" + JSON.stringify(obj) + ")")
+						}
+					setTimeout(function(){
+						mui.back();
+					},300);
+					
+				}
+				
+//				$scope.save=function(action){
+//					if(action=='confirm'){
+//						var obj={
+//								"state":$scope.checkedState
+//							}
+//						RpcClient.invoke("equ-inventory-list.html", "RPC_equ_inventory", obj);
+//						RpcClient.invoke("equ-inventory-list-header.html", "RPC_equ_inventory", obj);
+//						var view=plus.webview.currentWebview();
+//						var opener=view.opener();
+//						if(view.callback){
+//							opener.evalJS(view.callback+"(" + JSON.stringify(obj) + ")")
+//						}
+//					}
+//					mui.back();
+//				}
+			}]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

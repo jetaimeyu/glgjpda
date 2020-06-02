@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../../css/mui.previewimage.css" />
+		<link rel="stylesheet" href="../../../css/common.css" />
+		<link rel="stylesheet" href="../../../icon-font/iconfont.css" />
+		<style type="text/css">
+			/*header .mui-pull-right {
+				height: 44px;
+				line-height: 44px;
+				color: #fff;
+				font-size: 16px;
+			}*/
+			
+			.menu-more {
+				z-index: 20;
+				padding: 13px;
+				margin-right: -8px;
+				color: #3296FA;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="ContController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">查看合同</a>
+			<!--<a class="mui-pull-right edit" ng-if="editAuth">编辑</a>-->
+			<a class="mui-pull-right menu-more edit" ng-if="editAuth">编辑</a>
+		</header>
+		<div class="mui-scroll-wrapper" id="content" style="display: none;">
+			<ul class="data-group">
+				<li class="data-row">
+					<label>合同编号</label>
+					<div class="body">
+						<span ng-bind="contractData.ContractCode"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>对外公开</label>
+					<div class="body">
+						<span ng-bind="contractData.IsPublic==0?'否':'是'"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>用户名称</label>
+					<div class="body">
+						<span ng-bind="contractData.ClientName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>施工地点</label>
+					<div class="body">
+						<span ng-bind="contractData.ConstructionAddress"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>发货时间</label>
+					<div class="body">
+						<span ng-bind="contractData.ShipTime"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>验收时间</label>
+					<div class="body">
+						<span ng-bind="contractData.AcceptingTime"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>无故障运行时间</label>
+					<div class="body">
+						<span ng-bind="' ' + contractData.StirPeriod + getUnit(contractData.StirPeriodUnit)" ng-show="contractData.StirPeriod>0"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>业务员</label>
+					<div class="body">
+						<span class="no-user" ng-repeat="user in contractData.Clerks" ng-attr-user="{{user.id}}" ng-bind="($index==0?'':'、')+user.name"></span>
+					</div>
+				</li>
+				<!--<li class="data-row" ng-if="contractData.Clerks.length>0">
+					<label>业务员</label>
+					<div class="body">
+						<md-chat-user-list ng-model="contractData.Clerks"></md-chat-user-list>
+					</div>
+				</li>-->
+				<li class="data-row">
+					<label>安调负责人</label>
+					<div class="body">
+						<span class="no-user" ng-repeat="user in contractData.InstallDutys" ng-attr-user="{{user.id}}" ng-bind="($index==0?'':'、')+user.name"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="contractData.Remark">
+					<label>备注</label>
+					<div class="body">
+						<span ng-bind="contractData.Remark"></span>
+					</div>
+				</li>
+				<!--合同图片-->
+				<li class="data-row" ng-if="contractData.ContractPicList.length>0">
+					<div class="body" style="padding: 9px 10px 10px 16px;">
+						<div class="photo file" ng-repeat="p in contractData.ContractPicList" ng-if="p.IsDelete == 0">
+							<div class="img-body">
+								<img data-preview-src="{{Api45+'/api/v1.0/WorkOrder/MatContract/'+contractData.ID+'_'+p.ID+'_0x0.png'}}" ng-src="{{Api45+'/api/v1.0/WorkOrder/MatContract/'+contractData.ID+'_'+p.ID+'_60x60.png'}}" data-preview-group="1" />
+							</div>
+						</div>
+					</div>
+				</li>
+				<!--<li class="data-row" ng-if="contractData.ContractPicList.length!=0">
+					<div class="body attach" style="padding-left: 16px;">
+						<md-image ng-if="contractData.ContractPicList.length!=0" images="imageList" readonly="true"></md-image>
+					</div>
+				</li>-->
+			</ul>
+			<ul class="data-group" ng-repeat="prod in contractData.MdCodeList" ng-show="contractData.MdCodeList.length>0">
+				<!--产品信息-->
+				<li class="data-row mui-table-view-cell" ng-click="tap(prod.ProdID,prod.SkuID,prod.MdCode,prod.ProdInnerCode)">
+					<p class="opt md-icon">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" style="padding: 9px 10px 10px 16px;">
+						<img class="size60 float-left border-f2 bg-f2 mr10" ng-src="{{ImgUrl+'/prod/logo/'+prod.ProdID+'_70x70.jpg'}}" />
+						<div style="margin-right: 20px;">
+							<span class="font-16" ng-bind="'设备名称：'+prod.ProdName"></span>
+						</div>
+						<p class="color-red-md" ng-bind="prod.MdCode | getMdCode"></p>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>合同产品序号</label>
+					<div class="body">
+						<span ng-bind="prod.ContracPkgNo"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>设备型号</label>
+					<div class="body">
+						<span ng-bind="prod.SkuName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>出厂编号</label>
+					<div class="body">
+						<span ng-bind="prod.ProdInnerCode"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>制造时间</label>
+					<div class="body">
+						<span ng-bind="prod.MakingDate"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>出厂时间</label>
+					<div class="body">
+						<span ng-bind="prod.FactoryDate"></span>
+					</div>
+				</li>
+			</ul>
+			<!--<div class="md-tab mt10">
+				<a class="md-tab-item" ms-class="[selectTab=='faultSubmit'&&'md-active']" data-type="faultSubmit" data-index="1" href="#item1">
+					故障报修
+				</a>
+				<a class="md-tab-item" ms-class="[selectTab=='repair'&&'md-active']" data-type="repair" data-index="2" href="#item2">
+					安装调试
+				</a>
+			</div>
+			<div style="position: relative;">
+				<div id="item1" class="md-tab-content md-active" ms-class="selectTab=='faultSubmit'&&'md-active'">
+					<div class="mui-scroll-wrapper" style="margin-top: 0px;" ms-visible="MendList.length>0">
+						<div id="scroll1" class="mui-scroll">
+							<ul class="mui-table-view">
+								<li class="mui-table-view-cell" ms-for="item in MendList">
+									<p class="listcon_til clearfix">
+										<i class="float-left icon-repair-2 color-yellow" style="line-height: 21px;"></i>
+										<span class="listcon_titles tEllipsis" ms-text="item.ReportCompName"></span>
+										<span class="listcon_date" ms-text="item.ReportDate"></span>
+									</p>
+									<a ms-attr="{href:'../statistics/order-view.html?workOrderId='+item.WorkOrderID}" open-type="common" class="mui-navigate-right">
+										<p ms-visible="item.ProdName!=''" ms-text="item.ProdName"></p>
+										<p ms-visible="item.SkuName!=''||item.ProdInnerCode!=''">
+											<span ms-text="item.SkuName"></span>
+											<span class="listcon_span" ms-text="item.ProdInnerCode!=''?' ('+item.ProdInnerCode+')':''"></span>
+										</p>
+										<p class="color-black ws wb" style="margin-bottom: 7.5px;width:94%;white-space: normal;" ms-visible="item.Description!=''" ms-html="item.Description"></p>
+										<div class="voice" ms-visible="item.AudioLength>0" ms-attr="{file:'WorkOrder/'+item.WorkOrderID+'.amr'}">
+											<img src="../../images/voice.png" />
+											<span>{{item.AudioLength}}''</span>
+										</div>
+									</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div class="empty" ms-visible="MendList.length==0" style="padding-bottom: 10vh;margin-top: 10vh;">暂无数据</div>
+				</div>
+				<div id="item2" class="md-tab-content" ms-class="selectTab=='repair'&&'md-active'">
+					<div class="mui-scroll-wrapper" style="margin-top: 0px;" ms-visible="DebugList.length>0">
+						<div id="scroll2" class="mui-scroll">
+							<ul class="mui-table-view">
+								<li class="mui-table-view-cell" ms-for="item in DebugList">
+									<p class="listcon_til clearfix">
+										<i class="float-left icon-repair color-blue" style="line-height: 21px;"></i>
+										<span class="listcon_titles tEllipsis" ms-text="item.ReportCompName"></span>
+										<span class="listcon_date" ms-text="item.ReportDate"></span>
+									</p>
+									<a ms-attr="{href:'../statistics/order-view.html?workOrderId='+item.WorkOrderID}" open-type="common" class="mui-navigate-right">
+										<p ms-visible="item.ProdName!=''" ms-text="item.ProdName"></p>
+										<p ms-visible="item.SkuName!=''||item.ProdInnerCode!=''">
+											<span ms-text="item.SkuName"></span>
+											<span class="listcon_span" ms-text="item.ProdInnerCode!=''?' ('+item.ProdInnerCode+')':''"></span>
+										</p>
+										<p class="color-black ws wb" style="margin-bottom: 7.5px;" ms-visible="item.Description!=''" ms-html="item.Description"></p>
+										<div class="voice" ms-visible="item.AudioLength>0" ms-attr="{file:'WorkOrder/'+item.WorkOrderID+'.amr'}">
+											<img src="../../images/voice.png" />
+											<span>{{item.AudioLength}}''</span>
+										</div>
+									</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div class="empty" ms-visible="DebugList.length==0" style="padding-bottom: 10vh;margin-top: 10vh;">暂无数据</div>
+				</div>
+			</div>-->
+			<md-no-data ng-show="!contractData.ContractCode">暂无数据</md-no-data>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../../js/mui.previewimage.js"></script>
+	<script type="text/javascript" src="../../../js/mui.zoom.js"></script>
+	<script type="text/javascript" src="../../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../../js/common.js"></script>
+	<script type="text/javascript" src="../../../js/utils.js"></script>
+	<script type="text/javascript" src="../../../js/rpc.js"></script>
+	<script type="text/javascript" src="check-contract.js"></script>
+
+</html>

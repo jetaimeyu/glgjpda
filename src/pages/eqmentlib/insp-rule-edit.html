@@ -1,0 +1,751 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/common.css">
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<style>
+			
+			.data-group .opt-left {
+				position: absolute;
+				padding: 10px 10px 11px 16px !important;
+				left: 0px;
+				color: #5F9EDF !important;
+				max-width: 50px !important;
+			}
+			
+			.data-group .opt-left~.body {
+				margin-left: 50px;
+				width: 30%;
+			}
+			.data-group .data-row .opt~.body{
+				margin-right: 70px;
+			}
+			
+			.stand-li {
+				width: 100%;
+			}
+			
+			.chosed-eq {
+				width: 100%;
+				box-sizing: border-box;
+				display: block;
+				background: #FFFFFF;
+				padding: 0 16px;
+			}
+			
+			.choosed-list {
+				width: 100%;
+				background: #F7F7F7;
+				margin: 0 auto;
+				box-sizing: border-box;
+				padding: 0 8px;
+			}
+			
+			.choded-title {
+				font-size: 1.2rem;
+				color: #999999;
+				line-height: 2.4rem;
+			}
+			
+			.li-content {
+				width: 100%;
+				display: flex;
+				align-items: center;
+				background: #f7f7f7;
+				font-size: 1.4rem;
+				justify-content: space-between;
+			}
+			
+			.li-content img {
+				width: 17px;
+				height: 14px;
+				vertical-align: middle;
+			}
+			
+			.choosed-list ul {
+				background: none;
+			}
+			
+			.icon-delete {
+				color: #AEAEAE;
+			}
+			
+			.equ_img {
+				width: 35px;
+				margin-right: 11px;
+			}
+			
+			.equ_img img {
+				width: 35px;
+				height: 35px;
+				border-radius: 50%;
+			}
+			
+			.equ-info {
+				width: 90%;
+			}
+			
+			.equ-name {
+				color: #323232;
+				font-size: 1.4rem;
+			}
+			
+			.equ-number,
+			.equ-location {
+				color: #999999;
+				font-size: 1.2rem;
+				line-height: 15px;
+			}
+			
+			.equ_list_li_left {
+				width: 96%;
+				display: flex;
+				text-align: left;
+				align-items: flex-start;
+			}
+			
+			.li-left {
+				width: 96%;
+				overflow: hidden;
+				display: flex;
+				align-items: center;
+				justify-content: flex-start;
+			}
+			
+			.fill-img {
+				width: 17px;
+				margin-right: 5px;
+			}
+			
+			.fill-name {
+				width: 90%;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+			
+			.choded-title {
+				font-size: 1.2rem;
+				color: #999999;
+				position: relative;
+				box-sizing: border-box;
+				padding: 0 9px;
+				background: #F7F7F7;
+			}
+			
+			.equ-title {
+				margin-left: 0 !important;
+			}
+			
+			.choded-title:after {
+				position: absolute;
+				left: 0;
+				right: 10px;
+				bottom: 0;
+				height: 1px;
+				content: '';
+				-webkit-transform: scaleY(0.5);
+				transform: scaleY(0.5);
+				background-color: #CCCCCC;
+				width: 100%;
+			}
+			
+			.data-group .data-row:after {
+				position: absolute;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				height: 1px;
+				content: '';
+				-webkit-transform: scaleY(0.5);
+				transform: scaleY(0.5);
+				background-color: #EAEAEA;
+			}
+		.data-li-last .data-row:last-child:after{
+				height: 1px;
+			}
+			
+			.nomargin-tp {
+				margin-top: 0;
+			}
+			
+			.no-pl {
+				padding-left: 0;
+			}
+			
+			.equ_list_li {
+				padding: 10px 0;
+			}
+			
+			.hr-block {
+				width: 100%;
+				height: 5px;
+				background: #F1F1F1;
+			}
+			
+			.imgslist {
+				float: left;
+				width: 55px;
+				height: 55px;
+				margin-right: 10px;
+				background-size: cover !important;
+			}
+			
+			.chooset {
+				color: #3296FA !important;
+			}
+			
+			.what-block {
+				width: 100%;
+				height: 10px;
+				background: #fff;
+			}
+			
+			.equ_list_li_last {
+				padding: 10px 0 !important;
+			}
+			
+			.mbottom {
+				padding-bottom: 200px;
+			}
+			
+			.right-text {
+				color: #3296FA !important;
+				padding-right: 0 !important;
+			}
+			
+			.sl {
+				width: 100%;
+				padding: 0 16px;
+				box-sizing: border-box;
+			}
+
+			.stand-li{
+				padding-right: 16px!important;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="insplanController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">巡检标准维护</a>
+		</header>
+		<div class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<ul class="data-group nomargin-tp">
+				<li class="data-row must">
+					<label>巡检标准名称</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="data.Name" lenlimit="50" class="needsclick" placeholder="请输入巡检标准名称"></div>
+						</div>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<li class="data-row mui-table-view-cell must">
+					<label>适用设备</label>
+					<p class="opt md-icon icon-right" ng-click="tap('equ')" style="color: #3296FA !important"></p>
+					<div class="body" style="color: #3296FA !important" ng-click="tap('equ')">
+						请选择设备
+					</div>
+				</li>
+			</ul>
+			<!-- <ul class="data-group sl">
+					<li class=" data-row must no-pl height-self  mui-table-view-cell">
+						<label class="equ-title">适用设备</label>
+						<i class="opt md-icon icon-right right-text" ng-click="tap('equ')"></i>
+						<div class="body" ng-click="tap('equ')">
+							<span class="chooset">请选择设备</span>
+						</div>
+					</li>
+				</ul> -->
+			<div class="chosed-eq" ng-if="isShowChoosed()">
+				<div class="data-roww-wrap">
+					<div class="choded-title" ng-show="isShowChoosed()">已选</div>
+					<div class="choosed-list">
+						<ul class="data-group nomargin-tp ">
+							<li class=" data-row must pad-10 " ng-if="equ.IsEqDir==1" ng-repeat="equ in data.EqList | filter:{'IsDelete':'0'}">
+								<div class="li-content">
+									<div class="li-left">
+										<div class="fill-img">
+											<img src="../../images/fill.png" />
+										</div>
+										<div class="fill-name" ng-bind="equ.DirName"></div>
+									</div>
+									<div class="li-right">
+										<i class="icon-delete" ng-click="del(equ)"></i>
+									</div>
+								</div>
+							</li>
+						</ul>
+					</div>
+					<div class="hr-block" ng-show="isShowChoosed2()"></div>
+					<div class="choosed-list mar-bottom">
+						<ul class="data-group nomargin-tp">
+							<li class="data-row equ_list_li equ_list_li_last" ng-if="equ.IsEqDir==0" ng-repeat="equ in data.EqList | filter:{'IsDelete':'0'}">
+								<div class="equ_list_li_left">
+									<div class="equ_img">
+										<img src="../../images/imgPre.png" ng-style="{'background-image':'url('+ (equ.AttachFilePath | getEquLogo:35) +')'}" class="imgslist" />
+									</div>
+									<div class="equ-info">
+										<div class="equ-name" ng-bind="equ.EqName"></div>
+										<div class="equ-number">
+											<span>型号:</span>
+											<span ng-bind="equ.SkuName">:</span>
+										</div>
+										<div class="equ-location" ng-if="isShowAddress(equ)">
+											<span ng-bind="'位置'+':' + (equ | getEquAddress)"></span>
+										</div>
+									</div>
+								</div>
+								<div class="equ_list_li_right">
+									<i class="icon-delete" ng-click="del(equ)"></i>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<div class="what-block" ng-show="isShowChoosed3()"></div>
+			</div>
+			<ul class="data-group params data-li-last" id="params-body">
+				<p class="data-group-tip">巡检项目</p>
+				<li class="data-row mui-table-view-cell stand-li" ng-show="info.IsDelete!=1" ng-repeat="info in data.Items">
+					<p class="opt opt-left icon-sort"></p>
+					<div class="body stand-con">
+						<span class="span-con" ng-bind="info.ItemName.trim()"></span>
+					</div>
+					<p class="opt md-icon-more" style="padding-right: 16px;">
+						<i class="icon-edit" data-sortid="{{info.SortID}}" data-type="{{info.Type}}" data-itemValue="{{info.ItemValue}}" data-id="{{info.ID}}" data-name="{{info.ItemName}}"></i>
+						<i class="icon-delete" data-sortid="{{info.SortID}}" data-type="{{info.Type}}" data-itemValue="{{info.ItemValue}}" data-id="{{info.ID}}" data-name="{{info.ItemName}}"></i>
+					</p>
+				</li>
+				
+			</ul>
+			<ul class="data-group" style="margin-top: 0;">
+				<li class="data-row ">
+					<div class="btn-group" ng-click="tap('item')">
+				    <a class="btn-col">增加项目</a>
+			      </div>
+				</li>
+			</ul>
+			
+			<div class="mui-content-padded">
+				<span class="mui-btn mui-btn-block" ng-click="save()">保存</span>
+			</div>
+		</div>
+		<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+		<script src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/sortable-edit.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript">
+			app.controller("insplanController", ["$scope", "$filter", "RPCObserver", "ApiService", "UtilsService", "DataService",
+				"$q",
+				function($scope, $filter, RPCObserver, ApiService, UtilsService, DataService, $q) {
+					var saveing = false;
+					$scope.data = {
+						ID: query('id') || 0,
+						FormSkinID: 0,
+						Name: "",
+						EqList: [],
+						Items: []
+					};
+					var cur_view = plus.webview.currentWebview();
+					cur_view.selectObj && $scope.data.EqList.push(cur_view.selectObj);
+					if($scope.data.ID) {
+						getInspRuleData();
+					} else {
+						$scope.isLoad = true;
+					}
+                     $scope.retryModal = {
+						msg: "巡检标准编辑",
+						retry: getInspRuleData,
+						state: ''
+					}
+					//根据id获取巡检标准数据 和 巡检计划记录参数配置
+					function getInspRuleData() {
+						var url1 = ApiService.Api50 + "/api/v1/Equipment/GetEqOverhaulStandardById?id=" + $scope.data.ID;
+						var url2 = ApiService.Api47 + "/api/v1.0/EqOverhaul/GetStandardItemParamsSetting?standardId=" + $scope.data.ID;
+						var promises = [DataService.get(url1), DataService.get(url2)];
+						$q.all(promises).then(function(res) {
+							$scope.retryModal.state = '';
+							for(i = 0; i < res[0].EqList.length; i++) {
+								if(res[0].EqList[i].IsEqDir == 0) {
+									res[0].EqList[i].EqName = res[0].EqList[i].EqOrDirName;
+								} else {
+									res[0].EqList[i].DirName = res[0].EqList[i].EqOrDirName;
+								}
+								res[0].EqList[i].IsDelete = 0;
+							}
+							for(i = 0; i < res[1].SetParams.length; i++) {
+								res[1].SetParams[i].IsDelete = 0;
+								res[1].SetParams[i].SortID = i;
+							}
+							$scope.data.Name = res[0].Name;
+							$scope.data = res[0];
+							$scope.data.FormSkinID = res[1].FormSkinID;
+							$scope.data.Items = res[1].SetParams;
+							$scope.isLoad = true;
+						}, function(error) {
+							$scope.retryModal.state = error.State;
+						})
+					}
+
+					//增加项目
+					$scope.tap = function(key, obj) {
+						document.activeElement.blur();
+						switch(key) {
+							case 'item':
+								UtilsService.openWindow({
+									needLogin: true,
+									id: "insp-rule-item-edit.html",
+									url: "insp-rule-item-edit.html",
+									extras: {
+										callback: "addItemCallback"
+									}
+								});
+								break;
+							case 'equ':
+								var _list = angular.copy($scope.data.EqList);
+
+								UtilsService.openWindow({
+									needLogin: true,
+									id: "select-equ-list.html",
+									url: "equ-list.html?action=select&must=true&multiselect=true&selectCatalog=true",
+									extras: {
+										selectObj: _list.filter(function(item) {
+											return item.IsEqDir == 0 && item.IsDelete == 0;
+										}).map(function(item) {
+											item.ID = parseInt(item.Code);
+											return item;
+										}),
+										selectCatalog: _list.filter(function(item) {
+											return item.IsEqDir == 1 && item.IsDelete == 0;
+										}).map(function(item) {
+											item.ID = parseInt(item.Code);
+											return item;
+										}),
+										callback: "selectEquCallback"
+									}
+								});
+								break;
+							case 'edit':
+								UtilsService.openWindow({
+									needLogin: true,
+									id: "insp-rule-item-edit.html",
+									url: "insp-rule-item-edit.html",
+									extras: {
+										itemdata: obj,
+										callback: "addItemCallback"
+									}
+								})
+								break;
+							case 'del':
+								mui.confirm("是否删除该条巡检项目？", "提示", ["删除", "取消"], function(e) {
+									if(e.index == 0) {
+										if(obj.ID) {
+											var index = $scope.data.Items.findIndex(function(item) {
+												return item.SortID == obj.SortID;
+											});
+											$scope.data.Items[index].IsDelete = 1;
+											$scope.$apply();
+										} else {
+											$scope.data.Items = $scope.data.Items.filter(function(_item) {
+												return _item.SortID != obj.SortID;
+											});
+											$scope.data.Items.forEach(function(ele, index) {
+												ele.SortID = index;
+											});
+											$scope.$apply();
+										}
+									}
+								});
+								break;
+						}
+
+					};
+					$scope.isShowAddress = function(equ) {
+						return trim($filter("getEquAddress")(equ)).length > 0;
+					};
+                  var mui_back = mui.back;
+					mui.back = function() {
+						RPCObserver.broadcast('refresh_insp_rule_lnfo')
+						mui_back()
+					};
+					mui("#params-body").on("tap", ".icon-delete", function() {
+						var _id = this.getAttribute("data-id");
+						var sortid = this.getAttribute("data-sortid");
+						$scope.tap("del", {
+							"ID": _id,
+							"SortID": sortid
+						})
+						return false;
+					}).on("tap", ".icon-edit", function() {
+						var _id = this.getAttribute("data-id");
+						var sortid = this.getAttribute("data-sortid");
+						var _Type = this.getAttribute("data-type");
+						var _ItemValue = this.getAttribute("data-itemValue");
+						var _name = this.getAttribute("data-name");
+						$scope.tap("edit", {
+							"ID": _id,
+							"ItemName": _name,
+							"ItemValue": _ItemValue,
+							"Type": _Type,
+							"SortID": sortid
+						})
+						return false;
+					});
+
+					//增加项目回调
+					window.addItemCallback = function(obj) {
+						var item = angular.copy(obj);
+						item.IsDelete = 0;
+						if(obj.hasOwnProperty("SortID")) {
+							$scope.data.Items[obj.SortID] = item;
+						} else {
+							item.SortID = $scope.data.Items.length;
+							$scope.data.Items.push(item);
+						}
+						$scope.$apply();
+					}
+
+					//选择设备后的回调
+					window.selectEquCallback = function(res1, res2) {
+						$scope.data.EqList.forEach(function(_item) {
+							if(_item.IsEqDir == 0) {
+								_item.IsDelete = res1.some(function(_item1) {
+									return _item1.ID == _item.Code;
+								}) ? 0 : 1;
+								res1 = res1.filter(function(_item1) {
+									return _item1.ID != _item.Code;
+								})
+							} else {
+								_item.IsDelete = res2.some(function(_item2) {
+									return _item2.ID == _item.Code;
+								}) ? 0 : 1;
+								res2 = res2.filter(function(_item2) {
+									return _item2.ID != _item.Code;
+								})
+							}
+						});
+
+						var item;
+						res1 && (res1.forEach(function(equ) {
+							equ.IsEqDir = 0;
+							equ.Code = equ.ID;
+							item = angular.copy(equ);
+							item.ID = 0;
+							item.IsDelete = 0;
+							$scope.data.EqList.push(item);
+						}));
+
+						res2 && (res2.forEach(function(equ) {
+							equ.IsEqDir = 1;
+							equ.Code = equ.ID;
+							item = angular.copy(equ);
+							item.IsDelete = 0;
+							item.ID = 0;
+							$scope.data.EqList.push(item);
+						}));
+
+						$scope.$apply();
+
+					};
+					//删除设备或者目录
+					$scope.del = function(_item) {
+						if(_item.ID > 0) {
+							var index = $scope.data.EqList.findIndex(function(item) {
+								return _item.ID == item.ID;
+							});
+							$scope.data.EqList[index].IsDelete = 1
+						} else {
+							var index = $scope.data.EqList.findIndex(function(item) {
+								return _item.Code == item.Code;
+							});
+							$scope.data.EqList.splice(index, 1)
+						}
+					};
+
+					$scope.isShowChoosed = function() {
+						return $scope.data.EqList.some(function(_item) {
+							return _item.IsDelete == 0;
+						});
+					}
+					$scope.isShowChoosed2 = function() {
+						return $scope.data.EqList.some(function(_item) {
+							return _item.IsEqDir == 0 && _item.IsDelete == 0;
+						}) && $scope.data.EqList.some(function(_item) {
+							return _item.IsEqDir == 1 && _item.IsDelete == 0;
+						})
+					}
+					$scope.isShowChoosed3 = function() {
+						return $scope.data.EqList.some(function(_item) {
+							return _item.IsEqDir == 1;
+						}) || $scope.data.EqList.some(function(_item) {
+							return _item.IsEqDir == 0;
+						});
+					}
+
+					//保存
+					$scope.save = function() {
+						document.activeElement.blur();
+						if($scope.data.Name.trim() == '') {
+							mui.toast("请输入巡检标准名称");
+							return;
+						}
+						if($scope.data.EqList.filter(function(item) {
+								return item.IsDelete == 0;
+							}).length == 0) {
+							mui.toast("请选择设备");
+							return;
+						}
+						if($scope.data.Items.filter(function(item) {
+								return item.IsDelete == 0;
+							}).length == 0) {
+							mui.toast("请增加巡检项目");
+							return;
+						}
+						//验证填字符长度
+						if(!checkLengthUtil.check()) {
+							return false;
+						}
+						if(saveing) {
+							return;
+						}
+
+						saveing = true;
+						submit();
+						if(cur_view.callback) {
+							cur_view.opener().evalJS(cur_view.callback + "(" + JSON.stringify($scope.data) + ")");
+							mui.back();
+						}
+					};
+
+					//提交
+					function submit() {
+						var url = ApiService.Api50 + '/api/v1/Equipment/SaveEqOverhaulStandard';
+						var postdata = {
+							ID: $scope.data.ID,
+							Name: $scope.data.Name.trim(),
+							Items: $scope.data.Items,
+							EqList: $scope.data.EqList
+						};
+						DataService.post(url, postdata).then(function(res) {
+							saving = false;
+							var billUrl = ApiService.Api47 + "/api/v1/EqOverhaul/SaveStandardItemServiceParamsSetting";
+							var billpostdata = {
+								StandardID: res,
+								FormSkinID: $scope.data.FormSkinID || 0,
+								SetParams: postdata.Items.map(function(item) {
+									return {
+										ID: item.ID || 0,
+										StandardID: res,
+										FieldName: item.FieldName || "",
+										ItemName: item.ItemName,
+										Type: item.Type,
+										ItemValue: item.ItemValue,
+										SortID: item.SortID,
+										IsDelete: item.IsDelete
+									}
+								})
+							};
+							DataService.post(billUrl, billpostdata).then(function(redata) {
+								console.log(JSON.stringify(billpostdata))
+								saving = false;
+								if(redata) {
+									UtilsService.saveModal(function() {
+										saveing = false;
+										mui.back();
+									}, function() {
+										saveing = false;
+										$scope.data.ID = res;
+										getInspRuleData();
+									});
+									RPCObserver.broadcast('refresh_insp_rule_list');
+									RPCObserver.broadcast('refresh_insp_rule_lnfo');
+									RPCObserver.broadcast('refresh_insp_rule_equ');
+								}
+							}, function(res) {
+								saveing = false;
+							})
+
+						}, function(res) {
+							saving = false;
+						})
+					};
+				}
+			]);
+
+			//排序(由于排序后设备参数删除ng-click会不起作用，所以用此方法)
+			Sortable.create(document.getElementById("params-body"), {
+				group: "params",
+				animation: 150,
+				scroll: false,
+				handle: ".opt-left",
+				onStart: function() {
+					mui(".mui-scroll-wrapper")[0].style.overflow = "hidden";
+				},
+				onEnd: function(evt) {
+					mui(".mui-scroll-wrapper")[0].style.overflow = "scroll";
+					if(evt.newIndex > -1) {
+						var oldIdx = evt.oldIndex;
+						var newIdx = evt.newIndex;
+
+						var nums = 0;
+						if(oldIdx < newIdx) {
+							nums = 0.5; //向下拖动
+						} else {
+							nums = -0.5; //向上拖动
+						}
+						var appElement = document.querySelector('[ng-controller=insplanController]');
+						var $scope = angular.element(appElement).scope();
+						$scope.data.Items[oldIdx - 1].SortID = newIdx + nums - 1; //-1shang
+						$scope.data.Items = $scope.data.Items.sort(compare("SortID"));
+						$scope.data.Items = $scope.data.Items.filter(function(_item, _idx) {
+							_item.SortID = _idx;
+							return true;
+						});
+
+						$scope.data.Items.forEach(function(ele, index) {
+							ele.SortID = index;
+						})
+
+						$scope.$apply();
+					}
+				}
+			});
+
+			function sortId(a, b) {
+				return a.SortID - b.SortID
+			}
+			var compare = function(prop) {
+				return function(obj1, obj2) {
+					var val1 = obj1[prop];
+					var val2 = obj2[prop];
+					if(!isNaN(Number(val1)) && !isNaN(Number(val2))) {
+						val1 = Number(val1);
+						val2 = Number(val2);
+					}
+					if(val1 < val2) {
+						return -1;
+					} else if(val1 > val2) {
+						return 1;
+					} else {
+						return 0;
+					}
+				}
+			}
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

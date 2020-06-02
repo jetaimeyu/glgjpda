@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style>
+			.copyright {
+				text-align: center;
+				line-height: 40px;
+				position: absolute;
+				bottom: 0;
+				width: 100%;
+			}
+			
+			.clause {
+				text-align: center;
+				line-height: 40px;
+				position: absolute;
+				bottom: 0;
+				margin-bottom: 30px;
+				width: 100%;
+			}
+			/*伪元素(底线)控制*/
+			/*去掉最后一个li的底线*/
+			
+			.data-group .data-row:last-child:after {
+				height: 0;
+			}
+			/*去掉ul上下边线*/
+			
+			.data-group:before,
+			.data-group:after {
+				height: 0;
+			}
+			/*li边线离左右距离、边线颜色*/
+			
+			.data-group .data-row:after {
+				left: 10px;
+				right: 10px;
+				background-color: #EAEAEA;
+			}
+			/*ul上下间距*/
+			
+			.data-group {
+				margin-top: 8px;
+			}
+			/*li高度*/
+			
+			.data-group .data-row {
+				height: 40px;
+				padding-top: 12px;
+				padding-bottom: 12px;
+			}
+			
+			.data-group .data-row a {
+				font-size: 1.4rem;
+				line-height: 1.4rem;
+				color: #323232;
+			}
+			
+			.icon-right {
+				float: right;
+				color: #C7C7CB;
+			}
+			
+			.mui-table-view-cell>a:not(.mui-btn).mui-active {
+				background-color: transparent;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="AboutController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">关于</a>
+		</header>
+		<div class="mui-content">
+			<div style="text-align: center;padding:40px 0 20px 0;">
+				<img id="logo" src="../../images/mdicon192.png" style="width: 80px;" />
+				<p>万企链 v<span id="apkVersions"></span></p>
+			</div>
+			<ul class="data-group">
+				<!--<li class="data-row mui-table-view-cell">
+					<label>反馈</label>
+					<p class="opt md-icon font-15">
+						<span class="icon-right"></span>
+					</p>
+				</li>-->
+				<li class="data-row mui-table-view-cell" ng-click="checkUpdate()">
+					<label ng-bind="isAndroid?'版本更新':'去评分'"></label>
+					<p class="opt md-icon font-15">
+						<span class="icon-right"></span>
+					</p>
+				</li>
+			</ul>
+			<!--<p class="clause"><a href="http://www.maidiyun.com" open-type="common" style="text-decoration:underline">官网</a> <span style="color: #169BD5;"> | </span><a style="text-decoration:underline">服务条款</a></p>-->
+			<p class="copyright">Copyright &copy; 2015-2019 迈迪信息技术有限公司</p>
+		</div>
+		<script src="../../js/angular.min.js"></script>
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/common.js"></script>
+		<script src="../../js/utils.js"></script>
+		<script>
+			app.controller("AboutController", ["$scope", "UtilsService", "AuthService", function($scope, UtilsService, AuthService) {
+				$scope.checkUpdate = function() {
+					if($scope.isAndroid) {
+						plus.Push.checkUpdate(true);
+					} else {
+						mui.openWindow({
+							url: "https://itunes.apple.com/cn/app/%E8%BF%88%E8%BF%AA%E9%80%9Av-%E5%B7%A5%E4%B8%9A%E5%93%81%E5%94%AE%E5%90%8E%E6%9C%8D%E5%8A%A1%E7%AE%A1%E7%90%86%E5%B9%B3%E5%8F%B0/id1404861234?mt=8",
+							createNew: true,
+							waiting: {
+								autoShow: false
+							}
+						});
+					}
+				};
+				$scope.isAndroid = mui.os.android;
+				setTimeout(mui.init);
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+				setTimeout(function() {
+					plus.Push.getVersionName(function(data) {
+						document.getElementById("apkVersions").innerText = data;
+					})
+				}, 100)
+			});
+		</script>
+	</body>
+
+</html>

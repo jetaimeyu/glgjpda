@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<style>
+			.mark {
+				padding: 5px;
+				background-color: #CCCCCC;
+				color: #000000;
+				margin-right: 10px;
+				font-size: 13px;
+			}
+			
+			* {
+				font-family: 'MicrosoftYaHei';
+				color: #323232;
+			}
+			
+			p {
+				margin: 0;
+			}
+			
+			.mui-clearfix {
+				overflow: hidden;
+			}
+			
+			.mui-icon {
+				color: #999999;
+			}
+			
+			.pl15 {
+				padding: 0 15px;
+			}
+			
+			.data-group {
+				margin: 0;
+			}
+			
+			.data-row {
+				/*padding: 7px 0;*/
+				/*border-bottom: 1px solid #EAEAEA;*/
+			}
+			
+			.data-row:last-child {
+				border: 0;
+			}
+			
+			h2.title {
+				line-height: 40px;
+				height: 40px;
+				background: #EFEFEF;
+				color: #888888;
+				font-size: 16px;
+				font-weight: 400;
+				margin: 0;
+			}
+			
+			.list-name {
+				font-size: 15px;
+				color: #323232;
+				line-height: 1.33;
+				margin-bottom: 6px;
+				text-overflow: ellipsis;
+				overflow: hidden;
+				white-space: nowrap;
+			}
+			
+			.list-group {
+				font-size: 14px;
+				color: #3296FA;
+				line-height: 1.3;
+				text-overflow: ellipsis;
+				overflow: hidden;
+				white-space: nowrap;
+			}
+			/*.list-footer p {
+			position: fixed;
+			bottom: 0;
+			width: 100%;
+			line-height: 40px;
+			text-align: center;
+			background: #3296FA;
+			color: #fff;
+			font-size: 16px;
+			z-index: 11;
+		}*/
+			
+			.mui-scroll-wrapper {
+				z-index: auto;
+			}
+			/*弹窗*/
+			
+			.mui-popover {
+				top: 50%;
+				left: 50%;
+				margin-left: -141px;
+				margin-top: -100px;
+				border-radius: 3px;
+				position: fixed;
+			}
+			
+			.mui-popover h3 {
+				font-size: 15px;
+				padding: 10px 10px;
+				height: 40px;
+				line-height: 20px;
+				background: #F6FBFF;
+				margin: 0;
+				border-radius: 3px 3px 0 0;
+				display: flex;
+			}
+			
+			.popover-text {
+				display: inline-block;
+				/*width: 80%;*/
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				flex: 1;
+			}
+			
+			.mui-popover .mui-popover-arrow:after {
+				display: none;
+			}
+			
+			.mui-popover h3 .close {
+				flex: none;
+			}
+			
+			.mui-popover button {
+				width: 100%;
+				border: 0;
+				background: #3296FA;
+				color: #fff;
+				line-height: 40px;
+				font-size: 15px;
+				border-radius: 0;
+			}
+			
+			.dialog-body {
+				margin: 30px 15px;
+				border-bottom: 1px solid #EAEAEA;
+				padding-bottom: 9px;
+			}
+			
+			.mui-input-row label {
+				padding-left: 0;
+			}
+			
+			.data-group .data-row {
+				display: block;
+				min-height: 60px;
+			}
+			
+			.closeList {
+				min-width: 80px;
+				background: #f00;
+				text-align: center;
+				position: absolute;
+				right: -80px;
+				line-height: 60px;
+				top: 0;
+			}
+			
+			.closeList i {
+				color: #fff;
+				line-height: 100%;
+			}
+			
+			.li-wrap {
+				/*position: absolute;*/
+				border-bottom: 1px solid #EAEAEA;
+				padding: 8px 0;
+			}
+			
+			.tran {
+				transition: .5s;
+			}
+			
+			.mui-input-row label {
+				width: 25%;
+			}
+			
+			.mui-input-row label~input {
+				width: 75%;
+			}
+			
+			.mui-input-row .mui-input-clear~.mui-icon-clear {
+				right: 20px;
+			}
+			
+			.mui-pull-caption {
+				color: #666;
+			}
+			
+			.nodata {
+				text-align: center;
+				margin-top: 50%;
+			}
+			
+			.dataWrap {
+				position: absolute;
+				padding: 0 15px;
+				width: 100%;
+			}
+			
+			.group :last-child .li-wrap {
+				border: 0
+			}
+			
+			.li-title {
+				max-width: 80%;
+			}
+		</style>
+	</head>
+
+	<body ms-controller="appCtl" class="ms-controller">
+		<!--<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		<h1 class="mui-title">生产小组</h1>
+	</header>-->
+		<div class="mui-scroll-wrapper" id="refreshContainer">
+			<div class="mui-scroll">
+				<!--数据列表-->
+				<div class="mui-table-view mui-table-view-chevron" ms-if="dataList.length > 0 || useGroupList.length > 0">
+					<div ms-if="useGroupList.length > 0">
+						<h2 class="title pl15">最近使用</h2>
+						<ul class="data-group biglabel group">
+							<li class="data-row click-gray mui-clearfix" ms-for="item in useGroupList" ms-attr="{'dataUserId': item.CreateUserID}">
+								<div class="dataWrap tran">
+									<div class="mui-pull-left li-wrap" style="width: 100%;" ms-attr="{'dataID': item.ID, 'dataWName': item.WorkShopName , 'dataGName':item.GroupName,'isSignal': item.IsHaveSignal ? '1' : '0'}">
+										<div class="mui-pull-left li-title">
+											<p class="list-name">{{item.WorkShopName}}</p>
+											<p class="list-group">{{item.GroupName}}</p>
+										</div>
+										<div class="mui-pull-right" style="line-height: 40px;">
+											<span class="mui-icon mui-icon-locked" style="margin-right:5px;" ms-visible="item.IsHaveSignal"></span>
+											<span class="mui-icon mui-icon-arrowright"></span>
+										</div>
+									</div>
+								</div>
+								<div class="mui-pull-left closeList tran" ms-attr="'dataID': item.ID" name="1">
+									<i class="mui-icon mui-icon-trash"></i>
+								</div>
+							</li>
+						</ul>
+					</div>
+					<div ms-if="dataList.length !=useGroupList.length">
+						<h2 class="title pl15">其他组</h2>
+						<ul class="data-group biglabel">
+							<li class="data-row click-gray mui-clearfix" ms-for="item in dataList" ms-visible="!item.isHide" ms-attr="{'dataUserId': item.CreateUserID}">
+								<div class="dataWrap tran">
+									<div class="mui-pull-left li-wrap" style="width: 100%;" ms-attr="{'dataID': item.ID, 'dataWName': item.WorkShopName , 'dataGName':item.GroupName,'isSignal': item.IsHaveSignal ? '1' : '0'}">
+										<div class="mui-pull-left li-title">
+											<p class="list-name">{{item.WorkShopName}}</p>
+											<p class="list-group">{{item.GroupName}}</p>
+										</div>
+										<div class="mui-pull-right" style="line-height: 40px;">
+											<span class="mui-icon mui-icon-locked" style="margin-right:5px;" ms-visible="item.IsHaveSignal"></span>
+											<span class="mui-icon mui-icon-arrowright"></span>
+										</div>
+									</div>
+								</div>
+
+								<div class="mui-pull-left closeList tran" ms-attr="'dataID': item.ID">
+									<i class="mui-icon mui-icon-trash"></i>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</div>
+
+			</div>
+			<div class="nodata dis-none" ms-if="isLoad && dataList.length == 0 && useGroupList.length == 0">
+				<img src="../../images/noData.png" />
+				<p>暂无数据</p>
+			</div>
+			<!--<div class="list-footer">
+			<p id="goTO">创建生产小组</p>
+		</div>-->
+			<!--
+            弹窗
+            -->
+
+			<!--<a class="mui-btn mui-btn-primary mui-btn-block openPopover">打开弹出菜单</a>-->
+		</div>
+		<div id="popover" class="mui-popover">
+			<h3>
+				<span class="popover-text">{{dataWName + dataGName}}</span>
+				<span class="mui-icon mui-icon mui-icon-closeempty mui-pull-right close"></span>
+			</h3>
+			<div class="mui-input-row dialog-body">
+				<label>口令</label>
+				<input type="password" id="signal" class="mui-input-clear mui-input-password" placeholder="输入口令加入小组">
+			</div>
+			<button id="submit">加入小组</button>
+		</div>
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/avalon.js"></script>
+		<script type="text/javascript">
+			//      mui.init();
+			mui.init({
+				pullRefresh: {
+					container: "#refreshContainer", //下拉刷新容器标识，querySelector能定位的css选择器均可，比如：id、.class等
+					down: {
+						height: 50, //可选,默认50.触发下拉刷新拖动距离,
+						auto: false, //可选,默认false.首次加载自动下拉刷新一次
+						contentdown: "下拉可以刷新", //可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+						contentover: "释放立即刷新", //可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+						contentrefresh: "正在刷新...", //可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+						callback: downUpload //必选，刷新函数，根据具体业务来编写，比如通过ajax从服务器获取新数据；
+					},
+					up: {
+						height: 50, //可选.默认50.触发上拉加载拖动距离
+						contentrefresh: "正在加载...", //可选，正在加载状态时，上拉加载控件上显示的标题内容
+						contentnomore: '没有更多数据了', //可选，请求完毕若没有更多数据时显示的提醒内容；
+						callback: upPush //必选，刷新函数，根据具体业务来编写，比如通过ajax从服务器获取新数据；
+					}
+				}
+			});
+			mui.plusReady(function() {
+
+				user.ready(function() {
+					app.user = user;
+					getDataList()
+				});
+				//查看详情回退事件
+				window.addEventListener("refreshStorageData", function(e) {
+
+					/*					var group = localGet('useGroup') || {};
+										if(app.user.UserID && app.user.UserID == group.userID) {
+											for(var k = 0; k<app.dataList.length; k ++){
+												app.dataList[k].isHide = false
+											}
+
+											for(var i = 0; i < group.list.length; i++) {
+												for(var l = 0; l < app.dataList.length; l++) {
+													if(app.dataList[l].ID == group.list[i].ID) {
+														app.dataList[l].isHide = true
+													}
+												}
+											}
+											app.dataList = app.dataList;
+					//						alert(JSON.stringify(app.dataList))
+											app.useGroupList = group.list;
+										}*/
+				})
+
+				//创建新页面回退事件
+				window.addEventListener("createTeamSuccess", function(e) {
+					getDataList();
+				})
+
+				plus.key.addEventListener("backbutton", function() {
+					mui.fire(plus.webview.getWebviewById('index.html'), 'wrapHide')
+				});
+				//          getDataList();
+			});
+
+			var app = avalon.define({
+				$id: 'appCtl',
+				dataID: '',
+				dataWName: '',
+				dataGName: '',
+				dataList: [],
+				useGroupList: [],
+				user: {},
+				page: 1,
+				clickNum: 0, //点击
+				useNode: [], //节点
+				isPull: '',
+				isLoad: false //是否加载完成
+			})
+			//点击详情
+			mui("body").on("tap", ".li-wrap", function() {
+
+				if(mui.isScrolling) {
+					return
+				}
+				app.dataID = this.getAttribute('dataID');
+				app.dataWName = this.getAttribute('dataWName');
+				app.dataGName = this.getAttribute('dataGName');
+
+				if(app.useNode.length) {
+					app.useNode[0].style.left = '0';
+					app.useNode[1].style.right = '-80px';
+					app.useNode = [];
+				}
+				if(this.getAttribute('isSignal') == '0') {
+					useGroup();
+				} else {
+					//从缓存里取口令
+					var userWord = localGet('userWord') || {};
+					var newDate = new Date().getTime();
+					if(userWord.userID && userWord.userID == app.user.UserID && userWord.passWore[app.dataID] && newDate - userWord.passWore[app.dataID + 'time'] < 3600000) {
+						app.signalVal = userWord[app.dataID];
+						useGroup();
+					} else {
+						mui('.mui-popover').popover('toggle');
+						mui.fire(plus.webview.getWebviewById('index.html'), 'wrapShow')
+
+						//						parent.mui('#wrap')[0].style.display = "block"
+						return;
+					}
+				}
+
+			});
+
+			//弹窗隐藏
+			mui("body").on("tap", ".close", function() {
+				mui('.mui-popover').popover('toggle', document.querySelectorAll(".openPopover"))
+				document.getElementById('signal').value = ""
+				mui.fire(plus.webview.getWebviewById('index.html'), 'wrapHide')
+				//				parent.mui('#wrap')[0].style.display = "none"
+			});
+			//弹窗隐藏
+			mui("body").on("tap", ".mui-backdrop", function() {
+				document.getElementById('signal').value = ""
+				//				parent.mui('#wrap')[0].style.display = "none"
+				mui.fire(plus.webview.getWebviewById('index.html'), 'wrapHide')
+			});
+
+			//左滑动事件
+			mui("body").on("swipeleft", ".click-gray", function(e) {
+				var dataLi = this.childNodes;
+				if(app.useNode.length && dataLi != app.useNode) {
+					app.useNode[0].style.left = '0';
+					app.useNode[1].style.right = '-80px';
+					app.useNode = [];
+				} else {
+					var userId = this.getAttribute('dataUserId');
+					//			alert(JSON.stringify(app.user))
+					if(userId != app.user.UserID || mui.isScrolling) {
+						return false;
+					}
+
+					dataLi[0].style.left = '-80px';
+					dataLi[1].style.right = '0px'
+					app.useNode = dataLi
+				}
+			})
+			//右滑动事件
+			mui("body").on("swiperight", ".click-gray", function(e) {
+				if(app.useNode.length) {
+					app.useNode[0].style.left = '0';
+					app.useNode[1].style.right = '-80px';
+					app.useNode = [];
+				}
+			})
+			//点击删除
+			mui("body").on("tap", ".closeList", function(e) {
+				var id = this.parentNode.firstChild.firstChild.getAttribute('dataID');
+				var name = this.getAttribute('name');
+				if(name) {
+					return del(id, name)
+				}
+				del(id)
+			})
+
+			//提交
+			mui("body").on("tap", "#submit", function() {
+				if(app.clickNum == 0) {
+					var val = app.signalVal || trim(document.getElementById('signal').value);
+					if(val == '') {
+						return mui.toast('请输入口令');
+					}
+					document.activeElement.blur();
+					app.clickNum = 1;
+					var url = MdAppUrl.Api50 + "/api/v1/Assemble/ValidSignal?groupId=" + app.dataID + "&secretSignal=" + val;
+					getAjaxData(url, function(res) {
+
+						if(res.State == 1 && res.Data) {
+							app.clickNum = 0;
+							mui('.mui-popover').popover('toggle', document.querySelectorAll(".openPopover"));
+							useGroup();
+							document.getElementById('signal').value = "";
+							//隐藏遮罩
+							mui.fire(plus.webview.getWebviewById('index.html'), 'wrapHide')
+							document.activeElement.blur();
+							//存当前用户使用过的口令
+							var wordObj = localGet('userWord') || {};
+							wordObj.userID = app.user.UserID || '';
+							wordObj.passWore = wordObj.passWore || {};
+							wordObj.passWore[app.dataID] = val;
+							wordObj.passWore[app.dataID + 'time'] = new Date().getTime()
+							localSave('userWord', wordObj)
+
+						} else {
+							app.clickNum = 0;
+
+							mui.toast('口令错误')
+						}
+					}, true)
+				}
+
+			});
+			//新建
+			//		mui("body").on("tap", "#goTO", function () {
+			//			openWindow("create.html")
+			//		});
+			//上拉
+			function upPush() {
+				setTimeout(function() {
+					app.isPull = "up"
+					app.page += 1
+					getDataList(true)
+				}, 500);
+
+			}
+			//下拉
+			function downUpload() {
+				setTimeout(function() {
+					app.isPull = "down"
+					app.page = 1
+					getDataList()
+				}, 500);
+			}
+
+			//获取数据
+			function getDataList(type) {
+				if(app.useNode.length) {
+					app.useNode[0].style.left = '0';
+					app.useNode[1].style.right = '-80px';
+					app.useNode = [];
+				}
+				if(!type) {
+					app.page = 1;
+				}
+				var url = MdAppUrl.Api50 + "/api/v1/Assemble/GetAssGroupList?page=" + app.page + "&pageSize=10";
+				getAjaxData(url, function(res) {
+					if(res.State && res.State == 1) {
+						app.isLoad = true
+						var group = localGet('useGroup') || {};
+						if(app.user.UserID && app.user.UserID == group.userID) {
+							for(var i = 0; i < group.list.length; i++) {
+								for(var l = 0; l < res.Data.DataRows.length; l++) {
+									if(res.Data.DataRows[l].ID == group.list[i].ID) {
+										res.Data.DataRows[l].isHide = true
+									}
+								}
+							}
+							app.useGroupList = group.list;
+						}
+
+						if(app.isPull == 'down') {
+							//							app.dataList = res.Data.DataRows;
+							mui('#refreshContainer').pullRefresh().endPulldownToRefresh(true)
+							mui("#refreshContainer").pullRefresh().refresh(true);
+						}
+						if(type) {
+							app.dataList = app.dataList.concat(res.Data.DataRows);
+							mui('#refreshContainer').pullRefresh().endPullupToRefresh(false);
+							if(app.isPull == 'down') {
+								mui("#refreshContainer").pullRefresh().refresh(true);
+							}
+						} else {
+							app.dataList = res.Data.DataRows;
+							//							app.dataList = res.Data.DataRows;
+							//							mui('#refreshContainer').pullRefresh().enablePullupToRefresh(false);
+
+						}
+						if(res.Data.DataRows.length < 10) {
+							mui('#refreshContainer').pullRefresh().endPullupToRefresh(true);
+						}
+
+						//如果没数据 禁止上拉
+						if(res.Data.TotalCount <= 10) {
+							mui('#refreshContainer').pullRefresh().disablePullupToRefresh();
+						}
+					} else {
+						app.isLoad = true
+						mui.toast("获取数据失败")
+					}
+				}, true)
+			}
+			//删除
+			function del(id, type) {
+				mui.confirm('是否删除', '', ['是', '否'], function(e) {
+					if(e.index == 0) {
+						var url = MdAppUrl.Api50 + "/api/v1/Assemble/DelAssGroup?groupId=" + id;
+						getAjaxData(url, function(res) {
+							if(res.State && res.State == 1) {
+								mui.toast("删除成功")
+								var nodeClose = document.querySelectorAll('.closeList'),
+									nodeWrap = document.querySelectorAll('.li-wrap');
+								for(var l = 0; l < nodeClose.length; l++) {
+									nodeClose[l].style.right = '-80px';
+									nodeWrap[l].style.left = '0px'
+								}
+								if(type) {
+									for(var i = 0; i < app.useGroupList.length; i++) {
+										if(app.useGroupList[i].ID == id) {
+											app.useGroupList.splice(i, 1);
+										}
+									}
+								}
+								var group = {}
+								group.userID = app.user.UserID;
+								group.list = app.useGroupList;
+								localSave('useGroup', group);
+								getDataList()
+
+							} else {
+								mui.toast(res.ErrorMessage)
+							}
+						}, true)
+					} else {
+						app.useNode[0].style.left = '0';
+						app.useNode[1].style.right = '-80px'
+					}
+				})
+
+			}
+			//跳转页面
+			var opener = null;
+
+			function openTo() {
+				//				if(!opener) {
+				//					opener = plus.webview.getWebviewById('assembly.html');
+				//				}
+				//				mui.fire(opener, "refreshData")
+				var linktype = query('type') || '';
+				if(linktype == 'record') {
+					openWindow('look-record.html?id=' + app.dataID + '&w=' + encodeURIComponent(app.dataWName) + '&g=' + encodeURIComponent(app.dataGName), {}, "look-record.html");
+				} else {
+					openWindow('assembly.html?id=' + app.dataID + '&w=' + encodeURIComponent(app.dataWName) + '&g=' + encodeURIComponent(app.dataGName), {}, 'assembly.html', '', 1);
+				}
+			}
+
+			//存最近使用的小组
+			function useGroup() {
+				var group = localGet('useGroup') || {};
+				group.list = group.list || [];
+				if(app.user.UserID !== group.userID) {
+					group.list = [];
+				}
+				//          if(app.user.UserID == group.userID){
+				for(var i = 0; i < app.dataList.length; i++) {
+					if(app.dataList[i].ID == app.dataID) {
+						group.list.unshift(app.dataList[i])
+					}
+				}
+				for(var l = 0; l < group.list.length; l++) {
+					for(var j = 0; j < group.list.length; j++) {
+						if(group.list[l].ID == group.list[j].ID && l != j) {
+							group.list.splice(j, 1)
+						}
+					}
+				}
+				//          }
+				group.userID = app.user.UserID || '';
+				group.list = group.list.slice(0, 3)
+				localSave('useGroup', group);
+				openTo();
+			}
+			//获取缓存数据
+			function getSessionStorage(key) {
+				var _data;
+				_data = window.sessionStorage.getItem(key);
+				if(_data !== null) {
+					return JSON.parse(_data);
+				}
+				_data = window.localStorage.getItem(key);
+				return _data === null ? undefined : JSON.parse(_data)["data"];
+			}
+			mui('body').on('hidden', '.mui-popover', function(e) {
+				document.activeElement.blur();
+			});
+		</script>
+	</body>
+
+</html>

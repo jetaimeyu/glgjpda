@@ -1,0 +1,49 @@
+<ul class="data-group" style="margin-top: 0px;">
+	<li class="mui-table-view-cell data-list new-data-list-s" ng-repeat="item in data">
+		<div class="data-li-left">
+			<div ng-if="!type">
+				<span ng-bind="item.RealName"></span>
+			</div>
+			<div ng-if="type">
+				<p ng-bind="item.ProdName"></p>
+				<p ng-bind="item.SkuName"></p>
+			</div>
+		</div>
+		<div class="data-li-right">
+			<div class="count-body">
+				<span class="user-info" ng-bind="item.Count"></span>
+			</div>
+		</div>
+	</li>
+</ul>
+<style>
+	p.number {
+		font-size: 1.5rem;
+		color: #333;
+		word-wrap: break-word;
+	}
+	
+	.count-body {
+		text-align: right;
+	}
+	
+	.data-li-left {
+		width: 70%;
+		float: left;
+	}
+	
+	.data-li-right {
+		width: 30%;
+		float: right;
+		margin: auto;
+	}
+	
+	.new-data-list-s {
+		position: relative;
+		overflow: hidden;
+		padding: 5px 15px;
+		-webkit-touch-callout: none;
+		display: flex;
+		/*align-items: center;*/
+	}
+</style>

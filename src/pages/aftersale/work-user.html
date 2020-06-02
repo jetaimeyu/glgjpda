@@ -1,0 +1,54 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	</head>
+
+	<body ng-controller="workUserController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left mui-ellipsis" style="max-width: 90vw;"><span ng-bind="userName+'的工作日志'" style="font-family: 'Helvetica Neue',Helvetica,sans-serif !important;"></span></a>
+		</header>
+		<div id="pullrefresh" ng-controller="pullrefreshController" class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<div class="mui-content">
+				<md-work-record ng-model="data"></md-work-record>
+				<md-no-data ng-show="data && data.length==0">暂无数据</md-no-data>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script>
+			app.controller("workUserController", ["$scope", "ApiService", "RPCObserver", function($scope, ApiService, RPCObserver) {
+				//获取当前用户姓名
+				$scope.userName = plus.webview.currentWebview().workUserName;
+				$scope.workDate = plus.webview.currentWebview().workDate;
+				$scope.pageIndex = 0;
+				$scope.pageSize = 20;
+				var userId = query("id");
+				var url = ApiService.Api50 + "/api/v1/MatWorkOrder/GetPagedWorkLogListByUserId?userId=" + userId + "&beginDate=" + $scope.workDate.start + "&endDate=" + $scope.workDate.end;
+				$scope.url = url;
+				$scope.$on("refresh_pageindex", function() {
+					$scope.url = url + "&pageIndex=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize;
+				});
+
+				RPCObserver.on('refresh_mat_worklog_list', 'refresh_mat_worklog_list');
+				window.refresh_mat_worklog_list = function() {
+					$scope.$broadcast('md_pullrefresh');
+				};
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

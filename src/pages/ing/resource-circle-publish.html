@@ -1,0 +1,267 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/common.css">
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<style type="text/css">
+			
+			.data-group:first-child {
+				margin-top: 0px;
+			}
+			
+			.mui-content {
+				position: absolute;
+				top: 0px;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				overflow: auto;
+			}
+			
+			.icon {
+				width: 16px;
+				height: 14.5px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="ResourceCircleController">
+		<header class="mui-bar mui-bar-nav" style="position: absolute;">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">发布资源圈</a>
+			<a class="mui-pull-right menu-add" id="add" ng-click="recordVideo()" ng-show="videoList.length==0&&imageList.length==0">
+				<img class="icon" src="../../images/equ/equ-video.png" />
+			</a>
+		</header>
+		<div class="mui-content" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<ul class="data-group">
+				<li class="data-row must" ng-class="{'showborder':OptionList.length>0}">
+					<label>资源圈内容</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="ContentText" class="needsclick" placeholder="请输入资源圈内容" lenlimit="500"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row" ng-show="videoList.length==0">
+					<label style="text-align: center;">图片</label>
+					<div class="body attach" style="padding-bottom: 5px;">
+						<md-image images="imageList" readonly="false" canadd="true"></md-image>
+					</div>
+				</li>
+				<li class="data-row" ng-show="videoList.length>0">
+					<label style="text-align: center;">视频</label>
+					<div class="body attach" style="padding-bottom: 5px;">
+						<md-video videos="videoList" readonly="false"></md-video>
+					</div>
+				</li>
+			</ul>
+			<div class="mui-content-padded" style="margin-bottom: 80px;">
+				<button id="btnSave" class="mui-btn mui-btn-primary mui-btn-block" ng-click="save()">发布</button>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript">
+			app.controller("ResourceCircleController", ["$scope", "$http", "ApiService", "UtilsService", "DataService", "$Modal", "$q", "$timeout", "RPCObserver", "$filter", "CacheService",
+				function($scope, $http, ApiService, UtilsService, DataService, $Modal, $q, $timeout, RPCObserver, $filter, CacheService) {
+					$scope.isLoad = true;
+					$scope.process = {
+						title: "发布成功",
+						SaveState: 0, //0未保存 1保存成功 2保存中 3保存失败
+						ProcessList: [{
+							Text: "上传图片/视频",
+							State: 0,
+							RetryMethod: uploadfile
+						}, {
+							Text: "保存资源圈内容",
+							State: 0,
+							RetryMethod: submitData
+						}]
+					};
+					var curUser = CacheService.get("user");
+
+					var postData = {
+						Attachs: []
+					}
+					$scope.videoList = []; //上传视频
+					$scope.imageList = []; //上传图片
+
+					var saving = false; //保存
+
+					var mui_back = mui.back;
+					mui.back = function() {
+						if($scope.ContentText.trim() || $scope.imageList.length > 0 || $scope.videoList.length > 0) {
+							mui.confirm("是否放弃正在编辑的资源圈内容？", "", ['继续编辑', '放弃'], function(e) {
+								e.index == 1 && mui_back();
+							})
+						} else {
+							mui_back();
+						}
+					}
+					//保存更改
+					$scope.save = function() {
+						document.activeElement.blur();
+						if($scope.ContentText.trim() == '') {
+							mui.toast("请输入资源圈内容");
+							return;
+						}
+						if($scope.imageList.length > 9) {
+							mui.toast("资源圈图片数量不得多于9张");
+							return;
+						}
+
+						if(saving) {
+							return;
+						}
+						//验证填字符长度
+						if(!checkLengthUtil.check()) {
+							return false;
+						}
+						//开始上传
+						saving = true;
+
+						UtilsService.submitModal($scope.process, function() {
+							saving = false;
+							mui_back();
+						});
+						uploadfile();
+					};
+
+					var loadFileType = 0;
+					//上传附件
+					function uploadfile() {
+						$scope.process.ProcessList[0].State = 1;
+						var files = [];
+						var fileType = 0;
+						if($scope.imageList.length > 0) {
+							files = $scope.imageList.filter(function(file) {
+								return file.State == 0;
+							});
+							fileType = 1;
+							loadFileType = 2;
+						} else if($scope.videoList.length > 0) {
+							files = $scope.videoList.filter(function(file) {
+								return file.State == 0;
+							});
+							fileType = 2;
+							loadFileType = 1;
+						}
+
+						if(files.length > 0) {
+							var promises = files.map(function(file) {
+								return $scope.uploadFile({
+									funcKey: "MdtResCircle",
+									localFile: file.FilePath
+								});
+							});
+							$q.all(promises).then(function(res) {
+								var flag = true;
+								res.forEach(function(file, index) {
+									file = JSON.parse(file.responseText).Data[0];
+									if(file == null) {
+										flag = false;
+									} else {
+										files[index].State = 1;
+										//										file.FileSize = files[index].FileSize;
+										file.FileType = fileType;
+										postData.Attachs.push(file);
+									}
+								});
+								$scope.process.ProcessList[0].State = flag ? 2 : 3;
+								submitData(loadFileType);
+							});
+						} else {
+							$scope.process.ProcessList[0].State = 2;
+							submitData(loadFileType);
+						}
+
+					}
+
+					function submitData() {
+						var url = ApiService.Api64 + '/api/v1/ResCircle/SaveResCircle';
+						$scope.process.ProcessList[1].State = 1;
+						postData.Content = $scope.ContentText;
+						postData.ShareID = 0;
+						postData.FileType = loadFileType;
+						DataService.post(url, postData).then(function(res) {
+							$scope.process.ProcessList[1].State = 2;
+							RPCObserver.broadcast("refresh_Assist_detail");
+							RPCObserver.broadcast("refresh_readList");
+							$timeout(function() {
+								$scope.process.SaveState = 1;
+							}, 800);
+						}, function(res) {
+							saving = false;
+							$scope.process.ProcessList[1].State = 3;
+						})
+					}
+
+					//录视频
+					$scope.recordVideo = function() {
+
+						UtilsService.recordVideo().then(function(res) {
+							$scope.videoList = $scope.videoList ? $scope.videoList : [];
+							$scope.videoList.length < 0 && ($scope.imageList = []);
+							res.State = 0;
+
+							UtilsService.getVideoTime(res.FileName).then(function(time) {
+								res.FileSize = time;
+							});
+
+							$scope.videoList.push(res);
+
+							if(typeof $scope.callback == "function") {
+								$scope.callback(3, res);
+							}
+						});
+					};
+
+					$scope.uploadFile = function(options) {
+
+						var fileName = options.localFile.substr(options.localFile.lastIndexOf('/') + 1, options.localFile.length - options.localFile.lastIndexOf('/'));
+						var defer = $q.defer();
+						var url = ApiService.Api64 + "/api/v1/File/uploadFile?funcKey=" + options.funcKey;
+						var task = plus.uploader.createUpload(url, {
+							method: "post"
+						}, function(t, status) {
+							if(status == 200 && JSON.parse(t.responseText).State == 1) {
+								defer.resolve(t);
+							} else {
+								defer.reject(t);
+							}
+						});
+						task.setRequestHeader('Authorization', 'Bearer ' + curUser.Token);
+						task.addFile(options.localFile, {
+							key: encodeURI(fileName),
+							name: encodeURI(fileName)
+						});
+						task.start();
+
+						return defer.promise;
+					}
+					//去掉回车换行
+					//						function iGetInnerText(testStr) {
+					//							var resultStr = testStr.replace(/[\r\n]/g, ""); //去掉回车换行
+					//							return resultStr;
+					//						}
+
+				}
+			]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+				plus.webview.currentWebview().setStyle({
+					softinputMode: "adjustResize"
+				});
+			});
+		</script>
+	</body>
+
+</html>

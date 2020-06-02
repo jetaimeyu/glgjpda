@@ -1,0 +1,965 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>客户服务</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.data-group .data-row label {
+				padding-right: 8px;
+			}
+			
+			.data-group:first-child {
+				margin-top: 0;
+			}
+			
+			.mui-table-view .mui-media-object {
+				border: none;
+			}
+			
+			.mui-table-view:before,
+			.mui-table-view:after {
+				content: none;
+			}
+			
+			.mui-table-view .mui-table-view-cell {
+				padding: 8px 16px;
+				height: 71px;
+			}
+			
+			.mui-table-view .mui-table-view-cell .mui-media-object {
+				line-height: 71px;
+				background-color: #FFFFFF;
+				width: 55px;
+				height: 55px;
+				max-width: 55px;
+				background-size: 50px;
+			}
+			
+			.mui-ellipsis {
+				white-space: nowrap!important;
+			}
+			
+			.equ-title {
+				/*line-height: 48px;*/
+				font-size: 1.5rem;
+				color: #000000;
+			}
+			
+			.equ-sub {
+				line-height: 16px;
+				font-size: 1.2rem;
+				color: #AAAAAA;
+				font-family: MicrosoftYaHei;
+			}
+			
+			.mui-table-view .mui-table-view-cell label,
+			.mui-table-view .mui-table-view-cell .opt {
+				position: absolute;
+				font-size: 1.2rem!important;
+				top: 50%;
+				-webkit-transform: translateY(-50%);
+				transform: translateY(-50%);
+				overflow: hidden;
+				margin: 0;
+			}
+			
+			.mui-table-view .mui-table-view-cell .opt,
+			.data-group .data-row .opt {
+				color: #AEAEAE;
+				top: 50%;
+			}
+			
+			.mui-table-view .mui-table-view-cell .opt:active {
+				color: #169BD5;
+			}
+			
+			.mui-table-view .mui-table-view-cell .opt,
+			.mui-table-view .mui-table-view-cell .body.arrow:after {
+				font-size: 1.7rem;
+				right: 0;
+				padding: 10px 14px 11px 10px;
+			}
+			
+			.mui-table-view-cell:after {
+				background-color: #ECECEC;
+			}
+			
+			.mui-table-view .mui-table-view-cell:after {
+				left: 10px;
+				right: 10px;
+			}
+			
+			.imgslist {
+				float: left;
+				width: 55px;
+				height: 55px;
+				margin-right: 10px;
+				background-size: cover!important;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="ServiceEditController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left mui-ellipsis" style="max-width: 70vw;" ng-bind="title"></a>
+		</header>
+		<div class="mui-scroll-wrapper equiFM" style="margin-bottom: 40px;display: none;" ng-class="{'mui-block':isLoad}">
+			<ul class="data-group">
+				<li class="data-row must">
+					<label>工作内容</label>
+					<div class="body">
+						<div class="edit">
+							<div id="serviceContent" class="needsclick" placeholder="请输入工作内容" contenteditable="true" lenlimit="400"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row" ng-if="audio.FileSize&&audio.FileSize!=0">
+					<label>语音描述</label>
+					<div class="body">
+						<md-audio audio="audio"></md-audio>
+					</div>
+				</li>
+				<li class="data-row" ng-if="imageList.length!=0">
+					<label>现场照片</label>
+					<div class="body attach">
+						<md-image style="display: inline;float: left;" images="imageList" readonly="false"></md-image>
+					</div>
+				</li>
+				<li class="data-row" ng-if="videoList.length!=0">
+					<label>现场视频</label>
+					<div class="body attach">
+						<md-video style="display: inline;float: left;" videos="videoList" readonly="false"></md-video>
+					</div>
+				</li>
+			</ul>
+			<div id="params-body">
+				<ul class="data-group" ng-repeat="groupParams in ServiceParams" ng-if="ServiceParams.length>0" style="margin-top:8px">
+					<p class="data-group-tip" ng-bind="groupParams[0].ParamName" ng-if="groupParams[0].IsGroup==1&&groupParams[1]"></p>
+					<li class="data-row" ng-repeat="param in groupParams" ng-switch="param.FieldType" ng-class="{'must':param.IsMust==1}" ng-click="paramsTap(param)" ng-if="param.IsGroup==0">
+						<label ng-bind="param.ParamName"></label>
+						<p class="opt md-icon icon-right" ng-if="param.ParamOptions.length>0"></p>
+						<div class="body" ng-switch-when="2|3|19" ng-switch-when-separator="|">
+							<span ng-if="!param.ParamDefault&&param.ParamOptions.length>0" class="placeholder" ng-bind="'请选择' + param.ParamName"></span>
+							<span ng-if="param.ParamOptions.length>0" ng-bind="param.ParamDefault" data-ParamName="{{param.ParamName}}" data-FiledName="{{param.FiledName}}" data-FieldType="{{param.FieldType}}" data-ParamOptions="true"></span>
+							<div class="edit" ng-if="param.ParamOptions.length==0">
+								<div lenlimit="200" class="needsclick" ng-bind="param.ParamDefault" placeholder="请输入{{param.ParamName}}" contenteditable="true" data-ParamName="{{param.ParamName}}" data-FiledName="{{param.FiledName}}" data-FieldType="{{param.FieldType}}"></div>
+							</div>
+						</div>
+						<!--datePicker-->
+						<p class="opt md-icon icon-right" ng-if="param.FieldType==7"></p>
+						<div class="body" data-options='{}' ng-switch-when="7">
+							<span ng-if="!param.ParamDefault" class="placeholder" data-FiledName="{{param.FiledName}}" data-FieldType="{{param.FieldType}}">请选择日期</span>
+							<span ng-if="param.ParamDefault" ng-bind="param.ParamDefault" data-FiledName="{{param.FiledName}}" data-FieldType="{{param.FieldType}}"></span>
+						</div>
+					</li>
+				</ul>
+			</div>
+
+			<ul class="data-group">
+				<p class="data-group-tip">相关客户</p>
+				<li class="data-row must relevant-customer">
+					<label>客户</label>
+					
+					<p class="opt select-opt">
+						<md-custom-select data-options="customSelectOptions"></md-custom-select>
+					</p>
+					<div class="body">
+						<md-drop-down-list ng-model="customer" data-options="{url:customerurl,labname:'请输入或选择客户'}"></md-drop-down-list>
+
+					</div>
+				</li>
+				<!-- <li class="data-row" ng-click="tap('creatNewCustomer')" style="min-height: auto;"> -->
+					<!-- <div class="button"> -->
+						<!-- 新建客户 -->
+					<!-- </div> -->
+				<!-- </li> -->
+				<li class="data-row must">
+					<label>联系人</label>
+					<div class="body">
+						<div class="edit">
+							<div id="linkName" class="needsclick" placeholder="请输入联系人" contenteditable="true" lenlimit="20"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row must">
+					<label>联系电话</label>
+					<div class="body">
+						<div class="edit">
+							<div id="linkPhone" class="needsclick" placeholder="请输入联系电话" contenteditable="true" lenlimit="15"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row must" ng-if="customer.ID||customer.Name">
+					<label>客户地址</label>
+					<p class="opt md-icon" ng-click="tap('addressSelect')">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="tap('addressSelect')">
+						<span class="placeholder" ng-if="!customer.Province">请选择客户地址</span>
+						<span ng-bind="customer.Province| locationfilter:customer.City:customer.District:customer.Address:customer.Street" ng-if="customer.Province"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<li class="mui-table-view-cell data-row">
+					<label>抄送给</label>
+					<p class="opt md-icon font-15" ng-click="tap('selectUser')">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="tap('selectUser')">
+						<span class="placeholder" ng-show="sendUsers.length==0">请选择抄送人</span>
+						<span ng-show="sendUsers.length>0" ng-repeat="user in sendUsers" ng-bind="$index==0?user.ViewName:'，'+user.ViewName"></span>
+					</div>
+				</li>
+			</ul>
+			<div class="mui-content-padded">
+				<span class="mui-btn mui-btn-block" ng-click="save()">保存</span>
+			</div>
+		</div>
+		<!--无网络或请求失败重试-->
+		<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+		<footer class="footBtn" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<md-record-media videos="videoList" audio="audio" images="imageList" callback="getMediaRes"></md-record-media>
+		</footer>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../message/transMessage.js"></script>
+		<script type="text/javascript">
+			app.controller("ServiceEditController", ["$scope", "UtilsService", "$Modal", "DataService", "ApiService", "DatePickerService", "Loading", "$q", "ChatUserService", "$filter", "$timeout", "BillService", "RPCObserver", "AuthService", "CacheService", function($scope, UtilsService, $Modal, DataService, ApiService, DatePickerService, Loading, $q, ChatUserService, $filter, $timeout, BillService, RPCObserver, AuthService, CacheService) {
+				$scope.title = query("title") || "其他服务资料";
+
+				var curUser = CacheService.get("user");
+				$scope.process = {
+					SaveState: 0, //0未保存 1保存成功 2保存中 3保存失败
+					ProcessList: [{
+						Text: "上传语音文件", //0未执行 1执行中 2完成 3失败
+						State: 0,
+						RetryMethod: uploadAudio
+					}, {
+						Text: "上传图片",
+						State: 0,
+						RetryMethod: uploadImgs
+					}, {
+						Text: "上传视频",
+						State: 0,
+						RetryMethod: uploadVideos
+					}, {
+						Text: "保存其他服务内容",
+						State: 0,
+						RetryMethod: submitData
+					}, {
+						Text: "通知抄送人",
+						State: 0,
+						RetryMethod: sendMsg
+					}]
+				};
+				//无网络或请求失败重试
+				$scope.retryModal = {
+					msg: "其他服务",
+					retry: init,
+					state: ''
+				}
+
+				var postData = {
+					ImgAttach: null,
+					ArmAttach: null,
+					VideoAttach: null
+				}
+				$scope.audio = {}; //上传音频
+				$scope.videoList = []; //上传视频
+				$scope.imageList = []; //上传图片
+				$scope.needCheck = true; //是否验证同一种产品
+				//产品
+				$scope.ProdList = [];
+				$scope.prodInfo = {
+					ProdID: 0,
+					ProdName: "",
+					SkuID: 0,
+					SkuName: "",
+					InnerCode: "",
+					MDCode: "",
+				};
+				//客户
+				$scope.customer = {
+					ID: 0,
+					Name: "",
+					Province: "",
+					City: "",
+					District: "",
+					Address: "",
+					Street: "",
+					MapLng: "",
+					MapLat: ""
+				};
+				//抄送人
+				$scope.sendUsers = [];
+				var sendUserIDs = [];
+
+				//客户服务参数
+				$scope.ServiceParams = [];
+				$scope.customSelectOptions = {
+					model: $scope.customer,
+					idField:'ID',
+					nameField:'Name',
+					selectfn:function(){
+						$scope.tap('selectCustomer');
+					}
+				};
+
+				//参数类型id
+				$scope.paramTypeID = query("typeid") || -1;
+				//客户服务id
+				$scope.serviceId = query("id") || 0;
+				AuthService.getAuth().then(function(res) {
+					$scope.InnerCodeName = res.InnerCodeName || '出厂编号';
+					//					$scope.serviceId == 0 && $scope.sendUsers.push({
+					//						"UserID": res.UserID,
+					//						"ViewName": $filter("getViewName")(res.UserName, res.RealName, res.Mdt),
+					//						"CompID": res.CompID,
+					//						"ULogoIsExist": res.ULogoIsExist
+					//					});
+				});
+				UtilsService.getDefaultRecipient().then(function(res) {
+					if(res && $scope.serviceId == 0) {
+						$scope.sendUsers.push({
+							"UserID": res.UserID,
+							"ViewName": res.ViewName,
+							"CompID": res.CompID,
+							"ULogoIsExist": res.ULogoIsExist
+						})
+
+					}
+				});
+				$scope.customerurl = ApiService.Api50 + "/api/v2/Customer/SearchCustomer?keyWords=";
+				//初始化
+				init();
+				//监听-停止语音
+				$scope.$on('emit-stop-audio', function() {
+					$scope.$broadcast("stop_audio");
+				});
+
+				function init() {
+					Loading.show();
+					if($scope.serviceId && $scope.serviceId > 0) {
+						getCustomerServiceInfo();
+					} else {
+						//获取客户服务参数
+						getServiceParamsList();
+					}
+				};
+
+				//获取客户服务参数
+				function getServiceParamsList() {
+					var url = ApiService.Api50 + "/api/v2/Customer/GetCustomerServiceParamsList?typeId=" + $scope.paramTypeID;
+					DataService.get(url).then(function(res) {
+
+						//清空 选择 类型字段中不存在于备选值的默认值
+						res.forEach(function(item, index) {
+							if(item.ParamOptions.length > 0) {
+								var paramOptions = item.ParamOptions.split("\r\n");
+								paramOptions.indexOf(item.ParamDefault) <= -1 && (item.ParamDefault = "");
+							}
+						})
+						Loading.hide();
+						$scope.isLoad = true;
+						$scope.ServiceParams = [];
+						$scope.retryModal.state = '';
+						if(res) {
+							res.forEach(function(item, index) {
+								if(item.IsGroup) {
+									$scope.ServiceParams.push([item]);
+								} else {
+									index == 0 && $scope.ServiceParams.push([]);
+									$scope.ServiceParams.slice(-1)[0].push(item);
+								}
+							})
+						}
+					}, function(error) {
+						$scope.retryModal.state = error.State;
+					})
+				}
+
+				$scope.paramsTap = function(item) {
+					$scope.$broadcast("stop_audio");
+					//actionsheet
+					if(item.ParamOptions.length > 0) {
+						var buttons = [];
+						var paramOptions = item.ParamOptions.split(/[\s\n]/);
+						paramOptions.forEach(function(item) {
+							item.trim() && buttons.push({
+								title: item
+							})
+						})
+						
+						UtilsService.actionSheet("", buttons).then(function(res) {
+							item.ParamDefault = res.title;
+						})
+						return;
+					}
+					switch(item.FieldType) {
+						case 7:
+							DatePickerService.pickDate({
+								selected: item.ParamDefault,
+							}).then(function(res) {
+								item.ParamDefault = res;
+							});
+							break;
+					}
+				}
+				$scope.tap = function(key) {
+					document.activeElement.blur();
+					$scope.$broadcast("stop_audio");
+					switch(key) {
+						//选择抄送人
+						case 'selectUser':
+							UtilsService.openWindow({
+								needLogin: true,
+								id: "contact-select.html",
+								url: "../common/contact-select.html?action=select&multiselect=true&type=org",
+								extras: {
+									selectObj: $scope.sendUsers,
+									callback: "selectUserCallback"
+								}
+							});
+							break;
+							//选择客户
+						case 'selectCustomer':
+							UtilsService.openWindow({
+								needLogin: true,
+								id: "customer-search.html",
+								url: "../search/customer-search.html?action=select&must=true",
+								extras: {
+									selectObj: $scope.customer,
+									callback: "selectCustomerContactCallback"
+								}
+							});
+							break;
+							//客户地址
+						case 'addressSelect':
+							UtilsService.openWindow({
+								id: "mdAddress.html",
+								url: "../../js/pages/mdAddress.html?needlogin=false",
+								extras: {
+									callback: 'getAddr'
+								}
+							});
+							break;
+						case 'prodSelect':
+							UtilsService.openWindow({
+								id: "problib-index.html",
+								url: "../problib/index.html?state=selsku",
+								extras: {
+									selectObj: $scope.prodInfo,
+									callback: 'prodSelectCallback'
+								}
+							})
+							break;
+						case 'scan':
+							setTimeout(function() {
+								UtilsService.openWindow({
+									needLogin: true,
+									id: 'scan.html',
+									url: '../scan/scan.html',
+									extras: {
+										callback: "scanCallback"
+									}
+								});
+							})
+							break;
+					}
+				};
+
+				//获取客户服务详情
+				function getCustomerServiceInfo() {
+					var url = ApiService.Api50 + "/api/v2/Customer/GetCustomerServiceInfo?CustomerServiceId=" + $scope.serviceId;
+					DataService.get(url).then(function(res) {
+						Loading.hide();
+						$scope.retryModal.state = '';
+						if(res) {
+							postData.ID = $scope.serviceId || "";
+							$scope.paramTypeID = res.ParamTypeID;
+							document.getElementById("serviceContent").innerText = res.JobContent;
+							$scope.ProdList = [{
+								ProdID: res.ProdID,
+								ProdName: res.ProdName,
+								MDCode: res.MdCode,
+								SkuName: res.SkuName,
+								SkuID: res.SkuID,
+								InnerCode: res.InnerCode,
+								IsNew: res.IsNew
+							}];
+							$scope.ServiceParams = [];
+							res.CustomerServiceParams.forEach(function(item) {
+								if(item.IsGroup == 1) {
+									$scope.ServiceParams.push([]);
+								}
+								var len = $scope.ServiceParams.length;
+								len == 0 && $scope.ServiceParams.push([item]);
+								len > 0 && $scope.ServiceParams[len - 1].push(item);
+							})
+
+							$scope.customer.ID = res.CustomerID;
+							$scope.customer.Name = res.CustomerName;
+							$scope.customer.Province = res.Province;
+							$scope.customer.City = res.City;
+							$scope.customer.District = res.District;
+							$scope.customer.Address = res.Address;
+							$scope.customer.Street = res.Street;
+							$scope.customer.MapLng = res.MapLng;
+							$scope.customer.MapLat = res.MapLat;
+							document.getElementById("linkName").innerText = res.LinkName;
+							document.getElementById("linkPhone").innerText = res.LinkPhone;
+
+							//抄送人
+							$scope.sendUsers = [];
+							res.Users.forEach(function(user) {
+								$scope.sendUsers.push({
+									"UserID": user.ID,
+									"ViewName": user.Name,
+									"CompID": user.CompID,
+									"ULogoIsExist": user.ULogoIsExist
+								})
+							})
+							sendUserIDs = [];
+							sendUserIDs = res.Users.map(function(user) {
+								return user.ID
+							});
+
+							//语音
+							$scope.audio = res.ArmAttach || {};
+							//照片
+							res.ImgAttach.forEach(function(item) {
+								item.State = 1;
+							});
+							$scope.imageList = res.ImgAttach;
+
+							//视频
+							res.VideoAttach.forEach(function(item) {
+								item.State = 1;
+							});
+							$scope.videoList = res.VideoAttach;
+							$scope.isLoad = true;
+						}
+					}, function(error) {
+						$scope.retryModal.state = error.State;
+					})
+				};
+
+				//避免重复点击
+				var isSubmitting = false;
+
+				//保存
+				$scope.save = function() {
+					$scope.$broadcast("stop_audio");
+					document.activeElement.blur();
+					//验证填字符长度
+					if(!checkLengthUtil.check()) {
+						return false;
+					}
+					if(document.getElementById("serviceContent").innerText.trim() == "") {
+						mui.toast("请输入工作内容");
+						return;
+					}
+					//验证必填参数
+					if(!verify()) return;
+					if(!$scope.customer.Name) {
+						mui.toast("请输入或选择一个客户！");
+						return;
+					}
+					if(document.getElementById("linkName").innerText.trim() == "") {
+						mui.toast("请输入联系人！");
+						return;
+					}
+					if(document.getElementById("linkPhone").innerText.trim() == "") {
+						mui.toast("请输入联系电话！");
+						return;
+					}
+					if($scope.customer.Province == ""||$scope.customer.Province==undefined) {
+						mui.toast("请选择客户地址！");
+						return;
+					}
+
+					//验证数字和日期
+					if(!isNumberOrDate()) return;
+
+					//验证填字符长度
+					if(!checkLengthUtil.check()) {
+						return false;
+					}
+
+					if(isSubmitting) return;
+					//开始上传
+					isSubmitting = true;
+					if(postData.ImgAttach == null) {
+						postData.ImgAttach = $scope.imageList.filter(function(item) {
+							return item.ID > 0;
+						}).map(function(item) {
+							return {
+								ID: item.ID,
+								FileGuid: item.FileGuid,
+								FileName: item.FileName,
+								FileExt: item.FileExt,
+								FilePath: item.FilePath,
+								FileSize: item.FileSize,
+								FileType: item.FileType
+							}
+						})
+					}
+					if(postData.VideoAttach == null) {
+						postData.VideoAttach = $scope.videoList.filter(function(item) {
+							return item.ID > 0;
+						}).map(function(item) {
+							return {
+								ID: item.ID,
+								FileGuid: item.FileGuid,
+								FileName: item.FileName,
+								FileExt: item.FileExt,
+								FilePath: item.FilePath,
+								FileSize: item.FileSize,
+								FileType: item.FileType
+							}
+						})
+					}
+					UtilsService.submitModal($scope.process, function() {
+						isSubmitting = false;
+						mui.back();
+					}, function() {
+						isSubmitting = false;
+						postData.ImgAttach = null;
+						postData.VideoAttach = null;
+						$scope.process.SaveState = 0;
+						$scope.process.ProcessList.forEach(function(item) {
+							item.State = 0;
+						})
+						getCustomerServiceInfo();
+					}, function() {
+						isSubmitting = false;
+						$scope.process.ProcessList.forEach(function(item) {
+							item.State = 0;
+						})
+						postData.ImgAttach = [];
+						$scope.imageList.forEach(function(item) {
+							item.State = 0;
+						})
+						postData.VideoAttach = [];
+						$scope.videoList.forEach(function(item) {
+							item.State = 0;
+						})
+					});
+					//开始附件上传(语音-图片-视频)
+					uploadAudio();
+				};
+
+				//上传语音
+				function uploadAudio() {
+					if($scope.audio && $scope.audio.FileSize && !$scope.audio.FileGuid) {
+						$scope.process.ProcessList[0].State = 1;
+						UtilsService.uploadFileBill($scope.audio.FilePath, 2).then(function(res) {
+							if(res != null) {
+								res.FileSize = $scope.audio.FileSize;
+								res.FileType = 2;
+								postData.ArmAttach = res;
+							}
+							$scope.process.ProcessList[0].State = (res == null ? 3 : 2);
+							//上传图片
+							uploadImgs();
+						});
+					} else {
+						if($scope.audio.FileGuid) {
+							postData.ArmAttach = $scope.audio;
+						}
+						$scope.process.ProcessList[0].State = 2;
+						//上传图片
+						uploadImgs();
+					}
+				}
+				//上传图片
+				function uploadImgs() {
+					if([0, 3].indexOf($scope.process.ProcessList[1].State) >= 0) {
+						$scope.process.ProcessList[1].State = 1;
+						var imgs = $scope.imageList.filter(function(img) {
+							return img.State == 0;
+						});
+						if(imgs.length > 0) {
+							var promises = imgs.map(function(img) {
+								return UtilsService.uploadFileBill(img.FilePath, 1);
+							});
+							$q.all(promises).then(function(res) {
+								var flag = true;
+								res.forEach(function(img, index) {
+									if(img == null) {
+										flag = false;
+									} else {
+										imgs[index].State = 1;
+										img.FileSize = imgs[index].FileSize;
+										img.FileType = 1;
+										postData.ImgAttach.push(img);
+									}
+								});
+								$scope.process.ProcessList[1].State = flag ? 2 : 3;
+								//上传视频
+								uploadVideos();
+							});
+						} else {
+							$scope.process.ProcessList[1].State = 2;
+							//上传视频
+							uploadVideos();
+						}
+					} else {
+						uploadVideos();
+					}
+				}
+				//上传视频
+				function uploadVideos() {
+					if([0, 3].indexOf($scope.process.ProcessList[2].State) >= 0) {
+						$scope.process.ProcessList[2].State = 1;
+						var videos = $scope.videoList.filter(function(video) {
+							return video.State == 0;
+						});
+						if(videos.length > 0) {
+							var promises = videos.map(function(video) {
+								return UtilsService.uploadFileBill(video.FilePath, 3);
+							});
+							$q.all(promises).then(function(res) {
+								var flag = true;
+								res.forEach(function(video, index) {
+									if(video == null) {
+										flag = false;
+									} else {
+										videos[index].State = 1;
+										video.FileSize = videos[index].FileSize;
+										video.FileType = 3;
+										postData.VideoAttach.push(video);
+									}
+								});
+								$scope.process.ProcessList[2].State = flag ? 2 : 3;
+								//提交
+								submitData();
+							});
+						} else {
+							$scope.process.ProcessList[2].State = 2;
+							//提交
+							submitData();
+						}
+					} else {
+						submitData();
+					}
+				}
+				//上传客户服务详情
+				function submitData() {
+					if($scope.process.ProcessList[0].State == 2 && $scope.process.ProcessList[1].State == 2 && $scope.process.ProcessList[2].State == 2) {
+						$scope.process.ProcessList[3].State = 1;
+						postData.ID = $scope.serviceId || 0;
+						postData.JobContent = replaceHTML(document.getElementById("serviceContent").innerText);
+						postData.LinkName = replaceHTML(document.getElementById("linkName").innerText);
+						postData.LinkPhone = replaceHTML(document.getElementById("linkPhone").innerText);
+						postData.SendUsers = $scope.sendUsers.map(function(item) {
+							return item.UserID;
+						}).join('/');
+						postData.ParamTypeID = $scope.paramTypeID.toString();
+						postData.IsHasAudio = $scope.audio.FileSize > 0 ? 1 : 0;
+						postData.AudioLength = $scope.audio.FileSize || 0;
+						//客户地址保存
+						postData.CustomerName = $scope.customer.Name;
+						postData.CustomerID = 0;
+
+						postData.Province = $scope.customer.Province;
+						postData.City = $scope.customer.City;
+						postData.District = $scope.customer.District;
+						postData.Address = $scope.customer.Address;
+						postData.Street = $scope.customer.Street;
+						postData.MapLat = $scope.customer.MapLat;
+						postData.MapLng = $scope.customer.MapLng;
+
+						postData.FieldList = [];
+						var paramsDom = document.querySelectorAll("[data-FiledName]");
+						for(var i = 0; i < paramsDom.length; i++) {
+							var ele = paramsDom[i];
+							var FiledName = ele.getAttribute("data-FiledName");
+							var FieldType = ele.getAttribute("data-FieldType");
+							var value = replaceHTML(ele.innerText);
+							(FieldType == 7 && value == "请选择日期") && (value = "");
+							postData.FieldList.push({
+								"key": FiledName,
+								"value": value,
+								"FieldType": FieldType
+							})
+						}
+
+						var url = ApiService.Api50 + "/api/v2/Customer/SaveCustomerService";
+						DataService.post(url, postData).then(function(res) {
+							if(res) {
+								$scope.serviceId = res[0];
+								$scope.process.ProcessList[3].State = 2;
+								//rpc通知
+								rpc();
+								//通知抄送人
+								sendMsg(res);
+								$timeout(function() {
+									$scope.process.SaveState = 1;
+								}, 800)
+							}
+						}, function(res) {
+							$scope.process.ProcessList[3].State = 3;
+						});
+					}
+				}
+
+				//rpc
+				function rpc() {
+					RpcClient.invoke("service-info.html", "RPC_serviceInfoRefresh");
+					//刷新 客户服务搜索
+					RPCObserver.broadcast('refresh_service_search_list');
+					//刷新 故障列表
+					RPCObserver.broadcast('refresh_mat_service_list');
+					// 客户信息刷新
+					RpcClient.invoke("customer-info.html", "RPC_BillViewRefresh", "customer");
+					//刷新客户详情-合计 列表
+					RPCObserver.broadcast("refresh_my_sxun");
+				}
+
+				//给抄送人发送消息
+				function sendMsg(params) {
+					$scope.process.ProcessList[4].State = 2;
+					$scope.sendUsers.filter(function(user) {
+						return sendUserIDs.indexOf(user.UserID) < 0
+					}).forEach(function(user) {
+						ChatUserService.send({
+							chatId: user.UserID,
+							chatName: user.ViewName,
+							chatCompId: user.CompID,
+							hasLogo: curUser.ULogoIsExist,
+							chatLogo: user.ULogoIsExist,
+							type: 7,
+							content: {
+								eventName: "other-service",
+								logo: ApiService.Down + "/chat/other-service.png",
+								title: "其他服务",
+								desc: $filter("formatFaultInfo")(postData.IsHasAudio, postData.AudioLength, postData.JobContent),
+								params: params
+							}
+						});
+					})
+				}
+
+				//校验
+				function verify() {
+					var verify = true;
+					var paramsBodys = document.getElementById("params-body");
+					for(var j = 0; j < paramsBodys.childNodes.length; j++) {
+						var paramsBody = paramsBodys.childNodes[j];
+						if(paramsBody && paramsBody.nodeName == "UL") {
+							var required = paramsBody.querySelectorAll(".must");
+							for(var i = 0; i < required.length; i++) {
+								var item = required[i];
+								var requiredItems = item.querySelector("div");
+								var requiredNode = requiredItems.querySelector("span,div");
+								if(requiredNode.nodeName == "DIV") {
+									var contenteditableDiv = requiredNode.childNodes[1];
+									if(contenteditableDiv.innerText.replace(/(^\s*)|(\s*$)/g, "") == "") {
+										mui.toast(contenteditableDiv.getAttribute("placeholder"));
+										verify = false;
+										break;
+									}
+								} else if(requiredNode.nodeName == "SPAN") {
+									var paramName = replaceHTML(item.childNodes[1].innerText.trim());
+									if(requiredNode.innerText.trim() == "请选择日期") {
+										mui.toast('请选择' + paramName);
+										verify = false;
+										break;
+									}
+									if(requiredNode.classList.contains("placeholder") || requiredNode.innerText.trim() == "") {
+										mui.toast('请选择' + paramName);
+										verify = false;
+										break;
+									}
+								}
+							}
+						}
+						if(!verify) {
+							break;
+						}
+					}
+
+					return verify;
+				}
+
+				//校验数字和日期格式
+				function isNumberOrDate() {
+					var verify = true;
+					var reg = /^(-)?([1-9]\d*|0)(\.\d+)?$/;
+					var paramsDom = document.querySelectorAll("[data-FiledName]");
+					for(var i = 0; i < paramsDom.length; i++) {
+						var ele = paramsDom[i];
+						var FieldType = ele.getAttribute("data-FieldType");
+						if(FieldType == 2 && !reg.test(ele.innerText.trim()) && ele.innerText.trim() != "") {
+							ele.focus();
+							mui.toast("该项【" + ele.getAttribute("data-ParamName") + "】只能输入正确格式的数字");
+							verify = false;
+							break;
+						} else if(FieldType == 7 && ele.innerText != "请选择日期" && ele.innerText.trim() != "" && !ele.innerText.trim().match(/^(\d{1,4})(-|\/)(\d{1,2})\2(\d{1,2})$/)) {
+							mui.toast("请选择正确的日期");
+							verify = false;
+							break;
+						}
+					}
+					return verify;
+
+				}
+
+			}]);
+
+			//选择抄送人员回调
+			function selectUserCallback(obj) {
+				var appElement = document.querySelector('[ng-controller=ServiceEditController]');
+				var $scope = angular.element(appElement).scope();
+				$scope.sendUsers = angular.copy(obj);
+				$scope.$apply();
+			}
+
+			//选择客户回调
+			function selectCustomerContactCallback(obj) {
+				var appElement = document.querySelector('[ng-controller=ServiceEditController]');
+				var $scope = angular.element(appElement).scope();
+				var customer = angular.copy(obj);
+				$scope.customer.Address = customer.Address;
+				$scope.customer.City = customer.City;
+				$scope.customer.Name = customer.CustomerName;
+				$scope.customer.District = customer.District;
+				$scope.customer.ID = obj.ID;
+				$scope.customer.Province = customer.Province;
+				$scope.customer.Street = customer.Street;
+				$scope.customer.MapLng = customer.MapLng;
+				$scope.customer.MapLat = customer.MapLat
+				$scope.$apply();
+			}
+
+			//客户地址回调
+			function getAddr(res) {
+				var appElement = document.querySelector('[ng-controller=ServiceEditController]');
+				var $scope = angular.element(appElement).scope();
+				$scope.customer.Province = res.province;
+				$scope.customer.City = res.city;
+				$scope.customer.District = res.district;
+				$scope.customer.Address = res.address;
+				$scope.customer.Street = res.street;
+				$scope.customer.MapLng = res.lng;
+				$scope.customer.MapLat = res.lat;
+				$scope.$apply();
+			}
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

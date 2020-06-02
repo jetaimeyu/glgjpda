@@ -1,0 +1,195 @@
+<!DOCTYPE HTML>
+<html id="MdTong">
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+	<title></title>
+	<link rel="stylesheet" href="../../css/mui.min.css" type="text/css" charset="utf-8" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	<link  href="../../css/mui.loading.css" rel="stylesheet"/>
+	<style type="text/css">
+		html {
+			width: 100%;
+			height: 100%;
+		}
+
+		body {
+			height: 100%;
+			background-color: transparent;
+		}
+
+		.mui-popover .mui-popover-arrow {
+			left: auto;
+			right: 1px !important
+		}
+
+		.mui-table-view-cell:after {
+			position: absolute;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			height: 1px;
+			content: '';
+			-webkit-transform: scaleY(.5);
+			transform: scaleY(.5);
+			background-color: #ccc;
+		}
+
+		.mui-popover .mui-popover-arrow:after {
+			top: 22px;
+			left: 0;
+			width: 15px;
+			height: 15px;
+		}
+	</style>
+</head>
+
+<body ng-controller="MenuchatController">
+	<a style="display: block;height: 100%; background:url(../../images/mask.png);"></a>
+	<div id="topPopover" class="mui-popover pop-menu" style="position:fixed ;top: 43px;right:9px;">
+		<div class="mui-popover-arrow" style="top: -25px;"></div>
+		<ul class="mui-table-view" style="color: #fff;right: 0;">
+			<li class="mui-table-view-cell popover" style="text-align: left;" data-type="1">
+				<a class="mui-icon icon-bumenguanli">
+					<font>新增下级目录</font>
+				</a>
+			</li>
+			<li class="mui-table-view-cell popover" style="text-align: left; display:none;" data-type="2" ng-class="{'mui-block':curDir && curDir.ID>0}">
+				<a class="mui-icon icon-add">
+					<font>新增产品</font>
+				</a>
+			</li>
+			<li class="mui-table-view-cell popover" style="text-align: left; display:none;" ng-class="{'mui-block':curDir && curDir.ID>0}"
+			 data-type="3">
+				<a class="mui-icon icon-edit">
+					<font>修改目录</font>
+				</a>
+			</li>
+			<li class="mui-table-view-cell popover" style="text-align: left; display:none;" ng-class="{'mui-block':curDir && curDir.ID>0}"
+				data-type="4">
+				   <a class="mui-icon icon-delete">
+					   <font>删除目录</font>
+				   </a>
+			   </li>
+		</ul>
+	</div>
+</body>
+<script type="text/javascript" src="../../js/angular.min.js"></script>
+<script src="../../js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" src="../../js/common.js"></script>
+<script type="text/javascript" src="../../js/utils.js"></script>
+<script type="text/javascript" src="../../js/rpc.js"></script>
+<script type="text/javascript" src="../../js/mui.loading.js"></script>
+
+<!--<script type="text/javascript" src="../message/transMessage.js"></script>-->
+<script type="text/javascript">
+	app.controller("MenuchatController", ["$scope", "UtilsService", "ApiService", "DataService", "RPCObserver", function (
+		$scope, UtilsService, ApiService, DataService, RPCObserver) {
+		$scope.ResID = 0;
+		$scope.isUpdate = false;
+		$scope.domData = {
+
+		};
+
+		$scope.curDir = null;
+		var ws = plus.webview.currentWebview();
+		var oldBack = mui.back;
+		mui.back = function () {
+			ws.hide();
+		};
+
+		var dom = {
+			init: function () {
+				this.webView.init();
+				this.content.init();
+			},
+			webView: {
+				cur: "",
+				init: function () {
+					this.cur = plus.webview.currentWebview();
+					this.event();
+				},
+				event: function () {
+					window.addEventListener("tap", function () {
+						dom.webView.cur.hide();
+					})
+					window.addEventListener("dragstart", function () {
+						dom.webView.cur.hide();
+					})
+				}
+			},
+			content: {
+				init: function () {
+					this.event();
+				},
+				event: function () {
+					mui(".mui-table-view").on("tap", "li", function () {
+						UtilsService.clearWindow();
+						var type = this.getAttribute("data-type");
+						switch (type) {
+							case "1":
+								var url = "../complib/PkgClassExt.html?pid=" + ($scope.curDir ? $scope.curDir.ID : 0);
+								dom.event.openWindow(url, "PkgClassExt.html");
+								break; 
+							case "2":
+								var url = "../complib/prod-edit.html";
+								dom.event.openWindow(url, "prod-edit.html",{
+									dir:{
+										ID:$scope.curDir.ID,
+										SName:$scope.curDir.catalogname,
+										SPath:$scope.curDir.path
+									}
+								});
+								break;
+							case "3":
+								var url = "../complib/PkgClassExt.html?pid=" + ($scope.curDir.ParDirID) + "&id=" +
+									$scope.curDir.ID;
+								dom.event.openWindow(url, "PkgClassExt.html");
+								break;
+
+							case "4":
+								mui.showLoading("正在删除", "div");
+								var url = ApiService.Api50+"/api/v1/Prod/DelPkgClassExt/"+$scope.curDir.ID;
+								DataService.get(url).then(function(res){
+									RPCObserver.broadcast("refresh_prodDir_back");
+									mui.hideLoading();
+									mui.toast("保存成功!");
+								},function(res){
+									mui.hideLoading();
+									mui.toast(res.ErrorMessage || res.Data);
+								})
+
+								break;
+						}
+					});
+				}
+			},
+			event: {
+				openWindow: function (url, id, data) {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: id,
+						url: url,
+						extras: data
+					});
+				}
+			}
+		};
+
+
+		RpcServer.expose("RPC_cur_dir", function (data) {
+			$scope.curDir = data;
+			$scope.$apply();
+		});
+
+		dom.init();
+	}]);
+
+	mui.plusReady(function () {
+		angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+	});
+</script>
+
+</html>

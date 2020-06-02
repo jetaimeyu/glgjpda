@@ -1,0 +1,117 @@
+<ul class="data-group mdDervFaulList" style="margin-top: 0px;">
+	<li class="mui-table-view-cell data-row mui-block" ng-repeat="prod in model">
+		<p class="opt md-icon font-15" ng-if="action=='select'" ng-click="tap('faultEdit',prod)">
+			<span class="icon-check chekbox" ng-class="{'icon-round color-gray-deep':prod.ID!=selectedId,'icon-check color-blue-dark':prod.ID==selectedId}"></span>
+		</p>
+		<div class="bodyTxt" ng-click="tap(prod)">																							
+			<p class="recordTXT mui-ellipsis-2" style="margin-bottom: 10px;" ng-bind="prod.IsHasAudio | formatDeviceRepairInfo:prod.AudioLength:prod.JobContent"></p>
+			<p class="recordSign font-12">
+				<span style="max-width: 30vw;" ng-bind="prod.CreateDate"></span>
+			</p>
+		</div>
+	</li>
+</ul>
+<style type="text/css">
+	.data-group .data-row {
+		padding: 10px 16px;
+	}
+	
+	.recordTXT {
+		font-size: 1.5rem;
+		line-height: 18px;
+		color: #000000;
+		margin-bottom: 10px;
+		word-break: break-all;
+	}
+	
+	.recordSign {
+		margin-bottom: 0px;
+		font-size: 1.2rem;
+		line-height: 1.2rem;
+		color: #AAAAAA;
+		/*CSS3弹性盒子*/
+		display: -ms-flex;
+		display: -webkit-flex;
+		display: flex;
+		-ms-flex-align: center;
+		-webkit-align-items: center;
+		-webkit-box-align: center;
+		align-items: center;
+	}
+	
+	.recordSign>span {
+		display: inline-block;
+		margin-right: 10px;
+	}
+	
+	.recordSign>span:last-child {
+		margin-right: 0;
+	}
+	
+	.equFaultType {
+		max-width: 50.0vw;
+		/*字符串截取*/
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		text-overflow: ellipsis;
+		-ms-text-overflow: ellipsis;
+	}
+	
+	.opt~.bodyTxt {
+		margin-right: 22px;
+	}
+	
+	.chekbox {
+		display: inline-block;
+		/*margin-right: 16px;*/
+		font-size: 20px;
+	}
+	
+	.debugDiv {
+		padding: 10px;
+		margin-bottom: 10px;
+		border: 1px solid #F7F7F7;
+		background-color: #F7F7F7;
+	}
+	
+	.debugDiv>img {
+		float: left;
+		width: 40px;
+		height: 40px;
+	}
+	
+	.debugDiv>div {
+		padding-top: 3px;
+		margin-left: 50px;
+	}
+	
+	.debugDiv .faultyP01 {
+		font-size: 1.5rem;
+		line-height: 17px;
+		color: #AAAAAA;
+		margin-bottom: 9px;
+	}
+	
+	.debugDiv .faultyP02 {
+		margin-bottom: 0px;
+		line-height: 12px;
+	}
+	
+	.debugDiv .faultySpan01 {
+		display: inline-block;
+		max-width: 30.0vw;
+		font-size: 1.2rem;
+		line-height: 12px;
+		color: #AAAAAA;
+		margin-right: 7px;
+	}
+	
+	.imgslist {
+		width: 40px;
+		height: 40px;
+		background-size: cover!important;
+	}
+</style>

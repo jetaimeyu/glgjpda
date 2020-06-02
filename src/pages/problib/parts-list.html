@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title>零配件清单</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<link rel="stylesheet" href="../../css/mui.min.css" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+</head>
+
+<body ng-controller="partsList">
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left">装配清单</a>
+	</header>
+	<div class="content"></div>
+
+	<script type="text/javascript" src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript">
+		app.controller("partsList", ["$scope", function ($scope) {
+			$scope.MDCode = query("mdcode") || "";
+			$scope.innercode = encodeURIComponent(query("innercode")) || "";
+			$scope.partProdName = query("partProdName") || "";
+			$scope.partSkuName = query("partSkuName") || "";
+			$scope.hostProdId = query("hostProdId") || "";
+			$scope.hostSkuId = query("hostSkuId") || "";
+			$scope.tapID = query("tapID") || "";
+			$scope.params = {
+				CompID: query('CompID') || '',
+				EqJane: query('EqJane') || '',
+				LogoIsExist: query('LogoIsExist') || '',
+				ProdName: query('ProdName') || '',
+				SkuName: query('SkuName') || ''
+			}
+			mui.init({
+				subpages: [{
+					url: 'parts-list-sub.html?mdcode=' + $scope.MDCode + "&innercode=" + $scope.innercode + "&partProdName=" + encodeURIComponent($scope.partProdName) + "&partSkuName=" + encodeURIComponent($scope.partSkuName) + "&tapID=" + $scope.tapID + "&hostProdId=" + $scope.hostProdId + "&hostSkuId=" + $scope.hostSkuId + '&ProdName=' + $scope.params.ProdName + '&SkuName=' + $scope.params.SkuName + '&LogoIsExist=' + $scope.params.LogoIsExist + '&CompID=' + $scope.params.CompID + '&EqJane=' + $scope.params.EqJane + '&CompName=' + query("CompName") + '&CodeCreateUserName=' + query("CodeCreateUserName"),
+					id: 'parts-list-sub.html' + ($scope.tapID || "") + (+new Date()),
+					styles: {
+						top: '45px'
+					}
+				}]
+			})
+		}]);
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+		});
+	</script>
+</body>
+
+</html>

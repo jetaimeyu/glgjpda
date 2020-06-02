@@ -1,0 +1,86 @@
+<ul class="data-group" ng-class="{'switchUser':ismodal==1}">
+	<li class="data-row mui-table-view-cell acc-row" ng-repeat="u in users" ng-click="change(u)">
+		<!--<img ng-src="{{u.UserID|getUserLogo:50:50}}" />-->
+		<div class="div-img md-userCustomLogo ng-hide" ng-show="!u.ULogoIsExist" ng-bind="u.ViewName | getUserCustomLogo"></div>
+		<div class="div-img" ng-style="{'background-image':'url('+ (u.UserID|getUserLogo:50:0) +')'}" ng-class="u.ULogoIsExist?'':'ng-hide'"></div>
+		<div style="padding-right: 30px;">
+			<span class="name" ng-bind="u.ViewName"></span>
+			<span class="account" ng-bind="u.Mdt"></span>
+			<span class="account" ng-bind="u.CompName"></span>
+		</div>
+		<i class="icon-check color-blue" ng-if="u.UserID==userid"></i>
+	</li>
+</ul>
+<style>
+	.switchUser {
+		max-height: 340px;
+		width: 80vw;
+		-webkit-overflow-scrolling: touch;
+		overflow-y: scroll;
+		margin-top: 0px!important;
+	}
+	
+	.acc-row {
+		min-height: 68px!important;
+		padding: 11px 15px !important;
+		position: relative;
+	}
+	
+	.acc-row div {
+		margin-left: 65px;
+	}
+	
+	.acc-row img {
+		width: 50px;
+		border-radius: 50%;
+	}
+	
+	.acc-row .div-img {
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+		width: 40px;
+		height: 40px;
+		background-size: cover;
+		border-radius: 50%;
+		margin-left: 5px;
+		position: absolute;
+	}
+	
+	div.md-userCustomLogo {
+		line-height: 40px;
+	}
+	
+	.acc-row .name {
+		display: block;
+		font-size: 1.5rem;
+		line-height: 25px;
+		margin-right: 30px;
+		word-break: break-all;
+	}
+	
+	.acc-row .account {
+		display: block;
+		font-size: 1.2rem;
+		color: #999999;
+		word-break: break-all;
+	}
+	
+	.acc-row i {
+		position: absolute;
+		right: 20px;
+		top: 50%;
+		transform: translateY(-50%);
+		font-size: 1.8rem;
+		font-weight: bold;
+	}
+	
+	.md-modal .md-modal-content {
+		padding: 0 10px!important;
+	}
+	
+	.data-group:before,
+	.data-group:after {
+		height: 0px!important;
+	}
+</style>

@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta charset="UTF-8">
+		<title></title>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.mdt_demand {
+				padding-top: 9.5px;
+				padding-left: 9.5px;
+				padding-right: 9.5px;
+				background: #fff;
+			}
+			
+			.mdt_demand_details {
+				font-size: 1.4rem;
+				color: #333;
+				margin-bottom: 0.3rem;
+				word-wrap: break-word;
+				word-break: break-all;
+			}
+			
+			.flex-container {
+				width: 100%;
+				display: -ms-flex;
+				display: -webkit-flex;
+				display: flex;
+				-ms-flex-align: center;
+				-webkit-align-items: center;
+				-webkit-box-align: center;
+				align-items: center;
+				justify-content: space-between;
+			}
+			
+			.mdt_demand_require {
+				background: #fff;
+				margin-top: 8.5px;
+				overflow: hidden;
+				padding-left: 9.5px;
+				padding-right: 9.5px;
+			}
+			
+			.flex-container-req1 {
+				width: 100%;
+				display: -ms-flex;
+				display: -webkit-flex;
+				display: flex;
+				-ms-flex-align: center;
+				-webkit-align-items: center;
+				-webkit-box-align: center;
+				align-items: center;
+				height: 11.5px;
+				justify-content: space-between;
+				margin-bottom: 10px;
+			}
+			
+			.flex-container-req2 {
+				width: 100%;
+				display: -ms-flex;
+				display: -webkit-flex;
+				display: flex;
+				-ms-flex-align: center;
+				-webkit-align-items: center;
+				-webkit-box-align: center;
+				align-items: center;
+				min-height: 11.5px;
+				margin-top: 7px;
+			}
+			
+			.flex-item {
+				font-size: 12px;
+				color: #666;
+				line-height: 14px;
+				word-break: break-all;
+			}
+			
+			.mdt_votes {
+				color: #C90000;
+			}
+			
+			.mdt_votes_request {
+				text-align: center;
+				color: #169BD5;
+				font-size: 1.5rem;
+				margin-bottom: 17.5px;
+				margin-top: 8.5px;
+				font-weight: normal;
+			}
+			
+			.mdt_request_photos {
+				margin-top: 11px;
+				overflow: hidden;
+				margin-bottom: 12px;
+				margin-left: 0px;
+				margin-right: 0px;
+			}
+			
+			.mdt_request_photos li {
+				float: left;
+				width: 44.5px;
+				height: 44.5px;
+				border: solid 1px #ccc;
+				margin-right: 5.5px;
+			}
+			
+			.mdt_request_photos li img {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+			}
+			
+			.mdt_price_list {
+				height: 8.6px;
+				width: 100%;
+				display: -ms-flex;
+				display: -webkit-flex;
+				display: flex;
+				-ms-flex-align: center;
+				-webkit-align-items: center;
+				-webkit-box-align: center;
+				align-items: center;
+				margin-top: 15px;
+				height: 32px;
+				margin-bottom: 9.5px;
+			}
+			
+			.mdt_price1 {
+				color: #666666;
+				font-size: 1.2rem;
+			}
+			
+			.mdt_price2 {
+				font-size: 1.2rem;
+				background: #CDE8FD;
+				height: 32px;
+				color: #169BD5;
+				width: 6.8rem;
+				text-align: center;
+				float: left;
+				line-height: 32px;
+				margin-right: 7.5px;
+			}
+			
+			.mdt_price3 {
+				font-size: 1.2rem;
+				background: #169BD5;
+				height: 32px;
+				color: #fff;
+				width: 68px;
+				text-align: center;
+				float: left;
+				line-height: 32px
+			}
+			
+			.mdt_price_list span {
+				color: #C90000;
+			}
+			
+			.mdt_bottom {
+				height: 49px;
+				background: #fff;
+				position: fixed;
+				width: 100%;
+				bottom: 0;
+				display: -ms-flex;
+				display: -webkit-flex;
+				display: flex;
+				-ms-flex-align: center;
+				-webkit-align-items: center;
+				-webkit-box-align: center;
+				align-items: center;
+				font-size: 0.4rem;
+				justify-content: space-between;
+			}
+			
+			.mdt_bottom input {
+				margin-bottom: 0px;
+				padding: 0;
+				color: #DC0000;
+				border: none;
+				font-size: 1.4rem;
+				padding-left: 6px;
+				padding-right: 6px;
+			}
+			
+			.mdt_bottom>div:nth-child(1) {
+				width: 155px;
+				display: -ms-flex;
+				display: -webkit-flex;
+				display: flex;
+				-ms-flex-align: center;
+				-webkit-align-items: center;
+				-webkit-box-align: center;
+				align-items: center;
+				justify-content: flex-start;
+			}
+			
+			.mdt_bottom>div:nth-child(1)>div:first-child {
+				float: left;
+				color: #666;
+				margin-left: 10.5px;
+				width: 47px;
+				font-size: 1.5rem;
+				line-height: 49px;
+			}
+			
+			.mdt_bottom>div:nth-child(1)>div:last-child {
+				float: left;
+				width: 80px!important;
+				background-color: #FFFFFF;
+				/*flex: 1;*/
+			}
+			
+			.mdt_bottom>div:nth-child(1)>div:last-child>input {
+				display: inline-block;
+				width: 80px!important;
+				height: 30px!important;
+				background-color: #F3F3F3;
+				margin: auto;
+			}
+			
+			.mdt_bottom>div:nth-child(2) {
+				width: 220px;
+				display: -ms-flex;
+				display: -webkit-flex;
+				display: flex;
+				justify-content: flex-end;
+			}
+			
+			#offerBtn {
+				width: 50%;
+				/*width: 110px;*/
+				text-align: center;
+				color: #fff;
+				background: #DC0000;
+				height: 49px;
+				line-height: 49px;
+				font-size: 1.5rem;
+			}
+			
+			#cancelBtn {
+				width: 50%;
+				/*width: 110px;*/
+				text-align: center;
+				color: #fff;
+				background: #A8B4BD;
+				height: 49px;
+				line-height: 49px;
+				font-size: 1.5rem;
+			}
+			
+			#cancelBtn,
+			#offerBtn {
+				border: none;
+				padding: 0px;
+				border-radius: 0px;
+			}
+			
+			#offerBtn {}
+			
+			.mdt_expland {}
+			
+			.mdt_block {
+				overflow: hidden;
+				line-height: 18px;
+				height: 20px;
+				margin-top: 1.15rem;
+			}
+			
+			.mdt_block_tip {
+				font-size: 1.2rem;
+				color: #666666;
+				background: #F0F0F0;
+				float: left;
+				margin-right: 5px;
+				margin-bottom: 3px;
+				height: 18.5px;
+				line-height: 20px;
+				padding-left: 7.5px;
+				padding-right: 7.5px;
+				border-radius: 3px;
+			}
+			
+			.mui-table-view .mui-media-body {
+				font-size: 1.4rem;
+			}
+			
+			.mui-table-view-cell p {
+				margin-bottom: 0;
+				font-size: 1.2rem;
+				line-height: 16px;
+				word-break: break-all;
+			}
+			
+			.mui-table-view .mui-media-object {
+				background: none;
+				border: 0px;
+				border-radius: 50%;
+			}
+			
+			.mui-table-view:before,
+			.mui-table-view-cell:after {
+				/*	background-color: #fff;*/
+			}
+			
+			html,
+			body {
+				font-size: 62.5%;
+			}
+			
+			.mdt_demand_companyvotes {
+				margin-top: 8px;
+				overflow: hidden;
+				padding-left: 9px;
+				padding-right: 9px;
+				background: #fff;
+				text-align: center;
+				font-size: 1.5rem;
+				color: #169BD5;
+				padding-top: 8.5px;
+			}
+			
+			.mui-table-view:after {
+				background-color: #fff;
+			}
+			
+			.mdt_compname {
+				font-size: 1.2rem;
+				background: #E8E8E8;
+				float: left;
+				height: 24px;
+				line-height: 24px;
+				padding-left: 15px;
+				padding-right: 15px;
+				border-radius: 2px;
+				display: -webkit-box;
+				-webkit-box-orient: vertical;
+				-webkit-line-clamp: 1;
+				overflow: hidden;
+			}
+			
+			.flex_containerOpt {
+				justify-content: center;
+				width: 100%;
+				display: -ms-flex;
+				display: -webkit-flex;
+				display: flex;
+				-ms-flex-align: center;
+				-webkit-align-items: center;
+				-webkit-box-align: center;
+				align-items: center;
+				padding-bottom: 9px;
+			}
+			
+			.ms-controller {
+				visibility: hidden
+			}
+			
+			.mui-popover a {
+				font-size: 14px;
+			}
+			
+			.mui-popover {
+				color: #333333;
+				min-width: 30vw;
+			}
+			
+			.mui-table-view:before {
+				background-color: #fff;
+			}
+			
+			#expandopen_btn {
+				padding-top: 9px;
+			}
+		</style>
+		<style type="text/css">
+			.mui-preview-image.mui-fullscreen {
+				position: fixed;
+				z-index: 20;
+				background-color: #000;
+			}
+			
+			.mui-preview-header,
+			.mui-preview-footer {
+				position: absolute;
+				width: 100%;
+				left: 0;
+				z-index: 10;
+			}
+			
+			.mui-preview-header {
+				height: 44px;
+				top: 0;
+			}
+			
+			.mui-preview-footer {
+				height: 50px;
+				bottom: 0px;
+			}
+			
+			.mui-preview-header .mui-preview-indicator {
+				display: block;
+				line-height: 25px;
+				color: #fff;
+				text-align: center;
+				margin: 15px auto 4;
+				width: 70px;
+				background-color: rgba(0, 0, 0, 0.4);
+				border-radius: 12px;
+				font-size: 16px;
+			}
+			
+			.mui-preview-image {
+				display: none;
+				-webkit-animation-duration: 0.5s;
+				animation-duration: 0.5s;
+				-webkit-animation-fill-mode: both;
+				animation-fill-mode: both;
+			}
+			
+			.mui-preview-image.mui-preview-in {
+				-webkit-animation-name: fadeIn;
+				animation-name: fadeIn;
+			}
+			
+			.mui-preview-image.mui-preview-out {
+				background: none;
+				-webkit-animation-name: fadeOut;
+				animation-name: fadeOut;
+			}
+			
+			.mui-preview-image.mui-preview-out .mui-preview-header,
+			.mui-preview-image.mui-preview-out .mui-preview-footer {
+				display: none;
+			}
+			
+			.mui-zoom-scroller {
+				position: absolute;
+				display: -webkit-box;
+				display: -webkit-flex;
+				display: flex;
+				-webkit-box-align: center;
+				-webkit-align-items: center;
+				align-items: center;
+				-webkit-box-pack: center;
+				-webkit-justify-content: center;
+				justify-content: center;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				top: 0;
+				width: 100%;
+				height: 100%;
+				margin: 0;
+				-webkit-backface-visibility: hidden;
+			}
+			
+			.mui-zoom {
+				-webkit-transform-style: preserve-3d;
+				transform-style: preserve-3d;
+			}
+			
+			.mui-slider .mui-slider-group .mui-slider-item img {
+				width: auto;
+				height: auto;
+				max-width: 100%;
+				max-height: 100%;
+			}
+			
+			.mui-android-4-1 .mui-slider .mui-slider-group .mui-slider-item img {
+				width: 100%;
+			}
+			
+			.mui-android-4-1 .mui-slider.mui-preview-image .mui-slider-group .mui-slider-item {
+				display: inline-table;
+			}
+			
+			.mui-android-4-1 .mui-slider.mui-preview-image .mui-zoom-scroller img {
+				display: table-cell;
+				vertical-align: middle;
+			}
+			
+			.mui-preview-loading {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				top: 0;
+				left: 0;
+				display: none;
+			}
+			
+			.mui-preview-loading.mui-active {
+				display: block;
+			}
+			
+			.mui-preview-loading .mui-spinner-white {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				margin-left: -25px;
+				margin-top: -25px;
+				height: 50px;
+				width: 50px;
+			}
+			
+			.mui-preview-image img.mui-transitioning {
+				-webkit-transition: -webkit-transform 0.5s ease, opacity 0.5s ease;
+				transition: transform 0.5s ease, opacity 0.5s ease;
+			}
+			
+			@-webkit-keyframes fadeIn {
+				0% {
+					opacity: 0;
+				}
+				100% {
+					opacity: 1;
+				}
+			}
+			
+			@keyframes fadeIn {
+				0% {
+					opacity: 0;
+				}
+				100% {
+					opacity: 1;
+				}
+			}
+			
+			@-webkit-keyframes fadeOut {
+				0% {
+					opacity: 1;
+				}
+				100% {
+					opacity: 0;
+				}
+			}
+			
+			@keyframes fadeOut {
+				0% {
+					opacity: 1;
+				}
+				100% {
+					opacity: 0;
+				}
+			}
+			
+			p img {
+				max-width: 100%;
+				height: auto;
+			}
+			
+			.mui-table-view .zhongbiaotupian {
+				width: 80px;
+				height: 50px;
+				position: absolute;
+				top: 20px;
+				right: 50px;
+				z-index: 2;
+			}
+			
+			.flex-container-req2 .flex-item:nth-child(1) {
+				width: 190px;
+			}
+		</style>
+
+	</head>
+
+	<body ms-controller="appCtl" class="ms-controller mui-content">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">需求详情</a>
+			<a href="#topPopover" style="font-size: 16px;line-height: 26px;" class="mui-icon icon-gengduo mui-pull-right" ms-visible="userLastModifyUserID == Demand.LastModifyUserID && Demand.State == 1"></a>
+		</header>
+		<div id="topPopover" class="mui-popover" style="width:auto;">
+			<div class="mui-popover-arrow"></div>
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell popover cancelDemand">
+					<a class="mui-icon">
+						<span class="icon-guanbi" style="margin-right: 10px;margin-left: 0px;"></span>
+						<font style="padding-left: 0px;">取消发布</font>
+					</a>
+				</li>
+			</ul>
+		</div>
+		<div ms-class="[isLoad?'mui-block':'']" style="display: none;">
+			<div class="mui-scroll-wrapper">
+				<div class="mdt_demand" style="margin-top: 44px;">
+					<div class="mdt_demand_details">
+						{{@Demand.DemandName}}
+					</div>
+					<!--企业名称-->
+					<div ms-visible="userLastModifyUserID != Demand.LastModifyUserID">
+						<div class="mdt-demand-company-bg" :visible="@Demand.CompID != 0"><span class="mui-ellipsis">{{@Demand.CompName}}</span></div>
+						<div class="mdt-demand-company-bg" :visible="@Demand.CompID == 0"><span>{{@Demand.CreateUserName}}（个人）</span></div>
+					</div>
+					<div class="flex-container" style="padding-bottom: 9.5px;">
+						<a class="flex-item">
+							<span class="icon-shijian" style="margin-right: 3px;"></span> {{Demand.LeftTime}}
+						</a>
+						<a class="flex-item">
+							<span class="icon-qiye" style="margin-right: 3px;"></span> 已有<span class="mdt_votes">{{@Demand.JoinCount}}</span>家企业报价
+						</a>
+					</div>
+					<div class="mdt_expland" ms-visible="ifExpand==0">
+						<div class="bottom_line"></div>
+						<div class="flex_containerOpt" id="expandopen_btn">
+							<a class="flex-item" style="color: #169BD5;margin-right: 1.5rem;">
+								展开
+							</a>
+							<a class="flex-item">
+								<span class="icon-jiantou-down" style="color: #169BD5;font-size: 1.4rem;"></span>
+							</a>
+						</div>
+					</div>
+				</div>
+				<div class="mdt_demand_require" ms-visible="ifReceipt==1">
+					<h1 class="mdt_votes_request">接单要求</h1>
+					<div class="flex-container-req1">
+						<a class="flex-item">
+							数量：{{@Demand.Amount}}件
+						</a>
+						<a class="flex-item">
+							预算：<span class="mdt_votes">{{@Demand.Budget}}</span>
+						</a>
+					</div>
+					<div class="flex-container-req1" style="margin-top: 10px;">
+						<a class="flex-item">
+							投标截止日期：{{@Demand.BidEndDate}}
+						</a>
+						<a class="flex-item">
+							期望交货日期：{{@Demand.PreDeliveryDate}}
+						</a>
+					</div>
+				</div>
+				<div class="bottom_line" ms-visible="ifReceipt==1"></div>
+				<div class="mdt_demand_require" ms-visible="ifReceipt==1" style="margin-top: 0px;">
+					<div class="flex-container-req2">
+						<a class="flex-item">
+							接单类型：<span ms-if="Demand.DemandType == 1">包工包料</span><span ms-if="Demand.DemandType != 1">来料加工</span>
+						</a>
+						<a class="flex-item" style="flex: 1">
+							料品主要材质：{{Demand.MaterialName|emptydisplay}}
+						</a>
+					</div>
+					<div class="flex-container-req2">
+						<a class="flex-item">
+							是否包含质保金：<span ms-if="Demand.IsHasWarranty == 0">不</span>包含质保金
+						</a>
+						<a class="flex-item" style="flex: 1">
+							是否含税：<span ms-if="Demand.IsHasTax == 0">不</span>含税
+						</a>
+					</div>
+					<div class="flex-container-req2">
+						<a class="flex-item">
+							是否包含违约金：<span ms-if="Demand.IsHasPenalty==0">不</span>包含违约金
+						</a>
+						<a class="flex-item" style="flex: 1">
+							是否包含运费：<span ms-if="Demand.IsHasTransferFee==0">不</span>含运费
+						</a>
+					</div>
+					<ul class="mdt_request_photos mui-content-padded">
+						<li ms-for="item in Demand.AttachmentList" ms-visible="item.Ext=='.pdf'">
+							<img class="showpdf" src="../../images/pdf.png" ms-attr="{'data-id':item.ID,'data-name':item.FileName}" />
+						</li>
+						<li ms-for="item in Demand.AttachmentList" ms-visible="item.Ext!='.pdf'">
+							<img ms-attr="{'src':getDemandLogo(item, '100x0'), 'data-preview-src':getDemandLogo(item, '0x0'), 'data-preview-group':'1'}" />
+						</li>
+
+					</ul>
+				</div>
+				<div class="bottom_line" ms-visible="ifReceipt==1"></div>
+				<div class="mdt_demand_require" ms-visible="ifReceipt==1" style="margin-top: 0px;">
+					<div class="flex-container-req2" style="margin-top: 9px;padding-bottom: 9px;">
+						<a class="flex-item" style="width: auto;">
+							收货地址：{{@Demand.fullAddr|emptydisplay}}
+						</a>
+					</div>
+					<!--ms-visible="ifExpand==1 && userLastModifyUserID == Demand.LastModifyUserID"-->
+					<div class="mdt_expland" >
+						<div class="flex_containerOpt" id="expandclose_btn">
+							<a class="flex-item" style="color: #169BD5;margin-right: 1.5rem;">
+								收起
+							</a>
+							<a class="flex-item">
+								<span class="icon-up" style="color: #169BD5;font-size: 1.4rem;"></span>
+							</a>
+						</div>
+					</div>
+				</div>
+
+				<div class="mui-scroll" >
+					<!--ms-visible="userLastModifyUserID == Demand.LastModifyUserID"-->
+					<div class="mdt_demand_companyvotes" >
+						<div class="mdt_company_votes">已投标企业（共{{@Demand.JoinCount}}家）</div>
+					</div>
+					<!--ms-visible="userLastModifyUserID == Demand.LastModifyUserID"-->
+					<ul class="mui-table-view" >
+						<li class=" mui-media" ms-for="(index,item) in offerComp" style="padding-left: 9.5px;">
+							<img class="zhongbiaotupian" ms-visible="item.State==2" src="../../images/myoffer/zhongbiao.png" />
+							<a href="javascript:;" class="companyInfo" ms-attr="{'data-cid':item.JoinCompID, 'data-index': index}">
+								<img class="mui-media-object mui-pull-left" ms-attr="{src:picUrl+'/Y29tcC9sb2dv_' + item.JoinCompID + '_100x100.png'}" style="border: solid 1px #ccc;">
+								<div class="mui-media-body">
+									{{item.JoinCompName}}
+									<p>主营：{{item.MainProduct}}</p>
+								</div>
+								<div class="mdt_block" ms-visible="item.Tags.length>0">
+									<div class="mdt_block_tip" ms-for="tag in item.Tags">
+										{{tag.CName}}({{tag.Count}}台)
+									</div>
+								</div>
+							</a>
+							<div style="clear: both;"></div>
+							<div class="mdt_price_list" style="justify-content:space-between;">
+								<div class="mdt_price1">
+									报价：<span ms-text="getPrice(item.QuoteMoney)"></span>
+								</div>
+								<div>
+									<div class="mdt_price2 contactBtn" ms-attr="{'data-cid':item.JoinCompID}">
+										联系厂家
+									</div>
+									<div ms-visible="Demand.State == 1" class="mdt_price3 chooseBtn" ms-attr="{'data-jid':item.ID,'data-state':item.State}">
+										选为中标
+									</div>
+								</div>
+							</div>
+						</li>
+					</ul>
+				</div>
+				<div class="mdt_bottom" ms-visible="@showOffer == 1">
+					<div>
+						<div>
+							报价：
+						</div>
+						<div>
+							<input type="text" value="" id="offerInput" ms-duplex="@offer" maxlength="10" onkeyup="clearNoNum(this)" />
+						</div>
+					</div>
+					<div>
+						<button id="offerBtn" type="button" class="mui-btn mui-btn-outlined">
+							立即报价
+					</button>
+						<button id="cancelBtn" type="button" class="mui-btn mui-btn-outlined" ms-visible="showCancel == true">
+							取消报价
+					</button>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/mui.zoom.js"></script>
+		<script type="text/javascript" src="../../js/mui.previewimage.js"></script>
+		<script type="text/javascript" src="../../js/avalon.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript">
+			var demandId = parseInt(query("demandId") || "0"),
+				expandopen_btn = document.getElementById("expandopen_btn"),
+				offerBtn = document.getElementById("offerBtn"),
+				cancelBtn = document.getElementById("cancelBtn"),
+				offerInput = document.getElementById("offerInput"),
+				expandclose_btn = document.getElementById("expandclose_btn");
+
+			mui.init({
+					beforeback: function() {
+						if(app.change) {
+							plus.webview.currentWebview().opener().reload(true);
+						}
+						return true;
+					}
+				}
+
+			);
+
+			mui.plusReady(function() {
+				app.init();
+			})
+
+			var typeid = Math.ceil(demandId / 1000).toString() + '000'
+			var app = avalon.define({
+				$id: "appCtl",
+				offerId: 0,
+				offer: '',
+				offerState: 1,
+				showCancel: false,
+				isLoad: false,
+				Demand: {
+					DemandName: '',
+					LeftTime: '',
+					JoinCount: '',
+					Amount: '',
+					Budget: '',
+					BidEndDate: '',
+					PreDeliveryDate: '',
+					DemandTypeList: [],
+					DemandType: '',
+					fullAddr: ''
+				},
+				mp: 0,
+				offerComp: [],
+				offerCompNum: 0,
+				attachDir: typeid,
+				picUrl: MdAppUrl.pic,
+				imageUrl: MdAppUrl.Img,
+				ifExpand: 1, //0显示展开按钮，1显示收起，-1不显示收起和展开
+				ifReceipt: 1, //1显示接单要求，0不显示接单要求
+				PageIndex: 1, //分页
+				showOffer: 0, //是否显示报价按钮  0 不显示， 1显示
+				change: false,
+				userLastModifyUserID: 0,
+				//需求详情
+				getDemand: function(cb) {
+					var url = MdAppUrl.Api45 + "/api/v1.0/EpDemand/GetDemandInfo?demandId=" + demandId;
+					getAjaxData(url, function(reData) {
+						app.isLoad = true;
+						if(reData && reData.State == 1 && reData.Data) {
+							reData.Data.fullAddr = app.delAddressDispaly(reData.Data)
+							//reData.Data.MaterialName = app.delMetarial(reData.Data.MaterialID, reData.Data.MaterialName)
+							app.Demand = reData.Data;
+							//如果有.00这种格式则不显示
+							//删除  || reData.Data.Budget.toString().indexOf('.0') > -1
+							if(reData.Data.Budget.toString().indexOf('.00') > -1) {
+								app.Demand.Budget = parseInt(reData.Data.Budget);
+							}
+							app.Demand.Budget = app.Demand.Budget + "元";
+							if(reData.Data.Budget == 0) {
+								app.Demand.Budget = "无";
+							}
+							//剩余天数逻辑判断
+							var leftTime = reData.Data.LeftTime;
+							if(leftTime > 0) {
+								app.Demand.LeftTime = "剩余天数：" + leftTime + "天";
+							} else if(leftTime <= 0) {
+								app.Demand.LeftTime = "剩余天数：已过期";
+							}
+
+							if(typeof(cb) == 'function') {
+								cb();
+								mui.previewImage();
+							}
+						} else {
+							mui.alert("网络连接失败！");
+							hideWaiting();
+						}
+					}, 'get', true);
+				},
+				getDemandImages: function(info, ex) {
+					if(info) {
+						return MdAppUrl.Api45 + "/api/v1.0/epdemand/" + info.ID + "_" + ex + info.Ext;
+					} else {
+						return "../../images/defImg70.png";
+					}
+				},
+				//展示图片
+				getDemandLogo: function(item, ex) {
+					if(item) {
+						//修复预览图片尺寸问题 原为_100*0
+						return MdAppUrl.Api45 + "/api/v1.0/epdemand/" + item.ID + "_" + ex + item.Ext;
+					} else {
+						return "../../images/defImg70.png";
+					}
+				},
+
+				//报价信息
+				getOfferPrice: function() {
+					//获取报价信息
+					var tmp_url = MdAppUrl.Api45 + "/api/v1/EpDemand/GetQuoteInfo?CompID=" + user.CompID + "&DemandID=" + demandId;
+
+					//获取报价信息
+					getAjaxData(tmp_url, function(reData) {
+						if(reData && reData.State == 1 && reData.Data.State != 8) {
+							app.offerId = reData.Data.ID;
+							app.offer = reData.Data.QuoteMoney;
+							app.offerState = reData.Data.State;
+							document.querySelector("#offerBtn").innerText = '修改报价';
+							app.showCancel = true;
+							if(reData.Data.State != 1 || app.Demand.State == 2) {
+								offerBtn.style.color = "#DB3B3B";
+								cancelBtn.style.color = "#909EA8";
+								offerInput.setAttribute("disabled", "disabled");
+								offerInput.style.backgroundColor = "#fff";
+							}
+						} else {
+
+						}
+					}, false);
+				},
+
+				//获取报价企业
+				getOfferComp: function() {
+					var compUrl = MdAppUrl.Api45 + '/api/v1.0/EpDemand/GetJoinCompanyList?pageSize=' + app.Demand.JoinCount + '&page=' + app.PageIndex + '&demandId=' + demandId;
+					getAjaxData(compUrl, function(reData) {
+						if(reData.State == 1) {
+							app.offerCompNum = reData.Data.TotalCount;
+							app.offerComp.pushArray(reData.Data.DataRows);
+						}
+					}, true)
+				},
+
+				//选标
+				chooseOffer: function(state, joinId) {
+					if(app.Demand.State != 1) {
+						return false;
+					}
+					mui.confirm("确认设置中标企业吗？", "", ["确认", "取消"], function(e) {
+						if(e.index == 0) {
+							var url = url = MdAppUrl.Api45 + "/api/v1/EpDemand/SetSelected?joinId=" + joinId + "&state=" + state;
+							getAjaxData(url, function(ret) {
+								if(ret.State == 1) {
+									//如果是设置中标   成功后设置 需求状态等于 已选标
+									app.Demand.State = 2;
+									app.offerComp = [];
+									app.init();
+								} else {
+									mui.alert(ret.ErrorMessage);
+								}
+							}, true);
+						}
+					})
+
+				},
+
+				//报价
+				OfferDemand: function() {
+					if(user.UserType == 1) {
+						return false;
+					}
+					if(app.offerState != 1 || app.Demand.State == 2) {
+						//mui.alert("已选标无法修改");
+						return false;
+					}
+					var optUrl = MdAppUrl.Api45 + "/api/v1/EpDemand/SaveQuoteInfo";
+					var offer = mui("#offerInput")[0].value
+					if(offer === '') {
+						mui.alert("请输入报价");
+						return false;
+					}
+					var data = {
+						ID: app.offerId,
+						DemandID: demandId,
+						JoinCompID: user.CompID,
+						QuoteMoney: parseFloat(offer),
+					};
+					if(!data.QuoteMoney) {
+						mui.alert("请输入正确的报价");
+						return false;
+
+					}
+					if(data.QuoteMoney <= 0) {
+						mui.alert("请输入正确的报价");
+						return false;
+					}
+					if(data.QuoteMoney >= 10000000) {
+						mui.alert("报价不能超出一千万");
+						return false;
+					}
+					postAjaxData(optUrl, data, function(ret) {
+						if(ret.State == 1) {
+							document.querySelector("#offerBtn").innerText = '修改报价';
+							app.init();
+
+							//							var mydemandView0 = plus.webview.getWebviewById('sub0');
+							//							if(mydemandView0) {
+							//								mui.fire(mydemandView0, "refreshpage");
+							//							}
+							//
+							//							var mydemandView1 = plus.webview.getWebviewById('sub1');
+							//							if(mydemandView1) {
+							//								mui.fire(mydemandView1, "refreshpage");
+							//							}
+
+							var parentView = plus.webview.currentWebview().opener();
+							if(parentView) {
+								parentView.evalJS('mui("#pullrefresh").pullRefresh().pulldownLoading()');
+							}
+
+							openWindow("offer_success.html?demandId=" + demandId + "&compId=" + app.Demand.CompID, {}, "offer_success.html");
+
+							//跳转 到列表
+						} else {
+							mui.alert(ret.ErrorMessage);
+						}
+					}, true, false);
+				},
+				// 取消报价
+				cancelOffer: function() {
+					if(app.offerState != 1 || app.Demand.State != 1) {
+						//mui.alert("无法取消");
+						return false;
+					}
+					var cancelUrl = MdAppUrl.Api45 + "/api/v1.0/EpDemand/CancelJoin?joinId=" + app.offerId;
+					mui.confirm("确定取消报价吗？", "提示", ["确认", "取消"], function(e) {
+						if(e.index == 0) {
+							getAjaxData(cancelUrl, function(reData) {
+
+								if(reData && reData.State == 1) {
+									mui.alert("取消报价成功！");
+									document.querySelector("#offerBtn").innerText = '立即报价';
+									app.showCancel = false;
+									//									var mydemandView0 = plus.webview.getWebviewById('sub0');
+									//									mui.fire(mydemandView0, "refreshpage");
+									//									var mydemandView1 = plus.webview.getWebviewById('sub1');
+									//									mui.fire(mydemandView1, "refreshpage");
+
+									var parentView = plus.webview.currentWebview().opener();
+									if(parentView) {
+										parentView.evalJS('mui("#pullrefresh").pullRefresh().pulldownLoading()');
+									}
+								} else {
+									mui.alert(reData.ErrorMessage);
+								}
+							}, true, true);
+						}
+					});
+
+				},
+				// 取消需求
+				cancelDemand: function() {
+					if(app.Demand.State < 2) {
+						var idsArray = [demandId];
+						var url = MdAppUrl.Api45 + "/api/v1.0/EpDemand/CancelDemand";
+						postAjaxData(url, idsArray, function(reData) {
+							if(reData && reData.State == 1) {
+								app.change = true;
+								mui.back();
+							} else {
+								mui.alert("取消失败！");
+							}
+						}, true, true);
+					} else {
+						mui.alert("已取消的需求不能再次取消");
+						return false;
+					}
+				},
+				// 处理地址
+				delAddressDispaly: function(demand) {
+					var fulladdress = '';
+					var addr = demand.PostAddrModel;
+					if(addr.Province == undefined) {
+
+					} else {
+						if(addr.Province == addr.City) {
+							fulladdress = addr.Province + " " + addr.District + addr.Address;
+						} else {
+							fulladdress = addr.Province + " " + addr.City + " " + addr.District + addr.Address;
+						}
+					}
+					var phone = addr.LinkPhone;
+					/*if(user.CompID != demand.CompID) {
+						phone = phone.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2');
+					}*/
+					return fulladdress + " " + " (" + addr.RecvUserName + ") " + phone;
+				},
+				//处理材料
+				delMetarial: function(mid, mname) {
+					var meta = metarial.getTextByID(mid);
+					if(meta == '') {
+						return mname;
+					} else {
+						return meta;
+					}
+				},
+				getPrice: function(price) {
+					//如果有.00则不显示.00
+					//删除 || price.toString().indexOf('.0') > -1
+					if(price.toString().indexOf('.00') > -1) {
+						price = parseInt(price);
+					}
+					return "¥" + price + "元";
+				},
+				//页面初始化
+				init: function() {
+					user.ready(function() {
+						showWaiting();
+						setTimeout(app.getDemand(function() {
+							//企业用户走if  个人用户走else
+							if(user.CompID != 0) {
+								app.userLastModifyUserID = user.UserID;
+								app.mp = user.CompID;
+								app.getOfferPrice();
+
+								if(user.CompID == app.Demand.CompID) {
+									app.getOfferComp();
+									app.ifExpand = 0;
+									app.ifReceipt = 0;
+								} else {
+									if(user.UserType == '2') {
+										app.showOffer = 1;
+										if(app.Demand.State == 9) {
+											offerBtn.style.color = "#DB3B3B";
+											cancelBtn.style.color = "#909EA8";
+											offerInput.setAttribute("disabled", "disabled");
+											offerInput.style.backgroundColor = "#fff";
+										};
+									}
+								}
+							} else {
+								app.userLastModifyUserID = user.UserID;
+								if(user.UserID == app.Demand.LastModifyUserID) {
+									app.getOfferComp();
+									app.ifExpand = 0;
+									app.ifReceipt = 0;
+								}
+							}
+
+							hideWaiting();
+						}), 300);
+					});
+				}
+			});
+
+			//绑定报价按钮
+			mui("body").on('tap', '#offerBtn', function(e) {
+				if(app.Demand.State != 1) {
+					return false;
+				}
+				mui(this).button('loading');
+				this.blur();
+				setTimeout(function() {
+					app.OfferDemand();
+					mui(this).button('reset');
+				}.bind(this), 1000);
+
+			});
+			//取消报价按钮
+			mui("body").on('tap', '#cancelBtn', function() {
+				app.cancelOffer();
+			});
+			//绑定跳转按钮
+			mui("body").on('tap', '.contactBtn', function(e) {
+				var id = this.getAttribute('data-cid');
+				openWindow("../complib/index.html?compid=" + id);
+			});
+			//跳转到企业 todo
+			mui("body").on('tap', '.companyInfo', function() {
+				var id = this.getAttribute('data-cid');
+				var index = this.getAttribute('data-index');
+				var raw_data = app.offerComp[index];
+				var data = {
+					Mdt: raw_data.CompMdt,
+					CompName: raw_data.JoinCompName,
+					MainProduct: raw_data.MainProduct,
+					ID: raw_data.ID
+				}
+				openWindow("../complib/index.html?compid=" + id);
+//				openWindow("../industry/comp-info.html?id=" + id, {
+//					data: data
+//				});
+			});
+			//绑定选标按钮
+			mui("body").on('tap', '.chooseBtn', function() {
+				var id = this.getAttribute('data-jid');
+				var state = this.getAttribute('data-state');
+				app.chooseOffer(state, id);
+			});
+			//绑定取消按钮 todo
+			mui("body").on('tap', '.cancelDemand', function() {
+				mui('.mui-popover').popover("hide");
+				mui.confirm("确定取消需求吗？", "提示", ["确定", "取消"], function(e) {
+					if(e.index == 0) {
+						app.cancelDemand();
+					}
+				});
+			});
+			//绑定分享按钮
+			mui("body").on('tap', '.shareDemand', function() {
+				mui('.mui-popover').popover("hide");
+				mui.alert("分享功能稍后推出");
+			});
+			expandopen_btn.addEventListener('tap', function() {
+				app.ifReceipt = 1;
+				app.ifExpand = 1;
+			})
+
+			expandclose_btn.addEventListener('tap', function() {
+				app.ifReceipt = 0;
+				app.ifExpand = 0;
+			})
+
+			//为空显示处理  --
+			avalon.filters.emptydisplay = function(a) {
+
+				if(a == undefined || $.trim(a) == "" || a == null || a == 0) {
+					a = '--';
+				}
+				return a;
+			}
+			//编辑时收货地址显示处理  --
+			avalon.filters.delAddressDispaly = function(Province, City, District, Address) {
+				var fulladdress = '';
+				if(Province == undefined) {
+
+				} else {
+					if(Province == City) {
+						fulladdress = Province + " " + District + Address;
+					} else {
+						fulladdress = Province + " " + City + " " + District + Address;
+					}
+				}
+				return fulladdress;
+
+			}
+			// 天数显示
+			avalon.filters.day = function(a) {
+				a = parseInt(a);
+				return a;
+			}
+
+			//转化附件目录
+			avalon.filters.attach = function(a) {
+				return Math.ceil(a / 1000).toString() + '000';
+			}
+
+			//截取长度显示
+			avalon.filters.markdisplay = function(a, sublength) {
+
+				if(a == undefined || $.trim(a) == "" || a == null || a == 0) {
+					a = '';
+				} else if(a.length > sublength) {
+					a = a.substr(0, sublength) + '...';
+				}
+				return a;
+			}
+			//限制输入框输入数字
+			function clearNoNum(obj) {
+				obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3'); //只能输入两个小数  
+				if(obj.value.indexOf(".") < 0 && obj.value != "") { //以上已经过滤，此处控制的是如果没有小数点，首位不能为类似于 01、02的金额 
+					obj.value = parseFloat(obj.value);
+				}
+				if(obj.value == 'NaN') {
+					obj.value = 1;
+				}
+			}
+
+			function imgOnerror(url) {
+				//var img = event.srcElement;
+				var thisEvent = window.event || arguments.callee.caller.arguments[0];
+				var img = thisEvent.srcElement ? thisEvent.srcElement : thisEvent.target;
+				if(url == undefined || url == '' || url == null) {
+					img.src = img.getAttribute('z-src');
+				} else {
+					img.src = url;
+				}
+			}
+			mui("body").on("tap", ".showpdf", function() {
+				var fileId = this.getAttribute("data-id");
+				//var fileext = this.parentElement.getAttribute("data-ext");
+				var fileName = this.getAttribute("data-name");
+				plus.io.resolveLocalFileSystemURL("_downloads/" + fileId + "/" + fileName, function(entry) {
+					plus.runtime.openFile("_downloads/" + fileId + "/" + fileName, {}, function(e) {
+						mui.alert("手机无法打开此文件,请在电脑上下载查看");
+					});
+				}, function(e) {
+					var url = "http://info.maidiyun.com/45/api/v1.0/EpDemand/DownLoadDemandFile?fileId=" + fileId;
+					plus.nativeUI.showWaiting("下载中...");
+					downloadFile(url, "_downloads/" + fileId + "/" + fileName, function(localFile, status) {
+						if(status == 200) {
+							plus.nativeUI.closeWaiting();
+							//同一个文件就下载一次,都显示打开
+							plus.runtime.openFile("_downloads/" + fileId + "/" + fileName, {}, function(e) {
+								mui.alert("手机无法打开此文件,请在电脑上下载查看");
+							});
+						} else {
+							plus.nativeUI.closeWaiting();
+							mui.alert("文件下载失败，请重试");
+						}
+					});
+				});
+			});
+		</script>
+	</body>
+
+</html>

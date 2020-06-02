@@ -1,0 +1,279 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../css/mui.picker.min.css" />
+		<link href="../../css/mui.previewimage.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/mui.poppicker.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="demand-edit.css" />
+	</head>
+
+	<body ms-controller="myCtl">
+		<header class="mui-bar mui-bar-nav ">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left" ms-text="id?'修改需求':'发布需求'"></a>
+		</header>
+		<div class="mui-content">
+
+			<div class="mui-input-row">
+				<textarea id="textarea" ms-duplex="data.DemandName" placeholder="讲述一下你的需求"></textarea>
+			</div>
+
+			<ul class="data-group">
+				<li class="data-row" ms-visible="joinCompID">
+					<label>指定承接企业</label>
+					<div class="body" ms-text="joinCompName">
+					</div>
+				</li>
+				<li class="data-row">
+					<label>预算</label>
+					<span class="opt placeholder">（单位/元）</span>
+					<div class="body">
+						<input type="number" onkeyup="value=value.replace(/[^\d.]/g,'')" max-length="8" ms-duplex="data.Budget" placeholder="请填写预算"/>
+					</div>
+				</li>
+				<li class="data-row must">
+					<label>加工数量</label>
+					<span class="opt placeholder">（单位/件）</span>
+					<div class="body">
+						<input max-length="8" type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" ms-duplex="data.Amount" placeholder="请填写加工数量"/>
+					</div>
+				</li>
+				<li class="data-row date-pick pick-row must" ms-attr="{'data-value':data.BidEndDate,'data-name':'BidEndDate'}">
+					<label>投标截止日期</label>
+					<span class="opt md-icon icon-date icon-right"></span>
+					<div class="body ">
+						<div class="select_body" ms-text="data.BidEndDate.split(' ')[0]">
+
+						</div>
+					</div>
+				</li>
+				<li class="data-row date-pick pick-row must" ms-attr="{'data-value':data.PreDeliveryDate,'data-name':'PreDeliveryDate'}">
+					<label>计划交货日期</label>
+					<span class="opt md-icon icon-date icon-right"></span>
+					<div class="body ">
+						<div class="select_body" ms-text="data.PreDeliveryDate.split(' ')[0]">
+
+						</div>
+					</div>
+				</li>
+				<li class="data-row add-pick pick-row must" ms-attr="{province:data.PostAddrModel.Province,city:data.PostAddrModel.City,district:data.PostAddrModel.District,address:data.PostAddrModel.Address,maplng:data.PostAddrModel.MapLng,maplat:data.PostAddrModel.MapLat,street:data.PostAddrModel.Street,'data-name':'PostAddrModel'}">
+					<label>收货地址</label>
+					<span class="opt md-icon icon-right"></span>
+					<div class="body ">
+						<div class="select_body" ms-text="contractAddress(data.PostAddrModel.Province,data.PostAddrModel.City,data.PostAddrModel.District,data.PostAddrModel.Address,data.PostAddrModel.Street)">
+
+						</div>
+					</div>
+				</li>
+				<!--<li class="data-row add-pick" ms-attr="{province:data.PostAddrModel.Province,city:data.PostAddrModel.City,district:data.PostAddrModel.District,address:data.PostAddrModel.Address,maplng:data.PostAddrModel.MapLng,maplat:data.PostAddrModel.MapLat,street:data.PostAddrModel.Street,'data-name':'PostAddrModel'}">
+					<label>详细地址</label>
+					<div class="body ">
+						<input type="text" class="" ms-duplex="data.PostAddrModel.Address" placeholder="详细地址" />
+					</div>
+				</li>
+				<li class="data-row add-pick" ms-attr="{province:data.PostAddrModel.Province,city:data.PostAddrModel.City,district:data.PostAddrModel.District,address:data.PostAddrModel.Address,maplng:data.PostAddrModel.MapLng,maplat:data.PostAddrModel.MapLat,street:data.PostAddrModel.Street,'data-name':'PostAddrModel'}">
+					<label>门牌号</label>
+					<div class="body  add-pick">
+						<input type="text" class="" ms-duplex="data.PostAddrModel.Street" placeholder="门牌号" />
+					</div>
+				</li>-->
+				<!--<li class="data-row add-pick" ms-attr="{province:data.PostAddrModel.Province,city:data.PostAddrModel.City,district:data.PostAddrModel.District,address:data.PostAddrModel.Address,maplng:data.PostAddrModel.MapLng,maplat:data.PostAddrModel.MapLat,street:data.PostAddrModel.Street,'data-name':'PostAddrModel'}">
+					<div class="body address-info" ms-text="data.PostAddrModel.Address+data.PostAddrModel.Street">
+						<!--<div class="mui-input-row">
+							<textarea id="textarea" rows="2" placeholder="请填写详细地址，不少于5字" ms-duplex="data.PostAddrModel.Address"></textarea>
+						</div>
+					</div>
+				</li>-->
+			</ul>
+			<ul class="data-group demand-ex">
+				<li class="data-row">
+					<label>上传图纸</label>
+					<div class="body d_photos" style="padding: 10px 0px 0px 0px!important;">
+						<div class="photo_item add_photo">
+							<img src="../../images/industry/d_plusx2.png" />
+						</div>
+						<div class="photo_item " ms-if="isPicture(item.Ext)" ms-for="index,item  in data.AttachmentList" data-type="attach" ms-attr="{'data-idx':index}" data-for-rendered="renderPhotosComplate()">
+							<img ms-attr="{src:getPicture(item.ID,'50x50',item.Ext),'data-preview-src':getPicture(item.ID,'0x0',item.Ext)}" />
+							<i class="md-icon  icon-delete color-red-md"></i>
+						</div>
+						<div class="photo_item " ms-for="index,item  in tempPhotos" data-type="temp" ms-attr="{'data-idx':index}" data-for-rendered="renderPhotosComplate()">
+							<img ms-attr="{src:item,'data-preview-src':item}" />
+							<i class="md-icon  icon-delete color-red-md"></i>
+						</div>
+
+					</div>
+				</li>
+			</ul>
+
+			<ul class="data-group demand-ex" id="demand_ex">
+				<li class="data-row">
+					<label>接单类型</label>
+					<div class="body">
+						<ul class="mui-table-view mui-grid-view">
+							<li class="mui-table-view-cell mui-media mui-col-xs-6 " data-value="1" data-name="DemandType" ms-class="[data.DemandType==1?'active':'']">
+								包工包料
+							</li>
+							<li class="mui-table-view-cell mui-media mui-col-xs-6" data-value="2" data-name="DemandType" ms-class="[data.DemandType==2?'active':'']">
+								来料加工
+							</li>
+						</ul>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>是否包含违约金</label>
+					<div class="body">
+						<ul class="mui-table-view mui-grid-view">
+							<li class="mui-table-view-cell mui-media mui-col-xs-6 " data-value="1" data-name="IsHasPenalty" ms-class="[data.IsHasPenalty==1?'active':'']">
+								包含违约金
+							</li>
+							<li class="mui-table-view-cell mui-media mui-col-xs-6 " data-value="0" data-name="IsHasPenalty" ms-class="[data.IsHasPenalty==0?'active':'']">
+								不包含违约金
+							</li>
+						</ul>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>是否包含质保金</label>
+					<div class="body">
+						<ul class="mui-table-view mui-grid-view">
+							<li class="mui-table-view-cell mui-media mui-col-xs-6 " data-value="1" data-name="IsHasWarranty" ms-class="[data.IsHasWarranty==1?'active':'']">
+								包保质金
+							</li>
+							<li class="mui-table-view-cell mui-media mui-col-xs-6" data-value="0" data-name="IsHasWarranty" ms-class="[data.IsHasWarranty==0?'active':'']">
+								不包保质金
+							</li>
+						</ul>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>是否包含运费</label>
+					<div class="body">
+						<ul class="mui-table-view mui-grid-view">
+							<li class="mui-table-view-cell mui-media mui-col-xs-6 " data-value="1" data-name="IsHasTransferFee" ms-class="[data.IsHasTransferFee==1?'active':'']">
+								包含运费
+							</li>
+							<li class="mui-table-view-cell mui-media mui-col-xs-6" data-value="0" data-name="IsHasTransferFee" ms-class="[data.IsHasTransferFee==0?'active':'']">
+								不包含运费
+							</li>
+						</ul>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>是否含税</label>
+					<div class="body">
+						<ul class="mui-table-view mui-grid-view">
+							<li class="mui-table-view-cell mui-media mui-col-xs-6 " data-value="1" data-name="IsHasTax" ms-class="[data.IsHasTax==1?'active':'']">
+								含税
+							</li>
+							<li class="mui-table-view-cell mui-media mui-col-xs-6" data-value="0" data-name="IsHasTax" ms-class="[data.IsHasTax==0?'active':'']">
+								不含税
+							</li>
+						</ul>
+					</div>
+				</li>
+				<li class="data-row must">
+					<label>料品主要材质</label>
+					<!--<span class="opt md-icon icon-down"></span>-->
+					<div class="body">
+						<!--<div class="select_body" ms-text="data.MaterialName">
+						</div>-->
+						<input ms-duplex="data.MaterialName" maxlength="20" type="text" style="margin-right: -10px!important;width:102%" placeholder="请填写料品主要材质"/>
+					</div>
+				</li>
+			</ul>
+			<div class="btns">
+				<button class="btn btn_release">
+					立即发布
+				</button>
+
+				<button class="btn btn_draft" ms-visible="!joinCompID && userCompID != 0">
+					暂存草稿
+				</button>
+			</div>
+			<div class="notice">
+				<ul>
+					<li></li>
+					<li></li>
+					<li ms-visible="id" style="display:none">
+						<p ms-if="Process.ProcessList[0].State==1" class="mui-spinner font-13"></p>
+						<p ms-if="Process.ProcessList[0].State==2" class="icon-ok font-19"></p>
+						<p ms-if="Process.ProcessList[0].State==3" class="retry font-15 color-red-md" data-step="3">重试</p>
+						<div>1、{{Process.ProcessList[0].State==1?"正在":""}}删除图片 {{Process.ProcessList[0].Index}}/{{deletePhotos.length}}</div>
+					</li>
+					<li ms-visible="!id" style="display:none">
+						<p ms-if="Process.ProcessList[0].State==1" class="mui-spinner font-13"></p>
+						<p ms-if="Process.ProcessList[0].State==2" class="icon-ok font-19"></p>
+						<p ms-if="Process.ProcessList[0].State==3" class="retry font-15 color-red-md" data-step="1">重试</p>
+						<div>1、{{Process.ProcessList[0].State==1?"正在":""}}上传图片 {{Process.ProcessList[0].Index}}/{{tempPhotos.length}}</div>
+					</li>
+
+					<li ms-visible="id" style="display:none">
+						<p ms-if="Process.ProcessList[1].State==1" class="mui-spinner font-13"></p>
+						<p ms-if="Process.ProcessList[1].State==2" class="icon-ok font-19"></p>
+						<p ms-if="Process.ProcessList[1].State==3" class="retry font-15 color-red-md" data-step="1">重试</p>
+						<div>2、{{Process.ProcessList[1].State==1?"正在":""}}上传图片 {{Process.ProcessList[1].Index}}/{{tempPhotos.length}}</div>
+					</li>
+
+					<li ms-visible="!id" style="display:none">
+						<p ms-if="Process.ProcessList[1].State==1" class="mui-spinner font-13"></p>
+						<p ms-if="Process.ProcessList[1].State==2" class="icon-ok font-19"></p>
+						<p ms-if="Process.ProcessList[1].State==3" class="retry font-15 color-red-md" data-step=2>重试</p>
+						<div>2、{{Process.ProcessList[1].State==1?"正在":""}}保存需求信息</div>
+					</li>
+
+					<li ms-visible="id" style="display:none">
+						<p ms-if="Process.ProcessList[2].State==1" class="mui-spinner font-13"></p>
+						<p ms-if="Process.ProcessList[2].State==2" class="icon-ok font-19"></p>
+						<p ms-if="Process.ProcessList[2].State==3" class="retry font-15 color-red-md" data-step=2>重试</p>
+						<div>3、{{Process.ProcessList[2].State==1?"正在":""}}保存需求信息</div>
+					</li>
+					<li></li>
+					<li>
+						<ul class="btn-group">
+							<li class="btn-col success" ms-if="Process.SaveState==1">保存成功，点击返回</li>
+							<li class="btn-col close" ms-if="Process.SaveState==3">关闭</li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="popuplist" ms-if="popupType">
+			<div class="popuplist-content">
+				<div class="popuplist-content-hearders">
+					<p>请填写您的信息</p>
+				</div>
+				<div class="bottom_line"></div>
+				<div class="popuplist-content-info">
+					<div class="mui-input-row input-top">
+						<label>您的姓名：</label>
+						<input type="text" max-length="10" ms-duplex="data.RealName" placeholder="输入您的姓名">
+					</div>
+					<div class="mui-input-row">
+						<label>企业名称：</label>
+						<input type="text" max-length="20" ms-duplex="data.CompName" placeholder="输入您的企业名称">
+					</div>
+					<div class="mui-button-row name_submit">
+						<button class="name_submit_n" type="button">取消</button>
+						<button class="name_submit_y" type="button">确认</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/avalon.js"></script>
+		<script type="text/javascript" src="../../js/mui.picker.min.js"></script>
+		<script type="text/javascript" src="../../js/mui.poppicker.js"></script>
+		<script src="../../js/mui.zoom.js"></script>
+		<script src="../../js/mui.previewimage.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="demand-edit.js"></script>
+	</body>
+
+</html>

@@ -1,0 +1,142 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.data-row {
+				padding: 8px;
+			}
+			
+			.md-bottom-bar {
+				width: 100%;
+				display: flex;
+				position: fixed;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				z-index: 10;
+			}
+			
+			.md-bottom-bar>div {
+				width: 50%;
+				height: 40px;
+				box-sizing: border-box;
+				line-height: 40px;
+				text-align: center;
+				color: #fff;
+				font-size: 1.4rem;
+			}
+			
+			.md-bottom-bar .bar-left {
+				background: #ada7a7;
+			}
+			
+			.md-bottom-bar .bar-right {
+				background: #3296FA;
+			}
+			
+			.data-row span {
+				word-break: break-all;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="EquHandbookDetailsController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">常见故障</a>
+		</header>
+		<div class="mui-scroll-wrapper md-info-page" ng-class="{'mui-block':isLoad}" style="display: none;margin-bottom: 40px;">
+			<div class="mui-content">
+				<ul class="data-group">
+					<p class="data-group-tip">问题现象</p>
+					<li class="data-row">
+						<span ng-bind="data.Subject"></span>
+					</li>
+				</ul>
+				<ul class="data-group">
+					<p class="data-group-tip">解决方法</p>
+					<li class="data-row">
+						<span id="answer"></span>
+					</li>
+				</ul>
+				<ul class="data-group" ng-if="data.Picture.length>0||data.Video.length>0">
+					<li class="data-row">
+						<div class="body attach" style="padding-left: 16px;">
+							<md-image ng-if="data.Picture.length!=0" images="data.Picture" readonly="true"></md-image>
+							<md-video ng-if="data.Video.length!=0" videos="data.Video" readonly="true"></md-video>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<!--无网络或请求失败重试-->
+		<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+		<div class="md-bottom-bar" style="display: none;" ng-style="{'display':isLoad&&'flex'}">
+			<div class="bar-left" ng-click="tap('cancel')">
+				<span>问题已解决</span><br />
+			</div>
+			<div class="bar-right" ng-click="tap('keep')">
+				<span>继续报修</span>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script>
+			app.controller("EquHandbookDetailsController", ["$scope", "AuthService", "ApiService", "DataService", "UtilsService", "Loading", "RPCObserver",
+				function($scope, AuthService, ApiService, DataService, UtilsService, Loading, RPCObserver) {
+					$scope.ID = query("id");
+					$scope.data = {};
+
+					init();
+
+					function init() {
+						var url = ApiService.Api50 + "/api/v1/Prod/GetPkgQuestionDictionaryInfo/" + $scope.ID;
+						DataService.get(url).then(function(res) {
+							$scope.isLoad = true;
+							if(res) {
+								document.getElementById("answer").innerHTML = res.Answer.replace(/\n/g, "<br />");
+								$scope.data = res;
+							}
+						})
+					}
+
+					$scope.tap = function(type) {
+						var view = plus.webview.currentWebview().opener();
+						if(type == 'cancel') {
+							if(query("from") == "listview") {
+								view.opener().opener() && view.opener().opener().close("none");
+								view.opener() && view.opener().close("none");
+							} else {
+								view && view.close("none");
+							}
+							mui.back();
+						} else {
+							if(query("from") == "listview") {
+								view.opener().callback && view.opener().opener().evalJS(view.opener().callback + "(" + JSON.stringify($scope.data) + ")");
+							} else {
+								plus.webview.currentWebview().callback && plus.webview.currentWebview().opener().evalJS(plus.webview.currentWebview().callback + "(" + JSON.stringify($scope.data) + ")");
+							}
+							setTimeout(function() {
+								query("from") == "listview" && view.opener() && view.opener().close("none");
+								mui.back();
+							}, 400)
+						}
+					}
+				}
+			]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

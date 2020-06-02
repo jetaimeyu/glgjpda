@@ -1,0 +1,234 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	</head>
+
+	<body ng-controller="linkmanInfoController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">联系人详情</a>
+			<a class="menu-more icon-more right-menu-icon-detail" href="#popover" id="openPopover" ng-if="'Q56' | hasAuth:Linkman.CustomerCreateUserID:Linkman.CustomerCompID" style="display: none;" ng-class="{'mui-block':isLoad}"></a>
+		</header>
+		<div class="mui-scroll-wrapper md-info-page" style="display: none;" ng-class="{'mui-block':isLoad}">
+			
+			<ul class="data-group">
+				<p class="data-group-tip">基本信息</p>
+				<li class="data-row">
+					<label>姓名</label>
+					<div class="body">
+						<span ng-bind="Linkman.LinkName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>部门</label>
+					<div class="body">
+						<span ng-bind="Linkman.DeptName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>职务</label>
+					<div class="body">
+						<span ng-bind="Linkman.LinkPost"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>关键决策人</label>
+					<div class="body">
+						<span ng-bind="IsMaster[Linkman.IsMaster]"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<p class="data-group-tip">联系方式</p>
+				<li class="data-row">
+					<i class="opt md-icon icon-tel" ng-if="Linkman.LinkPhone" id="iphone" style="color: #3296FA" ng-click="call(Linkman.LinkPhone)"></i>
+					<label>手机</label>
+					<div class="body">
+						<span ng-bind="Linkman.LinkPhone"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<i class="opt md-icon icon-tel" ng-if="Linkman.LinkTel" id="iphone" style="color: #3296FA" ng-click="call(Linkman.LinkTel)"></i>
+					<label>电话</label>
+					<div class="body">
+						<span ng-bind="Linkman.LinkTel"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>邮件</label>
+					<div class="body">
+						<span ng-bind="Linkman.LinkEmail"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<p class="data-group-tip">附加信息</p>
+				<li class="data-row">
+					<label>生日</label>
+					<div class="body">
+						<span ng-bind="Linkman.Birthday"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>性别</label>
+					<div class="body">
+						<span ng-bind="LinkSex[Linkman.LinkSex]"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>角色关系</label>
+					<div class="body">
+						<span ng-bind="RoleRelation[Linkman.RoleRelation]"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>亲密程度</label>
+					<div class="body">
+						<span ng-bind="Intimacy[Linkman.Intimacy]"></span>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<div id="popover" class="mui-popover menuDivModel">
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell" ng-click="edit()">
+					<a class="mui-icon icon-edit">
+						<font>修改</font>
+					</a>
+				</li>
+				<li class="mui-table-view-cell" ng-click="delete()">
+					<a class="mui-icon icon-dustbin">
+						<font>删除</font>
+					</a>
+				</li>
+			</ul>
+		</div>
+		<!--无网络或请求失败重试-->
+		<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script>
+			app.controller("linkmanInfoController", ["$scope", "AuthService", "UtilsService", "ApiService", "DataService", "Loading", "RPCObserver", "$filter", "$timeout",
+				function($scope, AuthService, UtilsService, ApiService, DataService, Loading, RPCObserver, $filter, $timeout) {
+					//相关和详细信息tab
+					$scope.TabType = 1;
+					$scope.customerId = query("customerid") || 0;
+					$scope.LinkmanId = query("id");
+					//联系人基本信息
+					$scope.Linkman = {};
+
+					//无网络或请求失败重试
+					$scope.retryModal = {
+						msg: "联系人详情",
+						retry: getCustLinkManInfo,
+						state: ''
+					}
+
+					getCustLinkManInfo();
+
+					//获取客户基本信息
+					function getCustLinkManInfo() {
+						var url = ApiService.Api50 + "/api/v2/Customer/GetCustLinkManInfo?linkManId=" + $scope.LinkmanId;
+						DataService.get(url).then(function(res) {
+							$scope.customerId = res.CustomerID;
+							$scope.LinkmanId = res.ID;
+							$scope.Linkman = res;
+							$scope.isLoad = true;
+							$scope.retryModal.state = "";
+						}, function(error) {
+							$scope.retryModal.state = error.State;
+						});
+					}
+					$scope.call = function(phone) {
+						plus.device.dial(phone, false);
+						return false;
+					}
+					$scope.edit = function() {
+						UtilsService.openWindow({
+							id: "linkman-edit.html",
+							url: "linkman-edit.html?linkmanid=" + $scope.LinkmanId + "&customerid=" + $scope.customerId
+						});
+						mui('#popover').popover('hide');
+					}
+					$scope.delete = function() {
+						mui.confirm("确认删除吗？", function(e) {
+							if(e.index == 0) {
+								var url = ApiService.Api50 + "/api/v1/Customer/DelCustLinkMan?linkManId=" + $scope.LinkmanId;
+								DataService.get(url).then(function(res) {
+									//刷新客户详情
+									RpcClient.invoke("customer-info.html", "RPC_BillViewRefresh", "linkman");
+									//刷新联系人详情
+									RPCObserver.broadcast("refresh_linkman_info");
+									//刷新联系人列表
+									RPCObserver.broadcast("refresh_my_sxun");
+									mui('#popover').popover('hide');
+									mui.back();
+								}, function(error) {
+									mui('#popover').popover('hide');
+								});
+							} else {
+								mui('#popover').popover('hide');
+							}
+						});
+					}
+
+					$scope.openCustomerView = function(customerID) {
+						UtilsService.openWindow({
+							needLogin: true,
+							id: "customer-info.html",
+							url: "customer-info.html?customerid=" + customerID
+						})
+					}
+
+					RPCObserver.on('refresh_linkman_info', 'refresh_linkman_info');
+					window.refresh_linkman_info = function() {
+						getCustLinkManInfo();
+					};
+
+					// 关键决策人
+					$scope.IsMaster = {
+						1: "是",
+						2: "否"
+					};
+					// 性别
+					$scope.LinkSex = {
+						1: "男",
+						2: "女"
+					};
+					// 角色关系
+					$scope.RoleRelation = {
+						1: "普通人",
+						2: "决策人",
+						3: "分项决策人",
+						4: "商务决策",
+						5: "技术决策",
+						6: "财务决策",
+						7: "使用人",
+						8: "意见影响人"
+					}
+					// 亲密程度
+					$scope.Intimacy = {
+						1: "初相识",
+						2: "一般关系",
+						3: "朋友关系",
+						4: "好友关系"
+					}
+				}
+			]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

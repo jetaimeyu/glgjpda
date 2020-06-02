@@ -1,0 +1,70 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>装配详情</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	</head>
+
+	<body ng-controller="AssembleInfoController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">装配详情</a>
+		</header>
+		<div class="mui-scroll-wrapper md-info-page" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<ul class="data-group">
+				<li class="data-row">
+					<label>装配人</label> 
+					<div class="body">
+						<span ng-bind="AssembleInfo.AssembledUserName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>装配日期</label>
+					<div class="body">
+						<span ng-bind="AssembleInfo.AssembleDate"></span>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<!--无网络或请求失败重试-->
+		<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript">
+			app.controller("AssembleInfoController", ["$scope", "ApiService", "DataService", "Loading", function($scope, ApiService, DataService, Loading) {
+				//无网络或请求失败重试
+				$scope.retryModal = {
+					msg: "装配详情",
+					retry: getAssembleInfo,
+					state: ''
+				};
+				//获取安装提示详情
+				function getAssembleInfo() {
+					Loading.show();
+					var url = ApiService.Api50 + "/api/v1/MatWorkOrder/GetAssembleInfo?assembleId=" + query("id");
+					DataService.get(url).then(function(res) {
+						$scope.AssembleInfo = res;
+						Loading.hide();
+						$scope.isLoad = true;
+						$scope.retryModal.state = '';
+
+					}, function(error) {
+						$scope.retryModal.state = error.State;
+					});
+				};
+				getAssembleInfo();
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

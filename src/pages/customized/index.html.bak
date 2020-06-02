@@ -1,0 +1,256 @@
+<!--故障维护 scz-->
+<!doctype html>
+<html id="MdTong">
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+    <link href="../../css/mui.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="../../css/common.css"/>
+    <link rel="stylesheet" href="../../icon-font/iconfont.css"/>
+    <style type="text/css"></style>
+</head>
+
+<body ng-controller="CompIntroController">
+<header class="mui-bar mui-bar-nav">
+    <a class="mui-action-back mui-icon icon-back mui-pull-left">企业定制</a>
+</header>
+<div class="mui-scroll-wrapper md-info-page" style="display: none;" ng-class="{'mui-block':isLoad}">
+    <div class="mui-content">
+        <md-no-data ng-if="CustomizePro.length==0">暂无定制内容</md-no-data>
+        <ul class="data-group" style="margin-top: 0;">
+            <li ng-repeat="project in CustomizePro" class="mui-table-view-cell mui-media"
+                ng-click="tap(project.Key)">
+                <div>
+                    <img class="mui-pull-left" style="margin-right: 15px;" ng-src="{{project.Icon}}"
+                         width="40" height="40"/>
+                    <div>
+                        <span ng-bind="project.Title"></span>
+                        <p ng-bind="project.Describe"></p>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<script type="text/javascript" src="../../js/mui.min.js"></script>
+<script type="text/javascript" src="../../js/angular.min.js"></script>
+<script type="text/javascript" src="../../js/common.js"></script>
+<script type="text/javascript" src="../../js/utils.js"></script>
+<script type="text/javascript" src="../../js/rpc.js"></script>
+<script type="text/javascript">
+			app.controller("CompIntroController", ["$scope", "$filter", "AuthService", "ApiService", "DataService",
+				"UtilsService", "ChatUserService", "Loading", "RPCObserver", "ShareLogService", "CacheService",
+				function($scope, $filter, AuthService, ApiService, DataService, UtilsService, ChatUserService, Loading,
+					RPCObserver, ShareLogService, CacheService) {
+					$scope.CustomizePro = [];
+					var curUser = CacheService.get("user");
+					user.ready();
+					getData();
+					var isBoiler = false;
+					//根据返回锅炉列表是否有数据判断是否显示四通内容
+					function getBoilerList() {
+						var url = ApiService.Boiler + "/boiler/queryBoilerList?pageIndex=1&pageSize=10";
+						getAjaxData(url, function(res) {
+							if(res.data && res.data.length > 0) {
+								isBoiler = true;
+							}
+						}, true, false)
+						return isBoiler;
+					};
+
+					function getData() {
+						if(["23984", "24621", "31889"].indexOf(curUser.CompID.toString()) >= 0) {
+							$scope.CustomizePro.push({
+								"Title": "佳润", //23984、24621、31889佳润
+								"Describe": "设备维护保养",
+								"Key": "maintenanceList",
+								"Icon": "../../images/Detailedparameters@3x.png"
+							})
+						}
+						<!--$scope.CustomizePro.push({-->
+							<!--"Title": "生产信息补录",-->
+							<!--"Describe": "扫码完善设备的生产信息",-->
+							<!--"Key": "prodinfoBackTracking",-->
+							<!--"Icon": "../../images/Detailedparameters@3x.png"-->
+						<!--})-->
+						//alert($filter("hasMenuAuth")("syyy", "qydz","htda","htdaxx"))
+						if($filter("hasMenuAuth")("syyy", "qydz", "htda")) {
+							$scope.CustomizePro.push({
+								"Title": "合同档案",
+								"Describe": "备份您已签订的合同",
+								"Key": "equContract",
+								"Icon": "../../images/Detailedparameters@3x.png"
+							})
+						}
+						$scope.CustomizePro.push({
+							"Title": "物联码报废",
+							"Describe": "物联码报废",
+							"Key": "mdcodeScrap",
+							"Icon": "../../images/Detailedparameters@3x.png"
+						})
+						$scope.CustomizePro.push({
+							"Title": "更换物联码",
+							"Describe": "作废无效的物联码，更换新的物联码",
+							"Key": "replaceMdcode",
+							"Icon": "../../images/Detailedparameters@3x.png"
+						})
+						if(["27712", "38355", "38354", "26858","38677"].indexOf(curUser.CompID.toString()) >= 0){
+						 $scope.CustomizePro.push({
+							"Title": "仓库管理",
+							"Describe": "仓库管理",
+							"Key": "international-cable",
+							"Icon": "../../images/Detailedparameters@3x.png"
+						})
+						 $scope.CustomizePro.push({
+							"Title": "托盘重组",
+							"Describe": "托盘重组",
+							"Key": "pallet-reorganization",
+							"Icon": "../../images/Detailedparameters@3x.png"
+						})
+						$scope.CustomizePro.push({
+							"Title": "打印包码",
+							"Describe": "打印包码",
+							"Key": "print-code",
+							"Icon": "../../images/Detailedparameters@3x.png"
+						})
+						$scope.CustomizePro.push({
+							"Title": "生产包装",
+							"Describe": "生产包装",
+							"Key": "production-pack",
+							"Icon": "../../images/Detailedparameters@3x.png"
+						})
+						}
+						//						if(getBoilerList() || (curUser.CompID == 29456)) {
+						//							$scope.CustomizePro.push({
+						//								"Title": "四通锅炉物联检测",
+						//								"Describe": "",
+						//								"Key": "sitongBoiler",
+						//								"Icon": "../../images/Detailedparameters@3x.png"
+						//							})
+						//						}
+
+					};
+					$scope.isLoad = true;
+					$scope.CustomizedList = [];
+					$scope.tap = function(key) {
+						switch(key) {
+							case "maintenanceList":
+								UtilsService.openWindow({
+									needLogin: true,
+									id: 'maintenance-list.html',
+									url: './JiaRun/maintenance-list.html',
+								});
+								break;
+							case "point":
+								UtilsService.openWindow({
+									needLogin: true,
+									id: 'point-redemption-list.html',
+									url: './point/point-redemption-list.html',
+								});
+								break;
+							case "prodinfoBackTracking":
+								UtilsService.openWindow({
+									needLogin: true,
+									id: 'prodInfo-backTracking.html',
+									url: './prodInfo-backTracking/index.html',
+								});
+								break;
+							case "equContract":
+								UtilsService.openWindow({
+									needLogin: true,
+									id: 'add-contract.html',
+									url: './ShanTui/add-contract.html',
+								});
+								break;
+							case "sitongBoiler":
+								UtilsService.openWindow({
+									needLogin: true,
+									id: 'sitong-boiler-list.html',
+									url: './sitongBoiler/sitong-boiler-list.html',
+								});
+								break;
+							case "replaceMdcode":
+								UtilsService.openWindow({
+									needLogin: true,
+									id: 'replace-mdcode.html',
+									url: 'Other/replace-mdcode.html',
+								});
+								break;
+							case "mdcodeScrap":
+								UtilsService.openWindow({
+									needLogin: true,
+									id: 'mdcode-scrap.html',
+									url: 'Other/mdcode-scrap.html',
+								});
+								break;
+                            case "production-pack":
+								var viewName = $filter("getViewName")(curUser.UserName, curUser.RealName,curUser.Mdt);
+								var key = "production-pack";
+								var title = "生产包装";
+								//本地链接地址
+								<!--openUrl("http://192.168.1.149:8848/Md.ToolMarket/tools/international-cable/production.html?compid=" + curUser.CompID + "&userid=" + curUser.UserID + "&userauth=" + curUser.UserAuth + "&token=" + curUser.Token + "&orgdeptid=" + curUser.OrgID + "&username=" + viewName +"&duty="+curUser.Duty+  "&v=" + Math.random(), title, "oem");-->
+							    //服务器链接地址
+								openUrl(MdAppUrl.Tools + "/tools/international-cable/production.html?compid=" + curUser.CompID + "&userid=" + curUser.UserID + "&userauth=" + curUser.UserAuth + "&token=" + curUser.Token + "&orgdeptid=" + curUser.OrgID + "&username=" + viewName +"&duty="+curUser.Duty+  "&v=" + Math.random(), title, "oem");
+								break;
+							case "international-cable":
+								var viewName = $filter("getViewName")(curUser.UserName, curUser.RealName,curUser.Mdt);
+								var key = "international-cable";
+								var title = "仓库管理";
+								//本地链接
+								<!--openUrl("http://192.168.1.149:8848/Md.ToolMarket/tools/international-cable/index.html?compid=" + curUser.CompID + "&userid=" + curUser.UserID + "&userauth=" + curUser.UserAuth + "&token=" + curUser.Token + "&orgdeptid=" + curUser.OrgID + "&username=" + viewName + "&v=" + Math.random(), title, "oem");-->
+								//服务器链接地址
+								openUrl(MdAppUrl.Tools + "/tools/" + key + "/index.html?compid=" + curUser.CompID + "&userid=" + curUser.UserID + "&userauth=" + curUser.UserAuth + "&token=" + curUser.Token + "&orgdeptid=" + curUser.OrgID + "&username=" + viewName+"&duty="+curUser.Duty + "&v=" + Math.random(), title, "oem");
+								break;
+							case "pallet-reorganization":
+							var viewName = $filter("getViewName")(curUser.UserName, curUser.RealName,curUser.Mdt);
+							var key = "international-cable";
+<!--openUrl("http://192.168.1.149:8849/Md.ToolMarket/tools/international-cable/codeClearn.html?compid=" + curUser.CompID + "&userid=" + curUser.UserID + "&userauth=" + curUser.UserAuth + "&token="-->
+								<!--+ curUser.Token + "&orgdeptid=" + curUser.OrgID + "&username=" + viewName + "&v=" + Math.random(), title, "oem");-->
+								<!--//console.log(MdAppUrl.Tools + "/tools/" + key + "/codeClearn.html?compid=" + user.CompID + "&userid=" + user.UserID + "&userauth=" + user.UserAuth + "&orgdeptid=" + user.OrgID);-->
+								<!--openUrl(MdAppUrl.Tools + "/tools/" + key + "/codeClearn.html?compid=" + curUser.CompID + "&userid=" + curUser.UserID + "&userauth=" + curUser.UserAuth + "&token=" + curUser.Token + "&orgdeptid=" + curUser.OrgID + "&username=" + viewName + "&v=" + Math.random(), title, "oem");-->
+							<!--UtilsService.openWindow({-->
+									<!--needLogin: true,-->
+									<!--id: 'codeClearn.html',-->
+									<!--url: "http://192.168.1.149:8849/Md.ToolMarket/tools/international-cable/codeClearn.html?compid=" + curUser.CompID + "&userid=" + curUser.UserID + "&userauth=" + curUser.UserAuth + "&token="-->
+								<!--+ curUser.Token + "&orgdeptid=" + curUser.OrgID + "&username=" + viewName +"&duty="+curUser.Duty+ "&v=" + Math.random(),-->
+								<!--});-->
+								UtilsService.openWindow({
+									needLogin: true,
+									id: 'codeClearn.html',
+									url: MdAppUrl.Tools + "/tools/" + key + "/codeClearn.html?compid=" + curUser.CompID + "&userid=" + curUser.UserID + "&userauth=" + curUser.UserAuth + "&token=" + curUser.Token + "&orgdeptid=" + curUser.OrgID + "&username=" + viewName + "&duty="+curUser.Duty+ "&v=" + Math.random(),
+									})
+							break;
+							case "print-code":
+							var viewName = $filter("getViewName")(curUser.UserName, curUser.RealName,curUser.Mdt);
+							var key = "international-cable";
+							<!--UtilsService.openWindow({-->
+									<!--needLogin: true,-->
+									<!--id: 'boxCode.html',-->
+									<!--url: "http://192.168.1.149:8849/Md.ToolMarket/tools/international-cable/boxCode.html?compid=" + curUser.CompID + "&userid=" + curUser.UserID + "&userauth=" + curUser.UserAuth + "&token="-->
+								<!--+ curUser.Token + "&orgdeptid=" + curUser.OrgID + "&username=" + viewName +"&duty="+curUser.Duty+ "&v=" + Math.random(),-->
+								<!--});-->
+								UtilsService.openWindow({
+									needLogin: true,
+									id: 'boxCode.html',
+									url: MdAppUrl.Tools + "/tools/" + key + "/boxCode.html?compid=" + curUser.CompID + "&userid=" + curUser.UserID + "&userauth=" + curUser.UserAuth + "&token=" + curUser.Token + "&orgdeptid=" + curUser.OrgID + "&username=" + viewName + "&duty="+curUser.Duty+ "&v=" + Math.random(),
+									})
+							break;
+							default:
+								break;
+						}
+					};
+				}
+			]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+
+</script>
+</body>
+
+</html>

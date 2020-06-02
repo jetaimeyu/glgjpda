@@ -1,0 +1,141 @@
+<!--导航目录部分-->
+<div id="res-slide" class="top-thin-line mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted nav-bar" ng-show="NavData.length>1">
+	<div class="mui-scroll" style="height: 40px;">
+		<a class="item" ng-class="{'mui-active':idx==NavData.length-1}" ng-repeat="(idx,item) in NavData" ng-click="ev_nav_click(item,idx)">
+			<span class="icon iconfont icon-right color-gray-deep" style="margin-left: 2px;" ng-show="idx>0"></span>
+			<span class="group-name" ng-bind="item.name"></span>
+		</a>
+	</div>
+</div>
+<div id="slider" class="mui-scroll-wrapper" ng-style="{'position': 'initial','margin-top': NavData.length>1?'44px':'0px'}">
+	<ul class="data-group" ng-if="Data[NavData[NavData.length-1].id]">
+		<li class="mui-table-view-cell data-row" ng-repeat="o in Data[NavData[NavData.length-1].id]" ng-click="select(o)">
+			<span class="name">{{o.name}}</span>
+			<i class="icon-roundcheckfill color-blue" ng-show="o.id==id"></i>
+			<i class="icon-round color-gray" ng-show="o.id!=id"></i>
+			<p id="next" class="opt"  ng-click="ev_item_click(o);$event.stopPropagation();">
+				<span style="color: #666;">下级</span>
+			</p>
+		</li>
+	</ul>
+	<md-no-data ng-show="isLoad&&Data[NavData[NavData.length-1].id]&&Data[NavData[NavData.length-1].id].length==0">暂无数据</md-no-data>
+</div>
+<style>
+	.md-modal-content {
+		background-color: #EAEAEA !important;
+		padding: 10px 0px !important;
+	}
+	/*伪元素(底线)控制*/
+	/*去掉ul上下边线*/
+	
+	.data-group:before,
+	.data-group:after {
+		height: 0;
+	}
+	/*li边线离左右距离、边线颜色*/
+	
+	.data-group .data-row:after {
+		left: 0px;
+		right: 0px;
+		background-color: #EAEAEA;
+	}
+	/*ul上下间距*/
+	
+	.data-group {
+		margin-top: 0px;
+	}
+	
+	.data-group .data-row {
+		padding: 0 5px;
+		height: 40px;
+		line-height: 40px;
+	}
+	
+	.data-group .data-row .icon-right {
+		position: absolute;
+		right: 0px;
+		padding: 7px 10px;
+		top: 50%;
+		transform: translateY(-50%);
+		font-size: 1.5rem;
+	}
+	
+	.data-group .data-row .name {
+		margin-left: 35px;
+		font-size: 1.5rem;
+		max-width: calc(80vw - 20px);
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		display: block;
+	}
+	
+	.data-group .data-row i {
+		position: absolute;
+		left: 10px;
+		padding: 5px;
+		top: 50%;
+		transform: translateY(-50%);
+		font-size: 1.8rem;
+	}
+	
+	.data-group .data-row .opt,
+	.data-group .data-row .body.arrow:after {
+		padding: 10px 16px 11px 10px;
+		color: #AEAEAE!important;
+	}
+	
+	#res-slide {
+		padding: 0 10px;
+		background: #fff;
+		height: 40px;
+		position: fixed;
+		    margin-top: 84px;
+	}
+	
+	#res-slide:before{
+		top:auto;
+		bottom:0px;
+	}
+	
+	.mui-segmented-control.mui-segmented-control-inverted .item {
+		color: #169BD5;
+	}
+	
+	.mui-segmented-control.mui-segmented-control-inverted .item.mui-active {
+		color: #9A9A9C;
+		background: none;
+		border: none;
+	}
+	
+	.mui-segmented-control .item {
+		padding: 0px !important;
+		line-height: 40px;
+	}
+	
+	.mui-segmented-control.mui-scroll-wrapper {
+		height: 43px;
+	}
+	
+	.mui-segmented-control .mui-control-item {
+		line-height: 35px;
+		padding: 0 !important;
+		margin-left: 6px;
+	}
+	
+	.mui-slider .mui-segmented-control.mui-segmented-control-inverted~.mui-slider-group .mui-slider-item {
+		border-top: none;
+	}
+	
+	.mui-slider-indicator {
+		border-bottom: 1px solid #c8c7cc;
+	}
+	
+	.mui-segmented-control .mui-control-item>span {
+		font-size: 14px;
+	}
+	
+	#slider .data-group .data-row .body {
+		padding-left: 10px;
+	}
+</style>

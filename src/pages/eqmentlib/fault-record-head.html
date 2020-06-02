@@ -1,0 +1,70 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.icon {
+				width: 16px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="equListController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">设备故障记录</a>
+			<a class="mui-pull-right menu-add" id="add" ng-click="add()" ng-if="('Q9' | hasAuth)&&isScrap!='true'" style="display: none;" ng-class="{'mui-block':isLoad}">
+				<img class="icon" src="../../images/add.png" />
+			</a>
+		</header>
+		<div class="mui-content"></div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("equListController", ["$scope", "Loading", "UtilsService", "$timeout", function($scope, Loading, UtilsService, $timeout) {
+				//设备id
+				$timeout(function() {
+					$scope.isLoad = true;
+				}, 100)
+				$scope.equipmentId = query("equid");
+				$scope.isScrap = query("isScrap");
+				var prodInfo = plus.webview.currentWebview().prodInfo;
+				mui.init({
+					subpages: [{
+						url: 'fault-record.html?equid=' + $scope.equipmentId,
+						id: 'fault-record.html',
+						styles: {
+							top: '45px',
+							bottom: '0px',
+						}
+					}]
+				});
+				//跳转
+				$scope.add = function() {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'mat-fault-submit.html',
+						url: '../aftersale/mat-fault-submit.html',
+						extras: {
+							prodInfo: prodInfo
+						}
+					});
+				};
+			}]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

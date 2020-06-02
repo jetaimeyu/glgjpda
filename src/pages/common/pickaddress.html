@@ -1,0 +1,116 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../css/animate.min.css" />
+		<link rel="stylesheet" href="pickaddress.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css"/>
+	</head>
+
+	<body ms-controller="myCtl">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">设置地址</a>
+			<!--<h1 class="mui-title">设置地址</h1>-->
+			<a class="mui-icon-right-nav mui-pull-right mui-icon" ms-visible="IsShowSearch==0" id="btn_save">
+				<span class="font-16 ">保存</span>
+			</a>
+		</header>
+		<div class="mui-content">
+			<ul class="data-group" style="margin-bottom: 10px;">
+				<li class="data-row chooseArea">
+					<label>所在地市</label>
+					<p class="opt md-icon icon-down"></p>
+					<div class="body mui-ellipsis" style="margin-right: 15px;">
+						<span class="color-gray" ms-visible="!Province">请选择省市区</span>
+						<span ms-text="Province|contractAddress(City,District)" ms-visible="Province"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>详细地址</label>
+					<p class="opt md-icon icon-right search-addr"></p>
+					<div class="body search-addr-body">
+						<input placeholder="请选择详细地址" class="search-addr-it" readonly="readonly" ms-duplex="Address" style="width:100%;" />
+						<!--<span class="placeholder" ms-visible="!Address">
+							请输入详细地址
+						</span>
+						<span ms-text="Address" ms-visible="Address">
+							
+						</span>-->
+						<!--<div class="edit">
+							<div id="divAddr" contenteditable="true" ms-duplex="Address"></div>
+
+						</div>-->
+						<!--	<input id="divAddr" type="text" ms-duplex="Address" placeholder="请输入详细地址" style="width:100%" />-->
+					</div>
+				</li>
+				<li class="data-row">
+					<label>街道门牌</label>
+					<div class="body">
+						<input id="divStreet" type="text" ms-duplex="Street" maxlength="30" placeholder="请输入街道门牌号" style="width:100%" />
+					</div>
+				</li>
+		</div>
+
+		<!--百度地图  -->
+		<div class="mgTop5 dv_map" id="dv_map">
+			<!--地址搜索框-->
+			<!--<div class="div-search" ms-visible="IsLoadedMap" style="display:none;">
+				<div class="input_box">
+					<p class="font-12 mt-4">搜索地址</p>-->
+			<!--<input class="ip-search" id="it_address" type="text" />-->
+			<!--<i class="mui-icon mui-icon-search font-19"></i>
+				</div>
+			</div>-->
+			<div class="map_mark" ms-visible="IsLoadedMap && showMapCenter" style="display:none;">
+				<img src="../../images/pin-red.png" style="width:30px;" />
+			</div>
+			<div class="location_self" id="location_self" ms-visible="IsLoadedMap" style="display:none;">
+				<span class="md-icon icon-location-2 color-gray-dark"></span>
+			</div>
+			<div ms-text="LabelAddress " class="map_address" ms-visible="LabelAddress&& IsLoadedMap && showMapCenter" style="display:none;"></div>
+			<div id="map_container" class="map_container">
+			</div>
+		</div>
+		<footer style="display:none;" ms-class="['animated',IsShowFooter==1?'fadeIn':'fadeOut']">
+			<button id="btnConfirm" class="mui-btn mui-btn-red ">使用该地址</button>
+			<button id="btnCancle" class="mui-btn mui-btn-grey ">取消</button>
+		</footer>
+		<div class="search_box" ms-class="['animated',IsShowSearch==1?'slideInRight':'slideOutRight']" style="display:none;">
+			<ul class="data-group">
+				<li class="data-row">
+					<label>搜索地址：</label>
+					<p class="opt mui-icon wth-40" id="btn-search-map">
+						<span class=" mui-icon-search font-19"></span>
+					</p>
+					<div class="body">
+						<input type="text" ms-duplex="SearchAddress" id="it_search" placeholder="请输入搜索关键字" />
+					</div>
+				</li>
+			</ul>
+			<div class="search_result" ms-visible="SearchResult.length>0">
+				<ul class="data-group" style="margin-top: 0px;">
+					<li class="data-row" style='padding-left:15px;' ms-for="index,obj in SearchResult" ms-attr="{'data-lng':obj.point.lng,'data-lat':obj.point.lat,'data-addr':obj.title}">
+						<div class="body">
+							<p class="font-14" ms-text="obj.title"></p>
+							<p class="font-12" ms-text="obj.address"></p>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script> 
+		<script type="text/javascript" src="../../js/utils.js"></script> 
+		<script type="text/javascript" src="../../js/avalon.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=W6WIQmkWMM7fHZ1bQzONDGwimUikfaPU"></script>
+		<script type="text/javascript" src="pickaddress-baidu.js"></script>
+		<script src="../../js/rpc.js"></script>
+	</body>
+
+</html>

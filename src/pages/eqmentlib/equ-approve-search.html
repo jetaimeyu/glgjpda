@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+	</head>
+	<style type="text/css">
+		
+		.mdApproveSearch .search_group .title {
+			color: #3296FA;
+			font-size: 1.3rem;
+		}
+		.mdApproveSearch .seclet-title {
+			color: #3296FA;
+		
+		}
+	
+	</style>
+
+	<body ng-controller="equApproveSearchController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">搜索</a>
+		</header>
+		<div style="display: block;" class="mdApproveSearch" >
+			<div class="search_group" >
+				<div class="title">流程类型</div>
+				<div class="content">
+					<span ng-class="{'seclet-title':checkedType=='0'}" ng-click="selectRow('type','0')">全部</span>
+					<span ng-class="{'seclet-title':checkedType=='1'}" ng-click="selectRow('type','1')">设备购置</span>
+					<span ng-class="{'seclet-title':checkedType=='2'}" ng-click="selectRow('type','2')">设备报废</span>
+				</div>
+				<div class="title">状态</div>
+				<div class="content">
+					<span ng-class="{'seclet-title':checkedState=='0'}" ng-click="selectRow('state','0')">全部</span>
+					<span ng-class="{'seclet-title':checkedState=='2'}" ng-click="selectRow('state','2')">待审核</span>
+					<span ng-class="{'seclet-title':checkedState=='4'}" ng-click="selectRow('state','4')">已同意</span>
+					<span ng-class="{'seclet-title':checkedState=='3'}" ng-click="selectRow('state','3')">已驳回</span>
+					
+				</div>
+			</div>
+		</div>
+		<footer class="f_btns" >
+			<a ng-click="save('cancel')">取消</a>
+			<a ng-click="save('confirm')">确定</a>
+		</footer>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("equApproveSearchController", ["$scope", "ApiService", "RPCObserver","UtilsService", function($scope, ApiService, RPCObserver,UtilsService) {
+				$scope.checkedType=0;
+				$scope.checkedState=0;
+				var self = plus.webview.currentWebview();
+				if(self.selectObj){
+					$scope.checkedType=self.selectObj.type;
+					$scope.checkedState=self.selectObj.state;
+				}
+				$scope.selectRow=function(condition,key){
+					if(condition=='type'){
+						if($scope.checkedType==key){
+							$scope.checkedType=0;
+							return;
+						}
+						$scope.checkedType=key;
+					}else if(condition=='state'){
+						if($scope.checkedState==key){
+							$scope.checkedState=0;
+							return;
+						}
+						$scope.checkedState=key;
+					}					
+					
+				}
+				
+				$scope.save=function(action){
+					if(action=='confirm'){
+						var obj={
+								"type":$scope.checkedType,
+								"state":$scope.checkedState
+							}
+						RpcClient.invoke("equ-approve-list.html", "RPC_equ_approve", obj);
+						RpcClient.invoke("equ-approve-list-header.html", "RPC_equ_approve", obj);
+						var view=plus.webview.currentWebview();
+						var opener=view.opener();
+						if(view.callback){
+							opener.evalJS(view.callback+"(" + JSON.stringify(obj) + ")")
+						}
+					}
+					mui.back();
+				}
+			
+
+			}]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

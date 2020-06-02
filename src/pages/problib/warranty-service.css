@@ -1,0 +1,227 @@
+.partDomUl.data-group .data-row .body {
+	padding: 10px 0 9px 16px;
+	/*CSS3弹性盒子*/
+	display: -ms-flex;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-flex-direction: row;
+	-ms-flex-direction: row;
+	flex-direction: row;
+	-ms-flex-align: center;
+	-webkit-align-items: center;
+	-webkit-box-align: center;
+	align-items: center;
+}
+
+.partDomUl.data-group {
+	margin-top: 8px;
+}
+
+.sku-name {
+	line-height: 15px;
+	width: 85%;
+	color: #AAAAAA!important;
+}
+
+
+/*新增配件列表样式*/
+
+div.remarkscontent {
+	color: #323232;
+	font-size: 1.4rem;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	vertical-align: middle;
+}
+
+.partDomHead{
+	background: #F7F7F7;
+	color:#666666;
+}
+
+/*删除按钮*/
+
+.partDomList .icon-right,
+.partDomList .icon-delete {
+	color: #AEAEAE!important;
+	padding-left: 10px;
+	margin-right: 12px!important;
+}
+
+.mui-row:after {
+	display: block;
+	position: absolute;
+	left: 0px;
+	right: 0px;
+	top: 0;
+	height: 1px;
+	content: '';
+	-webkit-transform: scaleY(0.5);
+	transform: scaleY(0.5);
+	background-color: #EAEAEA;
+}
+
+.close {
+	padding: 0px!important;
+}
+
+
+/*配件列表栅格样式*/
+
+.partDomUl .data-row:after {
+	background: #EAEAEA!important;
+}
+
+.partDomUl .mui-table-view-cell {
+	padding: 0px;
+}
+
+.partDomUl.data-group .data-row:after {
+	left: 0!important;
+	right: 0!important;
+}
+
+.width40 {
+	width: 40%;
+}
+
+.width30 {
+	width: 30%;
+}
+
+.width20 {
+	width: 20%;
+	text-align: center;
+}
+
+.mui-row:after {
+	height: 0;
+}
+
+.mui-table-view:before,
+.mui-table-view:after {
+	content: none;
+}
+
+.number span {
+	display: inline-block;
+	width: 30px;
+	height: 30px !important;
+	line-height: 30px;
+	border: 1px solid #CCCCCC !important;
+	text-align: center;
+	font-size: 1.3rem !important;
+	float: left;
+}
+
+.number .icon-add {
+	border-right: none !important;
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+}
+
+.number .icon-remove {
+	border-left: none !important;
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
+}
+
+.imgslist {
+	float: left;
+	width: 55px;
+	height: 55px;
+	margin-right: 10px;
+	background-size: cover!important;
+}
+
+.equ-title {
+	/*line-height: 48px;*/
+	font-size: 1.5rem;
+	color: #000000;
+}
+
+.equ-sub {
+	line-height: 16px;
+	font-size: 1.2rem;
+	color: #AAAAAA;
+	font-family: MicrosoftYaHei;
+}
+
+
+/*设置样式*/
+
+.setting {
+	margin-right: 6px!important;
+	font-size: 1.3rem!important;
+	color: #3296FA!important;
+}
+
+#hostExtandWarrantyPopover {
+	/*min-width: 260px;*/
+	/*height: 370px;*/
+	top: 50% !important;
+	margin-top: -150px;
+	left: 50% !important;
+	margin-left: -141px;
+	border-radius: 3px;
+	background-color: #fff;
+}
+
+#hostExtandWarrantyPopover .mui-popover .mui-popover-arrow {
+	display: none !important;
+}
+
+#hostExtandWarrantyPopover .data-group:before {
+	height: 0;
+}
+
+#hostExtandWarrantyPopover .data-group .data-row .body {
+	padding: 10px 5px 11px 10px;
+}
+
+#hostExtandWarrantyPopover .data-group .data-row:after {
+	left: 10px;
+	right: 10px;
+	background-color: #E5E5E5;
+	height: 1px;
+}
+
+#hostExtandWarrantyPopover .data-group .data-row:after {
+	left: 5px;
+	right: 5px;
+	background-color: #E5E5E5;
+}
+
+#hostExtandWarrantyPopover .data-group .data-row.must {
+	height: 60px;
+}
+
+#hostExtandWarrantyPopover .data-group .data-row.first {
+	min-height: 38px
+}
+
+.mdt_leftline {
+	width: 3px;
+	height: 14px;
+	background: #169BD5;
+	margin-top: -15px;
+	margin-left: -3px;
+}
+
+#add_div {
+	margin: 12px 20px 12px 20px;
+}
+
+#add_div a {
+	background-color: #3296FA;
+	color: #fff;
+	padding: 5px 0;
+	border: 1px solid #3296FA;
+}
+
+.info-title {
+	margin-left: 10px;
+	line-height: 1;
+	color: #1f1f1f;
+}

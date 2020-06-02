@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="demands-sub.css">
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+
+		<style>
+			.mui-bar~.mui-pull-top-tips {
+				top: 24px;
+			}
+			
+			.mui-pull-top-tips {
+				width: 100%;
+				padding-top: 8px;
+				padding-top: 8px;
+				position: absolute;
+				top: 0px;
+				z-index: -1;
+				text-align: center;
+			}
+			
+			.mui-pull-top-wrapper {
+				width: 100%;
+				display: block;
+				text-align: center;
+				background-clip: padding-box;
+				overflow: hidden;
+			}
+			
+			.mui-pull-top-tips.mui-transitioning {
+				-webkit-transition-duration: 200ms;
+				transition-duration: 200ms;
+			}
+			
+			.mui-pull-top-tips .mui-pull-loading {
+				margin: 0;
+			}
+			
+			.mui-pull-top-wrapper .mui-icon,
+			.mui-pull-top-wrapper .mui-spinner {
+				margin-top: 7px;
+			}
+			
+			.mui-pull-bottom-tips {
+				text-align: center;
+				font-size: 15px;
+				line-height: 40px;
+				color: #777;
+			}
+			
+			.mui-pull-top-canvas {
+				overflow: hidden;
+				background-color: #fafafa;
+				border-radius: 40px;
+				box-shadow: 0 4px 10px #bbb;
+				width: 40px;
+				height: 40px;
+				margin: 0 auto;
+			}
+			
+			.mui-pull-top-canvas canvas {
+				width: 40px;
+			}
+			.empty2 {
+				margin-top: 30vh;
+				width: 100%;
+				text-align: center;
+				word-break: break-all;
+				color: #666666;
+				font-size: 1.4rem;
+				padding: 0 15px;
+			}
+			
+		</style>
+
+	</head>
+
+	<body ms-controller="demandVm" class="ms-controller">
+		<div class="mui-scroll-wrapper" id="pullrefresh">
+				<!--主体-->
+				<ul class="mui-table-view demand_hall">
+					<li class="mui-table-view-cell demand-detail" ms-for="item in @DemandList" ms-attr="{'data-did':item.ID}">
+						<div class="mui-slider-cell ">
+							<div class="oa-contact-cell mui-table">
+								<div class="oa-contact-avatar mui-table-cell">
+									<img ms-attr="{'src':getDemandImages(item,'100x0'), 'data-preview-src':'', 'data-preview-group':'1'}" />
+
+									<div class="img_layer">
+									</div>
+									<div class="img_layer02">
+										<p>剩余<span>{{item.LeftTime>99?'99+':item.LeftTime}}</span>天</p>
+									</div>
+								</div>
+								<div class="oa-contact-content mui-table-cell">
+									<div class="mui-clearfix oa-contact-text">
+										<p class="">{{item.DemandName}}</p>
+									</div>
+									<div class="mui-clearfix mdt-demand-company-bg">
+										<span ms-visible='item.CompID != 0' class="mui-ellipsis">{{item.CompName}}</span>
+										<span ms-visible="item.CompID == 0">{{item.CreateUserName}}(个人)</span>
+									</div>
+									<div class="mui-clearfix oa-contact-offer">
+										<span></span>
+										<span>已有</span>
+										<span> {{item.JoinCount}} </span>
+										<span class="nrspan">家企业报价</span>
+									</div>
+								</div>						
+							</div>
+						</div>
+					</li>
+					<div class="empty2" ms-visible="@DemandList.length==0">{{@noDemand}}</div>
+				</ul>
+			</div>
+
+	
+
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/mui.pullToRefresh.js"></script>
+		<script type="text/javascript" src="../../js/avalon.js"></script>
+		<script type="text/javascript" src="demands.js"></script>
+
+	</body>
+
+</html>

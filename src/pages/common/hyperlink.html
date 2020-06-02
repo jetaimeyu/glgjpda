@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../css/common.css" rel="stylesheet" />
+		<link href="../../icon-font/iconfont.css" rel="stylesheet" />
+	</head>
+
+	<body ng-controller="TestFormCtl">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left" ng-bind="hyperLinkInfo.title"></a>
+		</header>
+		<div class="mui-content mui-fullscreen"></div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script>
+			app.controller("TestFormCtl", ["$scope", "Loading", function($scope, Loading) {
+				var ws = plus.webview.currentWebview();
+				$scope.hyperLinkInfo = ws.hyperlink;
+				setTimeout(function() {
+					mui.init({
+						subpages: [{
+							url: $scope.hyperLinkInfo.url,
+							id: $scope.hyperLinkInfo.url.substring($scope.hyperLinkInfo.url.lastIndexOf('/') + 1).split("?")[0],
+							styles: {
+								top: '44px',
+								bottom: '0px',
+							}
+						}]
+					});
+				})
+			}]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			})
+		</script>
+	</body>
+
+</html>

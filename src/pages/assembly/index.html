@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="../../css/common.css">
+		<style type="text/css">
+			.ms-controller {
+				visibility: hidden
+			}
+			
+			.list-footer {
+				position: fixed;
+				bottom: 0;
+				width: 100%;
+				z-index: 11;
+			}
+			
+			.list-footer p {
+				width: 100%;
+				line-height: 40px;
+				text-align: center;
+				background: #3296FA;
+				color: #fff;
+				font-size: 16px;
+				margin: 0;
+			}
+			
+			.createWrap {
+				display: none;
+				width: 100%;
+				height: 100%;
+				position: absolute;
+				z-index: 11;
+				background: rgba(0, 0, 0, .3);
+			}
+			
+			#wrap {
+				position: fixed;
+				z-index: 998;
+				bottom: 0;
+				left: 0;
+				height: 40px;
+				width: 100%;
+				background-color: rgba(0, 0, 0, .3);
+				display: none;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back  mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title"><span class="mui-action-back" style="padding-left: 0!important;">生产小组</span></h1>
+		</header>
+		<div class="mui-content"></div>
+		<div class="list-footer">
+			<p id="goTO">创建生产小组</p>
+			<div class="createWrap"></div>
+		</div>
+		<div id="wrap">
+
+		</div>
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript">
+			real_code = '';
+			mui.init({
+				subpages: [{
+					url: 'index-sub.html?type=' + (query('type') || '') + '',
+					id: 'index-sub.html',
+					styles: {
+						top: '45px',
+						bottom: '40px',
+					}
+				}]
+			});
+			//新建
+			mui("body").on("tap", "#goTO", function() {
+				openWindow("create.html")
+			});
+			window.addEventListener('wrapHide', function() {
+				mui('#wrap')[0].style.display = "none"
+			});
+			window.addEventListener('wrapShow', function() {
+				mui('#wrap')[0].style.display = "block"
+			});
+		</script>
+	</body>
+
+</html>

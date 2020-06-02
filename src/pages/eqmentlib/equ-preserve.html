@@ -1,0 +1,547 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="equ-maintenance.css" />
+	</head>
+
+	<body ng-controller="EquPreserveController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">设备保养</a>
+		</header>
+		<div class="mui-content" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<ul class="data-group">
+				<li class="mui-table-view-cell data-row must">
+					<label>保养设备</label>
+					<p class="opt md-icon-more" ng-if="!equRecord">
+						<i class="icon-saoyisao" ng-click="Scantap()"></i>
+						<i class="icon-right" ng-click="tap('equSelect')"></i>
+					</p>
+					<p class="opt md-icon font-15" ng-click="tap('equDetails')" ng-if="equRecord">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-if="!equRecord" ng-click="tap('equSelect')">
+						<span class="placeholder" ng-show="!EqID">请选择需要保养的设备</span>
+						<span ng-bind="'' | formatEquInfo:EqName:EqSkuName" ng-show="EqID"></span>
+					</div>
+					<div class="body" ng-if="equRecord" ng-click="tap('equDetails')">
+						<span class="placeholder" ng-show="!EqID">请选择需要保养的设备</span>
+						<span ng-bind="'' | formatEquInfo:EqName:EqSkuName" ng-show="EqID"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="EqID">
+					<label>设备编号</label>
+					<div class="body">
+						<span ng-bind="EqCode"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<li class="data-row must">
+					<label>保养内容</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="PreserveContent" lenlimit="300" class="needsclick" placeholder="请输入保养内容"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row must" ng-click="openActionSheet()">
+					<label>是否停机</label>
+					<div class="body">
+						<span ng-if="IsHalt===''" class="placeholder">请选择是否停机</span>
+						<span ng-if="IsHalt!==''" ng-bind="IsHalt==0?'否':'是'"></span>
+					</div>
+				</li>
+				<li class="data-row must" ng-show="IsHalt==1">
+					<label>停机时长</label>
+					<div class="body" style="margin-right: 15vw;display: inline;">
+						<div style="float: right;">小时</div>
+						<div class="edit" style="max-width: 100%;margin-right: 0;">
+							<div ng-model-div-text="HaltTime" class="needsclick" placeholder="请输入停机时长" lenlimit="10"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>保养用时</label>
+					<div class="body" style="margin-right: 15vw;display: inline;">
+						<div style="float: right;">小时</div>
+						<div class="edit" style="max-width: 100%;margin-right: 0;">
+							<div ng-model-div-text="MaintainTime" class="needsclick" placeholder="请输入保养用时" lenlimit="9"></div>
+						</div>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<li class="mui-table-view-cell data-row must">
+					<label>保养人</label>
+					<p class="opt md-icon font-15" ng-click="tap('selectUser')">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="tap('selectUser')">
+						<span ng-show="!CheckerName" class="placeholder">请选择保养人</span>
+						<span ng-show="CheckerName" ng-bind="CheckerName"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<li class="mui-table-view-cell data-row">
+					<label>下次保养日期</label>
+					<p class="opt md-icon font-15" ng-click="chooseDate()">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" data-options='{}' ng-click="chooseDate()">
+						<span ng-if="!NextPreserveDate" class="placeholder">请选择下次保养日期</span>
+						<span ng-if="NextPreserveDate" ng-bind="NextPreserveDate"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<li class="mui-table-view-cell data-row">
+					<label>抄送给</label>
+					<p class="opt md-icon font-15" ng-click="tap('selectCopyingUser')">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="tap('selectCopyingUser')">
+						<span class="placeholder" ng-show="sendUsers.length==0">请选择抄送人</span>
+						<span ng-show="sendUsers.length>0" ng-repeat="user in sendUsers" ng-bind="$index==0?user.ViewName:'，'+user.ViewName"></span>
+					</div>
+				</li>
+			</ul>
+			<div class="mui-content-padded" ng-click="save()">
+				<span class="mui-btn mui-btn-block">保存</span>
+			</div>
+		</div>
+		<!--无网络或请求失败重试-->
+		<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../message/transMessage.js"></script>
+
+		<script>
+			app.controller("EquPreserveController", ["$scope", "ApiService", "DataService", "UtilsService", "CacheService", "DatePickerService", "AuthService", "Loading", "$timeout", "ChatUserService", "$filter", "RPCObserver", function($scope, ApiService, DataService, UtilsService, CacheService, DatePickerService, AuthService, Loading, $timeout, ChatUserService, $filter, RPCObserver) {
+				$scope.process = {
+					SaveState: 0, //0未保存 1保存成功 2保存中 3保存失败
+					ProcessList: [{
+						Text: "保存保养记录信息",
+						State: 0,
+						RetryMethod: submitData
+					}, {
+						Text: "通知抄送人",
+						State: 0,
+						RetryMethod: sendMsg
+					}]
+				};
+				var curUser = CacheService.get("user");
+				$scope.ID = query("id") || 0;
+				//保养设备名称
+				$scope.EqName = "";
+				//保养设备二维码
+				$scope.EqMdCode = "";
+				//设备ID
+				$scope.EqID = "";
+				//设备编号
+				$scope.EqCode = "";
+				//设备型号
+				$scope.EqSkuName = "";
+				//是否停机
+				$scope.IsHalt = "";
+				//停机时长
+				$scope.HaltTime = "";
+				//保养用时
+				$scope.MaintainTime = "";
+				//下次保养日期
+				$scope.NextPreserveDate = "";
+				//保养人
+				$scope.CheckerName = "";
+				$scope.CheckerID = "";
+				//抄送人
+				$scope.sendUsers = [];
+
+				var sendUserIDs = []; //保养类型
+
+				//无网络或请求失败重试
+				$scope.retryModal = {
+					msg: "设备保养",
+					retry: load,
+					state: ""
+				};
+				var saving = false;
+				//原接口数据
+				if($scope.ID > 0) {
+					load();
+				} else {
+					//接收设备信息
+					$scope.equRecord = plus.webview.currentWebview().addEquRecord;
+					if($scope.equRecord != undefined) {
+						$scope.EqName = $scope.equRecord.EqName;
+						$scope.EqID = $scope.equRecord.EquipmentID;
+						$scope.EqCode = $scope.equRecord.EqIdentifier;
+						$scope.EqSkuName = $scope.equRecord.SkuName;
+						$scope.NextPreserveDate = $scope.equRecord.NextMaintainDate;
+					}
+					AuthService.getAuth().then(function(res) {
+						$scope.CheckerID = res.UserID;
+						$scope.CheckerName = $filter("getViewName")(res.UserName, res.RealName, res.Mdt);
+					});
+					UtilsService.getDefaultRecipient().then(function(res) {
+						if(res) {
+							$scope.sendUsers.push(res);
+						}
+					});
+					var url = ApiService.Api50 + "/api/v1/Common/GetSystemDate";
+					DataService.get(url).then(function(res) {
+						$scope.Today = res;
+						$scope.isLoad = true;
+					});
+				}
+
+				//加载
+				function load() {
+					Loading.show();
+					$scope.retryModal.state = "";
+					var url = ApiService.Api50 + "/api/v1/Equipment/GetEqMaintainInfoById/" + $scope.ID;
+					DataService.get(url).then(function(res) {
+						$scope.isLoad = true;
+						if(res) {
+							$scope.EqName = res.EqName;
+							$scope.EqID = res.EquipmentID;
+							$scope.EqCode = res.EqIdentifier;
+							$scope.EqSkuName = res.SkuName;
+							$scope.PreserveContent = res.Content;
+							$scope.NextPreserveDate = res.NextMaintainDate;
+							$scope.CheckerName = res.MaintainUserName;
+							$scope.CheckerID = res.MaintainUserID;
+							$scope.IsHalt = res.IsHalt;
+							$scope.HaltTime = res.HaltTime;
+							$scope.MaintainTime = res.MaintainTime > 0 ? String(res.MaintainTime) : "";
+							//抄送人
+							$scope.sendUsers = [];
+							res.Users.forEach(function(user) {
+								$scope.sendUsers.push({
+									"UserID": user.ID,
+									"ViewName": user.Name,
+									"CompID": user.CompID,
+									"ULogoIsExist": user.ULogoIsExist
+								})
+							})
+							sendUserIDs = [];
+							sendUserIDs = res.Users.map(function(user) {
+								return user.ID
+							});
+							//日期
+							$scope.Today = res.Today;
+							$scope.isLoad = true;
+							Loading.hide();
+						}
+					}, function() {
+						$scope.isLoad = false;
+						$scope.retryModal.state = true;
+					})
+				}
+
+				//保养设备选择
+				$scope.tap = function(key) {
+					switch(key) {
+						//选择故障设备
+						case 'equSelect':
+							UtilsService.openWindow({
+								needLogin: true,
+								id: "select-equ-list.html",
+								url: "equ-list.html?action=select&must=true",
+								extras: {
+									selectObj: {
+										ID: $scope.EqID,
+										EqIdentifier: $scope.EqIdentifier,
+										EqName: $scope.EqCode,
+										SkuName: $scope.EqSkuName
+									},
+									callback: "faultEquCallback"
+								}
+							});
+							break;
+							//选择保养人
+						case 'equDetails':
+							UtilsService.openWindow({
+								needLogin: true,
+								id: "equ-details.html",
+								url: "equ-details.html?equid=" + $scope.equRecord.EquipmentID
+							});
+							break;
+							//设备详情
+						case 'selectUser':
+							UtilsService.openWindow({
+								needLogin: true,
+								id: "contact-select.html",
+								url: "../common/contact-select.html?action=select&multiselect=false&must=true&type=org",
+								extras: {
+									selectObj: [{
+										UserID: $scope.CheckerID,
+										ViewName: $scope.CheckerName
+									}],
+									callback: "selectUserCallback"
+								}
+							});
+							break;
+						case 'selectCopyingUser':
+							UtilsService.openWindow({
+								needLogin: true,
+								id: "contact-select.html",
+								url: "../common/contact-select.html?action=select&multiselect=true&type=org",
+								extras: {
+									selectObj: $scope.sendUsers,
+									callback: "selectCopyingUserCallback"
+								}
+							});
+							break;
+					}
+				}
+				//打开openActionSheet
+				$scope.openActionSheet = function() {
+					UtilsService.actionSheet("", [{
+						id: 1,
+						title: "是"
+					}, {
+						id: 0,
+						title: "否"
+					}]).then(function(res) {
+						$scope.IsHalt = res.id;
+					})
+				}
+
+				//保存更改
+				$scope.save = function() {
+					if(saving) {
+						return;
+					}
+					document.activeElement.blur();
+					if(!$scope.EqName) {
+						mui.toast("保养设备不能为空");
+						return;
+					}
+					if($scope.PreserveContent.trim() == '') {
+						mui.toast("请输入保养内容");
+						return;
+					}
+					if($scope.IsHalt === "") {
+						mui.toast("请选择是否停机");
+						return;
+					}
+					if($scope.IsHalt == 1 && $scope.HaltTime == "") {
+						mui.toast("请输入停机时长");
+						return;
+					}
+					var reg = /^[+]{0,1}(\d+)$/;
+					if($scope.IsHalt == 1 && $scope.HaltTime && !reg.test($scope.HaltTime.trim())) {
+						mui.toast("停机时长只能为正整数");
+						return;
+					}
+					if($scope.IsHalt == 1 && $scope.HaltTime && $scope.HaltTime <= 0) {
+						mui.toast("停机时长必须大于0");
+						return;
+					}
+					if($scope.MaintainTime && !/^\d+(\.\d{0,2})?$/.test($scope.MaintainTime)) {
+						mui.toast("请输入正确的保养时长格式");
+						return;
+					}
+					if($scope.MaintainTime && $scope.MaintainTime <= 0) {
+						mui.toast("保养用时必须大于0");
+						return;
+					}
+					if(!$scope.CheckerID || $scope.CheckerID == 0) {
+						mui.toast("请选择保养人");
+						return;
+					}
+					if(!checkLengthUtil.check()) {
+						return false;
+					}
+					saving = true;
+					Loading.show();
+					$scope.IsHalt == 0 && ($scope.HaltTime = "");
+					submitData()
+					UtilsService.submitModal($scope.process, function() {
+						saving = false;
+						mui.back();
+					}, function() {
+						saving = false;
+						$scope.process.ProcessList.forEach(function(item) {
+							item.State = 0;
+						})
+						load();
+					}, function() {
+						saving = false;
+						$scope.process.ProcessList.forEach(function(item) {
+							item.State = 0;
+						})
+					});
+				}
+
+				function submitData() {
+					var url = ApiService.Api50 + "/api/v1/Equipment/SaveEqMaintain";
+					var postdata = {
+						"ID": $scope.ID,
+						"EquipmentID": $scope.EqID,
+						"Content": $scope.PreserveContent,
+						"IsHalt": $scope.IsHalt,
+						"HaltTime": parseInt($scope.HaltTime) || "",
+						"MaintainTime": $scope.MaintainTime.trim() || 0,
+						"MaintainUserID": $scope.CheckerID,
+						"NextMaintainDate": $scope.NextPreserveDate ? $scope.NextPreserveDate + " 00:00:00" : $scope.NextPreserveDate,
+						"SendUsers": $scope.sendUsers.map(function(item) {
+							return item.UserID;
+						}).join('/')
+					};
+					$scope.process.SaveState = 2;
+					DataService.post(url, postdata).then(function(res) {
+						$scope.process.ProcessList[0].State = 2;
+						saving = false;
+						Loading.hide();
+						if(res) {
+							RpcClient.invoke("equ-preserveView.html", "RPC_EqPreserveViewRefresh");
+							RpcClient.invoke("equ-preserveList.html", "RPC_EqPreserveListRefresh");
+							//刷新设备详情 保养
+							RPCObserver.broadcast('refresh_equ_info_preserve');
+							//刷新保养列表
+							RPCObserver.broadcast('refresh_equ_preserve_list');
+							//刷新设备详情
+							RPCObserver.broadcast('refresh_equ_info');
+							//刷新待办列表
+							RPCObserver.broadcast('refresh_msg_all_list');
+							//发送消息
+							$scope.ID = res;
+							sendMsg(postdata);
+							$timeout(function() {
+								$scope.process.SaveState = 1;
+							}, 800);
+						}
+					}, function() {
+						$scope.process.ProcessList[0].State = 3;
+					});
+				}
+				//给抄送人发送消息
+				function sendMsg(postdata) {
+					if($scope.process.ProcessList[0].State != 2) {
+						return;
+					}
+					$scope.process.ProcessList[1].State = 2;
+					$scope.sendUsers.filter(function(user) {
+						return sendUserIDs.indexOf(user.UserID) < 0
+					}).forEach(function(user) {
+						ChatUserService.send({
+							chatId: user.UserID,
+							chatName: user.ViewName,
+							chatCompId: user.CompID,
+							hasLogo: curUser.ULogoIsExist,
+							chatLogo: user.ULogoIsExist,
+							type: 7,
+							content: {
+								eventName: "equ-preserve",
+								logo: ApiService.Down + "/chat/jr-equ-maintain.png",
+								title: "设备保养",
+								desc: postdata.Content,
+								params: [$scope.ID]
+							}
+						});
+					})
+				}
+				//选择日期
+				$scope.chooseDate = function() {
+					DatePickerService.pickDate({
+						selected: $scope.NextPreserveDate,
+						minDate: $scope.Today
+					}).then(function(res) {
+						$scope.NextPreserveDate = res;
+					});
+				};
+
+				//扫码
+				$scope.Scantap = function() {
+					setTimeout(function() {
+						UtilsService.openWindow({
+							needLogin: true,
+							id: 'scan.html',
+							url: '../scan/scan.html',
+							extras: {
+								callback: "ScanBack"
+							}
+						});
+					})
+				};
+				// 刷新
+				RPCObserver.on("refresh_equ_preserve", "refresh_equ_preserve");
+				window.refresh_equ_preserve = function(NextPreserveDate) {
+					$scope.NextPreserveDate = NextPreserveDate;
+					$scope.$apply();
+				};
+				//刷新设备信息
+				RPCObserver.on("refresh_maintenance_equ_info", "refresh_maintenance_equ_info");
+				window.refresh_maintenance_equ_info = function(equInfo) {
+					$scope.EqName = equInfo.EqName;
+					$scope.EqID = equInfo.EqID;
+					$scope.EqCode = equInfo.EqCode;
+					$scope.EqSkuName = equInfo.EqSkuName;
+					$scope.$apply();
+				};
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+
+			//选择人员回调
+			function selectUserCallback(obj) {
+				var appElement = document.querySelector('[ng-controller=EquPreserveController]');
+				var $scope = angular.element(appElement).scope();
+				$scope.CheckerName = obj[0].ViewName;
+				$scope.CheckerID = obj[0].UserID
+				$scope.$apply();
+			}
+
+			//选择故障设备回调
+			function faultEquCallback(obj) {
+				var appElement = document.querySelector('[ng-controller=EquPreserveController]');
+				var $scope = angular.element(appElement).scope();
+				$scope.EqName = obj.EqName;
+				$scope.EqID = obj.ID;
+				$scope.EqCode = obj.EqIdentifier;
+				$scope.EqSkuName = obj.SkuName;
+				$scope.NextPreserveDate = obj.NextMaintainDate;
+				$scope.$apply();
+			}
+
+			//扫码回调
+			function ScanBack(obj) {
+				var appElement = document.querySelector('[ng-controller=EquPreserveController]');
+				var $scope = angular.element(appElement).scope();
+				var obj = JSON.parse(obj);
+				if(obj.resType == 2) {
+					$scope.EqName = obj.resInfo.EqName;
+					$scope.EqID = obj.resInfo.ID;
+					$scope.EqCode = obj.resInfo.EqIdentifier;
+					$scope.EqSkuName = obj.resInfo.SkuName;
+					$scope.NextPreserveDate = obj.resInfo.NextMaintainDate;
+					$scope.$apply();
+				} else {
+					mui.toast("请扫描设备码");
+				}
+
+			}
+			//选择抄送人员回调
+			function selectCopyingUserCallback(obj) {
+				var appElement = document.querySelector('[ng-controller=EquPreserveController]');
+				var $scope = angular.element(appElement).scope();
+				$scope.sendUsers = angular.copy(obj);
+				$scope.$apply();
+			}
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,142 @@
+<ul class="data-group prodlist" ng-repeat="itemlist in model">
+	<li class="prodtime">
+		<span ng-bind="itemlist.Date" class="font-13"></span>
+	</li>
+	<li class="mui-table-view-cell data-row" ng-repeat="item in itemlist.DataRows" ng-click="partDetail(item.ID)">
+		<p class="opt md-icon">
+			<span class="icon-right"></span>
+		</p>
+		<div class="body mui-grid-view  mui-row">
+			<div class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6 width65">
+				<p class="mui-ellipsis  partP01 font-13" ng-bind="item.ProdName"></p>
+				<p class="mui-ellipsis  partP02 font-13" ng-bind="'型号：'+item.SkuName"></p>
+			</div>
+			<div class="mui-table-view-cell mui-media mui-col-xs-2 mui-col-sm-2 width15 mui-ellipsis-2 font-13" ng-bind="item.Nums"></div>
+			<div class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 width20 mui-ellipsis-2 font-13" ng-bind="item.Remark"></div>
+		</div>
+	</li>
+</ul>
+<style type="text/css">
+	
+	.prodlist li.mui-table-view-cell:last-child {
+		border-bottom-left-radius: 6px;
+		border-bottom-right-radius: 6px;
+	}
+	.data-group .data-row {
+		background-color: #FFFFFF;
+	}
+	
+	.data-group .data-row .opt {
+		padding: 9px 2px 10px 10px;
+	}
+	
+	.data-group .data-row .opt~.body {
+		margin-right: 30px;
+	}
+	/*列表栅格样式*/
+	
+	.mui-grid-view.mui-grid-9 {
+		border: 0;
+		background: #fff;
+	}
+	
+	.mui-grid-view.mui-grid-9 .mui-table-view-cell {
+		border: 0;
+	}
+	
+	.mui-grid-view.mui-grid-9 .mui-media {
+		color: #323223;
+	}
+	
+	.mui-table-view-cell:after {
+		height: 0px;
+	}
+	
+	.mui-grid-view.mui-grid-9 .mui-table-view-cell {
+		padding-left: 15px!important;
+	}
+	
+	.mui-grid-view.mui-grid-9 .mui-table-view-cell {
+		padding: 0px;
+	}
+	
+	.mui-table-view-cell {
+		padding: 0;
+		vertical-align: middle;
+	}
+	/*列表样式*/
+	
+	.data-group {
+		margin-top: 0px;
+	}
+	
+	.prodtime {
+		text-align: center;
+		background: #EFEFEF;
+		background-color: transparent!important;
+	}
+	
+	.prodtime span {
+		line-height: 40px;
+		color: #888888!important;
+	}
+	
+	.prodlist {
+		margin-left: 15px;
+		margin-right: 15px;
+		background-color: transparent;
+	}
+	.prodlist li:nth-child(2) {
+		border-top-left-radius: 6px;
+		border-top-right-radius: 6px;
+	}
+	
+	.data-group .data-row .body {
+		display: flex;
+		align-items: center;
+		padding: 12px 0 12px 8px;
+	}
+	
+	.data-group .data-row:after {
+		left: 0px!important;
+		right: 0px!important;
+	}
+	
+	.prodlist .mui-row {
+		color: #323232!important;
+	}
+	
+	.mui-table-view-cell.mui-active {
+		background-color: transparent;
+	}
+	
+	.partP01 {
+		line-height: 15px;
+		margin-bottom: 4px!important;
+	}
+	
+	.partP02 {
+		line-height: 15px;
+		color: #AAAAAA!important;
+	}
+	
+	.width65 {
+		width: 65%;
+	}
+	
+	.width65>p {
+		color: #000000;
+	}
+	
+	.width20 {
+		width: 20%;
+		line-height: 15px;
+		padding-left: 10px;
+	}
+	
+	.width15 {
+		width: 15%;
+		text-align: center;
+		line-height: 15px;
+	}
+</style>

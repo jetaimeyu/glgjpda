@@ -1,0 +1,331 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style>
+			.data-group .prod-address {
+				margin-right: 60px!important;
+			}
+			
+			.mui-scroll-wrapper {
+				bottom: 40px;
+			}
+			
+			.md-switch-group .md-switch-button {
+				font-size: 1.2rem;
+			}
+			
+			.data-group .data-row.w145 .opt~.body {
+				margin-right: 140px;
+			}
+			
+			.imgslist {
+				float: left;
+				width: 62px;
+				height: 62px;
+				background-size: cover!important;
+			}
+			
+			.station {
+				margin-left: 46px!important;
+			}
+			
+			.station .icon-service-advisor,
+			.station .icon-service-station,
+			.station .icon-service-aftersale {
+				position: absolute;
+				left: 16px;
+			}
+			
+			.station p {
+				line-height: 21px;
+				display: flex;
+				position: relative;
+				margin-bottom: 8px!important;
+				margin-top: 1px!important;
+			}
+			
+			.station p:last-child {
+				margin-bottom: auto!important;
+			}
+			
+			.lop {
+				padding-left: 10px!important;
+			}
+			
+			.body.drop-down-body .icon-roundclose {
+				right: 70px!important;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="FaultSubnitCtrl">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">故障报修</a>
+		</header>
+		<div class="mui-scroll-wrapper" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<div class="mui-scroll">
+				<ul class="data-group">
+					<li class="data-row" ng-if="audio.FileSize&&audio.FileSize!=0">
+						<label>语音描述</label>
+						<div class="body">
+							<md-audio audio="audio"></md-audio>
+						</div>
+					</li>
+					<li class="data-row" ng-if="!(faultInfo.prodInfo.EqID > 0 && faultInfo.prodInfo.SourceMDCode != '' && curUser.CompID > 0) && !(faultInfo.prodInfo.EqName==''&&faultInfo.prodInfo.ProdName!='')">
+						<label>文字描述</label>
+						<div class="body">
+							<div class="edit">
+								<div ng-model-div-text="faultInfo.faultDescription" class="needsclick" placeholder="请输入文字描述" lenlimit="200"></div>
+							</div>
+						</div>
+					</li>
+					<li class="data-row" ng-if="(faultInfo.prodInfo.EqID > 0 && faultInfo.prodInfo.SourceMDCode != '' && curUser.CompID > 0) || (faultInfo.prodInfo.EqName==''&&faultInfo.prodInfo.ProdName!='')">
+						<label>文字描述</label>
+						<p class="opt select-opt">
+							<md-faildesc-select data-options="faildescSelectOptions"></md-faildesc-select>
+						</p>
+						<div class="body">
+							<md-drop-down-list ng-model="faultDescription" data-options="{url:QDLUrl,labname:'请输入或选择文字描述',isFault:true}"></md-drop-down-list>
+						</div>
+					</li>
+
+					<li class="data-row" ng-if="imageList.length!=0">
+						<label>现场照片</label>
+						<div class="body media-body attach">
+							<md-image style="display: inline;float: left;" images="imageList" readonly="false"></md-image>
+						</div>
+					</li>
+					<li class="data-row" ng-if="videoList.length!=0">
+						<label>现场视频</label>
+						<div class="body media-body attach">
+							<md-video style="display: inline;float: left;" videos="videoList" readonly="false"></md-video>
+						</div>
+					</li>
+					<!-- <li class="data-row" ng-show="JobFrom==1&&curUser.CompID>0"> -->
+					<li class="data-row" ng-if="JobFrom==1&&curUser.CompID>0">
+						<label>故障归类</label>
+						<p class="opt select-opt">
+							<md-custom-select data-options="customSelectOptions"></md-custom-select>
+						</p>
+						<div class="body">
+							<md-drop-down-list ng-model="matFatClass" data-options="{url:url,labname:'请输入或选择故障归类'}"></md-drop-down-list>
+						</div>
+
+						<!--<div class="body" ng-click="tap('faultClass')">
+							<span class="placeholder" ng-show="!matFatClass.ID">请选择故障归类</span>
+							<span ng-bind="matFatClass.Name" ng-show="matFatClass.ID"></span>
+						</div>-->
+					</li>
+				</ul>
+				<ul class="data-group" ng-if="!faultInfo.prodInfo.EqID">
+					<p class="data-group-tip">设备信息</p>
+					<li class="data-row must">
+						<label>迈迪物联码</label>
+						<div class="body">
+							<span ng-bind="faultInfo.prodInfo.MDCode"></span>
+						</div>
+					</li>
+					<li class="data-row must">
+						<label>生产厂家</label>
+						<div class="body">
+							<span ng-bind="faultInfo.prodInfo.CompName"></span>
+						</div>
+					</li>
+					<li class="data-row">
+						<div class="body" style="padding: 10px 5px 11px 16px;">
+							<img class="float-left imgslist bg-f2 border-f2 mr10" src="../../images/imgPre.png" ng-style="{'background-image':'url('+ (faultInfo.prodInfo | getProdLogo:0:62) +')'}" />
+							<div style="margin-left: 72px;">
+								<div class="title font-16 mui-ellipsis" ng-bind="faultInfo.prodInfo.ProdName"></div>
+								<p class="color-gray-deep font-13 mui-ellipsis" style="margin-bottom: 0" ng-bind="'型号：'+faultInfo.prodInfo.SkuName"></p>
+								<p ng-if="faultInfo.prodInfo.ProdInnerCode" class="color-gray-deep font-13 mui-ellipsis" style="margin-bottom: 0" ng-bind="faultInfo.prodInfo.InnerCodeName+'：'+faultInfo.prodInfo.ProdInnerCode"></p>
+							</div>
+						</div>
+					</li>
+				</ul>
+				<ul class="data-group" ng-if="faultInfo.prodInfo.EqID>0">
+					<p class="data-group-tip">相关设备</p>
+					<li class="mui-table-view-cell data-row must">
+						<label>设备信息</label>
+						<div class="body">
+							<span ng-bind="'' | formatEquInfo:faultInfo.prodInfo.EqName:(faultInfo.prodInfo.EqSkuName||faultInfo.prodInfo.SkuName)"></span>
+						</div>
+					</li>
+					<li class="data-row">
+						<label>设备编号</label>
+						<div class="body">
+							<span ng-bind="faultInfo.prodInfo.EqIdentifier"></span>
+						</div>
+					</li>
+				</ul>
+				<ul class="data-group" ng-if="faultInfo.prodInfo.EqID!=0&&nochoosed!=1">
+					<!-- ng-if="faultInfo.prodInfo.EqID>0&&faultInfo.prodInfo.SourceMDCode!=''&&curUser.CompID>0">-->
+					<li class="data-row must" ng-click="tap('JobFrom')">
+						<label>报修方式</label>
+						<p class="opt md-icon icon-right" ng-if="nochoosed!=1"></p>
+						<div class="body">
+
+							<span ng-bind="jobtitle.title"></span>
+						</div>
+					</li>
+				</ul>
+				<ul class="data-group" ng-if="JobFrom==3">
+					<li class="data-row">
+						<span class="opt">元</span>
+						<label>费用</label>
+
+						<div class="body">
+							<!--<div class="edit">
+								<div ng-model-div-text="faultInfo.QuotedPrice" class="needsclick" placeholder="请输入费用（默认可面议）" lenlimit="10"></div>
+							</div>-->
+
+							<input type="text" lenlimit="10" id="price" class="lop" maxlength="10" placeholder="请输入费用（可面议）" ng-model="faultInfo.QuotedPrice" style="padding-right:16px;" />
+
+						</div>
+					</li>
+				</ul>
+				<ul class="data-group" ng-if="JobFrom==1">
+					<li class="mui-table-view-cell data-row must">
+						<label>派工给</label>
+						<p class="opt md-icon font-15" ng-click="tap('selectWorkUser')">
+							<span class="icon-right"></span>
+						</p>
+						<div class="body" ng-click="tap('selectWorkUser')">
+							<span class="placeholder" ng-show="workUsers.length==0">请选择派工人</span>
+							<span ng-show="workUsers.length>0" ng-repeat="user in workUsers" ng-bind="$index==0?user.ViewName:'，'+user.ViewName"></span>
+						</div>
+					</li>
+					<li class="mui-table-view-cell data-row" ng-if="JobFrom==1">
+						<label>抄送给</label>
+						<p class="opt md-icon font-15" ng-click="tap('selectSendUser')">
+							<span class="icon-right"></span>
+						</p>
+						<div class="body" ng-click="tap('selectSendUser')">
+							<span class="placeholder" ng-show="sendUsers.length==0">请选择抄送人</span>
+							<span ng-show="sendUsers.length>0" ng-repeat="user in sendUsers" ng-bind="$index==0?user.ViewName:'，'+user.ViewName"></span>
+						</div>
+					</li>
+				</ul>
+				<ul class="data-group" ng-if="JobFrom==2">
+					<p class="data-group-tip">报修人信息</p>
+					<li id="reportComp" class="data-row w145 must" ng-if="curUser.CompID>0">
+						<label>报修单位</label>
+						<div class="opt" style="max-width: none;width: 140px;" ng-if="!faultInfo.CompID">
+							<div class="md-switch-group">
+								<a dataId="2" ng-class="{'md-active':faultInfo.ReportType==2}" class="md-switch-button" style="margin-right: -5px;">单位报修</a>
+								<a dataId="1" ng-class="{'md-active':faultInfo.ReportType==1}" class="md-switch-button">个人报修</a>
+							</div>
+						</div>
+						<div class="body">
+							<input maxlength="150" ng-change="getDefaultServiceStation()" type="text" placeholder="请输入您的单位" ng-model="faultInfo.CompName" ng-if="faultInfo.ReportType==2&&!faultInfo.CompName" />
+							<span ng-if="faultInfo.ReportType==2&&faultInfo.CompName" ng-bind="faultInfo.CompName"></span>
+							<span ng-if="faultInfo.ReportType==1">个人</span>
+						</div>
+					</li>
+					<li class="data-row must">
+						<label>报修人</label>
+						<div class="body">
+							<input type="text" lenlimit="20" maxlength="20" placeholder="请输入您的姓名" ng-model="faultInfo.UserName" />
+						</div>
+					</li>
+					<li class="data-row must">
+						<label>报修人电话</label>
+						<div class="body">
+							<input type="text" maxlength="15" placeholder="请输入您的联系电话" ng-model="faultInfo.UserPhone" />
+							<!--<span ng-if="faultInfo.UserPhone" ng-bind="faultInfo.UserPhone">手机号</span>-->
+						</div>
+					</li>
+					<li class="data-row must">
+						<label>设备地址</label>
+						<p id="selAddress" class="opt" ng-click="tap('addressSelect')">
+							<span class="color-gray-dark">修改</span>
+						</p>
+						<div class="body prod-address">
+							<span ng-bind="faultInfo.province | locationfilter:faultInfo.city:faultInfo.district:faultInfo.address:faultInfo.street"></span>
+							<span ng-if="!faultInfo.province" class="mui-icon mui-icon-spinner"> 正在定位...</span>
+						</div>
+					</li>
+				</ul>
+				<ul class="data-group" ng-if="JobFrom==3">
+					<p class="data-group-tip">报修人信息</p>
+					<li id="reportComp" class="data-row w145 must" ng-if="curUser.CompID>0">
+						<label>联系单位</label>
+						<div class="opt" style="max-width: none;width: 140px;" ng-if="!faultInfo.CompID">
+							<div class="md-switch-group">
+								<a dataId="2" ng-class="{'md-active':faultInfo.ReportType==2}" class="md-switch-button" style="margin-right: -5px;">单位报修</a>
+								<a dataId="1" ng-class="{'md-active':faultInfo.ReportType==1}" class="md-switch-button">个人报修</a>
+							</div>
+						</div>
+						<div class="body">
+							<input maxlength="150" ng-change="getDefaultServiceStation()" type="text" placeholder="请输入您的单位" ng-model="faultInfo.CompName" ng-if="faultInfo.ReportType==2&&!faultInfo.CompName" />
+							<span ng-if="faultInfo.ReportType==2&&faultInfo.CompName" ng-bind="faultInfo.CompName"></span>
+							<span ng-if="faultInfo.ReportType==1">个人</span>
+						</div>
+					</li>
+					<li class="data-row must">
+						<label>联系人</label>
+						<div class="body">
+							<input type="text" lenlimit="20" maxlength="20" placeholder="请输入您的姓名" ng-model="faultInfo.UserName" />
+						</div>
+					</li>
+					<li class="data-row must">
+						<label>联系人电话</label>
+						<div class="body">
+							<input type="tel" lenlimit="15" maxlength="15" placeholder="请输入您的联系电话" ng-model="faultInfo.UserPhone" />
+							<!--<span ng-if="faultInfo.UserPhone" ng-bind="faultInfo.UserPhone">手机号</span>-->
+						</div>
+					</li>
+					<li class="data-row must">
+						<label>设备地址</label>
+						<p id="selAddress" class="opt" ng-click="tap('addressSelect')">
+							<span class="color-gray-dark">修改</span>
+						</p>
+						<div class="body prod-address">
+							<span ng-bind="faultInfo.province | locationfilter:faultInfo.city:faultInfo.district:faultInfo.address:faultInfo.street"></span>
+							<span ng-if="!faultInfo.province" class="mui-icon mui-icon-spinner"> 正在定位...</span>
+						</div>
+					</li>
+				</ul>
+				<ul class="data-group" style="display: none;" ng-class="{'mui-block':isRuleLoad}" ng-if="JobFrom==2&&faultInfo.province">
+					<p class="data-group-tip">服务单位</p>
+					<li class="data-row" ng-if="stations.length==0">
+						<div class="body">
+							<p class="color-gray-deep mui-text-center">该企业未维护售后服务制度，无法在线报修！</p>
+						</div>
+					</li>
+					<li class="data-row must" ng-repeat="st in stations" ng-if="stations.length>0">
+						<div class="body station">
+							<span ng-if="st.RuleType==1" class="font-16 icon-service-advisor"></span>
+							<span ng-if="st.RuleType==2" class="font-16 icon-service-aftersale"></span>
+							<span ng-if="st.RuleType==3" class="font-16 icon-service-station"></span>
+							<p class="font-15"><span style="color: #333;" ng-bind="getType(st.RuleType)"></span><span style="flex: 1;" ng-bind="st.Name"></span></p>
+							<!--<p ng-if="st.Distance!='m'&&st.Distance!='NaNkm'" class="font-15"><span style="color: #333;">距您：</span><span ng-bind="st.Distance"></span></p>-->
+							<!--<p ng-if="st.Province" class="font-15"><span style="color: #333;">地址：</span><span style="flex: 1;" ng-bind="st.Province | locationfilter:st.City:st.District:st.Address:st.Street"></span></p>-->
+						</div>
+					</li>
+				</ul>
+				<div class="mui-content-padded">
+					<span class="mui-btn mui-btn-block" ng-click="save()">提交</span>
+					<p>当您的手机网络状况不好，或者暂时不想提交，你可以选择<span ng-click="tap('saveDraft')" class="color-blue font-15" style="text-decoration: underline;">存入草稿箱</span></p>
+				</div>
+			</div>
+		</div>
+		<footer class="footBtn">
+			<md-record-media videos="videoList" audio="audio" images="imageList" callback="getMediaRes"></md-record-media>
+		</footer>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../message/transMessage.js"></script>
+		<script type="text/javascript" src="mat-fault-submit.js"></script>
+	</body>
+
+</html>

@@ -1,0 +1,143 @@
+<!--查看mat配件更换list-->
+<ul class="partDomUl data-group" ng-show="model.length!=0">
+	<li class="data-row partDomHead">
+		<!--<p class="opt md-icon font-15 close">
+		</p>-->
+		<div class="body mui-grid-view mui-row">
+			<div class="mui-table-view-cell mui-media mui-col-xs-5 mui-col-sm-5 width30">新件编号</div>
+			<div class="mui-table-view-cell mui-media mui-col-xs-2 mui-col-sm-2 width30">旧件编号</div>
+			<div class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 width40">旧件规格</div>
+		</div>
+	</li>
+	<li class="data-row partDomList" ng-repeat="(index,item) in model">
+		<!--<p class="opt md-icon font-15 close">
+			<span class="icon-right partDomIcon" ng-click="lookDetail(item.ID)"></span>
+		</p>-->
+		<div class="body mui-grid-view  mui-row">
+			<div class="mui-table-view-cell mui-media mui-col-xs-5 mui-col-sm-5 width30 remarkscontent">
+				<span class="partDomSpan" ng-bind="item.NewPartsNum"></span>
+			</div>
+			<div class="mui-table-view-cell mui-media mui-col-xs-2 mui-col-sm-2 width30  remarkscontent">
+				<span class="partDomSpan" ng-bind="item.OldPartsNum"></span>
+			</div>
+			<div class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 width40  remarkscontent">
+				<span class="partDomSpan" ng-bind="item.OldPartsSpec"></span>
+			</div>
+		</div>
+	</li>
+</ul>
+<style type="text/css">
+	.partDomUl.data-group .data-row .body {
+		padding: 10px 0 9px 16px;
+		/*CSS3弹性盒子*/
+		display: -ms-flex;
+		display: -webkit-flex;
+		display: flex;
+		-webkit-flex-direction: row;
+		-ms-flex-direction: row;
+		flex-direction: row;
+		-ms-flex-align: center;
+		-webkit-align-items: center;
+		-webkit-box-align: center;
+		align-items: center;
+	}
+	
+	.partDomHead>div {
+		font-weight: bold;
+	}
+	
+	.partDomUl .width30.mui-active,
+	.partDomUl .width40.mui-active {
+		background-color: #FFF!important;
+	}
+	
+	.partDomUl.data-group {
+		margin-top: 8px;
+	}
+	
+	.partDomUl .partDomSpan {
+		display: inline-block;
+		width: 90%;
+		/*border: 1px solid #EAEAEA!important;*/
+	}
+	/*新增配件列表样式*/
+	
+	div.remarkscontent {
+		color: #323232;
+		font-size: 1.4rem;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		word-wrap: break-word;
+		word-break: normal;
+	}
+	/*删除按钮*/
+	
+	.partDomList .icon-right,
+	.partDomList .icon-delete {
+		color: #AEAEAE!important;
+		padding-left: 10px;
+		margin-right: 12px!important;
+	}
+	
+	.close {
+		padding: 0px!important;
+	}
+	/*配件列表栅格样式*/
+	
+	.mui-grid-view.mui-grid-9 {
+		border: 0;
+		background: #fff;
+	}
+	
+	.mui-grid-view.mui-grid-9 .mui-table-view-cell {
+		border: 0;
+	}
+	
+	.mui-grid-view.mui-grid-9 .mui-media {
+		color: #323223;
+	}
+	
+	.partDomUl .mui-table-view-cell:after {
+		height: 0px;
+	}
+	
+	.mui-grid-view.mui-grid-9 .mui-table-view-cell {
+		padding-left: 15px!important;
+	}
+	
+	.mui-grid-view.mui-grid-9 .mui-table-view-cell {
+		padding: 0px;
+	}
+	
+	.partDomUl .mui-table-view-cell {
+		padding: 0px;
+		/*CSS3弹性盒子*/
+		display: -ms-flex;
+		display: -webkit-flex;
+		display: flex;
+		-webkit-flex-direction: row;
+		-ms-flex-direction: row;
+		flex-direction: row;
+		-ms-flex-align: center;
+		-webkit-align-items: center;
+		-webkit-box-align: center;
+		align-items: center;
+	}
+	
+	.partDomList.mui-active {
+		/*background-color: transparent;*/
+	}
+	
+	.data-group .data-row:after {
+		left: 0!important;
+		right: 0!important;
+	}
+	
+	.width30 {
+		width: 30%;
+	}
+	
+	.width40 {
+		width: 40%;
+	}
+</style>

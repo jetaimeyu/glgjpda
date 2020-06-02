@@ -1,0 +1,229 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link href="../../css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	<style>
+		/*伪元素(底线)控制*/
+
+		/*去掉最后一个li的底线*/
+
+		.data-group .data-row:last-child:after {
+			height: 0;
+		}
+
+		/*去掉ul上下边线*/
+
+		.data-group:before,
+		.data-group:after {
+			height: 0;
+		}
+
+		/*li边线离左右距离、边线颜色*/
+
+		.data-group .data-row:after {
+			left: 10px;
+			right: 10px;
+			background-color: #EAEAEA;
+		}
+
+		/*ul上下间距*/
+
+		.data-group {
+			margin-top: 8px;
+		}
+
+		/*li高度*/
+
+		.data-group .data-row {
+			height: 40px;
+		}
+
+		/*按钮*/
+
+		.btn-submit {
+			margin: 40px 16px 0 16px;
+		}
+
+		.btn-submit span {
+			background-color: #3296FA;
+			color: #ffffff;
+			font-size: 1.6rem;
+			border-color: #3296FA;
+		}
+
+		/*输入验证码框离右边宽度*/
+
+		.data-group .data-row .opt~.body {
+			margin-right: 85px;
+		}
+
+		#getvcode {
+			max-width: 115px;
+		}
+	</style>
+</head>
+
+<body ng-controller="ChangePhoneController">
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left">变更手机号</a>
+	</header>
+	<div class="mui-scroll-wrapper">
+		<ul class="data-group">
+			<li class="data-row must">
+				<label>密码</label>
+				<div class="body">
+					<input type="password" ng-model="PassWord" placeholder="输入原密码" />
+				</div>
+			</li>
+		</ul>
+		<ul class="data-group">
+			<li class="data-row must">
+				<label>新手机号</label>
+				<div class="body">
+					<input type="tel" ng-model="NewPhone" maxlength="11" placeholder="输入新号码" />
+				</div>
+			</li>
+			<li class="data-row must">
+				<label>验证码</label>
+				<p id="getvcode" class="opt">
+					<span class="font-13 color-blue" ng-show="Countdown==60||Countdown<=0" ng-click="checkOldpw()">获取验证码</span>
+					<span ng-show="Countdown!=60&&Countdown!=0" ng-bind="Countdown+'s后重新获取'"></span>
+				</p>
+				<div class="body">
+					<input type="text" ng-model="InputVCode" placeholder="输入验证码" />
+				</div>
+			</li>
+		</ul>
+		<div class="btn-submit" ng-click="saveChange()">
+			<span class="mui-btn mui-btn-block">确认变更</span>
+		</div>
+	</div>
+	<script src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/rpc.js"></script>
+	<script>
+		app.controller("ChangePhoneController", ["$scope", "ApiService", "AuthService", "DataService", "CacheService", "Loading", function ($scope, ApiService, AuthService, DataService, CacheService, Loading) {
+			$scope.Countdown = 60;
+			$scope.PassWord = "";
+			$scope.NewPhone = "";
+			$scope.VerCode = "";
+			$scope.InputVCode = "";
+			//验证原密码
+			$scope.checkOldpw = function () {
+				if (!$scope.PassWord) {
+					mui.toast("请输入原密码");
+					return;
+				}
+				if (!$scope.NewPhone) {
+					mui.toast("请输入新手机号");
+					return;
+				}
+				var url = ApiService.Api50 + "/api/v1/User/VerifPwd?password=" + encodeURIComponent($scope.PassWord);
+				DataService.get(url).then(function (res) {
+					if (res) {
+						//mui.toast("原密码验证成功");
+						//不让再修改原密码
+						document.querySelector("input[type='password']").setAttribute("readonly", "true");
+						getVerCode();
+					} else {
+						mui.toast("原密码不正确");
+					}
+				});
+			};
+			var intl;
+			var oldPhone = "";
+			//获取验证码
+			function getVerCode() {
+				if ($scope.Countdown != 60 && $scope.Countdown != 0) {
+					//每隔一分钟获取一次
+					return;
+				}
+				var re = /^1\d{10}$/;
+				if (!re.test($scope.NewPhone)) {
+					mui.toast("请输入正确的手机号码");
+					return;
+				}
+				AuthService.getVerifyCode($scope.NewPhone).then(function (res) {
+					oldPhone = $scope.NewPhone;
+					$scope.VerCode = res;
+					//$scope.InputVCode = res;
+					$scope.Countdown = 59;
+
+					intl = setInterval(function () {
+						$scope.$apply(function () {
+							$scope.Countdown--;
+						});
+						if ($scope.Countdown <= 0) {
+							clearInterval(intl);
+						}
+					}, 1000);
+				}, function (error) {
+					mui.toast("获取验证码失败：" + error.ErrorMessage);
+				});
+			};
+			//保存更改
+			$scope.saveChange = function () {
+				if (!$scope.PassWord) {
+					mui.toast("请输入原密码");
+					return;
+				}
+				if (!$scope.NewPhone) {
+					mui.toast("请输入新手机号");
+					return;
+				}
+				if (!$scope.InputVCode) {
+					mui.toast("请输入验证码");
+					return;
+				}
+				if (oldPhone != $scope.NewPhone) {
+					mui.alert("当前变更的手机号与获取验证码的手机号不相符，请重新获取验证码");
+					return;
+				}
+				if ($scope.VerCode != $scope.InputVCode) {
+					mui.toast("验证码不正确");
+					return;
+				}
+				var url = ApiService.Api50 + "/api/v1/User/UpdateUserPhone?phone=" + $scope.NewPhone;
+				DataService.get(url).then(function (res) {
+					if (res == 1) {
+						mui.toast("变更成功");
+						clearInterval(intl);
+						$scope.InputVCode = "";
+						//重新获取更改后手机号绑定的账户
+						AuthService.getUserSwitchList().then(function (list) {
+							CacheService.remove("userList");
+
+							//此处应该更新下登录人信息缓存
+							CacheService.set("userList", list, true);
+							var user = CacheService.get('user');
+							user.Phone = $scope.NewPhone;
+							CacheService.set("user", user, true);
+
+							//更新个人信息手机号
+							RpcClient.invoke("userdetail", "RPC_RefreshUserInfo");
+							RpcClient.invoke("personal-info.html", "RPC_PersonInfoRefresh");
+							RpcClient.invoke("personal-information.html", "RPC_RefreshUserInfo");
+							mui.back();
+						});
+					}
+				});
+			}
+		}]);
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			plus.webview.currentWebview().setStyle({
+				softinputMode: "adjustResize"
+			});
+		});
+	</script>
+</body>
+
+</html>

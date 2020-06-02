@@ -1,0 +1,64 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/common.css">
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<style type="text/css">
+			.icon {
+				width: 16px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="ProdInfolistController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">产品详情</a>
+		</header>
+		<script type="text/javascript" src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("ProdInfolistController", ["$scope", "UtilsService", function($scope, UtilsService) {
+
+				var view = plus.webview.currentWebview();
+
+				$scope.prodId = query("prodId") || 0;
+				$scope.MdCode = query("MdCode") || '';
+				$scope.SkuID = query("SkuID") || '';
+				$scope.ProdInnerCode = query("ProdInnerCode") || view.ProdInnerCode || '';
+				$scope.InnerCodeName = query("InnerCodeName") || view.InnerCodeName || '';
+
+				//导航
+				setTimeout(function() {
+					mui.init({
+						subpages: [{
+							url: './prodinfo.html?prodId=' + $scope.prodId + '&SkuID=' + $scope.SkuID + '&MdCode=' + $scope.MdCode,
+							id: 'prodinfo.html',
+							styles: {
+								top: '44px', //mui标题栏默认高度为45px；
+								bottom: '0px' //默认为0px，可不定义；
+							},
+							extras: {
+								ProdInnerCode: $scope.ProdInnerCode,
+								InnerCodeName: $scope.InnerCodeName
+							}
+						}]
+					});
+				});
+
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

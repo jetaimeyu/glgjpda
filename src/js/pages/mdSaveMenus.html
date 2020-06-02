@@ -1,0 +1,64 @@
+<div id='modal'>
+	<div class='bclist'><img ng-src="{{localPath+'/images/savesuccess@3x.png'}}"></div><span class='save-success' ng-bind="model.title?model.title:'保存成功'"></span>
+	<div class='modify-button'>
+		<span ng-click="listFn()" ng-class="isShowEdit?'':'return-list'">点击返回</span>
+		<span class='continue-modify' ng-if="isShowEdit" ng-click="editFn()">继续修改</span>
+	</div>
+</div>
+<style type="text/css">
+	#modal {
+		width: 70vw;
+		height: 190px;
+		text-align: center;
+		opacity: 1;
+		text-align: center;
+		padding: 0;
+		z-index: 999;
+		opacity: 1;
+		border-radius: 3px;
+		box-shadow: 0px 0px 8px rgba(153, 153, 153, 1);
+	}
+	
+	#modal img {
+		width: 40px;
+		margin-top: 30px;
+		margin-bottom: 16px;
+	}
+	
+	.save-success {
+		color: #1AAE12;
+		font-size: 1.8rem;
+	}
+	
+	.modify-button {
+		position: absolute;
+		bottom: 0px;
+		left: 0;
+		right: 0;
+	}
+	
+	.modify-button span {
+		float: left;
+		width: 50%;
+		height: 40px;
+		line-height: 40px;
+		color: #3296FA;
+		font-size: 1.4rem;
+		border-top: 1px solid #EAEAEA;
+		border-right: 1px solid #EAEAEA;
+	}
+	
+	span.continue-modify {
+		border-right: 0;
+	}
+	
+	.return-list {
+		width: 70vw!important;
+		height: 40px!important;
+		line-height: 40px!important;
+		color: #3296FA;
+		font-size: 1.4rem;
+		border-top: 1px solid #EAEAEA;
+		text-align: center!important;
+	}
+</style>

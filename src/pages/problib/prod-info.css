@@ -1,0 +1,296 @@
+.topBar {
+    font-size: 1.5rem;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    color: #fff;
+    line-height: 40px;
+    padding-left: 10px;
+}
+
+.topBar .mui-ellipsis {
+    flex-grow: 1;
+}
+
+.topBar .btn-open {
+    width: 50px;
+    text-align: center;
+}
+
+.topBar .btn-open .btn {
+    background: #169BD5;
+    border: none;
+    border-radius: 7px;
+    height: 30px;
+    line-height: 31px;
+    margin-top: 4px;
+    font-size: 1.4rem;
+}
+
+.topBar .btn-close {
+    text-align: center;
+    width: 40px;
+}
+
+.mui-slider {
+    background: #fff;
+    min-height: 240px;
+    border-bottom: 1px solid #cacaca;
+}
+
+.mui-slider-indicator .mui-active.mui-indicator {
+    background: #4DA9EB;
+}
+
+.mui-slider-indicator .mui-indicator {
+    background: #c5c5c5;
+    box-shadow: none;
+}
+
+.mui-slider .mui-slider-group .mui-slider-item img {
+    height: 240px;
+    width: 100%;
+}
+
+.prod-info {
+    background: #fff;
+    padding: 23px 10px 0px 10px;
+}
+
+.prod-info .prod-name {
+    font-size: 1.7rem;
+    color: #1F1F1F;
+    word-break: break-all;
+    margin-bottom: 10px;
+}
+
+.prod-info .sku-name {
+    color: #999999;
+    word-break: break-all;
+    font-size: 1.4rem;
+    margin-bottom: 8px;
+}
+
+.prod-info .code-name {
+    margin-bottom: 8px;
+    word-break: break-all;
+    font-size: 1.4rem;
+}
+
+.prod-info .comp-name-box {
+    border-top: 1px solid #ECECEC;
+    display: flex;
+    height: 40px;
+    line-height: 40px;
+    font-size: 1.4rem;
+    color: #333333;
+}
+
+.prod-info .comp-name-box .comp-name {
+    flex-grow: 1;
+}
+
+.prod-info .comp-name-box .comp-right {
+    width: 100px;
+    text-align: right;
+    color: #999999;
+}
+
+.prod-info .comp-name-box .comp-right .mui-icon {
+    font-size: 1.8rem;
+}
+
+.data-group .data-row:nth-child(2) {
+    padding-bottom: 10px;
+}
+
+.recordlist {
+    padding: 10px 14px 4px 16px !important;
+}
+
+.avatar {
+    float: left;
+    width: 48px;
+    height: 48px;
+    border-radius: 48px;
+    background-size: cover;
+}
+
+.name-title {
+    padding-top: 3px;
+}
+
+.name-title .names {
+    font-size: 1.6rem;
+    color: #323232;
+    position: relative;
+    left: 14px;
+    padding-right: 16px;
+}
+
+.name-title .introduction {
+    font-size: 1.3rem;
+    color: #929292;
+    position: relative;
+    left: 14px;
+    top: 2px;
+}
+
+.fault-description {
+    color: #323232;
+    margin: 0 16px;
+    word-break: break-all;
+}
+.part-desc{
+	padding-top:10px
+}
+.total {
+    text-align: center;
+    line-height: 40px;
+    color: #3296FA;
+}
+
+.ext-btn {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 57px;
+    height: 37px;
+}
+.ext-btn i{
+	position: absolute;
+	background: #4DA9EB;
+	width: 28px;
+    height: 28px;
+    top: 5px;
+    left: 15px;
+	/* top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);	 */
+	border-radius: 50%;
+	opacity: 0.76;
+}
+
+
+.ext-btn .btn3d {
+    width: 15px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+
+
+
+.prodGrid {
+	background: #fff;
+	margin-top: 10px;
+	display: flex;
+	flex-wrap: wrap;
+	cursor: pointer;
+}
+
+.flex-container {
+	width: 50%;
+	display: -ms-flex;
+	display: -webkit-flex;
+	display: flex;
+	-ms-flex-align: center;
+	-webkit-align-items: center;
+	-webkit-box-align: center;
+	align-items: center;
+	height: 72px;
+	flex-wrap: wrap;
+}
+.bottom_line{
+	width: 100%;
+	}
+/*.flex-item {
+	flex: 1;
+}*/
+/*动态四格的样式*/
+.dynamicGrid  .flex-container{
+	display: block;
+}
+
+.dynamicGrid .flex-item {
+	width: 62.1%;
+	float: left;
+	margin-top: 15px;
+}
+.dynamicGrid .flex-img {
+	width: 37.2%;
+	float: left;
+	margin-top: 15px;
+}
+.dynamicGrid .flex-line{
+	float: left;
+}
+.dynamicGrid .bottom_line{
+	width: 200%;
+}
+
+.dynamicGrid .borderthin_right
+{
+    height:72px;
+    width: 1px;
+}
+
+.dynamicGrid .borderthin_right:after
+{
+    border-right: 1px solid #cacaca;
+}
+
+.bottom_line:after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-bottom: 1px solid #cacaca;
+    -webkit-transform: scaleY(.5);
+    -webkit-transform-origin: 0 0;
+}
+/*默认四格的样式*/
+
+.defaultGrid .defaultTag{
+	width: 49.5%;
+	display: block;
+}
+.defaultGrid .flex-item{
+	 width: 62.5%;
+	 float: left;
+}
+.defaultGrid .flex-img{
+	width: 37.5%;
+	float: left;
+}
+
+
+
+
+
+
+.flex-item p:nth-child(1) {
+	color: #4DA9EB;
+	font-size: 14px;
+	margin-bottom: 0px;
+}
+
+.flex-item p:nth-child(2) {
+	color: #777777;
+	font-size: 12px;
+	margin-bottom: 0px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+
+
+.flex-img img {
+	width: 42px;
+	height: 42px;
+	display: block;
+	margin: 0 auto;
+}

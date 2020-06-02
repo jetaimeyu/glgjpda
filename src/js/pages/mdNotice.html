@@ -1,0 +1,84 @@
+<div class="notice">
+	<ul>
+		<li></li>
+		<li></li>
+		<li ng-repeat="p in model.ProcessList">
+			<p ng-if="p.State==2" class="icon-check font-19" style="color: green;"></p>
+			<p ng-if="p.State==3" class="retry font-15 color-red-md" ng-click="p.RetryMethod()">重试</p>
+			<p ng-if="p.State==1" class="mui-spinner font-13"></p>
+			<div>{{$index+1}}、{{p.State==1?"正在":""}}{{p.Text}}</div>
+		</li>
+		<li style="padding-left: 0;padding-right: 0;padding-bottom: 0;" ng-if="showBack()" ng-click="backFn()">
+			<div class='modify-buttons'>
+				<span>点击返回</span>
+			</div>
+		</li>
+		<li></li>
+	</ul>
+</div>
+
+<style type="text/css">
+	/*进度框*/
+	
+	.notice>ul {
+		width: 70vw;
+	}
+	
+	.notice>ul>li {
+		padding: 5px 10px 5px 10px;
+		font-size: 1.5rem;
+	}
+	
+	.notice>ul>li:first-child {
+		padding: 0;
+		height: 7px;
+		background-color: #3296FA;
+	}
+	
+	.notice>ul>li:last-child {
+		padding: 0;
+	}
+	
+	.notice li p {
+		float: right;
+		color: green
+	}
+	
+	.notice .btn-group:before {
+		content: " ";
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 0;
+		height: 1px;
+		background-color: #E7E7E7;
+	}
+	
+	.notice .btn-group:after {
+		display: none;
+	}
+	
+	.btn-group .btn-col {
+		color: #3296FA;
+		font-size: 1.4rem;
+	}
+	
+	.md-modal .md-modal-content {
+		width: 100%;
+		padding: 0!important;
+	}
+	
+	.notice .modify-buttons {
+		text-align: center;
+		border-top: 1px solid #EAEAEA;
+		overflow: hidden;
+	}
+	
+	.notice .modify-buttons span {
+		width: 288px;
+		height: 40px;
+		line-height: 40px;
+		color: #3296FA;
+		font-size: 1.5rem;
+	}
+</style>

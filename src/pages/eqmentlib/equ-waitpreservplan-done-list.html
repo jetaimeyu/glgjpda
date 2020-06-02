@@ -1,0 +1,172 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+	</head>
+	<style type="text/css">
+		.mui-content .check-data-li {
+			display: flex;
+			padding: 6px 16px;
+			padding-right: 0;
+			align-items: center;
+		}
+		
+		.mui-content .check-data-li .check-data-li-left {
+			width: 80%;
+			display: flex;
+			flex-direction: column;
+		}
+		
+		.mui-content .check-data-li .check-data-li-right {
+			width: 20%;
+			color: #0099FF!important;
+			position: relative;
+			text-align: center;
+		}
+		
+		.mui-content .check-data-li .check-data-li-right:after {
+			position: absolute;
+			top: -8px;
+			height: 34px;
+			left: 0;
+			content: '';
+			background-color: #bbb;
+			width: 1px;
+			-webkit-transform: scaleY(0.5);
+			transform: scaleY(0.5);
+		}
+		
+		.equ-name {
+			font-size: 1.5rem;
+			color: #333;
+			margin-bottom: 5px;
+		}
+		
+		.equ-params {
+			color: #8f8f94;
+			margin-top: 0px;
+overflow: hidden!important;
+text-overflow:ellipsis!important;
+white-space: nowrap!important;
+word-break: break-all!important; 
+		}
+		.equ-EqLevel{
+			width: 100% - calc(50%)!important;
+			display:block;
+			overflow: hidden;
+			line-height:18px;
+			overflow: hidden!important;
+text-overflow:ellipsis!important;
+white-space: nowrap!important;
+word-break: break-all!important; 
+		}
+		
+	</style>
+
+	<body ng-controller="ParentPageController">
+		<div id="pullrefresh" ng-controller="pullrefreshController" class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<div class="mui-content">
+				<ul class="data-group" style="margin-top: 0px;">
+					<li class="data-row check-data-li" ng-repeat="item in data">
+						<div class="check-data-li-left" ng-click="tap(item,'details')">
+							<div class="equ-name">
+								<span ng-bind="item.PlanName"></span>
+							</div>
+							<div class="equ-params">
+								<span>保养时间：</span>
+								<span ng-bind="item.MaintainDate.slice(0,10)"></span>
+							</div>
+							<div class="equ-params">
+								
+								<span ng-bind="'保养级别：'+item.EqLevel" class="equ-EqLevel"></span>
+							</div>
+							
+							<div class="equ-params">
+								<span>保养人：</span>
+								<span ng-repeat="items in item.Users" ng-bind="($index==0?items.Name:'，'+items.Name)" ng-if="items.State!=9"></span>
+							</div>
+							
+							<div class="equ-params" style="margin-top: 2px;margin-bottom: 2px;">
+								<span>设备保养数：</span>
+								<span ng-bind="item.EqCount-item.Overplus "></span> /
+								<span ng-bind="item.EqCount"></span>
+								
+							</div>
+						</div>
+						<div class="check-data-li-right" ng-click="tap(item,'check')" ng-bind="'保养记录'"></div>
+					</li>
+				</ul>
+				<md-no-data ng-show="data && data.length==0">暂无数据</md-no-data>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script>
+			app.controller("ParentPageController", ["$scope", "ApiService", "DataService", "Loading", "RPCObserver", "UtilsService", function($scope, ApiService, DataService, Loading, RPCObserver, UtilsService) {
+				$scope.pageIndex = 0;
+				$scope.pageSize = 20;
+				var type = query('type');
+				//1 待保养 2 已保养
+				$scope.checkType = query("checkType");
+				$scope.strDate = query("startDate") ? query("startDate") + " 00:00:00" : "";
+				$scope.endDate = query("endDate") ? query("endDate") + " 23:59:59" : "";
+				var authType = {
+					my: 1,
+					dept: 2,
+					depts: 3,
+					all: 4
+				};
+
+				function init() {
+					$scope.checkType == 1 ? $scope.checkType = 1 : $scope.checkType = 2;
+					var url = ApiService.Api52 + "/api/v1/EqMaintain/GetPendMaintainPlanList" + "?type=" + $scope.checkType + "&strDate=" + $scope.strDate + "&endDate=" + $scope.endDate;
+					url += "&pageIndex=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize + "&authType=" + authType[type];
+					$scope.url = url;
+				};
+				$scope.$on('refresh_pageindex', init);
+
+				RPCObserver.on("equ-check-list-refresh", "refreshview");
+				window.refreshview = function(dateObj) {
+				    $scope.strDate = dateObj && dateObj.startDate ? dateObj.startDate:"";
+					$scope.endDate = dateObj && dateObj.endDate ? dateObj.endDate:"";
+					init();
+					$scope.$broadcast('md_pullrefresh');;
+				}
+
+				$scope.tap = function(item, type) {
+					if($scope.checkType == 2) {
+						var params = {
+							"details": {
+								id: "equ-maintens-info.html",
+								url: "equ-maintens-info.html?planId=" + item.PlanID + "&from=unchecklist"
+							},
+							"check": {
+								id: "equ-maintens-Equlist.html",
+								url: "equ-maintens-Equlist.html?id=" + item.PlanID+'&planLogId='+item.ID+'&havedoen=true'+'&done=true'
+							}
+						}
+						UtilsService.openWindow({
+							needLogin: true,
+							id: params[type].id,
+							url: params[type].url
+						})
+					}
+				}
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

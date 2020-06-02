@@ -1,0 +1,147 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+	<link href="../../css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	<style type="text/css">
+		.icon {
+			width: 16px;
+		}
+
+		.publishtyper {
+			font-size: 1.5rem;
+			color: #3296FA
+		}
+	</style>
+</head>
+
+<body ng-controller="AssistDetail">
+	<header class="mui-bar mui-bar-nav" style="display:none;">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left">我的资源圈</a>
+		<a class="mui-pull-right menu-add" id="add" ng-click="recordVideo()" style="display: none;"
+			ng-class="{'mui-block':isLoad||ispublisher}">
+			<img class="icon" src="../../images/equ/equ-video.png" />
+		</a>
+		<a class="mui-pull-right menu-search" id="search" ng-click="tap('search')" style="display: none;"
+			ng-class="{'mui-block':isLoad}">
+			<img class="icon" src="../../images/search.png" />
+			<!--<span class="publishtyper" ng-bind="publisher">
+					
+				</span>-->
+		</a>
+	</header>
+	<script type="text/javascript" src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/rpc.js"></script>
+	<script type="text/javascript" src="../message/transMessage.js"></script>
+	<script type="text/javascript" src="../../js/xss.min.js"></script>
+	<script type="text/javascript">
+		var isTitle = query("isTitle");
+		var offsetTop = "45px";
+		if (isTitle == "false") {
+			offsetTop = 0;
+			document.querySelector(".mui-bar-nav").style.display = "none";
+		} else {
+			document.querySelector(".mui-bar-nav").style.display = "block";
+		}
+		app.controller("AssistDetail", ["$scope", "AuthService", "ApiService", "DataService",
+			"UtilsService", "ChatUserService", "Loading", "RPCObserver", "$filter", "CacheService", "$timeout",
+			function ($scope, AuthService, ApiService, DataService, UtilsService, ChatUserService, Loading,
+				RPCObserver,
+				$filter, CacheService, $timeout) {
+				var user = CacheService.get('user');
+				$scope.isLoad = false
+				$scope.ispublisher = false
+				$scope.publisher = '全部';
+				$scope.publisherid = 0;
+				$scope.selectedman = '';
+				$scope.recordVideo = function () {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'resource-circle-publish.html',
+						url: 'resource-circle-publish.html'
+					});
+				}
+				window.recordVideo = $scope.recordVideo;
+				var curView = plus.webview.currentWebview();
+				getcomadminautor()
+
+				function getcomadminautor() {
+					Loading.show();
+					var url = ApiService.Api50 + "/api/v1/Common/MdtGetIsAdmin/" + user.UserID;
+					DataService.get(url).then(function (res) {
+						if (res.IsCreater || res.IsAdmin) {
+
+							Loading.hide();
+							$scope.isLoad = true;
+
+						}
+					})
+				}
+				loadData()
+
+				function loadData() {
+					var url = ApiService.Api64 +
+						"/api/v1/ResCircle/GetPagedResCircleUserList?pageIndex=1&pageSize=100";
+					DataService.get(url).then(function (res) {
+						if (res) {
+							var isindex = res.DataRows.findIndex(function (item) {
+								return item.UserID === user.UserID
+							})
+							if (isindex > -1) {
+								//								console.log(00000)
+								$scope.ispublisher = true
+								if (isTitle == "false") {
+									curView.opener().evalJS("canPublish(" + $scope.ispublisher + ")");
+								}
+							}
+						}
+					})
+				}
+				mui.init({
+					subpages: [{
+						url: 'resource-my-circle-list.html',
+						id: 'resource-my-circle-list.html',
+						styles: {
+							top: offsetTop,
+							bottom: 0
+						}
+					}]
+				})
+				RpcServer.expose('RPC_RefreshListTitle', function (params) {
+					$scope.selectedman = params
+					$scope.publisher = params.ViewName;
+					$scope.publisherid = params.UserID;
+					$scope.$apply()
+				});
+				$scope.tap = function () {
+					UtilsService.openWindow({
+						id: 'resource-circle-publisher-select.html',
+						url: "resource-circle-publisher-select.html?action=select&multiselect=false&pid=" +
+							$scope.publisherid,
+						extras: {
+							bannedUsers: $scope.selectedman,
+							callback: "selectUserCallback"
+						}
+					})
+				}
+
+			}
+		]);
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			plus.webview.currentWebview().setStyle({
+				scrollIndicator: 'none'
+			});
+		});
+	</script>
+</body>
+
+</html>

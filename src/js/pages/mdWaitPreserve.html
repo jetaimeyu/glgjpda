@@ -1,0 +1,45 @@
+<!--下拉刷新容器-->
+<ul class="data-group" style="margin-top: 0px;">
+	<li class="mui-table-view-cell data-row" ng-repeat="item in model" ng-click="tap(item)">
+		<p class="opt md-icon font-15">
+			<span class="icon-right"></span>
+		</p>
+		<div class="body">
+			<div class="equ-name font-15" ng-bind="item.PlanName"></div>
+			<div class="equ-address font-12" ng-bind="'保养级别：' + item.EqLevel"></div>
+			
+			<div class="expecte-overhaul font-14" ng-class="item.MaintainDate>=item.Today?'expecte-overhaul':'no-expecte-overhaul'" ng-bind="'计划保养日期：'+item.MaintainDate"></div>
+		    <div class="expecte-overhaul font-14">
+				<span>保养设备数：<span ng-bind="item.EqCount-item.Overplus "></span>/<span ng-bind="item.EqCount"></span></span>
+			</div>
+		</div>
+	</li>
+</ul>
+<style type="text/css">
+	
+	.data-group .data-row .body {
+		padding: 5px 10px 5px 16px;
+	}
+	
+	.equ-name {
+		color: #000000;
+	}
+	
+	.equ-model,
+	.equ-address {
+		color: #AAAAAA;
+		line-height: 17px;
+	}
+	
+	.expecte-overhaul {
+		color: #3296FA;
+		margin-top: 5px;
+		line-height: 19px;
+	}
+	
+	.no-expecte-overhaul {
+		color: #EA3535;
+		margin-top: 5px;
+		line-height: 19px;
+	}
+</style>

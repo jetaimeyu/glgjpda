@@ -1,0 +1,474 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<link href="../../css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	<link rel="stylesheet" href="../../css/swiper-4.2.2.min.css" />
+	<style type="text/css">
+		.mui-bar-nav {
+			-webkit-box-shadow: none;
+			border-bottom: solid 1px #e7e7e7;
+		}
+
+		.mui-bar-nav {
+			background-color: #FFFFFF;
+		}
+
+		.mui-bar-nav .mui-title,
+		.mui-bar-nav .mui-icon {
+			color: #323232;
+			max-width: 94%;
+			min-width: 50%;
+			/*CSS3弹性盒子*/
+			display: -ms-flex;
+			display: -webkit-flex;
+			display: flex;
+			-webkit-flex-direction: row;
+			-ms-flex-direction: row;
+			flex-direction: row;
+			-ms-flex-align: center;
+			-webkit-align-items: center;
+			-webkit-box-align: center;
+			align-items: center;
+		}
+
+		.mui-action-back span {
+			font-size: 1.7rem;
+			color: #323232;
+			width: calc(100% - 71px);
+			margin-left: 12px;
+		}
+
+		.comp-logo {
+			border: 1px solid #ECECEC;
+			border-radius: 50%;
+			margin-right: 8px;
+			width: 30px;
+			display: block;
+			height: 30px;
+		}
+
+		.add-resource {
+			position: relative;
+			z-index: 20;
+			padding: 16px 8px;
+		}
+
+		.add-resource img {
+			width: 16px;
+		}
+
+		.moveLi {
+			width: 20px !important;
+		}
+
+		.navDiv {
+			width: 100%;
+			position: relative;
+		}
+
+		.navDiv:after {
+			content: "";
+			position: absolute;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			height: 1px;
+			background-color: #CCCCCC;
+		}
+
+		.navUl {
+			margin-right: 41px;
+		}
+
+		.moveMod {
+			position: absolute;
+			top: 0px;
+			right: 5px;
+			width: 41px;
+			text-align: center;
+			line-height: 40px;
+		}
+
+		#popoverMove {
+			width: 105.5px;
+		}
+
+		.md-tab .md-tab-item:after {
+			height: 0px;
+		}
+
+		.icon-more {
+			font-size: 1.9rem;
+			color: #323232;
+		}
+
+		#moreWin {
+			position: relative;
+			z-index: 20;
+			padding: 2px 10px;
+			font-size: 2rem;
+			margin-right: -10px;
+		}
+
+		.longTitle {
+			padding-right: 0px;
+		}
+
+		.longTitle .headerNav {
+			padding-right: 0px !important;
+			max-width: 100%;
+		}
+
+		.icon {
+			width: 16px;
+		}
+
+		.mui-table-cell {
+			display: table-cell !important;
+		}
+
+		.mui-banner {
+			width: 100%;
+			box-sizing: border-box;
+			padding: 8px 0 13px 0;
+			position: relative;
+			overflow: hidden;
+		}
+
+		.mui-banner:after {
+			position: absolute;
+			width: 100%;
+			left: 0px;
+			right: 0px;
+			bottom: 0;
+			height: 1px;
+			content: '';
+			-webkit-transform: scaleY(0.5);
+			transform: scaleY(0.5);
+			background-color: #EAEAEA;
+		}
+
+		.ban-img {
+			width: 100%;
+		}
+
+		.ban-img img {
+			width: 100%;
+			height: 116px;
+		}
+
+		.mui-bar-nav~.mui-content .mui-pull-top-pocket {
+			top: 205px !important;
+		}
+	</style>
+</head>
+
+<body ng-controller="CompIndexController">
+	<header class="mui-bar mui-bar-nav" ng-class="{'longTitle':userCompId==compId}">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left headerNav">
+			<img class="comp-logo" ng-src="{{moreModules.ID|getCompLogo:30:30}}" ng-show="moreModules.ID!=0">
+			<span class="mui-ellipsis compName" ng-bind="moreModules.CompName" ng-show="moreModules.ID!=0"></span>
+		</a>
+		<a class="mui-pull-right menu-add moveMod" id="moreWin" ng-click="moreWebview()" ng-show='userCompId!=compId'
+			ng-class="{'mui-block':userCompId!=compId}" style="display: none;">
+			<img class="icon" src="../../images/add.png" />
+		</a>
+		<!--<a class="mui-icon icon-add moveMod mui-pull-right" id="moreWin" ng-click="moreWebview()" ng-show='userCompId!=compId' ng-class="{'mui-block':userCompId!=compId}" style="display: none;"></a>-->
+	</header>
+	<div class="mui-banner" style="margin-top: 40px;padding-bottom: 4px!important;height:132px;">
+		<img src="../../images/chat/45.png" style="width:100%;height:116px; position:absolute;top:9px;" />
+		<div class="swiper-container" id="swiper1" style="opacity: 0;background: #f1f1f1;">
+			<div class="swiper-wrapper">
+				<div class="swiper-slide" ng-repeat="item in picPath" data-swiper-autoplay="2000">
+					<div class="ban-img">
+						<img src="{{item}}" />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="md-tab navDiv" id="md-tab-wrap" top="150" style="margin-top:0px;display: none;"
+		ng-class="{'mui-block':isLoad}">
+		<ul class="md-tab" id="md-tab" top="214" ng-class="moreModules.ShowConfigItems.length!=0?'navUl':''">
+			<li class="md-tab-item" ng-class="{'md-active':tabIndex==0}"
+				ng-href="{{'prodlib.html?compid=' + compId+'&isResource='+isResource}}" winid="sub0">产品库</li>
+			<li class="md-tab-item" style="display:none;"
+				ng-class="{'md-active':tabIndex==4,'mui-table-cell':isResource && isEqs}"
+				ng-href="{{'../eqmentlib/prodlib.html?compid=' + compId+'&isResource='+isResource}}" winid="sub4">装备
+			</li>
+			<li class="md-tab-item" ng-class="{'md-active':tabIndex==1}" ng-href="{{'intro.html?compid=' + compId}}"
+				winid="sub1">介绍</li>
+			<li class="md-tab-item" ng-class="{'md-active':tabIndex==2}" ng-href="{{'news.html?compid=' + compId}}"
+				winid="sub2">新闻</li>
+			<li class="md-tab-item" ng-class="{'md-active':tabIndex==3}" ng-href="{{'service.html?compid=' + compId}}"
+				winid="service.html-sub3">联系人</li>
+			<li class="md-tab-item" ng-class="{'md-active':tabIndex==4}"
+				ng-href="{{'../ing/resource-circle.html?compid=' + compId}}" winid="service.html-sub4"
+				ng-if="userCompId>0">资源圈</li>
+		</ul>
+		<a class="mui-icon icon-more moveMod" id="moveMod" onclick="floatWebview"
+			ng-show="moreModules.ShowConfigItems.length!=0"
+			ng-class="{'mui-block':moreModules.ShowConfigItems.length!=0}" style="display: none;"></a>
+	</div>
+	<script type="text/javascript" src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/rpc.js"></script>
+	<script src="../message/transMessage.js"></script>
+	<script src="../../libs/swiper-4.2.2.min.js"></script>
+	<script type="text/javascript">
+		app.controller("CompIndexController", ["$scope", "ApiService", "DataService", "Loading", "AuthService",
+			"ChatUserService", "UtilsService", "CacheService",
+			function ($scope, ApiService, DataService, Loading, AuthService, ChatUserService, UtilsService,
+				CacheService) {
+				$scope.userCompId = "";
+
+				AuthService.getAuth().then(function (user) {
+					$scope.userCompId = user.CompID;
+					getCoPicList();
+				});
+				var curUser = CacheService.get("user");
+				//企业编号
+				$scope.compId = query('compid');
+				$scope.tabIndex = query('tabidx') || 0;
+				$scope.isResource = query("isResource") || 0;
+				$scope.isEqs = false;
+				$scope.moreModules = {
+					ID: 0,
+					CompName: '',
+					ShowConfigItems: []
+				};
+				$scope.img = [{
+					"imgurl": '../../images/chat/45.png'
+				}];
+				//获取更多模块
+				function init() {
+					var url = ApiService.Api50 + "/api/v1/Comp/GetCompShow?compId=" + $scope.compId;
+					DataService.get(url).then(function (res) {
+						$scope.moreModules = res;
+						//企业秀
+						//						setTimeout(function() {
+						//							floatCompShow(res);
+						//						}, 200)
+					})
+				}
+
+				window.sendToUser = function () {
+					UtilsService.openWindow({
+						id: "contact-select.html",
+						url: "../common/contact-select.html?action=select&multiselect=true&isGroup=true",
+						extras: {
+							selectObj: [],
+							callback: "forwardback"
+						}
+					});
+				};
+
+				window.forwardback = function (res) {
+					res.forEach(function (user) {
+						var type = 7;
+						var content = {
+							eventName: "comp",
+							logo: ApiService.Pic + '/Y29tcC9sb2dv_' + $scope.moreModules.ID +
+								'_70x70.png',
+							title: $scope.moreModules.CompName,
+							desc: $scope.moreModules.BriefOrMainProduct,
+							params: [$scope.moreModules.ID, $scope.moreModules.CompName, $scope
+								.moreModules.Mdt
+							]
+						};
+						if (user.GroupCode) {
+							ChatUserService.sendGroup({
+								GroupCode: user.UserID,
+								GroupName: user.ViewName,
+								GroupID: user.GroupID,
+								content: content,
+								type: type
+							});
+						} else {
+							ChatUserService.send({
+								chatId: user.UserID,
+								chatName: user.ViewName,
+								chatCompId: user.CompID,
+								hasLogo: curUser.ULogoIsExist,
+								chatLogo: user.ULogoIsExist,
+								type: type,
+								content: content
+							});
+						}
+					});
+				}
+
+				init();
+
+				function isShowEqs() {
+					var url = ApiService.Api45 +
+						"/api/v1.0/Equipment/GetCompEqInfoMergerList?page=1&pageSize=10&compId=" + $scope.compId +
+						"&catalogId=0";
+					DataService.get(url).then(function (res) {
+						$scope.isEqs = res.TotalCount > 0;
+					});
+				}
+
+				isShowEqs();
+				//获取自己企业的宣传图
+				function getCoPicList() {
+
+					var url = ApiService.Api52 + "/api/v1/Comp/GetMdtCoPicList?compId=" + $scope.compId;
+					DataService.get(url).then(function (res) {
+						//			console.log(JSON.stringify(url))
+						$scope.isLoad = true;
+						if (res.length > 0) {
+							$scope.picPath = res.map(function (item) {
+								return ApiService.Api52 + "/api/v1/File/DownLoadPic?filePath=" + item
+									.PicPath;
+							})
+						} else {
+							$scope.picPath = $scope.img.map(function (item) {
+								return item.imgurl;
+							})
+						}
+
+						setTimeout(function () {
+							var mySwiper = new Swiper('#swiper1', {
+								watchOverflow: true,
+								speed: 1000,
+								autoplay: true,
+								loop: true,
+								effect: 'cube',
+								cubeEffect: {
+									slideShadows: false,
+									shadow: false,
+									shadowOffset: 100,
+									shadowScale: 0.6
+								},
+								on: {
+									init: function () {
+										document.querySelector("#swiper1").style.opacity = "1";
+									}
+								}
+							})
+						}, 100)
+
+						Loading.hide();
+						$scope.loaded = true;
+					}, function () {
+						$scope.loaded = true;
+					});
+				};
+
+				// 创建头部更多悬浮窗口
+				$scope.moreWebview = function () {
+					if (moreWin) {
+						// 避免快速多次点击创建多个窗口
+						moreWin.show("fade-in");
+					} else {
+						var styles = {
+							background: 'transparent',
+							zindex: 10,
+						};
+						if (mui.os.android && ["5.0", "5.1"].indexOf(mui.os.version) >= 0) {
+							styles.hardwareAccelerated = false;
+						}
+
+						moreWin = plus.webview.create("../menus/resource-menus.html?compId=" + query('compid') +
+							"&resid=" + ($scope.moreModules.ResId || 0), "menu", styles, {
+								callback: 'resCB'
+							});
+						moreWin.show("fade-in");
+					}
+				}
+			}
+		]);
+
+		//弹出悬浮窗
+		var floatw = null;
+		var moreWin = null;
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+
+			MdConfig.StartUsingTab();
+			//固定为竖屏显示
+			plus.screen.lockOrientation("portrait-primary");
+			//菜单
+			ws = plus.webview.currentWebview();
+			var styles = {
+				background: 'transparent',
+				zindex: 10,
+			};
+			if (mui.os.android && ["5.0", "5.1"].indexOf(mui.os.version) >= 0) {
+				styles.hardwareAccelerated = false;
+			}
+			floatw = plus.webview.create("../menus/moveModules.html?compId=" + query('compid'), "menu", styles);
+		});
+
+		// 创建悬浮窗口
+		function floatWebview() {
+			if (floatw) { // 避免快速多次点击创建多个窗口
+				floatw.show("fade-in");
+			} else {
+				var styles = {
+					background: 'transparent',
+					zindex: 10,
+				};
+				if (mui.os.android && ["5.0", "5.1"].indexOf(mui.os.version) >= 0) {
+					styles.hardwareAccelerated = false;
+				}
+				floatw = plus.webview.create("../menus/moveModules.html?compId=" + query('compid'), "menu", styles);
+				floatw.show("fade-in");
+			}
+		}
+
+		function resCB(res) {
+			var appElement = document.querySelector('[ng-controller=CompIndexController]');
+			var $scope = angular.element(appElement).scope();
+			$scope.moreModules.ResId = res.resId;
+			$scope.$apply();
+
+			//移除资源时，res.resId为空，则要刷新对应的分组
+			//RpcClient.invoke("sourceWind", "RPC_RefreshResource", res.resId ? res.groupId : $scope.moreModules.GroupID); 
+			RpcClient.invoke("compWind", "RPC_RefreshResource", res.resId ? res.groupId : $scope.moreModules.GroupID);
+			//RpcClient.invoke("friendWind", "RPC_RefreshResource", res.resId ? res.groupId : $scope.moreModules.GroupID);
+			//刷新企业资源搜索列表
+			RpcClient.invoke("search-resource.html", "RPC_SearchUserListRefresh");
+		}
+
+		//弹出菜单
+		document.getElementById("moveMod").addEventListener("tap", function () {
+			floatWebview();
+		});
+		// 创建企业秀悬浮窗口（暂时不用）
+		//			function floatCompShow(res) {
+		//				var floatshow = null;
+		//				if(floatshow) { // 避免快速多次点击创建多个窗口
+		//					return;
+		//				}
+		//				floatshow = plus.webview.create("compShow.html", "compShow.html", {
+		//					margin: "auto",
+		//					scrollIndicator: 'none',
+		//					scalable: false,
+		//					popGesture: 'none'
+		//				}, {
+		//					CompName: res.CompName,
+		//					Mdt: res.Mdt,
+		//					BriefOrMainProduct: res.BriefOrMainProduct,
+		//					CompID: res.ID
+		//				});
+		//				floatshow.addEventListener("loaded", function() {
+		//					floatshow.show('slide-in-top', 300);
+		//					floatshow = null;
+		//				}, false);
+		//			}
+	</script>
+</body>
+
+</html>

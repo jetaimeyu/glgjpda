@@ -1,0 +1,528 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+  <link rel="stylesheet" href="../../../css/mui.min.css">
+  <link rel="stylesheet" href="../../../css/common.css">
+  <link rel="stylesheet" href="../../../icon-font/iconfont.css">
+  <style type="text/css">
+    -group:first-child {
+      margin-top: 0px;
+    }
+
+    .mui-content {
+      position: absolute;
+      top: 0px;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      overflow: auto;
+    }
+
+    .phraseUL {
+      text-align: center;
+      margin-top: 0;
+    }
+
+    .phraseUL li {
+      line-height: 20px;
+      padding: 15px;
+      padding-right: 36px;
+      min-height: 50px !important;
+    }
+
+    .add-phrase {
+      color: #3296FA;
+      box-shadow: 0px -1px 3px 0px rgba(180, 180, 180, 0.5)
+    }
+
+    #adpopover {
+      /*min-width: 260px;*/
+      /*height: 370px;*/
+      top: 65% !important;
+      margin-top: -150px;
+      left: 50% !important;
+      margin-left: -141px;
+      border-radius: 3px;
+      background-color: #fff;
+    }
+
+    #adpopover.mui-popover .mui-popover-arrow {
+      display: none !important;
+    }
+
+    #adpopover -group:before {
+      height: 0;
+    }
+
+    #adpopover -group -row .body {
+      padding: 10px 5px 11px 10px;
+    }
+
+    #adpopover -group -row:after {
+      left: 10px;
+      background-color: #E5E5E5;
+    }
+
+    #adpopover -group -row.first:after {
+      left: 5px;
+      right: 5px;
+      background-color: #E5E5E5;
+    }
+
+    #adpopover -group -row:last-child:after {
+      height: 1px;
+      left: 5px;
+      right: 5px;
+    }
+
+    #adpopover -group -row.first {
+      min-height: 38px
+    }
+
+    .addelment {
+      margin: 12px 20px 12px 20px;
+    }
+
+    .addelment a {
+      background-color: #3296FA;
+      color: #fff;
+      padding: 5px 0;
+      border: 1px solid #3296FA;
+    }
+
+    -group -row .label-gray {
+      color: #333333;
+    }
+
+    .info-title {
+      margin-left: 10px;
+      line-height: 1;
+      color: #1f1f1f;
+    }
+
+    .title {
+      color: #1f1f1f;
+    }
+
+    .mdt_leftline {
+      width: 3px;
+      height: 14px;
+      background: #169BD5;
+      margin-top: -13px;
+      margin-left: -3px;
+    }
+
+    #adpopover -group -row label {
+      width: 70px;
+    }
+
+    span.placeholder a {
+      color: #dddddd !important;
+    }
+  </style>
+</head>
+
+<body ng-controller="MNEditController">
+  <header class="mui-bar mui-bar-nav">
+    <a class="mui-action-back mui-icon icon-back mui-pull-left" ng-bind="ID>0?'修改':'新增'"></a>
+    <a class="mui-pull-right menu-more mui-icon icon-saoyisao" ng-click="tap('scan')"></a>
+  </header>
+  <div class="mui-content" ng-class="{'mui-block':isLoad}" style="display: none;">
+    <ul class="data-group">
+      <li class="data-row must">
+        <label>客户名称</label>
+        <div class="body">
+          <input maxlength="20" id="name" onkeyup="value=value.substr(0,20)" placeholder="请输入客户名称"
+            ng-model="CustomerName" />
+        </div>
+      </li>
+      <li class="data-row">
+        <label>联系方式</label>
+        <div class="body">
+          <input maxlength="15" id="phone" class="needsclick" onkeyup="value=value.substr(0,15)" placeholder="请输入联系电话"
+            ng-model="CustomerTel" />
+        </div>
+      </li>
+      <li class="data-row">
+        <label>客户地址</label>
+        <div class="body">
+          <input maxlength="50" id="address" onkeyup="value=value.substr(0,50)" placeholder="请输入客户地址"
+            ng-model="CustomerAddress" />
+        </div>
+      </li>
+      <li class="data-row">
+        <label>巡检日期</label>
+        <p class="opt md-icon font-15" ng-click="tap('time1')">
+          <span class="icon-right"></span>
+        </p>
+        <div class="body" ng-click="tap('time1')">
+          <span class="placeholder" ng-if="RecordDate==''">请选择巡检日期</span>
+          <span ng-if="RecordDate!=''" ng-bind="RecordDate"></span>
+        </div>
+      </li>
+      <li class="data-row">
+        <label>发动机号</label>
+        <div class="body">
+          <input maxlength="30" id="EngineNumber" onkeyup="value=value.substr(0,30)" placeholder="请输入发动机号"
+            ng-model="EngineNumber" />
+        </div>
+      </li>
+      <li class="data-row">
+        <label>机型</label>
+        <div class="body">
+          <input maxlength="30" id="ModelName" onkeyup="value=value.substr(0,30)" placeholder="请输入机型"
+            ng-model="ModelName" />
+        </div>
+      </li>
+      <li class="data-row">
+        <label>整机编号</label>
+        <div class="body">
+          <input maxlength="30" id="MachineNumber" onkeyup="value=value.substr(0,30)" placeholder="请输入整机编号"
+            ng-model="MachineNumber" />
+        </div>
+      </li>
+      <li class="data-row ">
+        <label>交机日期</label>
+        <p class="opt md-icon font-15" ng-click="tap('time2')">
+          <span class="icon-right"></span>
+        </p>
+        <div class="body" ng-click="tap('time2')">
+          <span class="placeholder" ng-if="DeliveryDate==''">请选择交机日期</span>
+          <span ng-if="DeliveryDate!=''" ng-bind="DeliveryDate"></span>
+        </div>
+      </li>
+      <li class="data-row ">
+        <label>工作小时数</label>
+        <div class="body">
+          <input maxlength="10" id="WorkHours" onkeyup="value=value.substr(0,10)" placeholder="请输入工作小时数"
+            ng-model="WorkHours" />
+        </div>
+      </li>
+      <li class="data-row ">
+        <label>车辆使用情况简要描述</label>
+        <div class="body">
+          <div class="edit">
+            <div ng-model-div-text="Description" class="needsclick" placeholder="请输入车辆使用情况简要描述" lenlimit="200"></div>
+          </div>
+        </div>
+      </li>
+      <li class="data-row ">
+        <label>当地亩产</label>
+        <div class="body">
+          <input maxlength="10" id="YieldPerMu" onkeyup="value=value.substr(0,10)" placeholder="请输入当地亩产"
+            ng-model="YieldPerMu" />
+        </div>
+      </li>
+      <li class="data-row ">
+        <label>拉运配套情况 </label>
+        <p class="opt md-icon font-15" ng-click="tap('lypt')">
+          <span class="icon-right"></span>
+        </p>
+        <div class="body" ng-click="tap('lypt')">
+          <span class="placeholder" ng-if="MatchName==''">请选择</span>
+          <span ng-if="MatchName!=''" ng-bind="MatchName"></span>
+        </div>
+      </li>
+      <li class="data-row ">
+        <label>故障频率</label>
+        <div class="body">
+          <input maxlength="20" id="FailureCount" onkeyup="value=value.substr(0,20)" placeholder="请输入故障频率"
+            ng-model="FailureCount" />
+        </div>
+      </li>
+      <li class="data-row ">
+        <label>首次故障工作小时</label>
+        <div class="body">
+          <input maxlength="10" id="FailureDay" onkeyup="value=value.substr(0,10)" placeholder="请输入首次故障工作小时"
+            ng-model="FailureDay" />
+        </div>
+      </li>
+      <li class="data-row ">
+        <label>当日故障记录</label>
+        <div class="body">
+          <div class="edit">
+            <div ng-model-div-text="FaultRecord" class="needsclick" placeholder="请输入当日故障记录" lenlimit="200"></div>
+          </div>
+        </div>
+      </li>
+      <li class="data-row ">
+        <label>故障工单</label>
+        <div class="body">
+          <input maxlength="10" id="WorkOrderFailureID" onkeyup="value=value.substr(0,30)" placeholder="请输入故障工单号"
+            ng-model="WorkOrderFailureID" />
+        </div>
+      </li>
+    </ul>
+    <div class="mui-content-padded" style="margin-bottom: 80px;">
+      <button id="btnSave" class="mui-btn mui-btn-primary mui-btn-block" ng-click="save()">保存</button>
+    </div>
+
+  </div>
+  <!--无网络或请求失败重试-->
+  <md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+  <script type="text/javascript" src="../../../js/mui.js"></script>
+  <script type="text/javascript" src="../../../js/angular.min.js"></script>
+  <script type="text/javascript" src="../../../js/common.js"></script>
+  <script type="text/javascript" src="../../../js/utils.js"></script>
+  <script type="text/javascript" src="../../../js/rpc.js"></script>
+  <script type="text/javascript">
+    app.controller("MNEditController", ["$scope", "ApiService", "UtilsService", "DataService", "Loading", "$Modal", "RPCObserver", "$filter", "DatePickerService", "AuthService",
+      function ($scope, ApiService, UtilsService, DataService, Loading, $Modal, RPCObserver, $filter, DatePickerService, AuthService) {
+        //
+        $scope.ID = query('id') || 0
+        $scope.CustomerName = ""
+        $scope.CustomerTel = ""
+        $scope.CustomerAddress = ""
+        $scope.WorkHours = ""
+        $scope.Description = ""
+        $scope.YieldPerMu = ""
+        $scope.EngineProcName = ""
+        $scope.EngineNumber = ""
+        $scope.ModelName = ""
+        $scope.MachineNumber = ""
+        $scope.MatchType = 0
+        $scope.FailureCount = 0
+        $scope.FailureDay = 0
+        $scope.FaultRecord = ""
+        $scope.WorkOrderFailureID = ""
+        $scope.RecordDate = nowDate()
+        //
+        //
+        var MatchArr = ['充足', '一般', '不足']
+        $scope.MatchName = MatchArr[$scope.MatchType]
+
+        //无网络或请求失败重试,或已删除
+        $scope.retryModal = {}
+
+        if ($scope.ID > 0) {
+          getMaintenanceInfoById()
+        } else {
+          $scope.isLoad = true;
+        }
+        function nowDate() {
+          var date = new Date()
+          var y = date.getFullYear(),
+            m = date.getMonth() + 1,
+            d = date.getDate()
+          return y + '-' + (m > 9 ? m : '0' + m) + '-' + (d > 9 ? d : '0' + d)
+        }
+        function getMaintenanceInfoById() {
+          var url = ApiService.Api50 + "/api/v1/ZJMN/GetZjmnWorklogInfo/" + $scope.ID;
+          DataService.get(url).then(function (res) {
+            $scope.CustomerName = res.CustomerName
+            $scope.CustomerTel = res.CustomerTel
+            $scope.CustomerAddress = res.CustomerAddress
+            $scope.WorkHours = res.WorkHours
+            $scope.Description = res.Description
+            $scope.YieldPerMu = res.YieldPerMu
+            $scope.EngineProcName = res.EngineProcName
+            $scope.EngineNumber = res.EngineNumber
+            $scope.ModelName = res.ModelName
+            $scope.MachineNumber = res.MachineNumber
+            $scope.MatchType = res.MatchType
+            $scope.FailureCount = res.FailureCount
+            $scope.FailureDay = res.FailureDay
+            $scope.FaultRecord = res.FaultRecord
+            $scope.WorkOrderFailureID = res.WorkOrderFailureID
+            $scope.RecordDate = res.RecordDate || nowDate()
+            $scope.MatchName = MatchArr[$scope.MatchType]
+            $scope.isLoad = true;
+
+            $scope.retryModal.state = "";
+          }, function (error) {
+            $scope.isLoad = false;
+            $scope.retryModal.state = error.State;
+          });
+        }
+
+        $scope.chooseTitle = "";
+        window.ScanBackA = function (obj) {
+          Loading.show();
+          //console.log(obj)
+          obj = JSON.parse(obj);
+          setTimeout(function () {
+            getProdInfo(obj.codeValue, obj.resInfo.SourceCompID);
+          }, 500);
+        }
+        //选择抄送人
+        $scope.tap = function (key) {
+          switch (key) {
+            case 'scan':
+              openWindow("../../scan/scan.html", {
+                callback: 'ScanBackA',
+              }, 'scan.html')
+              break;
+            case 'lypt':
+              $scope.selectModal(2);
+              $scope.chooseTitle = "选择";
+              break;
+            case 'time1':
+              DatePickerService.pickDate({
+                selected: $scope.RecordDate,
+                maxDate: (new Date).setDate((new Date).getDate())
+              }).then(function (res) {
+                $scope.RecordDate = res;
+              });
+              break;
+            case 'time2':
+              DatePickerService.pickDate({
+                selected: $scope.objDataDeliveryDate,
+                maxDate: (new Date).setDate((new Date).getDate())
+              }).then(function (res) {
+                $scope.DeliveryDate = res;
+              });
+              break;
+            case 'selectUser':
+              UtilsService.openWindow({
+                needLogin: true,
+                id: "contact-select.html",
+                url: "../../common/contact-select.html?action=select&multiselect=true&type=org",
+                extras: {
+                  selectObj: $scope.pushUsers,
+                  callback: "selectUserCallback"
+                }
+              });
+              break;
+          }
+        };
+        var saving = false;
+        //保存
+        $scope.save = function () {
+          document.activeElement.blur();
+          //验证填字符长度
+          if (!checkLengthUtil.check()) {
+            return false;
+          }
+          //开始上传
+          saving = true;
+          submitData();
+        };
+
+        function submitData() {
+          if (!trim($scope.CustomerName)) {
+            mui.alert("请输入客户名称！");
+            return false
+          }
+          var url = ApiService.Api50 + "/api/v1/ZJMN/SaveZjmnWorklog";
+          var postData = {
+            ID: $scope.ID,
+            CustomerName: $scope.CustomerName,
+            CustomerTel: $scope.CustomerTel,
+            CustomerAddress: $scope.CustomerAddress,
+            WorkHours: $scope.WorkHours,
+            Description: $scope.Description,
+            YieldPerMu: $scope.YieldPerMu,
+            EngineProcName: $scope.EngineProcName,
+            EngineNumber: $scope.EngineNumber,
+            ModelName: $scope.ModelName,
+            MachineNumber: $scope.MachineNumber,
+            MatchType: $scope.MatchType,
+            FailureCount: $scope.FailureCount,
+            FailureDay: $scope.FailureDay,
+            FaultRecord: $scope.FaultRecord,
+            WorkOrderFailureID: $scope.WorkOrderFailureID,
+          }
+          //console.log(JSON.stringify(postData))
+          DataService.post(url, postData).then(function (res) {
+            Loading.hide();
+            if (res) {
+              //发送消息
+              //            $scope.ID = res;
+              //            RpcClient.invoke("J-repair-info.html", "RPC_RefreshWorkLog");
+              //            RPCObserver.broadcast('refresh_maintenance_list');
+              mui.toast("保存成功");
+              mui.back();
+            }
+            setTimeout(function () {
+              saving = false;
+            }, 1400);
+          });
+
+        }
+
+        //获取产品信息参数
+        function getProdInfo(code, compId) {
+          var url = ApiService.Api45 + "/api/v1.1/Produce/GetProdProduceInfoNewAll?mdcode=" + code + "&compid=" + compId;
+          DataService.get(url).then(function (res) {
+            Loading.hide()
+            var obj = {
+              "机型": '',
+              "整机编号": '',
+              "发动机号": ''
+            }
+            res.ProduceParams.forEach(function (item) {
+              obj[item.ParamName] = item.ParamDefValue
+            })
+            $scope.EngineNumber = obj['机型']
+            $scope.ModelName = obj['整机编号']
+            $scope.MachineNumber = obj['发动机号']
+          }).catch(function (err) {
+            console.log(err)
+          })
+        }
+
+
+        var mui_back = mui.back;
+        mui.back = function () {
+          if (isModal) {
+            $Modal.close();
+          } else {
+            RPCObserver.broadcast('refresh_ZHMN_list');
+            mui_back();
+          }
+        }
+        var isModal = false;
+        //选择modal
+        $scope.selectModal = function (key) {
+          $Modal.modal({
+            size: "small",
+            footer: false,
+            autoClose: true,
+            template: "<div style='max-height:55vh;overflow:auto;margin: -20px -10px -20px -10px;'><ul class='data-group phraseUL'><li class='data-row mui-ellipsis-2' ng-click='selPhrase(phrase,$index)' ng-repeat='phrase in params.phraseList' style='justify-content: center;'><div style='overflow: hidden;'><span ng-bind='phrase'></span></div></li></ul></div>",
+            params: {
+              phraseList: MatchArr
+            },
+            controller: ['$scope', "ApiService", "DataService", "$filter", function ($scope, ApiService, DataService,
+              $filter) {
+              isModal = true;
+              $scope.$on("modal_close", function () {
+                isModal = false;
+                mui("#adpopover").off("tap", ".savePhrase");
+              });
+              var appElement = document.querySelector('[ng-controller=MNEditController]');
+              var scope = angular.element(appElement).scope();
+
+              //选择工作分类
+              $scope.selPhrase = function (phrase, index) {
+                $scope.$modal.close();
+              }
+            }]
+          }).show();
+        };
+        //去掉回车换行
+        function iGetInnerText(testStr) {
+          var resultStr = testStr.replace(/[\r\n]/g, ""); //去掉回车换行
+          return resultStr;
+        }
+
+      }
+    ]);
+    //选择抄送人员回调
+    function selectUserCallback(obj) {
+      var appElement = document.querySelector('[ng-controller=MaintenanceEditController]');
+      var $scope = angular.element(appElement).scope();
+      $scope.pushUsers = angular.copy(obj);
+      $scope.$apply();
+    }
+
+    mui.plusReady(function () {
+      angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+    });
+  </script>
+</body>
+
+</html>

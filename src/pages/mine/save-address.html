@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport"
+		content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link href="../../css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	<link rel="stylesheet" href="save-address.css" />
+</head>
+
+<body ng-controller="addressEditController">
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left"></a>
+		<h1 class="mui-title">保存收货地址</h1>
+		<a id="btnDel" ng-if="!addressData.IsAdd" ng-click="del()" class="right-menu-words">删除</a>
+	</header>
+	<div class="mui-scroll-wrapper" id="wrapper" style="display: none;" ng-class="{'mui-block':isLoad}">
+		<ul class="data-group">
+			<li class="data-row must">
+				<label>收货人姓名</label>
+				<div class="body">
+					<input id="txtRecvUserName" type="text" maxlength="20" placeholder="请输入收货人姓名" />
+				</div>
+			</li>
+			<li class="data-row must">
+				<label>手机号码</label>
+				<div class="body">
+					<input type="tel" id="txtLinkPhone" maxlength="20" placeholder="请输入收货人手机号码" />
+				</div>
+			</li>
+			<li class="data-row must">
+				<label>地区</label>
+				<p class="opt md-icon icon-down" ng-click="showPickArea()">
+				</p>
+				<div class="body" ng-click="showPickArea()">
+					<span ng-show="!addressData.Province" class="placeholder">请选择省市区</span>
+					<span>{{addressData.Province | locationfilter:addressData.City:addressData.District}}</span>
+				</div>
+			</li>
+			<li class="data-row must">
+				<label>详细地址</label>
+
+				<div class="body">
+					<div class="edit">
+						<div class="needsclick" ng-model-div-text="addressData.Address" placeholder="{{'请输入详细地址'}}"
+							contenteditable="true" lenlimit="50"></div>
+					</div>
+				</div>
+			</li>
+			<li class="data-row">
+				<label>邮政编码</label>
+				<div class="body">
+					<input id="txtZipCode" type="text" maxlength="6" placeholder="请输入邮政编码" />
+				</div>
+			</li>
+			<li class="data-row">
+				<label>默认地址</label>
+				<div id="isDefault" class="body md-switch-group">
+					<a class="md-switch-button" ng-class="addressData.IsDefault==1?'md-active':''">是</a><a
+						class="md-switch-button" ng-class="addressData.IsDefault==1?'':'md-active'">否</a>
+				</div>
+			</li>
+		</ul>
+		<div class="mui-content-padded">
+			<button id="btnSave" ng-click="save()" class="mui-btn mui-btn-primary mui-btn-block">保存</button>
+		</div>
+	</div>
+	<script src="../../js/angular.min.js"></script>
+	<script src="../../js/mui.min.js"></script>
+	<script src="../../js/common.js"></script>
+	<script src="../../js/utils.js"></script>
+	<script src="../../js/rpc.js"></script>
+	<script>
+		app.controller("addressEditController", ["$scope", "UtilsService", "ApiService", "Loading", "DataService","RPCObserver",
+			function ($scope, UtilsService, ApiService, Loading, DataService, RPCObserver) {
+				$scope.addressData = {
+					IsAdd: true,
+					AddrID: 0,
+					RecvUserName: "", //联系人
+					LinkPhone: "", //联系电话
+					//收货地址
+					Province: "",
+					ProvinceCode: "",
+					City: "",
+					CityCode: "",
+					District: "",
+					Address: "",
+					MapLng: "", //经度
+					MapLat: "", //纬度
+					Street: "",
+					ZipCode: "",
+					IsDefault: 1,
+
+				};
+				$scope.IsOld = false;
+				$scope.IsShowPick = 0;
+				//选址窗口
+				var pickArea;
+
+				//预加载选址窗口
+				function prePickArea(callback) {
+
+					var pickName = "";
+					if ($scope.IsOld) {
+						pickName = "../common/pickareas-old.html";
+					} else {
+						pickName = "../common/pickareas.html";
+					}
+
+					if (plus.webview.getWebviewById(pickName)) {
+						plus.webview.getWebviewById(pickName).close();
+					}
+
+					//创建选型界面
+					pickArea = plus.webview.create(pickName, pickName, {
+						height: "400px",
+						margin: "auto",
+						scrollIndicator: 'none',
+						scalable: false,
+						bottom: '0',
+						background: 'transparent',
+						popGesture: 'none'
+					}, {
+						callback: "pickAreaCallback",
+						opener: plus.webview.currentWebview().id
+					});
+
+					//选型界面隐藏事件
+					pickArea.addEventListener("hide", function () {
+						plus.webview.currentWebview().setStyle({
+							mask: "none"
+						});
+					});
+
+					//当前窗口关闭事件
+					plus.webview.currentWebview().addEventListener("close", function () {
+						pickArea.close("none");
+					});
+
+					//遮罩点击事件
+					//遮罩点击事件
+					plus.webview.currentWebview().addEventListener("maskClick", function () {
+						$scope.IsShowPick = 0;
+						pickArea.hide("slide-out-bottom");
+						plus.webview.currentWebview().setStyle({
+							mask: "none"
+						});
+					}, false);
+
+					if (typeof (callback) == "function") {
+						callback();
+					}
+				};
+
+				//选址回调函数
+				window.pickAreaCallback = function (province, city, district) {
+					$scope.IsShowPick = 0;
+					pickArea.hide("slide-out-bottom");
+					$scope.addressData.Province = province;
+					$scope.addressData.City = city;
+					$scope.addressData.District = district;
+					$scope.$apply();
+				};
+
+				//显示选型界面
+				function showPickArea() {
+					$scope.IsShowPick = 1;
+					if (!pickArea) {
+						prePickArea(function () {
+							pickArea.show('slide-in-bottom', 300);
+
+							pickArea.evalJS("loadData('" + $scope.addressData.Province + "','" + $scope
+								.addressData.City + "','" + vm
+								.District + "')")
+
+							plus.webview.currentWebview().setStyle({
+								mask: "rgba(0,0,0,0.2)"
+							});
+
+						});
+					} else {
+						pickArea.show('slide-in-bottom', 300);
+
+						pickArea.evalJS("loadData('" + $scope.addressData.Province + "','" + $scope.addressData.City +
+							"','" + $scope.addressData.District + "')")
+
+						plus.webview.currentWebview().setStyle({
+							mask: "rgba(0,0,0,0.2)"
+						});
+					}
+
+				};
+
+				$scope.showPickArea = function () {
+					$scope.IsShowPick = 1;
+					if (!pickArea) {
+						prePickArea(function () {
+							pickArea.show('slide-in-bottom', 300);
+
+							pickArea.evalJS("loadData('" + $scope.addressData.Province + "','" + $scope
+								.addressData.City + "','" + $scope.addressData.District + "')")
+
+							plus.webview.currentWebview().setStyle({
+								mask: "rgba(0,0,0,0.2)"
+							});
+
+						});
+					} else {
+						pickArea.show('slide-in-bottom', 300);
+
+						pickArea.evalJS("loadData('" + $scope.addressData.Province + "','" + $scope.addressData
+							.City + "','" + $scope.addressData.District + "')")
+
+						plus.webview.currentWebview().setStyle({
+							mask: "rgba(0,0,0,0.2)"
+						});
+					}
+
+				};
+				prePickArea();
+				var areaData = ["上海@310000", "上海市@310100", "江苏@320000", "南京@320100", "无锡@320200", "徐州@320300",
+					"常州@320400", "苏州@320500", "南通@320600", "连云港@320700", "淮安@320800", "盐城@320900", "扬州@321000",
+					"镇江@321100", "泰州@321200", "宿迁@321300", "浙江@330000", "杭州@330100", "宁波@330200", "温州@330300",
+					"嘉兴@330400", "湖州@330500", "绍兴@330600", "金华@330700", "衢州@330800", "舟山@330900", "台州@331000",
+					"丽水@331100", "安徽@340000", "合肥@340100", "芜湖@340200", "蚌埠@340300", "淮南@340400", "马鞍山@340500",
+					"淮北@340600", "铜陵@340700", "安庆@340800", "黄山@341000", "滁州@341100", "阜阳@341200", "宿州@341300",
+					"六安@341500", "亳州@341600", "池州@341700", "宣城@341800", "江西@360000", "南昌@360100", "景德镇@360200",
+					"萍乡@360300", "九江@360400", "新余@360500", "鹰潭@360600", "赣州@360700", "吉安@360800", "宜春@360900",
+					"抚州@361000", "上饶@361100", "北京@110000", "北京市@110100", "天津@120000", "天津市@120100", "山西@140000",
+					"太原@140100", "大同@140200", "阳泉@140300", "长治@140400", "晋城@140500", "朔州@140600", "晋中@140700",
+					"运城@140800", "忻州@140900", "临汾@141000", "吕梁@141100", "山东@370000", "济南@370100", "青岛@370200",
+					"淄博@370300", "枣庄@370400", "东营@370500", "烟台@370600", "潍坊@370700", "济宁@370800", "泰安@370900",
+					"威海@371000", "日照@371100", "莱芜@371200", "临沂@371300", "德州@371400", "聊城@371500", "滨州@371600",
+					"菏泽@371700", "河北@130000", "石家庄@130100", "唐山@130200", "秦皇岛@130300", "邯郸@130400", "邢台@130500",
+					"保定@130600", "张家口@130700", "承德@130800", "沧州@130900", "廊坊@131000", "衡水@131100", "内蒙古@150000",
+					"呼和浩特@150100", "包头@150200", "乌海@150300", "赤峰@150400", "通辽@150500", "鄂尔多斯@150600",
+					"呼伦贝尔@150700", "巴彦淖尔@150800", "乌兰察布@150900", "兴安盟@152200", "锡林郭勒盟@152500", "阿拉善盟@152900",
+					"湖南@430000", "长沙@430100", "株洲@430200", "湘潭@430300", "衡阳@430400", "邵阳@430500", "岳阳@430600",
+					"常德@430700", "张家界@430800", "益阳@430900", "郴州@431000", "永州@431100", "怀化@431200", "娄底@431300",
+					"湘西@433100", "湖北@420000", "武汉@420100", "黄石@420200", "十堰@420300", "宜昌@420500", "襄阳@420600",
+					"鄂州@420700", "荆门@420800", "孝感@420900", "荆州@421000", "黄冈@421100", "咸宁@421200", "随州@421300",
+					"恩施@422800", "仙桃@429004", "潜江@429005", "天门@429006", "神农架@429021", "河南@410000", "郑州@410100",
+					"开封@410200", "洛阳@410300", "平顶山@410400", "安阳@410500", "鹤壁@410600", "新乡@410700", "焦作@410800",
+					"济源@419001", "濮阳@410900", "许昌@411000", "漯河@411100", "三门峡@411200", "南阳@411300", "商丘@411400",
+					"信阳@411500", "周口@411600", "驻马店@411700", "广东@440000", "广州@440100", "韶关@440200", "深圳@440300",
+					"珠海@440400", "汕头@440500", "佛山@440600", "江门@440700", "湛江@440800", "茂名@440900", "肇庆@441200",
+					"惠州@441300", "梅州@441400", "汕尾@441500", "河源@441600", "阳江@441700", "清远@441800", "东莞@441900",
+					"中山@442000", "东沙群岛@442100", "潮州@445100", "揭阳@445200", "云浮@445300", "广西@450000", "南宁@450100",
+					"柳州@450200", "桂林@450300", "梧州@450400", "北海@450500", "防城港@450600", "钦州@450700", "贵港@450800",
+					"玉林@450900", "百色@451000", "贺州@451100", "河池@451200", "来宾@451300", "崇左@451400", "福建@350000",
+					"福州@350100", "厦门@350200", "莆田@350300", "三明@350400", "泉州@350500", "漳州@350600", "南平@350700",
+					"龙岩@350800", "宁德@350900", "海南@460000", "海口@460100", "三亚@460200", "三沙@460300", "五指山@469001",
+					"琼海@469002", "儋州@460400", "文昌@469005", "万宁@469006", "东方@469007", "安定县@469021", "屯昌县@469022",
+					"澄迈县@469023", "临高县@469024", "白沙@469025", "昌江@469026", "乐东@469027", "陵水@469028", "保亭@469029",
+					"琼中@469030", "西沙群岛@469037", "南沙群岛@469038", "中沙群岛@469039", "辽宁@210000", "沈阳@210100",
+					"大连@210200", "鞍山@210300", "抚顺@210400", "本溪@210500", "丹东@210600", "锦州@210700", "营口@210800",
+					"阜新@210900", "辽阳@211000", "盘锦@211100", "铁岭@211200", "朝阳@211300", "葫芦岛@211400", "吉林@220000",
+					"长春@220100", "吉林@220200", "四平@220300", "辽源@220400", "通化@220500", "白山@220600", "松原@220700",
+					"白城@220800", "延边@222400", "黑龙江@230000", "哈尔滨@230100", "齐齐哈尔@230200", "鸡西@230300", "鹤岗@230400",
+					"双鸭山@230500", "大庆@230600", "伊春@230700", "佳木斯@230800", "七台河@230900", "牡丹江@231000", "黑河@231100",
+					"绥化@231200", "大兴安岭@232700", "陕西@610000", "西安@610100", "铜川@610200", "宝鸡@610300", "咸阳@610400",
+					"渭南@610500", "延安@610600", "汉中@610700", "榆林@610800", "安康@610900", "商洛@611000", "新疆@650000",
+					"乌鲁木齐@650100", "克拉玛依@650200", "吐鲁番@650400", "哈密@650500", "昌吉@652300", "博尔塔拉@652700",
+					"巴音郭楞@652800", "阿克苏@652900", "克孜勒苏@653000", "喀什@653100", "和田@653200", "伊犁@654000",
+					"塔城@654200", "阿勒泰@654300", "石河子@659001", "阿拉尔@659002", "图木舒克@659003", "五家渠@659004",
+					"甘肃@620000", "兰州@620100", "嘉峪关@620200", "金昌@620300", "白银@620400", "天水@620500", "武威@620600",
+					"张掖@620700", "平凉@620800", "酒泉@620900", "庆阳@621000", "定西@621100", "陇南@621200", "临夏@622900",
+					"甘南@623000", "宁夏@640000", "银川@640100", "石嘴山@640200", "吴忠@640300", "固原@640400", "中卫@640500",
+					"青海@630000", "西宁@630100", "海东@630200", "海北@632200", "黄南@632300", "海南藏族@632500", "果洛@632600",
+					"玉树@632700", "海西@632800", "重庆@500000", "重庆市@500100", "云南@530000", "昆明@530100", "曲靖@530300",
+					"玉溪@530400", "保山@530500", "昭通@530600", "丽江@530700", "普洱@530800", "临沧@530900", "楚雄@532300",
+					"红河@532500", "文山@532600", "西双版纳@532800", "大理@532900", "德宏@533100", "怒江@533300", "迪庆@533400",
+					"贵州@520000", "贵阳@520100", "六盘水@520200", "遵义@520300", "安顺@520400", "铜仁@520600", "黔西南@522300",
+					"毕节@520500", "黔东南@522600", "黔南@522700", "西藏@540000", "拉萨@540100", "昌都@540300", "山南@540500",
+					"日喀则@540200", "那曲@542400", "阿里@542500", "林芝@540400", "四川@510000", "成都@510100", "自贡@510300",
+					"攀枝花@510400", "泸州@510500", "德阳@510600", "绵阳@510700", "广元@510800", "遂宁@510900", "内江@511000",
+					"乐山@511100", "南充@511300", "眉山@511400", "宜宾@511500", "广安@511600", "达州@511700", "雅安@511800",
+					"巴中@511900", "资阳@512000", "阿坝@513200", "甘孜@513300", "凉山@513400", "香港@810000", "香港岛@810100",
+					"九龙@810200", "新界@810300", "澳门@820000", "澳门半岛@820100", "离岛@820200", "台湾@710000", "台北@710100",
+					"高雄@710200", "台南@710300", "台中@710400", "金门县@710500", "南投县@710600", "基隆@710700", "新竹@710800",
+					"嘉义@710900", "新北@711100", "宜兰县@711200", "新竹县@711300", "桃园县@711400", "苗栗县@711500",
+					"彰化县@711700", "嘉义县@711900", "云林县@712100", "屏东县@712400", "台东县@712500", "花莲县@712600",
+					"澎湖县@712700", "连江县@712800"
+				];
+				$scope.isLoad = false;
+				init()
+
+				function init() {
+					if (query("id") > 0) {
+						$scope.addressData.IsAdd = false;
+						$scope.addressData.AddrID = query("id");
+					}
+					Loading.show();
+					if (!$scope.addressData.IsAdd) {
+						getAddressInfo()
+					} else {
+						//位置定位
+						UtilsService.getLocation(true).then(function (location) {
+							$scope.addressData.Maplat = location.lat; //纬度
+							$scope.addressData.Maplng = location.lng; //经度
+							$scope.addressData.Address = location.address; //详细地址
+							$scope.addressData.Province = location.province; //省
+							$scope.addressData.City = location.city; //市
+							$scope.addressData.District = location.district; //区
+							$scope.addressData.Street = location.street; //街道
+							$scope.isLoad = true;
+							Loading.hide();
+						});
+					}
+
+				}
+
+				function getAddressInfo() {
+					//获取用户收货地址
+					var url = ApiService.Api42 + "/api/PostAddr/GetByID?addrID=" + $scope.addressData.AddrID;;
+					DataService.get(url).then(function (reData) {
+						//						console.log(JSON.stringify(reData))
+						$scope.addressData.ProvinceCode = reData.ProvinceCode;
+						$scope.addressData.Province = reData.Province;
+						$scope.addressData.CityCode = reData.CityCode;
+						$scope.addressData.City = reData.City;
+						$scope.addressData.District = reData.District;
+						$scope.addressData.Address = reData.Address;
+						$scope.addressData.Street = reData.Street;
+						$scope.addressData.RecvUserName = reData.RecvUserName;
+						document.getElementById("txtRecvUserName").value = reData.RecvUserName;
+						$scope.addressData.LinkPhone = reData.LinkPhone;
+						document.getElementById("txtLinkPhone").value = reData.LinkPhone;
+						$scope.addressData.ZipCode = reData.ZipCode;
+						document.getElementById("txtZipCode").value = reData.ZipCode;
+						$scope.addressData.IsDefault = reData.IsDefault;
+						$scope.isLoad = true;
+						Loading.hide();
+					})
+				}
+				$scope.del = function () {
+					mui.confirm("确定删除此收货地址？", "确定", ["取消", "确定"], function (e) {
+						if (e.index == 1) {
+							//获取用户收货地址
+							var url = ApiService.Api42 + "/api/PostAddr/Delete?addrID=" + $scope
+								.addressData.AddrID;
+							DataService.get(url).then(function (reData) {
+								if (reData) {
+									mui.toast("删除成功");
+									RPCObserver.broadcast('refresh_addr_manage_list')
+									setTimeout(function () {
+										mui.back();
+									}, 300)
+								}
+							});
+						}
+					});
+				}
+
+				$scope.save = function () {
+					$scope.addressData.RecvUserName = trim(document.getElementById("txtRecvUserName").value);
+					if (!$scope.addressData.RecvUserName) {
+						mui.toast("请输入收货人姓名！");
+						return;
+					}
+					//验证填字符长度
+					if (!checkLengthUtil.check()) {
+						return false;
+					}
+
+					$scope.addressData.LinkPhone = trim(document.getElementById("txtLinkPhone").value);
+					if (!$scope.addressData.LinkPhone) {
+						mui.toast("请输入收货人手机号码！");
+						return;
+					}
+
+					//验证手机号
+					var mobile = /^1[3|5|6|7|8]\d{9}$/,
+						phone = /^0\d{2,3}-?\d{7,8}$/;
+
+					if ($scope.addressData.LinkPhone && !(mobile.test($scope.addressData.LinkPhone) || phone.test(
+							$scope.addressData.LinkPhone))) {
+						mui.toast("您输入的手机号码不正确");
+						return;
+					}
+
+					if (!$scope.addressData.Province) {
+						mui.toast("请输入收货地址！");
+						return;
+					}
+					//获取省的code
+					var idx = 0;
+					areaData.every(function (item, index) {
+						var arr = item.split('@');
+						if (arr[0] == $scope.addressData.Province) {
+							$scope.addressData.ProvinceCode = arr[1];
+							idx = index;
+							return false;
+						}
+						return true;
+					});
+					if ($scope.addressData.Province == $scope.addressData.City) {
+						$scope.addressData.CityCode = $scope.addressData.ProvinceCode;
+					} else {
+						//获取市的code
+						for (idx = idx + 1; idx < areaData.length; idx++) {
+							var arr = areaData[idx].split('@');
+							var city = arr[0];
+							if (city == $scope.addressData.City) {
+								$scope.addressData.CityCode = arr[1];
+								break;
+							}
+							continue;
+						}
+					}
+
+					$scope.addressData.ZipCode = trim(document.getElementById("txtZipCode").value);
+					$scope.addressData.IsDefault = m("#isDefault a").classList.contains("md-active") ? "1" : "0";
+					var postData = {
+						"ID": $scope.addressData.AddrID,
+						"ProvinceCode": $scope.addressData.ProvinceCode,
+						"Province": $scope.addressData.Province,
+						"CityCode": $scope.addressData.CityCode,
+						"City": $scope.addressData.City,
+						"District": $scope.addressData.District,
+						"Address": $scope.addressData.Address,
+						"Street": "",//$scope.addressData.Street,
+						"RecvUserName": $scope.addressData.RecvUserName,
+						"LinkPhone": $scope.addressData.LinkPhone,
+						"ZipCode": $scope.addressData.ZipCode,
+						"IsDefault": $scope.addressData.IsDefault
+					};
+					var url = ApiService.Api42 + "/api/PostAddr";
+					if ($scope.addressData.IsAdd) {
+						url += "/Add";
+					} else {
+						url += "/Edit";
+					}
+					//					console.log(JSON.stringify(postData))
+					DataService.post(url, postData).then(function (reData) {
+						//						console.log(JSON.stringify(reData))
+						if (reData) {
+							mui.toast("保存成功！");
+							RPCObserver.broadcast('refresh_addr_manage_list')
+							setTimeout(function () {
+								mui.back();
+							}, 300)
+						} else {
+							mui.toast("保存收货地址失败，请于稍后再试！");
+						}
+					}, function (err) {
+
+					})
+
+				}
+				//选择收货地址
+				mui("body").on("tap", "#selAddress,#selAddress+.body", function () {
+					document.activeElement.blur();
+
+					UtilsService.openWindow({
+						id: "mdAddress.html",
+						url: "../common/pickaddress.html",
+						extras: {
+							callback: 'selectAddress'
+						}
+					});
+
+
+					// UtilsService.openWindow({
+					// 	id: "mdAddress.html",
+					// 	url: "../../js/pages/mdAddress.html?needlogin=false",
+					// 	extras: {
+					// 		callback: 'selectAddress'
+					// 	}
+					// });
+				});
+
+				window.getLocation = function (viewId, callback) {
+					UtilsService.getLocation(true).then(function (res) {
+						plus.webview.getWebviewById(viewId).evalJS(callback + "(" + JSON.stringify(res) +
+							")")
+					})
+				}
+
+			}
+		]);
+		//切换多项选择的switch控件
+		mui("body").on("tap", ".md-switch-button", function () {
+			if (this.classList.contains("md-active")) {
+				return;
+			}
+			var old = this.parentElement.querySelector(".md-switch-button.md-active");
+			old.classList.remove("md-active");
+			this.classList.add("md-active");
+		});
+		//反馈已选择的收货地址
+		function selectAddress(local) {
+			var appElement = document.querySelector('[ng-controller=addressEditController]');
+			var $scope = angular.element(appElement).scope();
+			$scope.addressData.Province = local.Province;
+			$scope.addressData.City = local.City;
+			$scope.addressData.District = local.District;
+			$scope.addressData.Address = local.Address;
+			$scope.addressData.MapLat = local.Lng;
+			$scope.addressData.MapLng = local.Lat;
+			$scope.addressData.Street = local.Street;
+			$scope.$apply();
+		}
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+		});
+	</script>
+</body>
+
+</html>

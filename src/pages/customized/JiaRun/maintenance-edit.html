@@ -1,0 +1,651 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../../css/mui.min.css">
+		<link rel="stylesheet" href="../../../css/common.css">
+		<link rel="stylesheet" href="../../../icon-font/iconfont.css">
+		<style type="text/css">
+			-group:first-child {
+				margin-top: 0px;
+			}
+			
+			.mui-content {
+				position: absolute;
+				top: 0px;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				overflow: auto;
+			}
+			
+			.phraseUL {
+				text-align: center;
+				margin-top: 0;
+			}
+			
+			.phraseUL li {
+				line-height: 20px;
+				padding: 15px;
+				padding-right: 36px;
+				min-height: 50px !important;
+			}
+			
+			.add-phrase {
+				color: #3296FA;
+				box-shadow: 0px -1px 3px 0px rgba(180, 180, 180, 0.5)
+			}
+			
+			#adpopover {
+				/*min-width: 260px;*/
+				/*height: 370px;*/
+				top: 65% !important;
+				margin-top: -150px;
+				left: 50% !important;
+				margin-left: -141px;
+				border-radius: 3px;
+				background-color: #fff;
+			}
+			
+			#adpopover.mui-popover .mui-popover-arrow {
+				display: none !important;
+			}
+			
+			#adpopover -group:before {
+				height: 0;
+			}
+			
+			#adpopover -group -row .body {
+				padding: 10px 5px 11px 10px;
+			}
+			
+			#adpopover -group -row:after {
+				left: 10px;
+				background-color: #E5E5E5;
+			}
+			
+			#adpopover -group -row.first:after {
+				left: 5px;
+				right: 5px;
+				background-color: #E5E5E5;
+			}
+			
+			#adpopover -group -row:last-child:after {
+				height: 1px;
+				left: 5px;
+				right: 5px;
+			}
+			
+			#adpopover -group -row.first {
+				min-height: 38px
+			}
+			
+			.addelment {
+				margin: 12px 20px 12px 20px;
+			}
+			
+			.addelment a {
+				background-color: #3296FA;
+				color: #fff;
+				padding: 5px 0;
+				border: 1px solid #3296FA;
+			}
+			
+			-group -row .label-gray {
+				color: #333333;
+			}
+			
+			.info-title {
+				margin-left: 10px;
+				line-height: 1;
+				color: #1f1f1f;
+			}
+			
+			.title {
+				color: #1f1f1f;
+			}
+			
+			.mdt_leftline {
+				width: 3px;
+				height: 14px;
+				background: #169BD5;
+				margin-top: -13px;
+				margin-left: -3px;
+			}
+			
+			#adpopover -group -row label {
+				width: 70px;
+			}
+			
+			span.placeholder a {
+				color: #dddddd !important;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="MaintenanceEditController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left" ng-bind="ID>0?'修改维护保养':'新增维护保养'"></a>
+		</header>
+		<div class="mui-content" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<ul class="data-group">
+				<li class="data-row">
+					<label>产品名称</label>
+					<div class="body">
+						<span ng-bind="ProdName"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="InnerCode">
+					<label ng-bind="InnerCodeName"></label>
+					<div class="body">
+						<span ng-bind="InnerCode"></span>
+					</div>
+				</li>
+				<li class="data-row must">
+					<label>采油厂</label>
+					<p class="opt md-icon font-15" ng-click="tap('oilProdName')">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="tap('oilProdName')">
+						<span class="placeholder" ng-if="oilProdName==''">请选择采油厂</span>
+						<span ng-if="oilProdName!=''" ng-bind="oilProdName"></span>
+					</div>
+				</li>
+				<li class="data-row must">
+					<label>作业区</label>
+					<p class="opt md-icon font-15" ng-click="tap('workZone')">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="tap('workZone')">
+						<span class="placeholder" ng-if="workZoneName==''">请选择作业区</span>
+						<span ng-if="workZoneName!=''" ng-bind="workZoneName"></span>
+					</div>
+				</li>
+				<li class="data-row must">
+					<label>井号</label>
+					<p class="opt md-icon font-15" ng-click="tap('wellNumber')">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="tap('wellNumber')">
+						<span class="placeholder" ng-if="wellNumber==''">请选择井号</span>
+						<span ng-if="wellNumber!=''" ng-bind="wellNumber"></span>
+					</div>
+				</li>
+				<li class="data-row ">
+					<label>加注数量(L)</label>
+					<div class="body">
+						<input maxlength="10" id="Nums" onkeyup="value=value.substr(0,10)" placeholder="请输入加注数量" ng-value="fillAmount" />
+					</div>
+				</li>
+				<li class="data-row must">
+					<label>设备类型</label>
+					<p class="opt md-icon font-15" ng-click="tap('equType')">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="tap('equType')">
+						<span class="placeholder" ng-if="equType==''">请选择设备类型</span>
+						<span ng-if="equType!=''" ng-bind="equType"></span>
+					</div>
+				</li>
+				<li class="data-row ">
+					<label>保养类型</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="maintenanceType" class="needsclick" placeholder="请输入保养类型" lenlimit="20"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row ">
+					<label>负责人</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="equLeader" class="needsclick" placeholder="请输入负责人名称" lenlimit="10"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row ">
+					<label>联系电话</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="leaderNumber" class="needsclick" placeholder="请输入联系电话" lenlimit="15"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row must">
+					<label>下次提醒时间</label>
+					<p class="opt md-icon font-15" ng-click="tap('time')">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="tap('time')">
+						<span class="placeholder" ng-if="nextRemindTime==''">请选择下次提醒时间</span>
+						<span ng-if="nextRemindTime!=''" ng-bind="nextRemindTime"></span>
+					</div>
+				</li>
+				<li class="data-row ">
+					<label>下次作业内容</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="nextWorkContent" class="needsclick" placeholder="请输入作业内容" lenlimit="100"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row must">
+					<label>推送人员</label>
+					<p class="opt md-icon font-15" ng-click="tap('selectUser')">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="tap('selectUser')">
+						<span class="placeholder" ng-show="pushUsers.length==0">请选择推送人员</span>
+						<span ng-show="pushUsers.length>0" ng-repeat="user in pushUsers" ng-bind="$index==0?user.ViewName:'，'+user.ViewName"></span>
+					</div>
+				</li>
+				<li class="data-row ">
+					<label>备注</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="remark" class="needsclick" placeholder="请输入备注" lenlimit="100"></div>
+						</div>
+					</div>
+				</li>
+			</ul>
+			<div class="mui-content-padded" style="margin-bottom: 80px;">
+				<button id="btnSave" class="mui-btn mui-btn-primary mui-btn-block" ng-click="save()">保存</button>
+			</div>
+
+		</div>
+		<!--新增快捷短语-->
+		<div id="adpopover" class="mui-popover" style="padding: 0 0px;">
+			<ul class="data-group" style="margin-top: 3px;">
+				<li class="data-row first">
+					<a class="opt md-icon icon-close" href="#adpopover"></a>
+					<div class="body">
+						<div class="pdLeft100 mui-ellipsis info-title">
+							<span class="color-gray-dark font-14">添加</span>
+						</div>
+						<div class="mdt_leftline mui-pull-left"></div>
+					</div>
+				</li>
+				<li class="data-row must">
+					<label class="label-gray" ng-bind="chooseTitle"></label>
+					<div class="body">
+						<div class="edit" style="margin-right: -5px;">
+							<div class="needsclick" id="newPhraseDesc" contenteditable="true" placeholder="{{'请输入'+chooseTitle}}" lenlimit="50"></div>
+						</div>
+					</div>
+				</li>
+			</ul>
+			<div class="addelment">
+				<a type="button" class="font-15 mui-btn mui-btn-block savePhrase">保存</a>
+			</div>
+		</div>
+		<!--无网络或请求失败重试-->
+		<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+		<script type="text/javascript" src="../../../js/mui.js"></script>
+		<script type="text/javascript" src="../../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../../js/common.js"></script>
+		<script type="text/javascript" src="../../../js/utils.js"></script>
+		<script type="text/javascript" src="../../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("MaintenanceEditController", ["$scope", "ApiService", "UtilsService", "DataService", "Loading", "$Modal", "RPCObserver", "$filter", "DatePickerService","AuthService",
+				function($scope, ApiService, UtilsService, DataService, Loading, $Modal, RPCObserver, $filter, DatePickerService,AuthService) {
+					$scope.ID = query("id") || 0;
+					$scope.oilProdName = ""; //采油厂名称
+					$scope.workZoneName = ""; //作业区名称
+					$scope.wellNumber = ""; //井号
+					$scope.fillAmount = ""; //加注数量
+					$scope.equType = ""; //设备类型
+					$scope.maintenanceType = ""; //保养类型
+					$scope.equLeader = ""; //设备保养负责人
+					$scope.leaderNumber = ""; //联系电话
+					$scope.nextRemindTime = ""; //下次提醒时间
+					$scope.nextWorkContent = ""; //下次作业内容
+					$scope.remark = ""; //备注
+					$scope.pushUsers = []; //推送人员
+					var prodInfo = plus.webview.currentWebview().prodinfo && JSON.parse(plus.webview.currentWebview().prodinfo);
+					if(prodInfo) {
+						$scope.MDCode = prodInfo.codeValue;
+						$scope.ProdID = prodInfo.resInfo.ProdID;
+						$scope.SkuID = prodInfo.resInfo.SkuID;
+						$scope.InnerCode = prodInfo.resInfo.InnerCode;
+						$scope.ProdName = decodeURIComponent(prodInfo.resInfo.ProdName).replace(/@squotes@/g, "'").replace(/@dquotes@/g, "\"");
+					}
+					AuthService.getAuth().then(function(res) {
+						$scope.InnerCodeName = res.InnerCodeName || '出厂编号';
+					});
+					//无网络或请求失败重试,或已删除
+					$scope.retryModal = {
+						msg: "维修保养",
+						retry: getMaintenanceInfoById,
+						state: ''
+					}
+					if($scope.ID > 0) {
+						var url = ApiService.Api50 + "/api/v1/MatWork/GetJrMrInfo/" + $scope.ID;
+						getMaintenanceInfoById()
+					} else {
+						$scope.isLoad = true;
+					}
+
+					function getMaintenanceInfoById() {
+						DataService.get(url).then(function(res) {
+							$scope.ID = res.ID;
+							$scope.oilProdName = res.OilProductionPlant;
+							$scope.workZoneName = res.OperationArea;
+							$scope.wellNumber = res.WellNumber;
+							$scope.fillAmount = res.FillAmount;
+							$scope.equType = res.EqType;
+							$scope.maintenanceType = res.MaintainType;
+							$scope.equLeader = res.ChargeUser;
+							$scope.leaderNumber = res.Phone;
+							$scope.nextRemindTime = res.NextRemindTime.slice(0, 10);
+							$scope.nextWorkContent = res.NextWorkContent;
+							$scope.remark = res.Remarks;
+							$scope.MDCode = res.MDCode;
+							$scope.ProdID = res.ProdID;
+							$scope.SkuID = res.SkuID;
+							$scope.InnerCode = res.InnerCode;
+							$scope.ProdName = res.ProdName;
+							$scope.isLoad = true;
+							$scope.pushUsers = [];
+							res.PushUserName.forEach(function(user) {
+								$scope.pushUsers.push({
+									"UserID": user.ID,
+									"ViewName": user.Name,
+									"CompID": user.CompID
+								})
+							})
+
+							$scope.retryModal.state = "";
+						}, function(error) {
+							$scope.isLoad = false;
+							$scope.retryModal.state = error.State;
+						});
+					}
+
+					var equTypes = [{
+						id: 1,
+						title: "新机"
+					}, {
+						id: 2,
+						title: "旧机"
+					}]
+
+					$scope.chooseTitle = "采油厂名称";
+					//选择抄送人
+					$scope.tap = function(key) {
+						switch(key) {
+							case 'oilProdName':
+								$scope.selectModal(1);
+								$scope.chooseTitle = "采油厂名称";
+								break;
+							case 'workZone':
+								$scope.selectModal(2);
+								$scope.chooseTitle = "作业区名称";
+								break;
+							case 'wellNumber':
+								$scope.selectModal(3);
+								$scope.chooseTitle = "井号";
+								break;
+							case 'time':
+								DatePickerService.pickDate({
+									selected: $scope.nextRemindTime,
+									minDate: (new Date).setDate((new Date).getDate() + 1)
+								}).then(function(res) {
+									$scope.nextRemindTime = res;
+								});
+								break;
+							case 'equType':
+								UtilsService.actionSheet("设备类型", equTypes).then(function(res) {
+									$scope.equType = res.title;
+								})
+								break;
+							case 'selectUser':
+								UtilsService.openWindow({
+									needLogin: true,
+									id: "contact-select.html",
+									url: "../../common/contact-select.html?action=select&multiselect=true&type=org",
+									extras: {
+										selectObj: $scope.pushUsers,
+										callback: "selectUserCallback"
+									}
+								});
+								break;
+						}
+					};
+					var saving = false;
+					//保存
+					$scope.save = function() {
+						document.activeElement.blur();
+						if($scope.oilProdName.trim() == '') {
+							mui.toast("请选择采油厂");
+							return;
+						}
+						if($scope.workZoneName.trim() == '') {
+							mui.toast("请选择作业区");
+							return;
+						}
+						if($scope.wellNumber.trim() == '') {
+							mui.toast("请选择井号");
+							return;
+						}
+						$scope.fillAmount = document.getElementById("Nums").value.trim();
+						if($scope.fillAmount && $scope.fillAmount <= 0) {
+							mui.toast("加注数量应为正整数");
+							return;
+						}
+						if($scope.fillAmount && (!/^[0-9]+$/.test($scope.fillAmount))) {
+							mui.toast("加注数量应为正整数！", {
+								duration: 1300,
+								type: 'div'
+							});
+							return;
+						}
+						if($scope.equType == "") {
+							mui.toast("请选择设备类型");
+							return;
+						}
+						if($scope.nextRemindTime == "") {
+							mui.toast("请选择下次提醒时间");
+							return;
+						}
+						if($scope.pushUsers.length == 0) {
+							mui.toast("请选择推送人员");
+							return;
+						}
+						if(saving) {
+							return;
+						}
+						//验证填字符长度
+						if(!checkLengthUtil.check()) {
+							return false;
+						}
+						//开始上传
+						saving = true;
+						submitData();
+					};
+
+					function submitData() {
+						var url = ApiService.Api50 + "/api/v1/MatWork/SaveJrmaintainRemin";
+						var postData = {
+							"ID": $scope.ID,
+							"OilProductionPlant": $scope.oilProdName,
+							"OperationArea": $scope.workZoneName,
+							"WellNumber": $scope.wellNumber,
+							"FillAmount": $scope.fillAmount,
+							"EqType": $scope.equType,
+							"MaintainType": $scope.maintenanceType.trim(),
+							"ChargeUser": $scope.equLeader.trim(),
+							"NextWorkContent": $scope.nextWorkContent.trim(),
+							"NextRemindTime": $scope.nextRemindTime + " 00:00:00",
+							"Phone": $scope.leaderNumber.trim(),
+							"PushUsers": $scope.pushUsers.map(function(item) {
+								return item.UserID;
+							}).join('/'),
+							"status": "",
+							"Remarks": $scope.remark.trim(),
+							"ProdID": $scope.ProdID,
+							"MDCode": $scope.MDCode,
+							"InnerCode": $scope.InnerCode,
+							"SkuID": $scope.SkuID
+						}
+						DataService.post(url, postData).then(function(res) {
+							Loading.hide();
+							if(res) {
+								//发送消息
+								$scope.ID = res;
+								RpcClient.invoke("J-repair-info.html", "RPC_RefreshWorkLog");
+								RPCObserver.broadcast('refresh_maintenance_list');
+								mui.toast("保存成功");
+								mui.back();
+							}
+							setTimeout(function() {
+								saving = false;
+							}, 1400);
+						});
+
+					}
+
+					//新增分类
+					var mui_back = mui.back;
+					mui.back = function() {
+						if(isModal) {
+							$Modal.close();
+						} else {
+							mui_back();
+						}
+					}
+					var isModal = false;
+					//选择modal
+					$scope.selectModal = function(key) {
+						$Modal.modal({
+							size: "small",
+							footer: false,
+							autoClose: true,
+							template: "<div style='max-height:55vh;overflow:auto;margin: -20px -10px -20px -10px;'><ul class='data-group phraseUL'><li class='data-row mui-ellipsis-2' ng-click='selPhrase(phrase)' ng-repeat='phrase in params.phraseList' style='justify-content: center;'><div style='overflow: hidden;'><span ng-bind='phrase.Content'></span></div><p class='opt md-icon font-14' ng-click='delPhrase($event,phrase)' ng-if='params.hasAuth'><span class='icon-close'></span></p></li><li class='data-row add-phrase' ng-click='addPhrase()' style='justify-content: center;' ng-if='params.hasAuth'><i class='md-icon font-18 icon-add'></i><span class='font-15'> 添加</span></li></ul></div>",
+							params: {
+								phraseList: [],
+								hasAuth: true
+							},
+							controller: ['$scope', "ApiService", "DataService", "$filter", function($scope, ApiService, DataService,
+								$filter) {
+								isModal = true;
+								getWorkLogTypeList();
+								$scope.$on("modal_close", function() {
+									isModal = false;
+									mui("#adpopover").off("tap", ".savePhrase");
+								});
+								var appElement = document.querySelector('[ng-controller=MaintenanceEditController]');
+								var scope = angular.element(appElement).scope();
+
+								function getWorkLogTypeList() {
+									var url = ApiService.Api50 + "/api/v1/MatWork/GetJrMaintainDictionariesListByType?type=" + key;
+									DataService.get(url).then(function(res) {
+										$scope.params.phraseList = res;
+									}, function(error) {
+										$scope.retryModal.state = error.State;
+									})
+								};
+								//选择工作分类
+								$scope.selPhrase = function(phrase) {
+									switch(key) {
+										case 1:
+											scope.oilProdName = phrase.Content;
+											break;
+										case 2:
+											scope.workZoneName = phrase.Content;
+											break;
+										case 3:
+											scope.wellNumber = phrase.Content;
+											break;
+									}
+									$scope.$modal.close();
+								}
+
+								//新增弹窗
+								$scope.addPhrase = function() {
+									mui("#adpopover").popover("toggle");
+									document.getElementById("newPhraseDesc").innerText = "";
+									document.getElementById("newPhraseDesc").focus();
+								}
+
+								var issaving = false;
+								//保存新增
+								mui("#adpopover").on("tap", ".savePhrase", function() {
+									if(issaving) {
+										return false;
+									}
+
+									if(document.getElementById("newPhraseDesc").innerText.trim() == '') {
+										mui.toast("请输入" + scope.chooseTitle);
+										return;
+									}
+
+									if(document.getElementById("newPhraseDesc").innerText.trim().length > 50) {
+										mui.toast("最大长度50个字");
+										return;
+									}
+
+									issaving = true;
+									var url = ApiService.Api50 + "/api/v1/MatWork/SaveJrMaintainDictionaries";
+									var postData = {
+										ID: 0,
+										Type: key,
+										Content: document.getElementById("newPhraseDesc").innerText.trim()
+									};
+									DataService.post(url, postData).then(function(res) {
+										$scope.params.phraseList.push({
+											ID: res,
+											Content: iGetInnerText(document.getElementById("newPhraseDesc").innerText)
+										});
+										mui("#adpopover").popover("hide");
+										setTimeout(function() {
+											issaving = false;
+										}, 600);
+									}, function() {
+										issaving = false;
+									});
+									return false;
+								})
+
+								//删除
+								$scope.delPhrase = function(event, phrase) {
+									event.stopPropagation();
+									mui.confirm("确认删除吗？", function(e) {
+										if(e.index == 0) {
+											var url = ApiService.Api50 + "/api/v1/MatWork/DeleteJrMtDictionariesById/" + phrase.ID;
+											DataService.get(url).then(function(res) {
+												mui.toast("删除成功");
+												getWorkLogTypeList();
+											});
+										}
+									});
+								}
+
+							}]
+						}).show();
+					};
+					//去掉回车换行
+					function iGetInnerText(testStr) {
+						var resultStr = testStr.replace(/[\r\n]/g, ""); //去掉回车换行
+						return resultStr;
+					}
+
+				}
+			]);
+			//选择抄送人员回调
+			function selectUserCallback(obj) {
+				var appElement = document.querySelector('[ng-controller=MaintenanceEditController]');
+				var $scope = angular.element(appElement).scope();
+				$scope.pushUsers = angular.copy(obj);
+				$scope.$apply();
+			}
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,90 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link href="../../css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+
+</head>
+
+<body ng-controller="searchCtl">
+	
+	<div >
+		<div ng-class="{'mui-block':search.showDom}"  ng-style="{'margin-bottom':search.action=='select'?'40px':'0px'}">
+			<div class="search_input">
+				<form ng-submit="event.doSearch()">
+					<a class="mui-action-back mui-icon icon-back mui-pull-left"></a>
+					<input type="search" placeholder="{{'请输入'+search.InnerCodeName}}" ng-model="search.key" maxlength="50">
+					<i class="icon-search-thin color-gray-dark"></i>
+					<i class="icon-delete color-gray" ng-click="event.delSearch()" ng-show='search.key'></i>
+					<span ng-click="event.doSearch()">搜索</span>
+				</form>
+			</div>
+			<div class="search_group" ng-if="!search.showResult">
+				<div class="content">
+					<span ng-repeat="h in search.history" ng-bind="h" ng-click="event.hisSearch(h)"></span>
+				</div>
+			</div>
+			<div id="pullrefresh" class="mui-scroll-wrapper" ng-class="{'mui-block':search.showResult}" >
+				<div class="mui-content" style="padding-top: 48px;">
+					<md-debug-list ng-model="search.data"></md-debug-list>
+					<md-no-data ng-show="search.data && search.data.length==0" data-options="{type:'search'}">暂无数据</md-no-data>
+					<md-state-tip data-options="{msg:'搜索',retry:event.doSearch}" ng-show="search.error || !search.netWork"></md-state-tip>
+				</div>
+			</div>
+		</div>
+		<footer class="f_btns" ng-class="{'mui-block':search.action=='select'}" >
+			<a ng-click="cancel()">取消</a>
+			<a ng-click="save()">确定</a>
+		</footer>
+	</div>
+	<script src="../../js/mui.js"></script>
+	<script type="text/javascript" src="../../js/angular.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript">
+		
+		mui.init(console.log("search............."))
+		app.controller("searchCtl", ["$scope", "ApiService","AuthService",function ($scope,ApiService,AuthService) {
+			$scope.options={
+				name:"",
+				key:"debug",
+				pageSize:20
+			}; 
+			$scope.save=function (){
+				console.log("save..........")
+			}
+			$scope.cancel=function (){
+				console.log("cancel..........")
+			}
+			//初始化
+			AuthService.getAuth().then(function (res) {
+				$scope.options.name = res.InnerCodeName || '出厂编号';
+				$scope.$broadcast("search_init");
+				console.log("111111")
+			});
+
+
+			$scope.$on('refresh_url', function(event,params){
+				console.log("222222")
+				refresh_url(params);
+			});
+			
+			function refresh_url(_obj){
+				console.log("3333333")
+				$scope.url = ApiService.Api50 + "/api/v1/ProdDebug/GetCompProdDebugList?keyWords=" + encodeURIComponent(_obj.value) + "&pageIndex=" + _obj.index + "&pageSize=" + _obj.size;
+			};
+
+		}]);
+
+//		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+//		});
+	</script>
+</body>
+
+</html>

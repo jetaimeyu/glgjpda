@@ -1,0 +1,425 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title>新增公告</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+	<link href="../../css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	<link rel="stylesheet" href="../../css/mui.previewimage.css" />
+	<style type="text/css">
+		.data-group:first-child {
+			margin-top: 0;
+		}
+
+		.mui-content {
+			position: absolute;
+			top: 0px;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			overflow: auto;
+		}
+
+		.data-group .isscan-type .opt.md-icon-more~.body {
+			margin-right: 40px;
+		}
+
+		.data-group .isscan-type .opt.md-icon-more::after {
+			height: 0;
+		}
+
+		.h_body {
+			margin-right: 48px !important;
+		}
+
+		/*下拉选择菜单*/
+
+		.mui-table-view-cell {
+			overflow: visible;
+		}
+
+		.padr {
+			padding-right: 20px !important;
+		}
+
+		.btn-group .btn-col {
+			color: #3296FA;
+			font-size: 1.4rem;
+		}
+
+		.md-inline {
+			display: inline !important;
+		}
+	</style>
+</head>
+
+<body ng-controller="EquFaultOrderController">
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left">新增公告</a>
+	</header>
+	<div class="mui-content equiFM">
+		<ul class="data-group">
+			<li class="data-row must">
+				<label>公告标题</label>
+				<div class="body">
+					<div class="edit">
+						<div ng-model-div-text="NoticeData.Title" class="needsclick" placeholder="请输入公告标题"
+							lenlimit="50"></div>
+					</div>
+				</div>
+			</li>
+			<li class="data-row must">
+				<label>公告类型</label>
+				<p class="opt select-opt">
+					<md-notice-type-select data-options="customSelectOptions.desc"></md-notice-type-select>
+				</p>
+				<div class="body">
+					<span ng-if="!NoticeData.TypeName" class="placeholder">请选择公告类型</span>
+					<span ng-if="NoticeData.TypeName" ng-bind="NoticeData.TypeName"></span>
+					<!--<div class="edit">
+							
+							<div ng-bind="NoticeData.TypeName" class="padr" placeholder="请选择公告类型" lenlimit="1000"></div>
+						</div>-->
+				</div>
+			</li>
+			<li class="mui-table-view-cell data-row must">
+				<label>发布日期</label>
+				<p class="opt md-icon font-15" ng-click="chooseDate()">
+					<span class="icon-right"></span>
+				</p>
+				<div class="body" data-options='{}' ng-click="chooseDate()">
+					<span ng-if="!NextPreserveDate" class="placeholder">请选择发布日期</span>
+					<span ng-if="NextPreserveDate" ng-bind="NextPreserveDate"></span>
+				</div>
+			</li>
+			<li class="data-row must">
+				<label>公告内容</label>
+				<div class="body">
+					<div class="edit">
+						<div ng-model-div-text="NoticeData.Content" class="needsclick padr" placeholder="请输入公告内容"
+							lenlimit="1000"></div>
+					</div>
+				</div>
+			</li>
+		</ul>
+		<ul class="data-group">
+			<li class="data-row" ng-repeat="prodItem in YunFile" ng-click="selectItem(prodItem)">
+				<p class="opt md-icon font-15" ng-click="view(prodItem)">
+					<span class="color-blue font-12" style="display:none"
+						ng-class="{'md-inline':videoView.indexOf(prodItem.FileExt)>=0 || offcieView.indexOf(prodItem.FileExt)>=0} ">预览</span>
+					<span class="color-blue font-12" ng-click="delYunFile($index)">移除</span>
+				</p>
+				<div class="body" style="padding-left:15px;" ng-if="imgView.indexOf(prodItem.FileExt)<0"
+					ng-style="{'margin-right':(videoView.indexOf(prodItem.FileExt)>=0 || offcieView.indexOf(prodItem.FileExt)>=0)?'75px':'45px'}"
+					ng-bind="prodItem.FileName+prodItem.FileExt">
+				</div>
+				<div class="body" style="padding-left:15px;" ng-if="imgView.indexOf(prodItem.FileExt)>=0">
+					<img class="imageview-native" style="max-height: 50px" ; fullpath="{{ApiDown+prodItem.FilePath}}"
+						ng-src="{{ApiDown+prodItem.FilePath}}" />
+				</div>
+			</li>
+			<li class="btn-group" ng-click="chooseYunFile()">
+				<a id="addPart" class="btn-col">增加文档</a>
+			</li>
+		</ul>
+		<div class="mui-content-padded">
+			<span class="mui-btn mui-btn-block" ng-click="save()">发布</span>
+		</div>
+	</div>
+	<!--无网络或请求失败重试-->
+	<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+	<!--<footer class="footBtn" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<md-record-media videos="videoList" audio="audio" images="imageList" callback="getMediaRes"></md-record-media>
+		</footer>-->
+	<script type="text/javascript" src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/mui.previewimage.js"></script>
+	<script type="text/javascript" src="../../js/mui.zoom.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/rpc.js"></script>
+	<script type="text/javascript" src="../message/transMessage.js"></script>
+	<script type="text/javascript">
+		app.controller("EquFaultOrderController", ["$scope", "UtilsService", "$Modal", "DataService", "ApiService",
+			"Loading",
+			"$q", "ChatUserService", "$filter", "$timeout", "AuthService", "BillService", "RPCObserver",
+			"CacheService", "DatePickerService",
+			function ($scope, UtilsService, $Modal, DataService, ApiService, Loading, $q, ChatUserService, $filter,
+				$timeout,
+				AuthService, BillService, RPCObserver, CacheService, DatePickerService) {
+				$scope.curUser = CacheService.get("user");
+				$scope.ID = query("id") || 0;
+				$scope.retryModal = {
+					msg: "公告修改",
+					retry: geteditinfo,
+					state: ''
+				}
+				$scope.NextPreserveDate = ""
+				$scope.data = {
+					Content: ""
+				}
+				if ($scope.ID > 0) {
+					geteditinfo()
+				}
+				$scope.ApiDown = ApiService.Down;
+				$scope.offcieView = offcieView;
+				$scope.videoView = videoView;
+				$scope.imgView = imgView;
+
+
+				function geteditinfo() {
+					Loading.show();
+					var url = ApiService.Api52 + "/api/v1/News/MdtCoUnewsInfoByCompFirst?newsId=" + query('id');
+					DataService.get(url).then(function (res) {
+
+						if (res) {
+							Loading.hide();
+							$scope.isLoad = true;
+
+							$scope.data = res;
+							$scope.NoticeData.Title = res.Title
+							$scope.NoticeData.TypeName = res.Text
+							$scope.NextPreserveDate = res.PublishTime
+
+							console.log(JSON.stringify(res))
+							$scope.data.Content = res.Content.replace(
+									/(http?:)?(https?:)?\/\/www.maidiyun.com\/50/g, ApiService.Api52)
+								.replace(
+									/(http?:)?(https?:)?\/\/mdbox.maidiyun.com\/50/g, ApiService.Api50)
+								.replace(
+									/(http?:)?(https?:)?\/\/mdbox.maidiyun.com\/51/g, ApiService.Api50)
+								.replace(
+									/(http?:)?(https?:)?\/\/www.maidiyun.com\/51/g, ApiService.Api50).replace(
+									"757px", "100%").replace(
+									/="\/\//g, '="' + 'http:' + '//');
+							$scope.NoticeData.Content = $scope.data.Content
+
+
+						}
+					}, function (error) {
+						$scope.retryModal.state = error.State;
+					});
+				}
+				$scope.process = {
+					SaveState: 0, //0未保存 1保存成功 2保存中 3保存失败
+					ProcessList: [{
+						Text: "保存故障内容",
+						State: 0,
+					}]
+				};
+
+				$scope.chooseYunFile = function () {
+					UtilsService.openWindow({
+						id: "yun-file-header.html",
+						url: "../message/yun-file-header.html",
+						extras: {
+							callback: "yunback"
+						}
+					});
+				};
+
+				$scope.view = function (item) {
+					var url = "../message/yun-file-view.html";
+					if ($scope.videoView.indexOf(item.FileExt) >= 0) {
+						if (plus.os.name == "Android") {
+							plus.Push.playVideo(ApiService.Down + item.FilePath, item.FileName + item.FileExt)
+							return;
+						} else {
+							url = "../message/yun-video-view.html";
+						}
+					} else if (item.FileExt.toLowerCase() == ".pdf") {
+						url = "../message/yun-file-pdf.html";
+					}
+					UtilsService.openWindow({
+						url: url,
+						id: "yun-file-view.html",
+						extras: {
+							data: {
+								FileName: item.FileName + item.FileExt,
+								FileUrl: ApiService.Down + item.FilePath
+							}
+						}
+					});
+				};
+
+				$scope.YunFile = [];
+
+				window.yunback = function (reses) {
+					$scope.YunFile = $scope.YunFile.concat(reses);
+					$scope.$apply();
+				};
+				$scope.delYunFile = function (idx) {
+					$scope.YunFile.splice(idx, 1);
+				};
+
+
+				setTimeout(function () {
+					previewImages();
+				}, 200);
+
+				var curUser = CacheService.get("user");
+
+				//					//无网络或请求失败重试
+				//					$scope.retryModal = {
+				//						msg: "故障详情",
+				//						retry: init,
+				//						state: ''
+				//					}
+				$scope.curUserID = 0;
+				//故障工单id
+				$scope.faultOrderId = query("id") || 0;
+				//故障
+				$scope.NoticeData = {
+					CompID: 11,
+					Content: "",
+					ID: 0,
+					ImgUrl: "",
+					PublishTime: "",
+					Title: "",
+					TypeId: "",
+					TypeName: ""
+				};
+				//选择日期
+				$scope.chooseDate = function () {
+					DatePickerService.pickDate({
+						selected: $scope.NextPreserveDate,
+						minDate: $scope.Today
+					}).then(function (res) {
+						$scope.NextPreserveDate = res;
+					});
+				};
+				// 选择组件
+				$scope.customSelectOptions = {
+					desc: {
+						model: $scope.NoticeData,
+						idField: 'TypeId',
+						nameField: 'TypeName',
+						selectfn: function () {
+							$scope.selectPhrase('3');
+						}
+					}
+				};
+				//选择常用短语
+				$scope.selectPhrase = function (type) {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: "phrase-select.html",
+						url: "phrase-select.html?action=select&&type=" + type,
+						extras: {
+							selectObj: {
+								ID: $scope.NoticeData.TypeId,
+								Content: $scope.NoticeData.TypeName
+							},
+							callback: "selectPhraseCallback"
+						}
+					});
+				};
+
+				//避免重复点击
+				var isSubmitting = false;
+
+				//保存
+				$scope.save = function () {
+					$scope.$broadcast("stop_audio");
+					document.activeElement.blur();
+					//验证填字符长度
+					if ($scope.NoticeData.Title.trim() == "") {
+						mui.toast("请输入公告标题！");
+						return;
+					}
+					if ($scope.NoticeData.Title.length > 50) {
+						mui.toast("标题应小于50个字符！");
+						return;
+					}
+					if ($scope.NoticeData.TypeId == "") {
+						mui.toast("请选择公告类型！");
+						return;
+					}
+
+					if ($scope.NextPreserveDate == "") {
+						mui.toast("请选择发布时间！");
+						return;
+					}
+					if ($scope.NoticeData.Content.trim() == "" && $scope.YunFile.length == 0) {
+						mui.toast("公告内容和文档内容必须选择一个！");
+						return;
+					}
+					if (isSubmitting) return;
+					//开始上传
+					isSubmitting = true;
+					submitData();
+				}
+
+
+				function submitData() {
+					var url = ApiService.Api52 + "/api/v1/News/SaveMdtCoUnews";
+					var postdata = {
+						"ID": $scope.ID,
+						"CompID": $scope.curUser.CompID,
+						"Title": $scope.NoticeData.Title,
+						"PublishTime": $scope.NextPreserveDate + " 00:00:00",
+						"Content": $scope.NoticeData.Content, //盘点人id/隔开 
+						"ImgUrl": "", //设备分类id/隔开
+						"TypeId": $scope.NoticeData.TypeId,
+						"YunFileIds": $scope.YunFile.map(function (item) {
+							return item.ID;
+						}).join(",")
+					};
+					//						console.log(JSON.stringify(postdata))
+					DataService.post(url, postdata).then(function (res) {
+						Loading.hide();
+						if (res) {
+
+							RPCObserver.broadcast('refresh_equ_fault_list');
+							RPCObserver.broadcast('refresh_inventory_info');
+
+
+							$scope.ID = res;
+							mui.toast("保存成功！");
+							setTimeout(function () {
+								mui.back();
+							}, 300);
+							setTimeout(function () {
+								saving = false;
+							}, 500);
+
+						}
+					}, function () {
+						setTimeout(function () {
+							saving = false;
+						}, 300);
+					});
+				}
+
+				//刷新关闭popover
+				RPCObserver.on('close_popover', 'close_popover');
+				window.close_popover = function () {
+					actionSheet && actionSheet.close();
+				};
+			}
+		]);
+
+		//常用短语选择回调
+		function selectPhraseCallback(obj) {
+			var appElement = document.querySelector('[ng-controller=EquFaultOrderController]');
+			var $scope = angular.element(appElement).scope();
+			if (obj) {
+				$scope.NoticeData.TypeId = obj.ID;
+				$scope.NoticeData.TypeName = obj.text;
+			} else {
+				$scope.NoticeData.TypeId = "";
+				$scope.NoticeData.TypeName = "";
+			}
+			$scope.$apply();
+		}
+
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+		});
+	</script>
+</body>
+
+</html>

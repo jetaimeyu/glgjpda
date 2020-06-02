@@ -1,0 +1,184 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+  <link href="../../../css/mui.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../../../css/common.css" />
+  <link rel="stylesheet" href="../../../icon-font/iconfont.css" />
+  <style type="text/css">
+    .icon {
+      width: 16px;
+    }
+
+    .md-boiler-list.data-group .data-row::after {
+      right: 10px;
+      left: 10px;
+    }
+
+    .md-boiler-list.data-group .data-row .body {
+      padding: 0px;
+    }
+
+    .md-boiler-list.data-group .data-row {
+      padding: 10px 16px 10px 16px;
+    }
+
+    .md-boiler-list.data-group:first-child {
+      margin-top: 0px;
+    }
+
+    .md-boiler-list .names {
+      font-size: 1.5rem;
+      color: #000;
+      /*padding-top: 6px;*/
+      max-width: 80%;
+    }
+
+    .md-boiler-list .CreateDate {
+      font-size: 1.2rem;
+      color: #AAAAAA;
+    }
+
+    .md-boiler-list .log-type {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      /*color: #3296FA!important;*/
+      display: inline-block;
+      max-width: 80%;
+    }
+
+    .md-boiler-list .margin-left-15 {
+      margin-left: 15px !important;
+    }
+
+    .md-boiler-list .eq-running-normal {
+      color: #78E785;
+    }
+
+    .md-boiler-list .eq-running-unusual {
+      color: #FD7C7C;
+    }
+
+    .edit {
+      line-height: 1;
+      vertical-align: middle;
+      font-size: 40px;
+    }
+
+    .del {
+      width: 30px;
+      height: 100%;
+      text-align: center;
+    }
+
+    .data-group-tip {
+      margin-top: 10px;
+      color: #999;
+    }
+
+    .empty {
+      margin-top: 30vh;
+      width: 100%;
+      text-align: center;
+      word-break: break-all;
+      color: #666666;
+      font-size: 1.5rem;
+      padding: 0 15px;
+    }
+
+    .data-group.biglabel .data-row label {
+      width: 80vw;
+    }
+
+    .data-group.md-boiler-list .data-row label {
+      margin-left: 0;
+    }
+  </style>
+</head>
+
+<body ng-controller="TSelListController">
+  <header class="mui-bar mui-bar-nav">
+    <a class="mui-action-back mui-icon icon-back mui-pull-left">工艺过程管理</a>
+  </header>
+
+  <div id="pullrefresh" class="mui-scroll-wrapper " ng-class="{'mui-block':isLoad}" style="display: none;">
+    <div class="mui-content">
+      <ul class="data-group md-boiler-list" ng-if="isShow">
+        <li class="data-row">
+          <label>订单编号</label>
+          <div class="body" ng-bind="data.OrderNo"></div>
+        </li>
+        <li class="data-row">
+          <label>工艺过程卡编号</label>
+         <div class="body" ng-bind="data.OrderProcessNo"></div>
+        </li>
+        <li class="data-row">
+          <label>产品名称</label>
+          <div class="body" ng-bind="data.ProdName"></div>
+        </li>
+        <li class="data-row">
+          <label>型号</label>
+          <div class="body" ng-bind="data.SkuName"></div>
+        </li>
+      </ul>
+      <p class="data-group-tip" ng-if="data.OrderProcessStep&&data.OrderProcessStep.length>0">工艺管理</p>
+      <ul class="data-group biglabel" ng-if="data.OrderProcessStep&&data.OrderProcessStep.length>0">
+        <li class="data-row step_con" ng-repeat="el in data.OrderProcessStep" ng-click="tap(el)">
+          <label ng-bind="el.StepName"></label>
+          <p class="opt md-icon icon-right"></p>
+        </li>
+      </ul>
+      <div class="empty" ng-if="!data.OrderProcessStep||data.OrderProcessStep.length==0">暂无工艺过程信息</div>
+    </div>
+  </div>
+  <script type="text/javascript" src="../../../js/mui.js"></script>
+  <script type="text/javascript" src="../../../js/angular.min.js"></script>
+  <script type="text/javascript" src="../../../js/common.js"></script>
+  <script type="text/javascript" src="../../../js/utils.js"></script>
+  <script type="text/javascript" src="../../../js/rpc.js"></script>
+  <script>
+    app.controller("TSelListController", ["$scope", "ApiService", "DataService", "UtilsService", "Loading", "RPCObserver", function ($scope, ApiService, DataService, UtilsService, Loading, RPCObserver) {
+      $scope.data = null;
+      $scope.isLoad = false;
+      $scope.isShow = false
+      $scope.TechincsCode = plus.webview.currentWebview().techincsCode;
+      var user = JSON.parse(localStorage.getItem('user')).data
+      //获取所有的数据
+      function getData() {
+        Loading.show();
+        var url = ApiService.Api45 + "/api/v1.0/Process/GetProcessDetailForMobile?OrderProcessID=" + $scope.TechincsCode + "&userId=" + user.UserID;
+        getAjaxData(url, function (res) {
+          Loading.hide();
+          $scope.isLoad = true
+          if (res.State == 1) {
+            $scope.data = res.Data
+            $scope.isShow = true
+          }
+          $scope.$apply();
+        }, true)
+      }
+      getData()
+      $scope.tap = function (data) {
+        openWindow("techincs-edit.html?userId=" + user.UserID, {
+          TechincsCode: $scope.TechincsCode,
+          ProcessStepID: data.ProcessStepID,
+          StepName: data.StepName,
+          OrderNo: $scope.data.OrderNo,
+          ProdName: $scope.data.ProdName,
+          SkuName: $scope.data.SkuName,
+          OrderProcessNo: $scope.data.OrderProcessNo
+        });
+      }
+    }]);
+    mui.plusReady(function () {
+      angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+    });
+
+  </script>
+</body>
+
+</html>

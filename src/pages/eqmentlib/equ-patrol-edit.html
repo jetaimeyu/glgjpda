@@ -1,0 +1,945 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.equpatrolEdit .icon-add {
+				color: #929292!important;
+			}
+			
+			.equpatrolEdit .data-group-tip-equInfo {
+				background: #FFF;
+				margin-bottom: 10px;
+				padding-top: 10px;
+			}
+			
+			.equpatrolEdit .body-patrol {
+				width: calc(100%-104px);
+				width: -moz-calc(100% - 104px);
+				width: -webkit-calc(100% - 104px);
+			}
+			
+			.equpatrolEdit .mui-media {
+				display: flex;
+				align-items: center;
+			}
+			
+			.right-save {
+				font-size: 1.4rem;
+				line-height: 40px;
+				padding: 3px 2px;
+				float: right;
+				color: #3296FA;
+			}
+			
+			.data-group-tip {
+				margin-top: 10px;
+			}
+			
+			.prod-list-empty {
+				padding: 10px 16px;
+				height: 130px;
+				background: #FFFFFF;
+			}
+			
+			.prod-list-empty .empty-logo {
+				background-image: url("../../images/complib/empty.png");
+				width: 80px;
+				height: 80px;
+				display: block;
+				background-size: cover;
+				/*text-align: center;*/
+			}
+			
+			.prodLibUl.mui-table-view:after {
+				height: 0px!important;
+			}
+			
+			.prodLibUl .mui-table-view-cell {
+				padding: 8px 16px!important;
+			}
+			
+			.prodLibUl .mui-media-body {
+				position: relative;
+				left: 70px;
+				width: 80%;
+			}
+			
+			.prodLibUl .productName {
+				font-size: 1.5rem;
+				color: #000;
+				margin-top: 2px;
+				margin-bottom: 10px;
+				line-height: initial;
+				max-width: 90%;
+			}
+			
+			.prodLibUl .productType {
+				font-size: 1.2rem;
+				color: #AAA;
+				max-width: 90%;
+			}
+			
+			.prodLibUl .opt {
+				color: #AEAEAE;
+				position: absolute;
+				top: 50%;
+				right: 10px;
+				-webkit-transform: translateY(-50%);
+				transform: translateY(-50%);
+				overflow: hidden;
+				margin: 0px;
+			}
+			
+			.select-time {
+				padding-left: 15px;
+				min-width: 80px!important;
+				max-width: 120px!important;
+				font-size: 1.3rem;
+				color: #666666!important;
+			}
+			
+			.mui-table-view-cell:after {
+				left: 0px;
+			}
+			
+			.equpatrolEdit .icon-topright-corner-delete {
+				color: red;
+				/*float: right;
+				margin-right: -16px;
+				margin-top: -4px;*/
+				position: absolute;
+				top: 4px;
+				right: 0px;
+				font-size: 2.6rem;
+			}
+			
+			.body.drop-down-body .icon-roundclose {
+				right: 45px!important;
+				padding: 9px 5px 10px 5px;
+			}
+			
+			.photo.file .icon-add {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+			}
+			
+			.photo.file .img-body {
+				position: relative;
+				overflow: hidden;
+				height: 35px;
+				background-color: #eaf6fe;
+			}
+			
+			.photo {
+				width: 35px;
+				height: 35px;
+				margin-right: 5px;
+				/*display: block;
+				float:left;*/
+			}
+			
+			.photo.content-box {
+				width: 120px;
+				text-align: center;
+				line-height: 35px;
+				color: #3296FA;
+			}
+			
+			.photo.content-box .img-body span.content-box-span {
+				width: 100%;
+				position: absolute;
+				top: 50%;
+				left: 0;
+				-webkit-transform: translateY(-50%);
+				transform: translateY(-50%);
+			}
+			
+			.equpatrolEdit .photo.content-box .icon-topright-corner-delete {
+				top: -7px;
+				font-size: 2rem;
+				z-index: 100;
+			}
+			
+			.photo.file .img {
+				height: 100%;
+				background-size: cover;
+			}
+			
+			footer {
+				width: 100%;
+				height: 40px;
+				position: fixed;
+				bottom: 0;
+				left: 0;
+				line-height: 40px;
+				text-align: center;
+				background-color: #FFFFFF;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="equpatrolEditController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left" ng-bind="ID>0?'修改巡检计划':'新增巡检计划'"></a>
+			<a class="right-save" ng-click="save()">保存</a>
+		</header>
+		<div class="mui-scroll-wrapper equpatrolEdit " ng-class="{'mui-block':isLoad}" style="display: none;margin-bottom: 41px;">
+			<p class="data-group-tip">基本信息</p>
+			<ul class="data-group">
+
+				<li class="data-row must">
+					<label>计划名称</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="patrolName" class="needsclick" placeholder="请输入计划名称" lenlimit="30"></div>
+						</div>
+					</div>
+				</li>
+
+				<li class="data-row">
+					<label>设备归类</label>
+					<p class="opt md-icon font-15" ng-click="tap('selcls')">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="tap('selcls')">
+						<span class="placeholder" ng-show="equCatalogDataList.length==0">请选择设备归类</span>
+						<span ng-show="equCatalogDataList.length>0" ng-repeat="cata in equCatalogDataList" ng-bind="$index==0?cata.DirName:','+cata.DirName"></span>
+					</div>
+				</li>
+
+				<li class="data-row must">
+					<label>巡检人</label>
+					<p class="opt md-icon font-15" ng-click="tap('selectUser')">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="tap('selectUser')">
+						<span class="placeholder" ng-show="patrolUserList.length==0">请选择巡检人</span>
+						<span ng-show="patrolUserList.length>0" ng-repeat="user in patrolUserList" ng-bind="$index==0?user.RealName:'，'+user.RealName"></span>
+					</div>
+				</li>
+				<li class="data-row must">
+					<label>巡检类型</label>
+					<p class="opt md-icon font-15" ng-click="tap('mainTypeWin')">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="tap('mainTypeWin')">
+						<span class="placeholder" ng-show="patrolType.ID==0">请选择巡检类型</span>
+						<span ng-show="patrolType.ID>0" ng-bind="patrolType.Name"></span>
+					</div>
+
+				</li>
+				<li class="data-row must">
+					<label>开始执行时间</label>
+					<p class="opt select-time" ng-click="chooseTime('start')">
+						<span ng-bind="startTime"></span>
+					</p>
+					<div class="body" ng-click="chooseDate('start')">
+						<span ng-if="!startDate" class="placeholder">请选择开始时间</span>
+						<span ng-if="startDate" ng-bind="startDate"></span>
+					</div>
+				</li>
+
+				<li class="data-row must">
+					<label>截止时间</label>
+					<p class="opt select-time" ng-click="chooseTime('end')">
+						<span ng-bind="endTime"></span>
+					</p>
+					<div class="body" ng-click="chooseDate('end')">
+						<span ng-if="!endDate" class="placeholder">请选择截止时间</span>
+						<span ng-if="endDate" ng-bind="endDate"></span>
+					</div>
+				</li>
+
+				<li class="data-row">
+					<label>循环周期</label>
+					<p class="opt md-icon font-15" ng-click="tap('unit')">
+						<span ng-bind="unitChange[periodUnit]" style="color: #666666;"></span>
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" style="margin-right: 80px;">
+						<div class="edit">
+							<div ng-model-div-text="patrolCyclePeriod" class="needsclick" placeholder="请输入循环周期" lenlimit="2"></div>
+						</div>
+					</div>
+				</li>
+			</ul>
+			<p class="data-group-tip">设备信息</p>
+			<ul class="data-group prodLibUl" ng-repeat="equ in PlanEqList" ng-if="equ.IsDel!=1">
+				<li class="data-row">
+					<label>设备名称</label>
+					<div class="body">
+						<div ng-bind="equ.EqName"></div>
+					</div>
+					<span class="icon-topright-corner-delete" ng-click="removeProd(equ.EQID,$index)"></span>
+				</li>
+				<li class="data-row">
+					<label>设备型号</label>
+					<div class="body">
+						<div ng-bind="equ.SkuName"></div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>设备编号</label>
+					<div class="body">
+						<div ng-bind="equ.EqIdentifier"></div>
+					</div>
+				</li>
+				<li class="data-row must">
+					<label>巡检标准</label>
+					<p class="opt md-icon font-15" ng-click="chooseStd($index,equ)">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="chooseStd($index,equ)">
+						<span ng-if="!equ.StdID" class="placeholder">请选择巡检标准</span>
+						<div ng-if="equ.StdID" ng-bind="equ.StdName"></div>
+					</div>
+				</li>
+			</ul>
+			<center ng-if="equNums==0">
+				<div class="prod-list-empty">
+					<span class="empty-logo"></span>
+					<p class="mt10">请点击底部按钮，添加设备</p>
+				</div>
+			</center>
+		</div>
+		<footer>
+			<ul class="mui-table-view mui-row">
+				<li class="mui-media mui-col-sm-12 mui-col-xs-12" style="background: #3296FA;color: #FFFFFF;" ng-click="tap('chooseEqu')">添加设备</li>
+			</ul>
+		</footer>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script>
+			app.controller("equpatrolEditController", ["$scope", "ApiService", "DataService", "UtilsService", "CacheService", "DatePickerService", "AuthService", "Loading", "$timeout", "RPCObserver",
+				function($scope, ApiService, DataService, UtilsService, CacheService, DatePickerService, AuthService, Loading, $timeout, RPCObserver) {
+					$scope.curUser = CacheService.get("user");
+					$scope.ID = query("planId") || 0;
+					if($scope.ID > 0) {
+						$scope.isLoad = false;
+						getpatrolInfo();
+					} else {
+						$timeout(function() {
+							$scope.isLoad = true;
+						}, 200);
+					}
+					var today = new Date().Format("yyyy-MM-dd HH:mm:ss");
+
+					var equList = [];
+					//设备数量
+					$scope.equNums = 0;
+					$scope.State = 0;
+					//巡检计划名称
+					$scope.patrolName = "";
+					//设备归类
+					$scope.equCatalogDataList = [];
+					//巡检人信息
+					$scope.patrolUserList = [];
+					$scope.userNums = 0;
+					//巡检类型
+					$scope.patrolType = {
+						ID: '',
+						Name: ''
+					};
+					//开始执行时间
+					$scope.startDate = "";
+					$scope.startTime = "";
+					//截止时间
+					$scope.endDate = "";
+					$scope.endTime = "";
+					//循环周期
+					$scope.patrolCyclePeriod = "";
+					//循环周期单位 年月日小时
+					$scope.periodUnit = 3;
+					//设备信息列表
+					$scope.PlanEqList = [];
+					//获取巡检计划信息
+					function getpatrolInfo() {
+						var url = ApiService.Api52 + "/api/v1/EqPatrolPlan/GetPatrolPlanInfoById?planId=" + $scope.ID
+						DataService.get(url).then(function(res) {
+							Loading.hide();
+							$scope.isLoad = true;
+							if(res) {
+								$scope.patrolName = res.PlanName;
+								$scope.startDate = res.StartDate.split(" ")[0];
+								$scope.startTime = res.StartDate ? res.StartDate.split(" ")[1].slice(0, 5) : "00:00";
+								$scope.endDate = res.EndDate.split(" ")[0];
+								$scope.endTime = res.EndDate ? res.EndDate.split(" ")[1].slice(0, 5) : "23:59";
+								$scope.patrolType.ID = res.TypeID;
+								$scope.patrolType.Name = res.TypeName;
+								$scope.equCatalogDataList = res.CatalogList;
+								$scope.State = res.State;
+
+								$scope.userNums = 0;
+								$scope.patrolCyclePeriod = res.CyclePeriod ? String(res.CyclePeriod) : "";
+								$scope.periodUnit = res.PeriodUnit;
+								$scope.patrolUserList = res.Users.map(function(item) {
+									return {
+										"UserID": item.ID,
+										"CompID": item.CompID,
+										"RealName": item.Name,
+										"State": item.State
+									}
+								});
+								if($scope.patrolUserList.length > 0) {
+									for(var i = $scope.patrolUserList.length - 1; i >= 0; i--) {
+										var item = $scope.patrolUserList[i];
+										if(item.State == 9) {
+											$scope.userNums++;
+											$scope.patrolUserList.splice(i, 1)
+										}
+									}
+
+								};
+								$scope.PlanEqList = res.PlanEqList.map(function(item) {
+									return {
+										"ID": item.ID,
+										"EqIdentifier": item.EqIdentifier,
+										"LastPlanDate": item.LastPlanDate,
+										"EqName": item.EqName,
+										"SkuName": item.SkuName,
+										"EQID": item.EQID,
+										"Path": item.Path,
+										"StdID": item.StdID,
+										"StdName": item.StdName,
+										"IsDel": 0,
+										"PlanID": item.PlanID,
+										"CheckItemList": item.CheckItemList
+									}
+								});
+								equList = res.PlanEqList.map(function(item) {
+									return {
+										"EqIdentifier": item.EqIdentifier,
+										"LastPlanDate": item.LastPlanDate,
+										"EqName": item.EqName,
+										"SkuName": item.SkuName,
+										"ID": item.EQID,
+										"IsDel": 0,
+										"PlanID": item.PlanID
+									}
+								});
+								$scope.equNums = res.PlanEqList.length;
+							};
+
+						}, function(error) {
+							$scope.isLoad = true;
+
+						})
+					};
+					//选择巡检日期
+					$scope.chooseDate = function(type, cuttle) {
+						DatePickerService.pickDate({
+							selected: type == "start" ? $scope.startDate : $scope.endDate,
+							minDate: today
+						}).then(function(res) {
+							if(type == "start") {
+								$scope.startDate = res;
+								$scope.startTime = "00:00";
+							} else {
+								$scope.endDate = res;
+								$scope.endTime = "23:59";
+							}
+						});
+					};
+					//选择时间
+					$scope.chooseTime = function(type) {
+						DatePickerService.pickTime({
+							selected: type == "start" ? $scope.startTime : $scope.endTime,
+							minDate: today
+						}).then(function(res) {
+							if(type == "start") {
+								$scope.startTime = res;
+							} else {
+								$scope.endTime = res;
+							}
+						});
+					}
+					var unitArr = [{
+						title: "年",
+						id: 1
+					}, {
+						title: "月",
+						id: 2
+					}, {
+						title: "日",
+						id: 3
+					}, {
+						title: "小时",
+						id: 4
+					}];
+					$scope.unitChange = {
+						"1": "年",
+						"2": "月",
+						"3": "日",
+						"4": "小时"
+					}
+					$scope.tap = function(key, index) {
+						switch(key) {
+							//选择巡检人
+							case 'selectUser':
+								var selectUsers = [];
+								$scope.patrolUserList.forEach(function(item) {
+									if(item.State != 9) {
+										selectUsers.push(item)
+									}
+								});
+								UtilsService.openWindow({
+									needLogin: true,
+									id: "contact-select.html",
+									url: "../common/contact-select.html?action=select&multiselect=true&type=org&&isView=false",
+									extras: {
+										selectObj: selectUsers,
+										callback: "selectUserCallback"
+									}
+								});
+								break;
+								//添加设备 
+							case "chooseEqu":
+								setTimeout(function() {
+									UtilsService.openWindow({
+										needLogin: true,
+										id: "equ-patrol-selectEquList.html",
+										url: "equ-patrol-selectEquList.html?action=select&multiselect=true",
+										extras: {
+											selectArr: equList,
+											selectCatalogEquArr: $scope.equCatalogDataList,
+											callback: "ChooseEquCallback"
+										}
+									});
+								})
+								break;
+								//选择设备归类
+							case "selcls":
+								//先选设备后选分类
+								if(equList.length > 0 && $scope.equCatalogDataList.length == 0) {
+									mui.confirm("修改设备归类会清空当前设备列表，是否继续？", function(e) {
+										if(e.index == 0) {
+											$timeout(function() {
+												equList = [];
+												$scope.PlanEqList.forEach(function(item) {
+													item.CheckItemList = [];
+													item.StdID = 0;
+													item.StdName = "";
+													item.IsDel = 1;
+												});
+												$scope.equNums = 0
+											}, 300)
+											UtilsService.openWindow({
+												needLogin: true,
+												id: 'sel-clsification-multiple.html',
+												url: "sel-clsification-multiple.html",
+												extras: {
+													callback: "SelClsBack",
+													selected: $scope.equCatalogDataList,
+													equNums: equList.length,
+													billkey: "B23",
+													ismust: true
+												}
+											});
+										}
+									});
+								} else {
+									UtilsService.openWindow({
+										needLogin: true,
+										id: 'sel-clsification-multiple.html',
+										url: "sel-clsification-multiple.html",
+										extras: {
+											callback: "SelClsBack",
+											selected: $scope.equCatalogDataList,
+											equNums: equList.length,
+											billkey: "B23",
+											ismust: true
+										}
+									});
+								}
+								break;
+							case "unit":
+								UtilsService.actionSheet("循环周期单位", unitArr).then(function(res) {
+									$scope.periodUnit = res.id;
+								})
+								break;
+							case "mainTypeWin":
+								setTimeout(function() {
+									UtilsService.openWindow({
+										needLogin: true,
+										id: 'select-patrol-type.html',
+										url: 'select-patrol-type.html',
+										extras: {
+											selectObj: {
+												ID: $scope.patrolType.ID,
+												Name: $scope.patrolType.Name
+											},
+											callback: "patroTypeCallback"
+										}
+									});
+								})
+								break;
+						}
+					}
+					$scope.chooseStd = function(index, equ) {
+						setTimeout(function() {
+							UtilsService.openWindow({
+								id: "select-patrol-rule.html",
+								url: "select-patrol-rule.html",
+								extras: {
+									index: index,
+									selectedItem: {
+										Path: equ.Path,
+										ID: equ.StdID,
+										StdName: equ.StdName,
+										CheckItemList: equ.CheckItemList ? equ.CheckItemList.map(function(item) {
+											return {
+												"ID": item.ItemID,
+												"Name": item.ItemName,
+												"RecordModel": item.RecordModel,
+												"Options": item.Options
+											}
+										}) : []
+									},
+									selectCatalogEquArr: equ.Path || 0,
+									callback: "ChooseStdCallback"
+								}
+							});
+						})
+					}
+					var saving = false;
+
+					//保存更改
+					$scope.save = function() {
+						if(saving) {
+							return;
+						}
+						document.activeElement.blur();
+						if($scope.patrolName.trim() == "") {
+							mui.toast("请输入巡检计划名称");
+							return;
+						}
+						if($scope.patrolName.length > 30) {
+							mui.toast("巡检计划名称最长30个字符");
+							return;
+						}
+						if($scope.patrolUserList.length == 0 || $scope.patrolUserList.length == $scope.userNums) {
+							mui.toast("请选择巡检人");
+							return;
+						}
+						if(!$scope.patrolType.ID) {
+							mui.toast("请选择巡检类型");
+							return;
+						}
+						if($scope.startDate == "") {
+							mui.toast("请选择开始执行时间");
+							return;
+						}
+						if($scope.endDate == "") {
+							mui.toast("请选择截止时间");
+							return;
+						}
+						var reg = /^(-)?([1-9]\d*|0)(\.\d+)?$/;
+						var reg2 = /^[+]{0,1}(\d+)$/;
+						if($scope.patrolCyclePeriod.trim() && !reg.test($scope.patrolCyclePeriod.trim())) {
+							mui.toast("请输入正确的循环周期");
+							return;
+						}
+						if($scope.patrolCyclePeriod.trim() && !reg2.test($scope.patrolCyclePeriod.trim())) {
+							mui.toast("循环周期只能为整数");
+							return;
+						}
+						if($scope.patrolCyclePeriod.trim() && $scope.patrolCyclePeriod.trim().length > 2) {
+							mui.toast("循环周期最多输入两位整数");
+							return;
+						}
+						//当前时间时间戳
+						var curDate = new Date().Format("yyyy-MM-dd HH:mm");
+						var curDateStamp = new Date(curDate.replace(/\-/g, "\/"));
+						var stdDate = $scope.startDate + " " + $scope.startTime + ":00";
+						var endDate = $scope.endDate + " " + $scope.endTime + ":59";
+						if($scope.ID && $scope.startTime != "00:00" && new Date(stdDate.replace(/-/g, "/")) < curDateStamp) {
+							mui.toast("计划开始时间不能小于当前时间");
+							return;
+						}
+						if(new Date(endDate.replace(/-/g, "/")) < new Date(stdDate.replace(/-/g, "/"))) {
+							mui.toast("计划截止时间不能小于计划开始时间");
+							return;
+						}
+						if(new Date(endDate.replace(/-/g, "/")) < curDateStamp) {
+							mui.toast("计划截止时间不能小于当前时间");
+							return;
+						}
+
+						$scope.equNums = 0;
+						var stdAll = true;
+						$scope.PlanEqList.forEach(function(item) {
+							if(item.IsDel == 0) {
+								$scope.equNums++;
+								!item.StdID && (stdAll = false);
+							}
+						});
+						if($scope.equNums == 0) {
+							mui.toast("请添加设备");
+							return;
+						}
+						if(!stdAll) {
+							mui.toast("存在未选择巡检标准的设备，请选择后再试");
+							return;
+						}
+						if(!checkLengthUtil.check()) {
+							return false;
+						}
+
+						saving = true;
+						submitData();
+					}
+
+					function submitData() {
+						Loading.show();
+						var url = ApiService.Api52 + "/api/v1/EqPatrolPlan/SavePatrolPlan";
+						var patrolUserIds = "";
+						$scope.patrolUserList.forEach(function(item) {
+							if(item.State != 9) {
+								patrolUserIds += item.UserID + "/"
+							}
+						})
+						var equCatalogIds = "";
+						$scope.equCatalogDataList.forEach(function(item) {
+							equCatalogIds += item.ID + "/"
+						})
+						//巡检设备信息
+						var patrolEquDatas = [];
+						patrolEquDatas = $scope.PlanEqList.map(function(data) {
+							var obj = {
+								"ID": data.ID || 0,
+								"EQID": data.EQID,
+								"EqName": data.EquName,
+								"EqIdentifier": data.EqIdentifier,
+								"SkuName": data.SkuName,
+								"IsDel": data.IsDel,
+								"StdID": data.StdID,
+								"StdName": data.StdName,
+								"PlanID": $scope.ID,
+								"CheckItemList": data.CheckItemList
+							}
+							return obj;
+						});
+						var postdata = {
+							"ID": $scope.ID,
+							"CompID": $scope.curUser.CompID,
+							"PlanName": $scope.patrolName,
+							"StartDate": $scope.startDate + " " + $scope.startTime + ":00",
+							"EndDate": $scope.endDate + " " + $scope.endTime + ":59",
+							"Operators": patrolUserIds, //巡检人id/隔开 
+							"CatalogIDs": equCatalogIds, //设备分类id/隔开
+							"State": $scope.State,
+							"CyclePeriod": $scope.patrolCyclePeriod,
+							"PeriodUnit": $scope.periodUnit,
+							"EqCount": $scope.PlanEqList.length,
+							"TypeID": $scope.patrolType.ID,
+							"TypeName": $scope.patrolType.Name,
+							"CatalogList": $scope.equCatalogDataList,
+							"PlanEqList": patrolEquDatas
+						};
+						DataService.post(url, postdata).then(function(res) {
+							Loading.hide();
+							if(res) {
+								if(postdata.ID == 0) {
+									var url = ApiService.Api50 + '/api/v1/Common/SaveShare';
+									var sharePostData = {
+										"DataFrom": shareLog['equ-insp'],
+										"DataID": res,
+										"Operate": "设备巡检",
+										"Content": "设备巡检",
+										"SendUsers": patrolUserIds,
+										"ActionType": 0
+									}
+									DataService.post(url, sharePostData).then(function(res) {
+
+									});
+								}
+								RPCObserver.broadcast('refresh_equ_patrol_list');
+								RPCObserver.broadcast('refresh_patrol_info');
+
+								$scope.ID = res;
+								mui.toast("保存成功！");
+								setTimeout(function() {
+									mui.back();
+								}, 300);
+								setTimeout(function() {
+									saving = false;
+								}, 500);
+
+							}
+						}, function() {
+							setTimeout(function() {
+								saving = false;
+							}, 300);
+						});
+					}
+					//移除设备列表中的设备
+					$scope.removeProd = function(id, index) {
+						mui.confirm("确认删除该设备吗？", function(e) {
+							if(e.index == 0) {
+								$scope.PlanEqList[index].IsDel = 1;
+								$scope.PlanEqList[index].StdID = 0;
+								$scope.PlanEqList[index].StdName = "";
+								$scope.PlanEqList[index].CheckItemList = [];
+								$scope.equNums -= 1;
+								for(var i = 0; i < equList.length; i++) {
+									if(equList[i].ID == id) {
+										equList.splice(i, 1);
+									}
+								}
+							}
+							$scope.$apply();
+						});
+					}
+					//清空设备列表
+					RPCObserver.on("refresh_equ_list", "refresh_equ_list");
+					window.refresh_equ_list = function(isClear) {
+						if(isClear) {
+							equList = [];
+							$scope.PlanEqList.forEach(function(item) {
+								item.CheckItemList = [];
+								item.StdID = 0;
+								item.StdName = "";
+								item.IsDel = 1;
+							});
+							$scope.equNums = 0
+						}
+					}
+					//选择设备回调
+					window.ChooseEquCallback = function(obj) {
+						equList = angular.copy(obj);
+						var newEquList = [];
+						$scope.equNums = 0;
+						$scope.PlanEqList.forEach(function(equ, index) {
+							equ.IsDel = 1;
+						});
+						obj.forEach(function(item, idx) {
+							if($scope.PlanEqList.length == 0) {
+								$scope.equNums++;
+								$scope.PlanEqList.push({
+									"EqIdentifier": item.EqIdentifier,
+									"LastPlanDate": item.LastPlanDate,
+									"Path": item.CatalogPath,
+									"EqName": item.EqName,
+									"SkuName": item.SkuName,
+									"EQID": item.ID,
+									"StdID": 0,
+									"StdName": "",
+									"IsDel": item.IsDel || 0,
+									"PlanID": 0
+								})
+							} else {
+								var hasIdx = false;
+								$scope.PlanEqList.forEach(function(equ, index) {
+									if(item.ID == equ.EQID) {
+										hasIdx = true;
+										if(equ.IsDel == 1) {
+											equ.IsDel = 0;
+											$scope.equNums++;
+										};
+										return;
+									}
+								});
+								if(!hasIdx) {
+									$scope.equNums++;
+									newEquList.push({
+										"EqIdentifier": item.EqIdentifier,
+										"LastPlanDate": item.LastPlanDate,
+										"Path": item.CatalogPath,
+										"EqName": item.EqName,
+										"SkuName": item.SkuName,
+										"EQID": item.ID,
+										"StdID": 0,
+										"StdName": "",
+										"IsDel": item.IsDel || 0,
+										"PlanID": 0
+									})
+								}
+							}
+						});
+						$scope.PlanEqList = $scope.PlanEqList.concat(newEquList);
+						$scope.$apply();
+					};
+					//选择巡检标准 回调
+					window.ChooseStdCallback = function(item, index, type, catalogIds) {
+						if(type == 1) {
+							$scope.PlanEqList[index].StdID = item.ID;
+							$scope.PlanEqList[index].StdName = item.StdName;
+							$scope.PlanEqList[index].CheckItemList = [];
+							$scope.PlanEqList[index].CheckItemList = item.CheckItemList.map(function(data) {
+								return {
+									"ItemID": data.ID,
+									"ItemName": data.Name,
+									"RecordModel": data.RecordModel,
+									"Options": data.Options
+								}
+							});
+							$scope.$apply();
+						} else {
+							var ids = catalogIds.split("_");
+							$scope.PlanEqList.forEach(function(eq) {
+								if(ids.indexOf(eq.Path) > -1 || item.CatalogIDs == 0) {
+									eq.StdID = item.ID;
+									eq.StdName = item.StdName;
+									eq.CheckItemList = [];
+									eq.CheckItemList = item.CheckItemList.map(function(data) {
+										return {
+											"ItemID": data.ID,
+											"ItemName": data.Name,
+											"RecordModel": data.RecordModel,
+											"Options": data.Options
+										}
+									});
+									$scope.$apply();
+								}
+							});
+						}
+					}
+				}
+			]);
+			//选择巡检人回调
+			function selectUserCallback(obj) {
+				var appElement = document.querySelector('[ng-controller=equpatrolEditController]');
+				var $scope = angular.element(appElement).scope();
+				$scope.patrolUserList = angular.copy(obj);
+				$scope.userNums = 0;
+				$scope.$apply();
+			}
+			//选择归类回调
+			function SelClsBack(list) {
+				var appElement = document.querySelector('[ng-controller=equpatrolEditController]');
+				var $scope = angular.element(appElement).scope();
+				$scope.equCatalogDataList = list;
+				$scope.$apply();
+			};
+
+			function patroTypeCallback(obj) {
+				var appElement = document.querySelector('[ng-controller=equpatrolEditController]');
+				var $scope = angular.element(appElement).scope();
+				if(obj) {
+					$scope.patrolType.ID = obj.ID;
+					$scope.patrolType.Name = obj.TypeName;
+				} else {
+					$scope.patrolType.ID = "";
+					$scope.patrolType.Name = "";
+				}
+				$scope.$apply();
+			}
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

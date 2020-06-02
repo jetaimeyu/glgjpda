@@ -1,0 +1,44 @@
+<ul class="data-group data-title">
+	<li class="data-row mui-table-view-cell supplier mui-block" ng-repeat="item in model" ng-click="moresupplier(item.ID)">
+		<p class="opt md-icon font-15">
+			<span class="icon-right"></span>
+		</p>
+		<div class="company-name font-16 mui-ellipsis">
+			<span ng-bind="item.SupplierName"></span>
+		</div>
+		<div class="company-address font-13 mui-ellipsis" ng-if="item.Province">
+			<span ng-bind="item.Province | locationfilter:item.City"></span>
+		</div>
+	</li>
+</ul>
+<style type="text/css">
+	.data-group .data-row:after {
+		right: 0px;
+	}
+	
+	.search-title {
+		color: #888888!important;
+		font-size: 1.4rem!important;
+		left: 15px!important;
+	}
+	
+	.company-name span {
+		color: #323232;
+	}
+	
+	.company-name {
+		width: 80%;
+		margin-left: 16px;
+	}
+	
+	.company-address {
+		width: 80%;
+		margin-left: 16px;
+		color: #999999;
+	}
+	
+	.supplier {
+		padding-top: 10px!important;
+		padding-bottom: 10px!important;
+	}
+</style>

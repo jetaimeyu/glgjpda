@@ -1,0 +1,225 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+	<link href="../../css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	<style type="text/css">
+		.detail-title {
+			margin-top: 44px;
+			background-color: #fff;
+		}
+
+		.detail-title::after {
+			content: "";
+			clear: both;
+			height: 0;
+			display: block;
+		}
+
+		.tptal {
+			padding: 8px 16px;
+			font-size: 1.4rem;
+			color: #323232;
+			padding-bottom: 0;
+		}
+
+		.tptal i {
+			font-size: 1.4rem;
+			margin-right: 7px;
+		}
+
+		.tptal li {
+			min-height: 20px !important;
+			line-height: 20px;
+		}
+
+		.tptal .icon-right {
+			line-height: 2.1;
+			color: #555555;
+			margin-left: 6px;
+		}
+
+		.comment-list .data-group {
+			margin-top: 0;
+		}
+
+		.detail-title p,
+		.comment-list p {
+			margin-bottom: 0;
+			color: #323232;
+		}
+
+		footer {
+			width: 100%;
+			position: fixed;
+			height: 44px;
+			line-height: 44px;
+			color: #fff;
+			z-index: 9;
+			bottom: 0;
+			background: #fff;
+			padding: 5px 0px 5px 0px;
+			border-top: 1px solid #ccc;
+		}
+
+		footer span.inp {
+			font-size: 1.4rem;
+			margin: 0 16px;
+			height: 32px;
+			display: block;
+			background: #e9e9e9;
+			border-radius: 35px;
+			padding-left: 38px;
+			line-height: 32px;
+			color: #323232;
+		}
+
+		footer .icon-pen {
+			position: absolute;
+			font-size: 1.4rem;
+			left: 34px;
+			top: -2px;
+			color: #000;
+		}
+	</style>
+</head>
+
+<body ng-controller="CommentDetail" style="display: none;" ng-class="{'mui-block':isLoad}">
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left">评论详情</a>
+	</header>
+	<!-- 头部信息 -->
+	<div class="detail-title">
+		<md-ing-reply-list ng-model="answerInfo" type="'header'"></md-ing-reply-list>
+	</div>
+	<ul class="tptal data-group" ng-if="commentListcount>0">
+		<li class="data-row">
+			<i class="icon-answer"></i>
+			<span ng-bind="commentListcount +'个评论'"></span>
+		</li>
+	</ul>
+	<div class="comment-list" style="padding-bottom:45px">
+		<md-ing-reply-list ng-model="commentList" type="'commentList'"></md-ing-reply-list>
+	</div>
+	<!--无网络或请求失败重试-->
+	<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+	<footer>
+		<span ng-click="answer()" class="inp">评论...</span>
+		<i class="icon-pen"></i>
+	</footer>
+
+	<script type="text/javascript" src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/rpc.js"></script>
+	<script type="text/javascript" src="../message/transMessage.js"></script>
+	<script type="text/javascript" src="../../js/xss.min.js"></script>
+	<script type="text/javascript">
+		app.controller("CommentDetail", ["$scope", "AuthService", "ApiService", "DataService",
+			"UtilsService", "ChatUserService", "Loading", "RPCObserver", "$filter", "CacheService",
+			function ($scope, AuthService, ApiService, DataService, UtilsService, ChatUserService, Loading,
+				RPCObserver, $filter, CacheService) {
+				$scope.isLoad = false;
+				//评论列表
+				$scope.commentList = [];
+				var curUser = CacheService.get("user");
+
+				//回答详情
+				$scope.answerInfo = [plus.webview.currentWebview().answer];
+				$scope.answerInfo[0].CommentCount = 0;
+
+				//无网络或请求失败重试
+				$scope.retryModal = {
+					msg: "",
+					retry: getCommentList,
+					state: ''
+				};
+				// 请求数据
+				getCommentList();
+
+				//获取评论列表
+				function getCommentList() {
+					Loading.show();
+					var url = ApiService.Api50 + "/api/v1/QA/CommentList?aId=" + query("aId") + "&pageSize=9999";
+					DataService.get(url).then(function (res) {
+						$scope.commentListcount = res.TotalCount
+						Loading.hide();
+						$scope.isLoad = true;
+						$scope.retryModal.state = '';
+						// 组件头像
+						for (var i = 0; i < res.DataRow.length; i++) {
+							var item = res.DataRow[i];
+							item.CContent = item.CContent.replace(/\/\/www.maidiyun.com\/50/g, ApiService.Api50).replace(/\/\/mdbox.maidiyun.com\/50/g, ApiService.Api50).replace(/\/\/www.maidiyun.com\/51/g, ApiService.Api50).replace("757px", "100%");
+							item.avatar = {
+								UserID: item.CUserInfo.UserID,
+								ViewName: item.CUserInfo.UserName,
+								ULogoIsExist: item.CUserInfo.ULogoIsExist
+							}
+						}
+						$scope.commentList = res.DataRow;
+					}, function (error) {
+						$scope.retryModal.state = error.State;
+					});
+				};
+				var mui_back = mui.back;
+				mui.back = function () {
+					RPCObserver.broadcast('refresh_inglist_detail', $scope.answerInfo);
+					mui_back();
+				}
+
+				//回复评论
+				var a = 1;
+				$scope.answer = function (item, event) {
+					if (a == 1) {
+						a = 0;
+						UtilsService.replyModal(150, "", "请输入评论内容").then(function (res) {
+							var url = ApiService.Api50 + '/api/v1/QA/CommentSave?aId=' + query("aId");
+							var postData = {
+								"ID": 0,
+								"CID": 0,
+								"CContent": res
+							}
+							DataService.post(url, postData).then(function (res) {
+								if (res) {
+									mui.toast("评论成功");
+
+									var content = "在您的答案中评论:" + postData.CContent;
+									curUser.UserID == $scope.answerInfo[0].AUserInfo.UserID && (content = "回复了您的评论:" + postData.CContent);
+									ChatUserService.sendQANotice({
+										chatId: $scope.answerInfo[0].AUserInfo.UserID,
+										chatName: $scope.answerInfo[0].AUserInfo.UserName,
+										Content: content
+									});
+									
+									// 请求数据
+									getCommentList();
+									RPCObserver.broadcast("refresh_Assist_detail");
+								}
+							});
+						});
+						setTimeout(function () {
+							a = 1;
+						}, 500);
+					}
+				}
+
+				//刷新页面数据
+				RPCObserver.on('refresh_Assist_detail', 'refresh_Assist_detail');
+				window.refresh_Assist_detail = function () {
+					getCommentList();
+				};
+			}
+		]);
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+		});
+	</script>
+</body>
+
+</html>

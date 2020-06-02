@@ -1,0 +1,34 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<link rel="stylesheet" href="equ-common.css" />
+	</head>
+
+	<body ng-controller="ContactOrgController">
+		<div id="pullrefresh" class="mui-scroll-wrapper" style="display:none;" ng-class="{'mui-block':isLoad}">
+			<div class="">
+				<p class="data-group-tip" style="padding-top: 8px;padding-bottom: 18px;margin-bottom:-20px;" ng-if="latelyData.length>0&&action!='select'">最近创建</p>
+				<md-device-list ng-model="latelyData" action="action" ng-if="action!='select'"></md-device-list>
+				<p class="data-group-tip" style="padding-top: 8px;padding-bottom: 0;" ng-if="latelyData.length>0&&action!='select'">设备列表</p>
+				<md-device-list ng-model="data" action="action"></md-device-list>
+				<md-no-data class="no-data" ng-show="data && data.length==0">暂无设备数据</md-no-data>
+			</div>
+		</div>
+		<script src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="equ-my.js"></script>
+	</body>
+
+</html>

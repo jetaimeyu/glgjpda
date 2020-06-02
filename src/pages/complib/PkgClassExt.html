@@ -1,0 +1,116 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../css/common.css" rel="stylesheet"/>
+		<link href="../../icon-font/iconfont.css" rel="stylesheet"/>
+		<link  href="../../css/mui.loading.css" rel="stylesheet"/>
+		<style type="text/css">
+			
+		</style>
+	</head>
+
+	<body ng-controller="CompIntroController" style="background: #FFFFFF;">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">编辑目录</a>
+		</header>
+		<div class="mui-content">
+			<ul class="data-group">
+				<li class="data-row must">
+					<label>名称</label>
+					<div class="body">
+						<input  type="text" ng-model="info.SName" placeholder="请输入名称" maxlength="80"/>
+					</div>
+				</li>
+			</ul>
+			<div class="mui-content-padded">
+				<button class="mui-btn mui-btn-primary mui-btn-block" ng-click="save()">保存</button>
+			</div>
+		</div>
+
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/mui.loading.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("CompIntroController", ["$scope", "ApiService", "DataService", "UtilsService", "RPCObserver","CacheService", function($scope, ApiService, DataService, UtilsService, RPCObserver,CacheService) {
+				$scope.id = query("id") || 0;
+				$scope.pid = query("pid") || 0;
+				
+				var user = CacheService.get("user");
+
+				$scope.info = {
+					PID:$scope.pid,
+					SName:"",
+					SPath:"",
+					SKey:"",
+					SortID:"",
+					CreateUser:user.UserID,
+					IsShowIndex:0,
+					HaveChild:0,
+					DirType:1,
+				};
+
+				
+				
+
+				var getInfo = function(){
+					mui.showLoading("正在加载...", "div");
+
+					var url = ApiService.Api50+"/api/v1/prod/GetPkgClassExtInfo?id="+$scope.id;
+
+					DataService.get(url).then(function(res){
+						mui.hideLoading();
+						$scope.info = res;
+					});
+				};
+
+				if($scope.id)
+				{
+					getInfo();
+				}
+
+				$scope.save = function(){
+					if(!$scope.info.SName.trim())
+					{
+						mui.toast("请输入名称!");
+						return;
+					}
+
+					delete $scope.info.CreateDate;
+					mui.showLoading("正在保存", "div");
+
+					var url =  ApiService.Api50+"/api/v1/prod/SavePkgClassExt?id="+$scope.id+"&compid="+user.CompID;
+					DataService.post(url,$scope.info).then(function(res){
+						if($scope.id)
+						{
+							RPCObserver.broadcast("refresh_prod_dir_name",$scope.info.SName);
+						}
+						else{
+							RPCObserver.broadcast("refresh_prod_dir");
+						}
+						
+						mui.hideLoading();
+						mui.toast("保存成功!");
+						mui.back();
+					},function(res){
+						mui.hideLoading();
+						mui.toast("保存失败:"+(res.ErrorMessage || res.Data));
+					});
+				};
+
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

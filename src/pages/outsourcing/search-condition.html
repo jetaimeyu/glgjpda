@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="search-condition.css" />
+	</head>
+
+	<body ms-controller="appCtrl">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left"></a>
+			<div class="search-box">
+				<div class="search-body">
+					<input type="text" id="txtSearch" placeholder="搜索您周边的外协企业" ms-duplex="SearchTitle" ms-css="{'padding-right':SearchTitle?'20px':'0px'}" />
+					<span class="mui-icon mui-icon-search"></span>
+					<i class="md-icon icon-close-3 clear-input" ms-visible="SearchTitle"></i>
+				</div>
+			</div>
+			<div class="nav_location font-15 search color-gray" ms-class="[SearchTitle?'color-gray-deep':'color-gray']" id="address_text">搜索</div>
+		</header>
+		<div class="mui-scroll-wrapper" id="divBody" style="overflow: hidden;margin-bottom: 44px;display: none;">
+			<div class="mui-scroll">
+				<p class="data-group-tip" style="margin-top: 10px;">请选择设备分类</p>
+				<ul class="data-group biglabel">
+					<div id="res-slide" class="mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted nav-bar">
+						<div class="mui-scroll">
+							<a ms-class="[(index==NavData.length-1?'mui-active':''),'mui-control-item']" ms-attr="{idx:index}" ms-for="index,obj in NavData">
+								<span class="icon iconfont icon-right color-gray-deep" ms-visible="index>0"></span>
+								<span ms-text="obj.CName" class="group-name"></span>
+							</a>
+						</div>
+						<!--<i class="icon-back font-14 back color-gray-deep" id="backNav" ms-visible="CurLevel>0"></i>-->
+					</div>
+					<div class="empty" ms-visible="TypeData=='-1'" style="padding:10px 0px;margin:0px;">
+						加载分类失败..
+					</div>
+					<li class="data-row li-item" ms-for="index,obj in TypeData" ms-attr="{'data-id':obj.id,'data-name':obj.name,idx:index,'data-path':obj.CPath,id:'choose-item-'+obj.id}">
+						<i ms-class="[IsChecked(obj.id),'font-22','checkClass']"></i>
+						<label style="left: 45px;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;width:50vw" ms-text="obj.name"></label>
+						<!--<p class="opt md-icon icon-right opt-child" ms-visible="obj.HasChild=='1'"></p>-->
+						<p ms-class="[obj.HasChild=='1'?'':'color-gray','opt','nextClass']" ms-visible="obj.HasChild=='1'">下级</p>
+					</li>
+				</ul>
+				<div class="empty" ms-visible="TTypeData!='-1' && TypeData && TypeData.length==0" style="padding:10px 0px;margin:0px;">
+					暂无下级分类
+				</div>
+			</div>
+
+		</div>
+		<div id="search-history" class="hide">
+			<ul class="data-group">
+				<li class="data-row serach-item" ms-for="index,obj in QueryData" ms-attr="{'idx':index,'data-value':obj}">
+					<label style="width:75vw" class="mui-ellipsis"><i class="icon-clock font-16" style="margin-right: 10px;"></i><span ms-text="obj"></span></label>
+					<p class="opt md-icon icon-right"></p>
+				</li>
+			</ul>
+		</div>
+		<footer class="top-thin-line" style="display: none;" id="footer">
+			<div class="choosed-body mui-row" style="display:none;">
+				<div class="mui-col-xs-3 mui-col-sm-4 choosed-item" ms-if="SelectClass && SelectClass.length>0" ms-for="index,obj in SelectClass" ms-attr="{'data-id':obj.id,'data-name':obj.name,idx:index}">
+					<i class="icon-close color-gray-deep" style="z-index: 100;"></i>
+					<span ms-text="obj.name"></span>
+				</div>
+				<div class="mui-col-xs-3 mui-col-sm-4">
+					<span class="color-red-md" id="clearClass">全部清除</span>
+				</div>
+			</div>
+			<p id="selNum" class="mui-ellipsis">
+				<span style="display:none" ms-visible="SelectedClass.name" ms-text="'已选择：'+SelectedClass.name"></span>
+				<span style="display:none;" ms-visible="!SelectedClass.name">请选择</span>
+				<!--<span ms-text="SelectClass.length" class="color-red-md font-20" style="margin: 0px 5px;"></span> 个类目
+				<i ms-visible="SelectClass.length>0" ms-class="IsOpen?'icon-down':'icon-up'" style="margin-left:5px"></i>-->
+			</p>
+			<div id="submit_btn">筛选</div>
+		</footer>
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/avalon.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="search-condition.js"></script>
+	</body>
+
+</html>

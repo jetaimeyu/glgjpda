@@ -1,0 +1,175 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.mui-clearfix p {
+				float: right;
+				color: #3296FA;
+				padding-top: 4px;
+			}
+			
+			.data-group .data-row {
+				padding-bottom: 0;
+			}
+			
+			.data-group .data-row i {
+				line-height: 40px;
+				margin-right: 10px;
+				font-size: 1.8rem;
+				margin-left: -6px;
+			}
+			
+			footer {
+				width: 100%;
+				position: fixed;
+				bottom: 0px;
+				line-height: 44px;
+				text-align: center;
+				color: #000;
+				z-index: 10;
+				background-color: #fff;
+				border-top: 1px solid #f1f1f1;
+				box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3)
+			}
+			
+			.ship-result {
+				float: left;
+				color: #333333;
+				padding-left: 15px;
+			}
+			
+			.submit {
+				float: right;
+				background-color: #3296FA;
+				color: #FFFFFF;
+				font-family: PingFang-SC-Medium;
+				border: none;
+				line-height: 45px;
+				padding: 0;
+				width: 120px;
+				border-radius: 0;
+			}
+			
+			.data-group .data-row .body {
+				padding: 0;
+			}
+			
+			.data-group .data-row .mui-ellipsis-2 {
+				padding: 8px 16px 8px 0;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="WorkSelectController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">选择工作内容</a>
+		</header>
+		<div class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<ul class="data-group" style="margin-top: 8px;" ng-if="data.prodDebugList.length>0">
+				<p class="data-group-tip">安装调试</p>
+				<li class="data-row" ng-click="selectTap(item)" ng-repeat="item in data.prodDebugList">
+					<i class="mui-pull-left" style="margin-left: 10px;" ng-class="{'icon-round color-gray':hasObj(item)<0,'icon-roundcheckfill color-blue ':hasObj(item)>=0}"></i>
+					<div class="body mui-ellipsis-2" ng-bind="item.JobContent"></div>
+				</li>
+			</ul>
+			<ul class="data-group" style="margin-top: 8px;" ng-if="data.recordsList.length>0">
+				<p class="data-group-tip">故障维修</p>
+				<li class="data-row" ng-click="selectTap(item)" ng-repeat="item in data.recordsList">
+					<i class="mui-pull-left" style="margin-left: 10px;" ng-class="{'icon-round color-gray':hasObj(item)<0,'icon-roundcheckfill color-blue ':hasObj(item)>=0}"></i>
+					<div class="body mui-ellipsis-2" ng-bind="item.RepairDescription"></div>
+				</li>
+			</ul>
+			<ul class="data-group" style="margin-top: 8px;margin-bottom: 46px;" ng-if="data.customerList.length>0">
+				<p class="data-group-tip">联系跟进</p>
+				<li class="data-row" ng-click="selectTap(item)" ng-repeat="item in data.customerList">
+					<i class="mui-pull-left" style="margin-left: 10px;" ng-class="{'icon-round color-gray':hasObj(item)<0,'icon-roundcheckfill color-blue ':hasObj(item)>=0}"></i>
+					<div class="body mui-ellipsis-2" ng-bind="item.ResultContent || '拜访'+item.CustomerName"></div>
+				</li>
+			</ul>
+			<md-no-data ng-show="data && (data.prodDebugList.length + data.recordsList.length + data.customerList.length)==0">暂无可选工作内容</md-no-data>
+		</div>
+		<footer class="font-15">
+			<span type="button" class="mui-btn submit" ng-click="save()">确定</span>
+		</footer>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script>
+			app.controller("WorkSelectController", ["$scope", "ApiService", "DataService", "RPCObserver", "Loading", function($scope, ApiService, DataService, RPCObserver, Loading) {
+				$scope.data = null;
+				var time = query("time") || "";
+				var today = new Date().Format("yyyy-MM-dd 00:00:00");
+				//传入的已选工作内容
+				$scope.selectedArr = plus.webview.currentWebview().selectArr || [];
+				$scope.selectedIds = [];
+				mui.each($scope.selectedArr, function(index, item) {
+					$scope.selectedIds.push({
+						id: item.ID,
+						type: item.type
+					});
+				});
+
+				Loading.show();
+				getWorkOptionToday();
+
+				function getWorkOptionToday() {
+					var url = ApiService.Api50 + "/api/v1/MatWorkOrder/MdtGetWorkOptionToday?todayTime=" + (time ? time : today);
+					DataService.get(url).then(function(res) {
+						Loading.hide();
+						$scope.isLoad = true;
+						res && ($scope.data = res);
+					})
+				}
+
+				$scope.selectTap = function(item) {
+					var index = $scope.hasObj(item);;
+
+					if(index >= 0) {
+						$scope.selectedIds.splice(index, 1);
+						$scope.selectedArr.splice(index, 1);
+					} else {
+						$scope.selectedIds.push({
+							id: item.ID,
+							type: item.type
+						});
+						$scope.selectedArr.push(item);
+					}
+				}
+
+				$scope.save = function() {
+					var view = plus.webview.currentWebview();
+					var opener = view.opener();
+					if(view.callback) {
+						opener.evalJS(view.callback + "(" + JSON.stringify($scope.selectedArr) + ")");
+					}
+					mui.back();
+				};
+
+				$scope.hasObj = function(obj) {
+					var idx = -1;
+					$scope.selectedIds.forEach(function(item, index) {
+						if(item.id == obj.ID && item.type == obj.type) {
+							idx = index;
+							return;
+						}
+					});
+					return idx;
+				}
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

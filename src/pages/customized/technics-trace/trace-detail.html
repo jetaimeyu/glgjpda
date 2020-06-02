@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html id="MdTong">
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../../css/common.css" />
+		<link rel="stylesheet" href="../../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="trace-info.css" />
+	</head>
+
+	<body ng-controller="traceDetailController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">加工过程追溯</h1>
+		</header>
+		<<div class="mui-scroll-wrapper" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<p class="data-group-tip">{{ProcessInfo.StepName}}</p>
+			<ul class="data-group">
+				<li class="data-row click-gray">
+					<label>定额台时</label>
+					<div class="body"><span ng-bind="ProcessInfo.FixedTime"></span></div>
+				</li>
+				<li class="data-row click-gray">
+					<label>加工车间</label>
+					<div class="body"><span ng-repeat="shop in ProcessInfo.WorkShopList" ng-if="shop.IsChecked==1" ng-bind="($index==0?'':'、')+shop.Name"></span></div>
+				</li>
+				<li class="data-row click-gray">
+					<label>加工设备</label>
+					<div class="body"><span ng-repeat="eq in ProcessInfo.EquipmentList" ng-if="eq.IsChecked==1" ng-bind="($index==0?'':'、')+eq.Name"></span></div>
+				</li>
+				<li class="data-row click-gray">
+					<label>加工人</label>
+					<div class="body"><span ng-repeat="men in ProcessInfo.WorkmenList" ng-if="men.IsChecked==1" ng-bind="($index==0?'':'、')+men.Name"></span></div>
+				</li>
+				<li class="data-row click-gray" ng-if="ProcessInfo.IsQualified==0">
+					<label>合格</label>
+					<div class="body"><span ng-bind="ProcessInfo.QualifiedCount"></span></div>
+				</li>
+				<li class="data-row click-gray" ng-if="ProcessInfo.IsQualified==0">
+					<label>次品</label>
+					<div class="body"><span ng-bind="ProcessInfo.InferiorCount"></span></div>
+				</li>
+				<li class="data-row click-gray" ng-if="ProcessInfo.IsQualified==0">
+					<label>废品</label>
+					<div class="body"><span ng-bind="ProcessInfo.WasteCount"></span></div>
+				</li>
+				<li class="data-row click-gray">
+					<label>检验员</label>
+					<div class="body"><span ng-repeat="che in ProcessInfo.CheckerList" ng-if="che.IsChecked==1"  ng-bind="($index==0?'':'、')+che.Name"></span></div>
+				</li>
+				<li class="data-row click-gray">
+					<label>检验时间</label>
+					<div class="body"><span ng-bind="ProcessInfo.CheckDate"></span></div>
+				</li>
+			</ul>
+
+		</div>
+		<script type="text/javascript" src="../../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../../js/common.js"></script>
+		<script type="text/javascript" src="../../../js/utils.js"></script>
+		<script>
+			
+			app.controller("traceDetailController",["$scope","ApiService","DataService","Loading",function($scope,ApiService,DataService,Loading){						
+				$scope.ProcessInfo="";
+				var processID=query("pid");
+				$scope.isLoad=false;
+				Loading.show();
+				processID&&getProcessInfo();
+				//获取设备信息
+				function getProcessInfo() {
+					var url = ApiService.Api45 +"/api/v1/Process/GetProcessStep?ProcessStepID=" + processID;
+					DataService.get(url).then(function(res) {
+						if(res) {
+							$scope.ProcessInfo = res;
+							$scope.ProcessInfo.WorkShopList=$scope.ProcessInfo.WorkShopList.filter(function(item){
+								return item.IsChecked==1
+							})
+							$scope.ProcessInfo.EquipmentList=$scope.ProcessInfo.EquipmentList.filter(function(item){
+								return item.IsChecked==1
+							})
+							$scope.ProcessInfo.WorkmenList=$scope.ProcessInfo.WorkmenList.filter(function(item){
+								return item.IsChecked==1
+							})
+							$scope.ProcessInfo.CheckerList=$scope.ProcessInfo.CheckerList.filter(function(item){
+								return item.IsChecked==1
+							})
+						} 
+						Loading.hide();
+						$scope.isLoad=true;
+			
+					},function(e){
+									
+					})
+				}
+
+			}])	
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

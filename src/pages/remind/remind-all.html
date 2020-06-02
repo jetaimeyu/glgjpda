@@ -1,0 +1,142 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>工作提醒</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	</head>
+
+	<body ng-controller="workremindlist">
+		<div class="mui-content mui-scroll-wrapper" id="pullrefresh" style="display:none" ng-class="{'mui-block':isLoad}">
+			<md-remind-list ng-model="remindlist"></md-remind-list>
+			<md-no-data ng-show="remindlist.length==0">暂无日程数据</md-no-data>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script>
+			app.controller("workremindlist", ["$scope", "ApiService", "DataService", "UtilsService", "RPCObserver", "Loading", function($scope, ApiService, DataService, UtilsService, RPCObserver, Loading) {
+				$scope.remindlist = [];
+				$scope.pageIndex = 0;
+				$scope.pageSize = 10;
+				var networkCanUse = true;
+				var self = plus.webview.currentWebview();
+				$scope.type = query("type") || "undefined";
+				//分页获取当前用户企业所有的工作日志信息列表
+				function getremindLogList(type) {
+					var url = ApiService.Api50
+					switch($scope.type) {
+						case 'undefined':
+							url += "/api/v1/MatWork/GetPagedMatWorkScheduleNotOvertimeList?pageIndex=" + $scope.pageIndex + '&pageSize=' + $scope.pageSize;
+							break;
+						case 'done':
+							url += "/api/v1/MatWork/GetPagedMatWorkScheduleOvertimeList?pageIndex=" + $scope.pageIndex + '&pageSize=' + $scope.pageSize;
+							break;
+					}
+					DataService.get(url).then(function(res) {
+						if(type == "down" || $scope.pageIndex == 1) {
+							$scope.remindlist = [];
+						}
+						$scope.isLoad = true;
+						networkCanUse = true;
+						if($scope.pageIndex != 1 && res.Data != '') {
+							if($scope.remindlist[$scope.remindlist.length - 1].Date == res.Data[0].Date) {
+								$scope.remindlist[$scope.remindlist.length - 1].DataRows = $scope.remindlist[$scope.remindlist.length - 1].DataRows.concat(res.Data[0].DataRows);
+								res.Data.shift();
+								$scope.remindlist = $scope.remindlist.concat(res.Data);
+							} else {
+								$scope.remindlist = $scope.remindlist.concat(res.Data);
+							}
+						} else {
+							$scope.remindlist = $scope.remindlist.concat(res.Data);
+
+						}
+
+						var resDataRows = [];
+						for(var i = 0; i < $scope.remindlist.length; i++) {
+							resDataRows = resDataRows.concat($scope.remindlist[i].DataRows);
+						}
+
+						var isEnd = resDataRows.length >= res.TotalCount;
+						if(mui("#pullrefresh").pullRefresh()) {
+							if(type == "down") {
+								mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
+								mui('#pullrefresh').pullRefresh().refresh(true);
+								mui("#pullrefresh").pullRefresh().endPullupToRefresh(isEnd);
+							} else {
+								mui("#pullrefresh").pullRefresh().endPullupToRefresh(isEnd);
+							}
+						}
+
+						var tip = document.querySelector('.mui-pull-bottom-pocket');
+						if(tip) {
+							if(resDataRows.length == 0) {
+								tip.classList.contains('mui-visibility') && tip.classList.remove('mui-visibility');
+								tip.classList.contains('mui-block') && tip.classList.remove('mui-block');
+							} else {
+								!tip.classList.contains('mui-visibility') && tip.classList.add('mui-visibility');
+								!tip.classList.contains('mui-block') && tip.classList.add('mui-block');
+							}
+						}
+					}, function() {
+						$scope.isLoad = true;
+						networkCanUse = false;
+						if(mui("#pullrefresh").pullRefresh()) {
+							setTimeout(function() {
+								if(type == "down") {
+									mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
+								} else {
+									mui("#pullrefresh").pullRefresh().endPullupToRefresh(false);
+								}
+							}, 800)
+						}
+					})
+				};
+
+				//rpc刷新
+				RPCObserver.on('refresh_mat_worklog_list', 'refresh_mat_worklog_list');
+				window.refresh_mat_worklog_list = downpullRefresh;
+
+				//下拉刷新
+				function downpullRefresh() {
+					$scope.pageIndex = 1; //页数
+					getremindLogList("down");
+				};
+				
+				//上拉加载
+				function uppullRefresh() {
+					if(networkCanUse) {
+						$scope.pageIndex++; //页数
+					}
+					getremindLogList();
+				};
+
+				//下拉刷新,上拉加载
+				setTimeout(function() {
+					mui.init({
+						pullRefresh: {
+							container: '#pullrefresh',
+							up: {
+								auto: true,
+								callback: uppullRefresh
+							},
+							down: {
+								callback: downpullRefresh
+							}
+						}
+					});
+				});
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

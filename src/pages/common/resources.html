@@ -1,0 +1,213 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<link rel="stylesheet" href="../../css/mui.min.css" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css">
+	<link rel="stylesheet" href="contact-common.css" />
+	<style>
+		.top45 {
+				margin-top: 45px
+			}
+			
+			.top90 {
+				margin-top: 90px
+			}
+		</style>
+</head>
+
+<body ng-controller="ContactOrgController">
+	<!--搜索框部分-->
+	<div class="search-box">
+		<div class="search-body">
+			<span class="mui-icon mui-icon-search" method="search"></span>
+		</div>
+		<div class="search-placeholder" ng-click="doSearchUser()">
+			<i class="mui-icon mui-icon-search"></i>
+			<span class="placeholder">搜索</span>
+		</div>
+	</div>
+	<!--导航目录部分-->
+	<div id="res-slide" class="top-thin-line mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted nav-bar"
+	 ng-class="{'mui-block':isLoad}" ng-show="isLoad&&navDirData.length>1" style="display: none;">
+		<div class="mui-scroll" style="height: 35px;">
+			<a class="mui-control-item" ng-repeat="dir in navDirData" ng-class="{'mui-active':dir.ID==OrgID}" ng-attr-orgid="{{dir.ID}}"
+			 ng-attr-index="{{$index}}">
+				<span class="icon iconfont icon-right color-gray-deep" style="margin-left: 2px;" ng-show="$index>0"></span>
+				<span class="group-name" ng-bind="dir.OrgName"></span>
+			</a>
+		</div>
+	</div>
+	<div id="slider" class="mui-scroll-wrapper" style="display:none;" ng-class="{'mui-block':isLoad,'top45':navDirData.length<2,'top90':navDirData.length>1||data[OrgID].deps.length==0}">
+		<!--目录部分-->
+		<ul class="data-group" style="margin-top: 0;" ng-show="data[OrgID] && data[OrgID].deps.length>0" ng-style="{'margin-top':navDirData.length>1?'0':'2px'}">
+			<li class="data-row dir-row" ng-repeat="dept in data[OrgID].deps" ng-click="clickDir(dept.ID,dept.GroupName)">
+				<label style="width:85vw">
+					<i class="icon-bumenguanli" style="float: left;">
+					</i>
+					<span class="mui-ellipsis" style="float: left; display:block;margin-left: 4px; max-width:75vw;" ng-bind="' '+dept.GroupName"></span>
+					<span class="dir_num" ng-bind="'('+dept.ResCount+')'" style="float: left;"></span>
+				</label>
+				<p class="opt md-icon icon-right"></p>
+			</li>
+		</ul>
+		<!--联系人部分-->
+		<div ng-show="isLoad && navDirData.length>1">
+			<md-user-reso-list ng-model="data[OrgID].users.resList" action="action" selected-users="selectedUsers" multi-select="multiSelect"></md-user-reso-list>
+		</div>
+		<md-no-data ng-show="(data[OrgID]&&data[OrgID].deps.length==0)||(data[OrgID].users&&data[OrgID].users.resList.length==0&&navDirData.length>1)">暂无数据</md-no-data>
+	</div>
+	<script src="../../js/mui.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/rpc.js"></script>
+	<script type="text/javascript">
+		/*ng1.6 事件*/
+		app.controller("ContactOrgController", ["$scope", "ApiService", "DataService", "UtilsService", "Loading", function (
+			$scope, ApiService, DataService, UtilsService, Loading) {
+			//是否用于选择人员
+			$scope.action = query("action");
+			$scope.multiSelect = query("multiselect");
+			//接受已选择的人员
+			$scope.selectedUsers = plus.webview.currentWebview().selectObj;
+			//部门id
+			$scope.OrgID = 0;
+
+
+			//页面数据
+			$scope.data = {};
+			//目录
+			$scope.navDirData = [{
+				ID: 0,
+				OrgName: "好友"
+			}];
+			//Android返回键返回上级目录
+			var mui_back = mui.back;
+			mui.back = function () {
+				if ($scope.navDirData.length > 1) {
+					$scope.navDirData.splice($scope.navDirData.length - 1, 1);
+					$scope.OrgID = $scope.navDirData[$scope.navDirData.length - 1].ID;
+					$scope.$apply();
+					resScroll();
+					loadData();
+				} else {
+					mui_back();
+				}
+			}
+
+			function loadData() {
+				if (!$scope.data.hasOwnProperty($scope.OrgID)) {
+					Loading.show();
+					//获取企业资源
+					getOrgList();
+				}
+			}
+
+			loadData(); //获取企业资源
+
+			function getOrgList() {
+				var url = ApiService.Api50 + "/api/v1/Resource/ResGroupList?resType=2";
+				DataService.get(url).then(function (res) {
+					if (res) {
+						$scope.data[$scope.OrgID] = {
+							deps: null
+						};
+						$scope.data[$scope.OrgID].deps = res;
+						$scope.isLoad = true;
+						Loading.hide();
+					}
+				})
+			}
+
+			//根据资源获取用户
+			function getUserListByOrgId() {
+				var url = ApiService.Api50 + "/api/v1/Resource/ResourceList?groupId=" + $scope.OrgID +
+					"&resType=2&pageSize=9999";
+				DataService.get(url).then(function (res) {
+					if (res) {
+						Loading.hide();
+						$scope.isLoad = true;
+						$scope.data[$scope.OrgID] = {
+							users: null
+						};
+						$scope.data[$scope.OrgID].users = res;
+					}
+				})
+			}
+
+			//导航栏滚动事件
+			function resScroll() {
+				setTimeout(function () {
+					var width = mui("#res-slide")[0].clientWidth;
+					var scrollWidth = mui("#res-slide .mui-scroll")[0].clientWidth;
+					scrollto = 0;
+					if ((scrollWidth + 35) < width || width == 0) {
+						scrollto = 0;
+					} else {
+						scrollto = width - scrollWidth - 24;
+					}
+					mui('#res-slide').scroll().scrollTo(scrollto, 0, 0);
+				}, 100);
+			}
+
+			//点击导航目录
+			mui("#res-slide").on("tap", ".mui-control-item", function () {
+				var orgid = this.getAttribute("orgid");
+				var index = this.getAttribute("index");
+				if (orgid == $scope.OrgID) return;
+				$scope.OrgID = orgid;
+				$scope.navDirData = $scope.navDirData.filter(function (_item, _index) {
+					return _index <= parseInt(index);
+				});
+				$scope.$apply();
+				resScroll();
+			})
+
+			//点击目录
+			$scope.clickDir = function (orgid, orgname) {
+				$scope.OrgID = orgid;
+				var selectedOrg = {
+					"ID": orgid,
+					"OrgName": orgname,
+				}
+				$scope.navDirData.push(selectedOrg);
+				if (!$scope.data[$scope.OrgID]) {
+					getUserListByOrgId();
+					Loading.show();
+				}
+				resScroll();
+			}
+
+			$scope.doSearchUser = function () {
+				//禁选择人员
+				var bannedUsers = plus.webview.currentWebview().bannedUsers;
+				UtilsService.openWindow({
+					id: "search-resource.html",
+					url: "../contact/search-resource.html",
+					extras: {
+						resType: 2,
+						action: $scope.action,
+						selectedUsers: $scope.selectedUsers,
+						multiSelect: $scope.multiSelect,
+						bannedUsers: plus.webview.currentWebview().bannedUsers
+					}
+				});
+			}
+		}]);
+
+		/*mui事件*/
+
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+		});
+	</script>
+</body>
+
+</html>

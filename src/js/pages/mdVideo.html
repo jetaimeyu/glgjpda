@@ -1,0 +1,49 @@
+<div class="video file" ng-repeat="video in videos">
+	<img class="bgVideo" src="{{localUrl}}/images/play_v.png" ng-click="play(video)" ng-style="{'top':video.FileSize==0?'12px':'8px'}" />
+	<video x5-video-player-type="h5" webkit-playsinline playsinline x5-playsinline x5-video-player-fullscreen="true" preload="auto" id="{{video.FileName}}" src="{{video.FileGuid? downUrl+video.FilePath:video.FilePath}}" onwebkitfullscreenchange="outFullscreen(this)">
+	</video>
+	<span class="time font-11 color-white" ng-show="video.FileSize!=0">{{video.FileSize|numToTime:video}}</span>
+	<img ng-if="!readonly" class="media-del" src="{{localUrl}}/images/delete.png" ng-click="delete($index)">
+</div>
+
+<style>
+	.video {
+		width: 50px;
+		height: 50px;
+		margin-right: 15px;
+		/*display: block;
+		float:left;*/
+	}
+	
+	.video.file .bgVideo {
+		width: 25px;
+		height: 25px;
+		z-index: 0;
+		left: 50%;
+		transform: translateX(-50%);
+		padding: 0px !important;
+	}
+	
+	.video.file video {
+		display: none;
+	}
+	
+	.video.file .time {
+		position: absolute;
+		bottom: 0px;
+		text-align: center;
+		width: 100%;
+		line-height: 14px;
+		background-color: #C8C7CC;
+	}
+	
+	.video.file .media-del {
+		position: absolute;
+		left: 40px;
+		top: 5px;
+		width: 15px;
+		height: 15px;
+		padding: 0px;
+		background-color: initial;
+	}
+</style>

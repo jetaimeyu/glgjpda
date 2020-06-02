@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../js/mescroll/mescroll.min.css" />
+		<link rel="stylesheet" href="comp-info.css" />
+	</head>
+
+	<body ms-controller="myCtl">
+		<header class="mui-bar mui-bar-nav " style="background: rgba(25, 117, 207, 0)">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: #FFFFFF;"></a>
+			<h1 class="mui-title" style="color: #FFFFFF;"></h1>
+			<div class="mui-pull-right comp-kefu">
+				<img src="../../images/industry/icon_callx2.png" />
+			</div>
+		</header>
+		<div class="mui-content mescroll" id="mescroll">
+			<div class="comp-info">
+				<div class="info-logo">
+					<img ms-attr="{src:getCompLogo()}" />
+				</div>
+				<div class="info-title" ms-text="compData.CompName">
+
+				</div>
+				<div class="info-mdt">
+					<div class="info-mdt-content">
+						迈迪通号：<span ms-text="compData.Mdt"></span>
+					</div>
+				</div>
+				<div class="info-btns">
+					<span class="btn-item btn_add" ms-visible="!isResource"><img src="../../images/industry/icon_addx2.png"/>加为资源</span>
+					<span class="btn-item btn_delete" style="display:none;" ms-visible="isResource"><img src="../../images/industry/icon_deletex2.png"/>移除资源</span>
+					<span class="btn-item btn_call"><img src="../../images/industry/icon_messagex2.png" />在线沟通</span>
+					<span class="btn-item btn_send"><img src="../../images/industry/icon_sendx2.png"/>发送外协需求</span>
+				</div>
+			</div>
+			<div class="comp-mainproduct" ms-visible="compData.MainProduct">
+				<div class="main-title">
+					<img src="../../images/industry/co-mainproductx2.png" /><span>主营业务</span>
+				</div>
+				<div class="main-content" ms-text="compData.MainProduct">
+
+				</div>
+			</div>
+			<div class="info-line"></div>
+			<div class="comp-equs ">
+				<ul class="mui-table-view mui-grid-view">
+					<li class="mui-table-view-cell mui-media mui-col-xs-6" ms-for="index,item in abilityData" ms-attr="{'data-idx':index,osid:item.ID}">
+						<a ms-attr="{href:'ability-detail.html?id='+item.EquipmentID}" open-type="common" createNew="1">
+							<img class="mui-media-object" onerror="this.src='../../images/defImg300.png'" onerror="this.src='../../images/defImg300.png'" ms-attr="{src:getAbilityLogo(item.LibraryID,'_300x300')}" />
+							<div class="mui-media-body">
+								<p class="mui-ellipsis" ms-text="item.EqName"></p>
+							</div>
+						</a>
+					</li>
+				</ul>
+			</div>
+			<div class="mescroll-empty" id="mescroll-empty"></div>
+
+			<script src="../../js/mui.js"></script>
+			<script type="text/javascript" src="../../js/avalon.js"></script>
+			<script type="text/javascript" src="../../js/utils.js"></script>
+			<script type="text/javascript" src="../../js/mescroll/mescroll.js"></script>
+			<script type="text/javascript" src="../../js/rpc-client.js"></script>
+			<script type="text/javascript" src="comp-info.js"></script>
+	</body>
+
+</html>

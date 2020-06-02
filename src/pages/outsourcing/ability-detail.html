@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../js/swiper/swiper.min.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="ability-detail.css" />
+	</head>
+
+	<body ms-controller="myCtl">
+
+		<header id="header" class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left"></a>
+		</header>
+		<div class="mui-content">
+			<!--<div class="swiper-container">
+				<div class="swiper-wrapper">
+					<div class="swiper-slide" ms-for="item in abilityData.EqPictureList" data-for-rendered="picComplete"><img ms-attr="{ src:getPic(item.LibraryID,'360x250')}" /></div>
+				</div>
+				<div class="swiper-pagination"></div>
+			</div>-->
+
+			<div ms-class="['mui-slider']">
+				<div class="mui-slider-item " ms-if="abilityData.EqPictureList.length==0">
+						<img ms-attr="{src:getPic(0,'360x250'),'data-preview-src':getPic(0,'360x250')}" />
+					</div>
+				<div class="mui-slider-group mui-slider-loop"  ms-if="abilityData.EqPictureList.length >0">
+
+					<!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
+					<div class="mui-slider-item mui-slider-item-duplicate" >
+						<img ms-attr="{src:getPic(abilityData.EqPictureList[abilityData.EqPictureList.length-1].LibraryID,'360x250')}" />
+					</div>
+					
+					<div class="mui-slider-item" ms-for="item in abilityData.EqPictureList" data-for-rendered="picComplete"  >
+						<img ms-attr="{src:getPic(item.LibraryID,'360x250'),'data-preview-src':getPic(item.LibraryID,'0x0'),'data-preview-group':1}" />
+					</div>
+					<div class="mui-slider-item mui-slider-item-duplicate" >
+						<img ms-attr="{src:getPic(abilityData.EqPictureList[0].LibraryID,'360x250')}" />
+					</div>
+					<!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+				</div>
+				<div class="mui-slider-indicator"  ms-if="abilityData.EqPictureList.length >0">
+					<div ms-for="index,item in abilityData.EqPictureList" ms-class="[index==0?'mui-active':'','mui-indicator']"></div>
+				</div>
+			</div>
+			<div class="info-name" ms-visible="abilityData.EqName">
+				<div ms-text="abilityData.EqName" class="prodname">
+
+				</div>
+				<div ms-text="'型号：'+abilityData.SkuName" class="skuname">
+
+				</div>
+			</div>
+			<div class="info-line"></div>
+			<div class="ability-params" ms-visible="abilityData.EqExtraParamList &&abilityData.EqExtraParamList.length>0 " style="display:none;">
+				<div class="title">
+					设备参数
+				</div>
+				<table>
+					<tr ms-for="item in abilityData.EqExtraParamList">
+						<td ms-text="item.ParamName"></td>
+						<td ms-text="item.ParamValue"></td>
+					</tr>
+
+				</table>
+				<div class="info-line"></div>
+			</div><div class="intro" ms-visible="abilityData.Intro" style="display:none;">
+				<div class="title">设备详情</div>
+				<div class="intro-content" ms-html="abilityData.Intro">
+				</div>
+			</div>
+		</div>
+		</div>
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/avalon.js"></script>
+		<script type="text/javascript" src="../../js/jquery.min.js"></script>
+		<script type="text/javascript" src="../../js/swiper/swiper.min.js"></script>
+		<script type="text/javascript" src="ability-detail.js"></script>
+	</body>
+
+</html>

@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<style type="text/css">
+			.mui-icon-back {
+				line-height: 44px;
+				margin-left: -17px!important;
+				color: #323232;
+				font-size: 2.7rem!important;
+			}
+			
+			.mui-bar .mui-title {
+				left: 19px;
+				color: #323232;
+				font-weight: 420;
+				line-height: 46px;
+			}
+			
+			.md-modal-content {
+				background-color: #EAEAEA !important;
+				padding: 10px 0px !important;
+			}
+			/*伪元素(底线)控制*/
+			/*去掉ul上下边线*/
+			
+			.data-group:before,
+			.data-group:after {
+				height: 0;
+			}
+			/*li边线离左右距离、边线颜色*/
+			
+			.data-group .data-row:after {
+				left: 0px;
+				right: 0px;
+				background-color: #EAEAEA;
+			}
+			/*ul上下间距*/
+			
+			.data-group {
+				margin-top: 0px;
+			}
+			
+			.data-group .data-row {}
+			
+			.data-group .data-row .icon-right {
+				position: absolute;
+				right: 0px;
+				padding: 7px 10px;
+				top: 50%;
+				transform: translateY(-50%);
+				font-size: 1.5rem;
+			}
+			
+			.data-group .data-row .name {
+				margin-left: 35px;
+				font-size: 1.5rem;
+				line-height: 40px;
+				max-width: calc(80vw - 20px);
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				-o-text-overflow: ellipsis;
+				overflow: hidden;
+				display: block;
+			}
+			
+			.data-group .data-row .left-10 {
+				position: absolute;
+				left: 5px;
+				padding: 5px;
+				top: 50%;
+				transform: translateY(-50%);
+				font-size: 1.8rem;
+			}
+			
+			.data-group .data-row .opt,
+			.data-group .data-row .body.arrow:after {
+				padding: 10px 16px 11px 10px;
+				color: #AEAEAE!important;
+			}
+			
+			#res-slide {
+				background: #fff;
+				overflow: hidden;
+				height: 40px;
+				position: fixed;
+				margin-top: 54px;
+			}
+			
+			.top-thin-line:before {
+				background-color: #ECECEC;
+			}
+			
+			.mui-segmented-control.mui-segmented-control-inverted .item {
+				color: #169BD5;
+				z-index: 999;
+			}
+			
+			.mui-segmented-control.mui-segmented-control-inverted .item.mui-active {
+				color: #9A9A9C;
+				background: none;
+				border: none;
+			}
+			
+			.mui-segmented-control .item {
+				padding: 0px !important;
+				line-height: 40px;
+			}
+			
+			.mui-slider .mui-segmented-control.mui-segmented-control-inverted~.mui-slider-group .item {
+				border-top: none;
+			}
+			
+			.mui-slider-indicator {
+				border-bottom: 1px solid #c8c7cc;
+			}
+			
+			.mui-segmented-control .item>span {
+				font-size: 14px;
+			}
+			
+			.mui-segmented-control .item .group-name {
+				margin-left: 10px;
+				margin-right: 10px;
+			}
+			
+			#slider .data-group .data-row .body {
+				padding-left: 10px;
+			}
+			
+			.dir_btns {
+				position: fixed;
+				left: 0;
+				right: 0;
+				height: 40px;
+				bottom: 0px;
+			}
+			
+			.dir_btns span {
+				line-height: 40px;
+				width: 50%;
+				font-size: 1.4rem;
+				text-align: center;
+				display: inline-block;
+				float: left;
+				position: relative;
+				border-top: 1px solid #eee;
+				background-color: #fff;
+			}
+			
+			.cancel {
+				color: #B1B1B1;
+			}
+			
+			 .cancel:after {
+				content: '';
+				position: absolute;
+				right: 0;
+				width: 1px;
+				line-height: 50%;
+				background-color: #eee;
+				height: 100%;
+			}
+			
+			.select {
+				color: #0ae;
+			}
+			
+			.menu-more {
+				z-index: 20;
+				padding: 13px 6px 13px 10px;
+			}
+			
+			#aepopover {
+				/*min-width: 260px;*/
+				/*height: 370px;*/
+				top: 65% !important;
+				margin-top: -150px;
+				left: 50% !important;
+				margin-left: -141px;
+				border-radius: 3px;
+				background-color: #fff;
+			}
+			
+			#aepopover .mui-popover .mui-popover-arrow {
+				display: none !important;
+			}
+			
+			#aepopover .data-group:before {
+				height: 0;
+			}
+			
+			
+			#aepopover .data-group .data-row .body {
+				padding: 10px 5px 11px 10px;
+			}
+			
+			#aepopover .data-group .data-row:after {
+				left: 10px;
+				right: 10px;
+				background-color: #E5E5E5;
+				height: 1px;
+			}
+			
+			#aepopover .data-group .data-row.first:after {
+				left: 5px;
+				right: 5px;
+				background-color: #E5E5E5;
+			}
+			
+			#aepopover .data-group .data-row.first {
+				min-height: 38px
+			}
+			
+			#add_div {
+				margin: 12px 20px 12px 20px;
+			}
+			
+			#add_div a {
+				background-color: #3296FA;
+				color: #fff;
+				padding: 5px 0;
+				border: 1px solid #3296FA;
+			}
+			
+			.data-group .data-row .label-gray {
+				color: #333333;
+			}
+			
+			.info-title {
+				margin-left: 10px;
+				line-height: 1;
+				color: #1f1f1f;
+			}
+			
+			.title {
+				color: #1f1f1f;
+			}
+			
+			.mdt_leftline {
+				width: 3px;
+				height: 14px;
+				background: #169BD5;
+				margin-top: -13px;
+				margin-left: -3px;
+			}
+			.data-group .data-row label{
+				width: 70px;
+			}
+			footer {
+				width: 100%;
+				height: 40px;
+				position: fixed;
+				bottom: 0;
+				left: 0;
+				line-height: 40px;
+				text-align: center;
+				background-color: #FFFFFF;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="selInventoryContentController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left" >选择盘点内容</a>
+		</header>
+		<div id="pullrefresh" ng-controller="pullrefreshController" class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}" style="display: none;margin-bottom: 40px;">
+			<div class="mui-content">
+					<ul class="data-group" ng-if="data.length">
+						<li class="mui-table-view-cell data-row" ng-repeat="item in data" ng-click="choose(item)">
+							<i class="icon-roundcheckfill color-blue left-10" ng-if="(selectedIds.indexOf(item.ID)>=0)"></i>
+							<i class="icon-round color-gray left-10" ng-if="selectedIds.indexOf(item.ID)==-1"></i>
+							<span class="name">{{item.Content}}</span>			
+						</li>
+					</ul>		
+				<!--<div class="dir_btns" id="bottomx">
+					<span class="cancel" ng-click="callBack(0)">取消</span>
+					<span class="select" ng-click="callBack(1)">确定</span>
+				</div>-->
+				<md-no-data ng-show="data&&dirList.length==0">暂无数据</md-no-data>
+			</div>
+		</div>
+		<footer>
+			<ul class="mui-table-view mui-row">
+				<li class="mui-media mui-col-sm-6 mui-col-xs-6 cancel"  ng-click="callBack(0)">取消</li>
+				<li class="mui-media mui-col-sm-6 mui-col-xs-6  select"   ng-click="callBack(1)">确定</li>
+			</ul>
+		</footer>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			app.controller("selInventoryContentController", ["$scope", "UtilsService",  "ApiService", "DataService", "Loading", "RPCObserver",
+				function($scope, UtilsService, ApiService, DataService, Loading, RPCObserver) {
+					$scope.isLoad = false;
+					$scope.pageIndex = 0;
+					$scope.pageSize = 20;
+					var saving = false; //保存状态
+					var ws = plus.webview.currentWebview();
+					$scope.selectedIds = [];
+					$scope.selectedContentList = [];
+					if(ws.selected.length>0){
+						$scope.selectedContentList=ws.selected;
+						$scope.selectedContentList.forEach(function(item,idx){
+							$scope.selectedIds.push(item.ID);
+							if(item.IsDel==1){
+								$scope.selectedIds[idx]=0;
+							}
+//							(item.IsDel==1)&&$scope.selectedIds[idx]=0;
+						});
+					}
+					function init() {
+						var url = ApiService.Api52 + "/api/v1/EqApply/GetInventoryContentPageList?pageIndex=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize;
+						$scope.url = url;
+					};					
+					$scope.$on('refresh_pageindex', init);
+					$scope.choose = function(item) {
+						var idx=$scope.selectedIds.indexOf(item.ID)
+						if(idx>=0){
+//							$scope.selectedIds.splice(idx,1)
+//							$scope.selectedContentList.splice(idx,1)
+							$scope.selectedIds[idx]=0;
+							$scope.selectedContentList[idx].IsDel=1;
+						}else{
+							$scope.selectedIds.push(item.ID)
+							$scope.selectedContentList.push(item)
+						};
+//						console.log(JSON.stringify($scope.selectedContentList))
+					};
+					
+					$scope.callBack = function(res) {
+						if(res) {
+//							console.log(JSON.stringify($scope.selectedContentList))
+							var selectedNum=0;
+							$scope.selectedContentList.forEach(function(item){
+								(item.IsDel!=1)&&selectedNum++;
+							});
+							if(selectedNum==0) {
+								mui.toast("请选择盘点内容！");
+								return;
+							}
+							ws.opener().evalJS(ws.callback + "(" + JSON.stringify($scope.selectedContentList) + ")");						
+						} 
+						mui.back();					
+					};
+				}
+			]);
+			mui.plusReady(function() {
+//				document.getElementById('bottomx').style.top = (plus.display.resolutionHeight - 40) + "px";
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+				plus.webview.currentWebview().setStyle({
+					scrollIndicator: 'none'
+				});
+			});
+		</script>
+	</body>
+
+</html>

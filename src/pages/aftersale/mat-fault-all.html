@@ -1,0 +1,108 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link href="../../css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+</head>
+
+<body ng-controller="FaultAllController">
+	<div id="pullrefresh" ng-controller="pullrefreshController" class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}" style="display: none;">
+		<div class="mui-content">
+			<md-faulty-work-order ng-show="data&&data.length>0" ng-model="data" action="action" selected-id="selectedId"></md-faulty-work-order>
+			<md-no-data ng-show="data && data.length==0">暂无数据</md-no-data>
+		</div>
+	</div>
+	<script type="text/javascript" src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script>
+		app.controller("FaultAllController", ["$scope", "$filter", "ApiService", "RPCObserver", function ($scope, $filter, ApiService, RPCObserver) {
+			$scope.pageIndex = 0;
+			$scope.pageSize = 10;
+			var type = query("type");
+			//选择器
+			$scope.action = query("action") || "";
+			$scope.selectedId = query("selectedid") || 0;
+			//扫码
+			$scope.mdCode = query("mdcode") || "";
+			var innerCode = query("innercode")?query("innercode").replace(/@squotes@/g, "'").replace(/@dquotes@/g, "\"") : "";
+			var mdCode = innerCode ? '' : $scope.mdCode;
+			//统计
+			var statistics = {
+				year: query("year") || "",
+				quarter: query("quarter") || "",
+				month: query("month") || "",
+				province: query("province") || "",
+				city: query("city") || "",
+				prodid: query("prodid") || "",
+				skuid: query("skuid") || "",
+				respid: query("respid") || "",
+				descid: query("descid") || "",
+				classid: query("classid") || "",
+				from: query("from") || "",
+				stage:query("stage") || 0
+			};
+
+			function init() {
+				var url = ApiService.Api50 + "/api/v1/MatWorkOrder/";
+				switch (type) {
+					case "at":
+						url += "GetPagedMatWorkOrderFailureListForMe?pageIndex=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize + "&isCheckComp=" + query("ischeckcomp") || 0;
+						break;
+					case "my":
+						url += "GetPagedMyMatWorkOrderFailureList?pageIndex=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize;
+						break;
+					case "dept":
+					case "depts":
+					case "all":
+						var authType = {
+							dept: 2,
+							depts: 3,
+							all: 4
+						};
+						url += "GetPagedCompMatWorkOrderFailureList?pageIndex=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize + "&authType=" + authType[type];
+						if (statistics.year || statistics.quarter || statistics.month) {
+							var date = $filter("getCustomDate")(statistics.year, statistics.quarter, statistics.month);
+							url += "&beginDate=" + date.start + "&endDate=" + date.end;
+						}
+						statistics.province && (url += "&province=" + statistics.province);
+						statistics.city && (url += "&city=" + statistics.city);
+						statistics.classid && (url += "&matFaultTypeId=" + statistics.classid);
+						statistics.respid && (url += "&responsibilityId=" + statistics.respid);
+						statistics.descid && (url += "&descriptionId=" + statistics.descid);
+						statistics.from && (url += "&from=" + statistics.from);
+						break;
+				}
+				mdCode && (url += "&mdCode=" + mdCode);
+				statistics.prodid && (url += "&prodId=" + statistics.prodid);
+				statistics.skuid && (url += "&skuId=" + statistics.skuid);
+				innerCode && (url += "&" + (["at", "my"].indexOf(type) >= 0 ? "innerCode" : "prodInnerCode") + "=" + encodeURIComponent(innerCode));
+				statistics.stage>0 && (url+="&stage="+statistics.stage);
+				$scope.url = url;
+			};
+
+			$scope.$on('refresh_pageindex', init);
+
+			RPCObserver.on('refresh_mat_fault_list', 'refresh_mat_fault_list');
+			window.refresh_mat_fault_list = function () {
+				$scope.$broadcast('md_pullrefresh');
+			};
+			window.reload = function(value){
+				statistics.stage=value;
+				$scope.$broadcast('md_pullrefresh');
+			}
+		}]);
+
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+		});
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>延保服务</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style>
+			.icon {
+				width: 16px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="securingServices">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">延保记录</a>
+			<a class="mui-pull-right menu-search" id="search" ng-click="tap()" ng-if="!isscan" style="display: none;" ng-class="{'mui-block':isLoad}">
+				<img class="icon" src="../../images/search.png" />
+			</a>
+		</header>
+
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript">
+			app.controller("securingServices", ["$scope", "UtilsService", function($scope, UtilsService) {
+				$scope.isLoad = true;
+				var mdcode = query('mdcode') || '';
+				$scope.isscan = query('isscan');
+				mui.init({
+					subpages: [{
+						url: 'securing-services-sub.html?mdCode=' + mdcode,
+						id: 'securing-services-sub.html',
+						styles: {
+							top: '45px',
+							bottom: 0
+						}
+					}]
+				})
+				$scope.tap = function() {
+					var url = 'securing-services-search.html?mdCode=' + mdcode;
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'securing-services-search.html',
+						url: url
+					});
+				}
+			}]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

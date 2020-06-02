@@ -1,0 +1,159 @@
+<ul class="data-group" style="margin-top: 0px;">
+	<li class="mui-table-view-cell data-list" ng-repeat="item in model" ng-click="tap($event,'maintenView',item.ID)">
+		<div class="user-info">
+			<span ng-if="listType=='at'&&item.IsRead==0" class="round"></span>
+			<div class="info-wrap" ng-class="{'margin-left-15':listType=='at'&&item.IsRead==0}">
+				<div class="mui-media-object mui-pull-left md-userCustomLogo ng-hide" ng-show="!item.ULogoIsExist" ng-bind="item.CreateUserName| getUserCustomLogo"></div>
+				<div class="avatar mui-media-object mui-pull-left md-userCustomLogo" ng-style="{'background-image':'url('+ (item.CreateUserID|getUserLogo:43:0) +')'}" ng-class="item.ULogoIsExist?'':'ng-hide'"></div>
+				<div class="infos">
+					<div class="names mui-ellipsis" ng-bind="item.CreateUser"></div>
+					<div class="CreateDate" ng-bind="item.CreateDate"></div>
+					<span class="log-type font-12 mui-ellipsis" ng-bind="item.LogTypeName"></span>
+				</div>
+			</div>
+		</div>
+		<div class="body">
+			<span class="font-15 mui-ellipsis-2" style="color: #000000;" ng-bind="item.CheckContent"></span>
+			<div class="faultyDiv">
+				<img src="../../images/imgPre.png" ng-style="{'background-image':'url('+ (item.AttachFilePath | getEquLogo:40) +')'}" class="imgslist" />
+				<div>
+					<p class='faultyP01 mui-ellipsis' ng-bind="item.EqName"></p>
+					<p class='faultyP02'><span class="faultySpan01 mui-ellipsis" ng-bind="item.SkuName"></span><span class="faultySpan01 mui-ellipsis" ng-if="item.SkuName || item.EqIdentifier">/</span><span class="faultySpan01 mui-ellipsis" ng-bind="item.EqIdentifier" ng-if="item.EqIdentifier"></span></p>
+				</div>
+			</div>
+			<p class="font-12 address">
+				<i class="icon-location-2 font-13"></i>
+				<span ng-bind="item.Province | locationfilter:item.City:item.District:item.Address:item.Street"></span>
+			</p>
+		</div>
+	</li>
+</ul>
+<style>
+	.mui-table-view-cell:after{
+		right: 10px;
+		left: 10px;
+	}
+	.data-group .data-list .body .round {
+		position: absolute;
+		width: 7px;
+		height: 7px!important;
+		border-radius: 50%;
+		top: 28px;
+		background-color: #3396FB;
+	}
+
+	.data-group .data-list {
+		padding: 10px 16px 10px 16px;
+	}
+	
+	.data-group:first-child {
+		margin-top: 0px;
+	}
+
+	.user-info .info-wrap::after {
+		clear: both;
+		content: "";
+		height: 0;
+		display: block;
+	}
+
+	.user-info .avatar {
+		height: 43px;
+		width: 43px;
+		border-radius: 50%;
+	}
+
+	.user-info .infos {
+		padding-left: 52px;
+		height: 43px;
+		line-height: 1;
+	}
+
+	.user-info .names {
+		font-size: 1.5rem;
+		color: #000;
+		padding-top: 6px;
+		margin-bottom: 6px;
+		max-width: 45%;
+	}
+	
+	.user-info .CreateDate {
+		font-size: 1.2rem;
+		color: #AAAAAA;
+	}
+	
+	.user-info div.md-userCustomLogo {
+		width: 43px!important;
+		height: 43px!important;
+		line-height: 43px!important;
+		background-size: cover;
+	}
+	
+	.user-info .log-type {
+		position: absolute;
+		top: 16px;
+		right: 16px;
+		color: #3296FA!important;
+		display: inline-block;
+		max-width: 35%;
+	}
+	
+	.user-info .margin-left-15 {
+		margin-left: 15px!important;
+	}
+	
+	.data-group .data-list .body>span {
+		line-height: 19px;
+	}
+	
+	
+	.faultyDiv {
+		padding: 10px;
+		margin-top: 10px;
+		margin-bottom: 6px;
+		border: 1px solid #F7F7F7;
+		background-color: #F7F7F7;
+	}
+	
+	.faultyDiv>img {
+		float: left;
+		width: 40px;
+		height: 40px;
+	}
+	
+	.faultyDiv>div {
+		padding-top: 3px;
+		margin-left: 50px;
+	}
+	
+	.faultyDiv .faultyP01 {
+		height: 1.7rem;
+		font-size: 1.5rem;
+		line-height: 1.7rem;
+		color: #AAAAAA;
+		margin-bottom: 9px;
+	}
+	
+	.faultyDiv .faultyP02 {
+		margin-bottom: 0px;
+		line-height: 1.3rem;
+	}
+	
+	.faultyDiv .faultySpan01 {
+		display: inline-block;
+		max-width: 30.0vw;
+		font-size: 1.2rem;
+		line-height: 1.3rem;
+		color: #AAAAAA;
+		margin-right: 7px;
+	}
+	
+	.imgslist {
+		width: 40px;
+		height: 40px;
+		background-size: cover!important;
+	}
+	.address{
+		line-height: 1.4rem;
+	}
+</style>

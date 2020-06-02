@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	</head>
+<style type="text/css">
+	.icon {
+			width: 16px;
+		}
+</style>
+	<body ng-controller="equApproveHeaderController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">审核列表</a>
+			<a class="mui-pull-right menu-search" id="search" ng-click="search()">
+				<img class="icon" src="../../images/search.png" />
+			</a>
+		</header>
+
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("equApproveHeaderController", ["$scope", "UtilsService", function($scope, UtilsService) {
+				
+				mui.init({
+					subpages: [{
+						url: 'equ-approve-list.html',
+						id: 'equ-approve-list.html',
+						styles: {
+							top: '45px',
+							bottom: 0
+						}
+					}]
+				})
+				$scope.dataList={
+					type:0,//1采购，2报废
+					state:0//1新建、2待审核、3已驳回、4已同意
+				}
+				$scope.search=function(){
+					UtilsService.openWindow({
+						needLogin: true,
+						id: "equ-approve-search.html",
+						url: "equ-approve-search.html",
+						extras:{
+							callback:"selectType",
+							selectObj:{
+								type:$scope.dataList.type,//1采购，2报废
+								state:$scope.dataList.state//1新建、2待审核、3已驳回、4已同意
+							}
+						}
+					});
+				}
+				RpcServer.expose("RPC_equ_approve", function(params) {
+					if(params) {
+						$scope.dataList.type=params.type;
+						$scope.dataList.state=params.state;
+						$scope.$apply();
+					}
+				})
+				
+			}]);
+			function selectType(obj) {
+				var appElement = document.querySelector('[ng-controller=equApproveHeaderController]');
+				var $scope = angular.element(appElement).scope();
+//				console.log(JSON.stringify(obj))
+				$scope.dataList.type=obj.type;
+				$scope.dataList.state=obj.state;
+				$scope.$apply();	
+			}
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,672 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="../../css/mui.pullrefresh.css" />
+		<link rel="stylesheet" href="../../js/mescroll/mescroll.min.css" />
+		<link rel="stylesheet" href="msg-all.css" />
+	</head>
+
+	<body ng-controller="MsgAllController">
+		<div class="md-tab-div" style="display: none;" ng-class="{'mui-block':isLoad && (dataFrom==4||dataFrom==7||dataFrom==19)}">
+			<ul class="data-group" ng-show="pageFrom!='personal'&&(dataFrom==4||dataFrom==7||dataFrom==19)">
+				<li class="data-row readtype" ng-show="dataFrom==4" style="min-height: inherit;margin-top: 10px;">
+					<div class="md-tab-group">
+						<span dataId="2" style="margin-right: 15px;" class="md-tab-button" ng-class="{'md-active':matReadType==2}">全部</span>
+						<span dataId="0" style="margin-left: 15px;" class="md-tab-button" ng-class="{'md-active':matReadType==0}">未读</span>
+					</div>
+				</li>
+				<li class="data-row readtype" ng-show="dataFrom==7" style="min-height: inherit;margin-top: 10px;">
+					<div class="md-tab-group">
+						<span dataId="-1" style="margin-right: 15px;" class="md-tab-button" ng-class="{'md-active':abnormalReadType==-1}">全部</span>
+						<span dataId="0" style="margin-left: 15px;" class="md-tab-button" ng-class="{'md-active':abnormalReadType==0}">未读</span>
+					</div>
+				</li>
+				<li class="data-row readtype" ng-show="dataFrom==19" style="min-height: inherit;margin-top: 10px;">
+					<div class="md-tab-group">
+						<span dataId="-1" style="margin-right: 15px;" class="md-tab-button" ng-class="{'md-active':scabnormalReadType==-1}">全部</span>
+						<span dataId="0" style="margin-left: 15px;" class="md-tab-button" ng-class="{'md-active':scabnormalReadType==0}">未读</span>
+					</div>
+				</li>
+			</ul>
+			<ul id="tab-type" class="md-tab data-group" ng-show="pageFrom=='personal'&&dataFrom==4">
+				<li class="md-tab-item" dataId="2" ng-class="{'md-active':matReadType==2}">全部</li>
+				<li class="md-tab-item" dataId="0" ng-class="{'md-active':matReadType==0}">未读</li>
+			</ul>
+		</div>
+		<div id="mescroll" class="mui-scroll-wrapper mui-fullscreen mescroll" style="display: none;top: 34px;" ng-style="{top:(dataFrom==7||dataFrom==4||dataFrom==19 || (dataFrom==4&&pageFrom=='personal'))?'34px':'0px'}" ng-class="{'mui-block':isLoad}">
+			<ul class="data-group" style="margin-top: 0px;" ng-if="dataFrom==4">
+				<li class="mui-table-view-cell data-row" ng-repeat="item in data" ng-click="tap(item)">
+					<div class="body" ng-if="item.Data.WorkOrderType==2">
+						<span class="round" ng-if="item.Type==0"></span>
+						<span class="font-14 mui-ellipsis-2 color-black" ng-class="{'margin-left-15':item.Type==0}" ng-bind="item.Data.IsHasAudio | formatFaultInfo:item.Data.AudioLength:item.Data.Content"></span>
+						<div class="mediaDiv">
+							<img src="../../images/imgPre.png" ng-style="{'background-image':'url('+ (item.Data.AttachFilePath | getEquLogo:40) +')'}" class="imgslist" />
+							<div>
+								<p class='descP-1 mui-ellipsis' ng-bind="item.Data.EqName"></p>
+								<p class='descP-2 mui-ellipsis'>
+									<span class="faultySpan01 mui-ellipsis" ng-bind="item.Data.SkuName"></span>
+									<span class="faultySpan01 mui-ellipsis" ng-if="item.Data.SkuName || item.Data.EqIdentifier">/</span>
+									<span class="faultySpan01 mui-ellipsis" ng-bind="item.Data.EqIdentifier" ng-if="item.Data.EqIdentifier"></span>
+								</p>
+							</div>
+						</div>
+						<p class="font-12" style="line-height: 16px;">
+							<span class="font-12 color-creat-info margin-right-10" ng-bind="item.CreateDate"></span>
+							<span class="font-12 color-creat-info" ng-bind="item.CreateUserName"></span>
+						</p>
+					</div>
+					<div class="body" ng-if="item.Data.WorkOrderType==1">
+						<div class="cell-type" ng-if="dataFrom==0" ng-bind="types[item.DataFrom]"></div>
+						<span class="round" ng-if="item.Type==0"></span>
+						<p class="font-14 mui-ellipsis-2 color-black" ng-class="{'margin-left-15':item.Type==0}" ng-bind="item.Data.IsHasAudio | formatDeviceRepairInfo:item.Data.AudioLength:item.Data.Content"></p>
+						<div class="mediaDiv">
+							<img src="../../images/imgPre.png" ng-style="{'background-image':'url('+ (item.Data | getProdLogo:40:0) +')'}" class="imgslist" />
+							<div>
+								<p class='descP-1 mui-ellipsis' ng-bind="item.Data.ProdName"></p>
+								<p class='descP-2 mui-ellipsis'>
+									<span class="faultySpan01 mui-ellipsis" ng-bind="item.Data.InnerCode" ng-if="item.Data.InnerCode"></span>
+									<span class="faultySpan01 mui-ellipsis" ng-if="item.Data.InnerCode">/</span>
+									<span class="faultySpan01 mui-ellipsis" ng-bind="item.Data.SkuName"></span>
+								</p>
+							</div>
+						</div>
+						<p class="font-12" style="line-height: 16px;">
+							<span class="font-12 color-creat-info margin-right-10" ng-bind="item.CreateDate"></span>
+							<span class="font-12 color-creat-info" ng-bind="item.CreateUserName"></span>
+						</p>
+					</div>
+				</li>
+			</ul>
+			<!--防伪报警-->
+			<ul class="data-group" style="margin-top: 0px;" ng-if="dataFrom==7">
+				<li class="mui-table-view-cell data-row" ng-repeat="item in data" ng-click="abnormalTap(item)">
+					<div class="body">
+						<span class="round" ng-if="item.IsRead==0"></span>
+						<span class="font-14 mui-ellipsis-2 color-black" ng-class="{'margin-left-15':item.IsRead==0}" ng-bind="item.AdnomalInfo"></span>
+						<div class="mediaDiv">
+							<img src="../../images/imgPre.png" ng-style="{'background-image':'url('+ (item | getProdLogo:40:0) +')'}" class="imgslist" />
+							<div>
+								<p class='descP-1 mui-ellipsis' ng-bind="item.ProdName"></p>
+								<p class='descP-2 mui-ellipsis'>
+									<span class="faultySpan01 mui-ellipsis" ng-bind="item.SkuName"></span>
+									<span class="faultySpan01 mui-ellipsis" ng-if="item.ProdInnerCode">/</span>
+									<span class="faultySpan01 mui-ellipsis" ng-bind="item.ProdInnerCode" ng-if="item.ProdInnerCode"></span>
+								</p>
+							</div>
+						</div>
+						<p class="font-12" style="line-height: 16px;">
+							<span class="font-12 color-creat-info margin-right-10" ng-bind="item.CreateDate"></span>
+							<span class="font-12 color-creat-info" ng-bind="item.CreateUserName"></span>
+						</p>
+					</div>
+				</li>
+			</ul>
+			<!--窜货预警-->
+			<ul class="data-group" style="margin-top: 0px;" ng-if="dataFrom==19">
+				<li class="mui-table-view-cell data-row" ng-repeat="item in data" ng-click="cabnormalTap(item)">
+					<div class="body">
+						<span class="round" ng-if="item.IsRead==0"></span>
+						<span class="font-14 mui-ellipsis-2 color-black" ng-class="{'margin-left-15':item.IsRead==0}" ng-bind="item.AdnomalInfo"></span>
+						<div class="mediaDiv">
+							<img src="../../images/imgPre.png" ng-style="{'background-image':'url('+ (item | getProdLogo:40:0) +')'}" class="imgslist" />
+							<div>
+								<p class='descP-1 mui-ellipsis' ng-bind="item.ProdName"></p>
+								<p class='descP-2 mui-ellipsis'>
+									<span class="faultySpan01 mui-ellipsis" ng-bind="item.SkuName"></span>
+									<span class="faultySpan01 mui-ellipsis" ng-if="item.ProdInnerCode">/</span>
+									<span class="faultySpan01 mui-ellipsis" ng-bind="item.ProdInnerCode" ng-if="item.ProdInnerCode"></span>
+								</p>
+							</div>
+						</div>
+						<p class="font-12" style="line-height: 16px;">
+							<span class="font-12 color-creat-info margin-right-10" ng-bind="item.CreateDate"></span>
+							<span class="font-12 color-creat-info" ng-bind="item.CreateUserName"></span>
+						</p>
+					</div>
+				</li>
+			</ul>
+			<!--待盘点设备-->
+			<ul class="data-group" style="margin-top: 0px;" ng-if="dataFrom==13">
+				<li class="data-row check-data-li" ng-repeat="item in data" ng-click="inventory(item)">
+					<div class="check-data-li-left">
+						<div class="equ-name">
+							<span ng-bind="item.PlanName"></span>
+						</div>
+						<div class="equ-params">
+							<span>盘点时间：</span>
+							<span ng-bind="item.PlanDate.split(' ')[0]"></span>
+						</div>
+						<div class="equ-params">
+							<span>盘点设备数：</span>
+							<span ng-bind="item.DoneNum"></span> /
+							<span ng-bind="item.InventoryNum"></span>
+						</div>
+						<div class="equ-params">
+							<span>盘点人：</span>
+							<span ng-repeat="items in item.Users" ng-bind="($index==0?items.Name:'，'+items.Name)"></span>
+						</div>
+					</div>
+				</li>
+			</ul>
+			<!--待巡检-->
+			<md-wait-over-haul ng-if="dataFrom==5" ng-model="data"></md-wait-over-haul>
+			<!--待保养-->
+			<md-wait-preserve ng-if="dataFrom==12" ng-model="data"></md-wait-preserve>
+			<!--待回访-->
+			<md-customer-translation ng-if="dataFrom==6" ng-model="data" show-type="'false'"></md-customer-translation>
+			<md-faulty-work-order ng-if="dataFrom==9||dataFrom==10" ng-model="data"></md-faulty-work-order>
+			<md-mat-repair-list ng-if="dataFrom==11" ng-model="data"></md-mat-repair-list>
+			<!--<md-mat-repair-list ng-if="dataFrom==8" ng-model="data"></md-mat-repair-list>-->
+			<md-no-data ng-show="data&&data.length==0&&Network">暂无数据</md-no-data>
+			<md-no-data ng-show="!Network">网络连接失败
+				<br />请检查网络后再试</md-no-data>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/mui.pullToRefresh.js"></script>
+		<script type="text/javascript" src="../../js/mescroll/mescroll.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script>
+			app.controller("MsgAllController", ["$scope", "ApiService", "DataService", "UtilsService", "RPCObserver", "ShareLogService",
+				function($scope, ApiService, DataService, UtilsService, RPCObserver, ShareLogService) {
+					//数据源
+					$scope.data = null;
+					$scope.Network = true;
+					$scope.isEnd = false;
+					$scope.isLoad = false;
+					$scope.matReadType = 0; //故障工单 2全部 0未读 1已读
+					$scope.abnormalReadType = 0; //防伪报警	-1全部 0未读
+					$scope.scabnormalReadType = 0; //窜货报警	-1全部 0未读
+					//列表类型 0设备故障、1故障工单、4故障工单、5待巡检、6待回访、7防伪报警、19窜货预警、9故障超期派工、10故障超期处理、11故障超期回访，13待盘点设备，19窜货预警
+					$scope.dataFrom = 4;
+					query("dataFrom") && ($scope.dataFrom = query("dataFrom"));
+					var pageIndex = 0;
+					var pageSize = 15;
+					$scope.pageFrom = query("from") || "";
+
+					mui.init();
+
+					var plugin = {
+						init: function() {
+							this.mescroll.init();
+						},
+						mescroll: {
+							obj: "",
+							init: function() {
+								this.obj = new MeScroll("mescroll", {
+									down: {
+										use: true,
+										offset: 60,
+										autoShowLoading: true,
+										auto: true,
+										beforeLoading: function(mescroll) {
+											mescroll.hideUpScroll();
+										}
+									},
+									up: {
+										use: true,
+										auto: false,
+										noMoreSize: 1,
+										offset: 50,
+										page: {
+											num: 0,
+											size: 15,
+											time: null
+										},
+										htmlLoading: '<p class="upwarp-progress mescroll-rotate"></p><p class="upwarp-tip">正在加载..</p>',
+										htmlNodata: '<p class="upwarp-nodata">-- 无更多数据 --</p>',
+										empty: {
+											warpId: null,
+											icon: null,
+											tip: "暂无数据~",
+											btntext: "",
+											btnClick: null
+										},
+										callback: plugin.mescroll.upCallback
+									}
+								});
+							},
+							upCallback: function(page) {
+								curData.load(page.num);
+							}
+						}
+					};
+
+					var curData = {
+						load: function(pageIndex) {
+							RpcClient.invoke("msg-list.html", "RPC_MaskToggle");
+							var url;
+							switch($scope.dataFrom) {
+								case 4:
+									url = ApiService.Api50 + "/api/v1/Common/GetPagedDataListByDataFrom?pageIndex=" + pageIndex + "&pageSize=" +
+										pageSize + "&dataType=1" + "&type=" + $scope.matReadType + "&dataForm=" + $scope.dataFrom;
+									break;
+								case 5:
+									url = ApiService.Api52 + "/api/v1/Equipment/GetMyEqInfoForNextRepairDateList?pageIndex=" + pageIndex + "&pageSize=" + pageSize;
+									break;
+								case 6:
+									url = ApiService.Api50 + "/api/v1/MatWorkOrder/GetServiceEvalList?page=" + pageIndex + "&pageSize=" + pageSize + "&isEval=0";
+									break;
+								case 7:
+									url = ApiService.Api50 + "/api/v1/MdCode/GetAbnormalMdCodeList?page=" + pageIndex + "&pageSize=" + pageSize + "&isAll=" + $scope.abnormalReadType;
+									break;
+								case 9:
+									url = ApiService.Api50 + "/api/v1/MatWorkOrder/GetPagedMatWorkOrderFailureOverdueWork?pageIndex=" + pageIndex + "&pageSize=" + pageSize;
+									break;
+								case 10:
+									url = ApiService.Api50 + "/api/v1/MatWorkOrder/GetPagedMatWorkOrderFailureOverdueUnreported?pageIndex=" + pageIndex + "&pageSize=" + pageSize;
+									break;
+								case 11:
+									url = ApiService.Api50 + "/api/v1/MatWorkOrder/GetPagedMatWorkOrderFailureOverdueUnvisit?page=" + pageIndex + "&pageSize=" + pageSize;
+									break;
+								case 12:
+									url = ApiService.Api52 + "/api/v1/Equipment/GetMyEqInfoForNextMaintainDateList?pageIndex=" + pageIndex + "&pageSize=" +pageSize;
+									break;
+								case 13:
+									url = ApiService.Api52 + "/api/v1/EqApply/GetMatEqInventoryPlan?type=1&pageIndex=" + pageIndex + "&pageSize=" + pageSize
+									break;
+								case 19:
+									url = ApiService.Api50 + "/api/v1/Suppliers/GetPagedDealerStockList?type=1&pageIndex=" + pageIndex + "&pageSize=" + pageSize + "&isAll=" + $scope.scabnormalReadType;
+									break;
+								default:
+									break;
+							}
+
+							DataService.get(url).then(function(res) {
+								$scope.Network = true;
+								$scope.isLoad = true;
+								if(res) {
+									pageIndex == 1 && ($scope.data = null);
+									$scope.data == null && ($scope.data = []);
+
+									$scope.data = $scope.data.concat(res.DataRows || res.Data);
+
+									setTimeout(function() {
+										plugin.mescroll.obj.endSuccess((res.DataRows || res.Data).length);
+
+										if((res.DataRows || res.Data).length == 0) {
+											document.querySelector("md-no-data").style.display = "block";
+											plugin.mescroll.obj.hideUpScroll();
+										}
+									}, 300);
+									RpcClient.invoke("msg-list.html", "RPC_MaskToggle");
+								}
+							}, function(error) {
+								$scope.Network = false;
+								$scope.isLoad = true;
+								//$scope.data == null && ($scope.data = []);
+								//pull.endPullDownToRefresh();
+								//pull.endPullUpToRefresh($scope.isEnd);
+								RpcClient.invoke("msg-list.html", "RPC_MaskToggle");
+								hideUpData();
+
+								plugin.mescroll.obj.endErr();
+							})
+						}
+					};
+					plugin.init();
+					//上拉下拉控件初始化
+					// var pull = mui("#pullrefresh").pullToRefresh({
+					// 	down: {
+					// 		height: ($scope.dataFrom == 1 || $scope.dataFrom == 4) ? 40 : 0,
+					// 		callback: pulldownRefresh
+					// 	},
+					// 	up: {
+					// 		callback: pullupRefresh,
+					// 		show: false,
+					// 		auto: true
+					// 	}
+					// })
+
+					//下拉刷新
+					function pulldownRefresh() {
+						pageIndex = 1;
+						getPagedDataListByDataFrom("down");
+					}
+
+					//上拉加载
+					function pullupRefresh() {
+						$scope.Network && pageIndex++;
+						//加载数据
+						getPagedDataListByDataFrom();
+					}
+
+					//根据抄送类型获取对应数据
+					function getPagedDataListByDataFrom(type) {
+						RpcClient.invoke("msg-list.html", "RPC_MaskToggle");
+						var url;
+						switch($scope.dataFrom) {
+							case 4:
+								url = ApiService.Api50 + "/api/v1/Common/GetPagedDataListByDataFrom?pageIndex=" + pageIndex + "&pageSize=" +
+									pageSize + "&dataType=1" + "&type=" + $scope.matReadType + "&dataForm=" + $scope.dataFrom;
+								break;
+							case 5:
+								url = ApiService.Api50 + "/api/v1/Equipment/GetMyEqInfoForNextRepairDateList?pageIndex=" + pageIndex + "&pageSize=" + pageSize;
+								break;
+							case 6:
+								url = ApiService.Api50 + "/api/v1/MatWorkOrder/GetServiceEvalList?page=" + pageIndex + "&pageSize=" + pageSize + "&isEval=0";
+								break;
+							case 7:
+								url = ApiService.Api50 + "/api/v1/MdCode/GetAbnormalMdCodeList?page=" + pageIndex + "&pageSize=" + pageSize + "&isAll=" + $scope.abnormalReadType;
+								break;
+							case 9:
+								url = ApiService.Api50 + "/api/v1/MatWorkOrder/GetPagedMatWorkOrderFailureOverdueWork?pageIndex=" + pageIndex + "&pageSize=" + pageSize;
+								break;
+							case 10:
+								url = ApiService.Api50 + "/api/v1/MatWorkOrder/GetPagedMatWorkOrderFailureOverdueUnreported?pageIndex=" + pageIndex + "&pageSize=" + pageSize;
+								break;
+							case 11:
+								url = ApiService.Api50 + "/api/v1/MatWorkOrder/GetPagedMatWorkOrderFailureOverdueUnvisit?page=" + pageIndex + "&pageSize=" + pageSize;
+								break;
+							case 12:
+								url = ApiService.Api50 + "/api/v1/Equipment/GetMyEqInfoForNextMaintainDateList?pageIndex=" + pageIndex + "&pageSize=" + pageSize;
+								break;
+							case 13:
+								url = ApiService.Api52 + "/api/v1/EqApply/GetMatEqInventoryPlan?type=1&pageIndex=" + pageIndex + "&pageSize=" + pageSize
+								break;
+							case 19:
+							    url = ApiService.Api50 + "/api/v1/Suppliers/GetPagedDealerStockList?type=1&pageIndex=" + pageIndex + "&pageSize=" + pageSize+ "&isAll=" + $scope.scabnormalReadType;
+								break;
+							default:
+								break;
+						}
+						DataService.get(url).then(function(res) {
+							$scope.Network = true;
+							$scope.isLoad = true;
+							if(res) {
+								type == "down" && ($scope.data = null);
+								$scope.data == null && ($scope.data = []);
+								$scope.data = $scope.data.concat(res.DataRows || res.Data);
+								//type == "down" && pull.scrollTo(0, 0, 10);
+
+								setTimeout(function() {
+									//									$scope.isEnd = $scope.data.length >= (res.TotalCount == undefined ? res.Total : res.TotalCount);
+									//									if(type == "down") {
+									//										pull.endPullDownToRefresh();
+									//										pull.refresh(true);
+									//									}
+
+									//									pull.endPullUpToRefresh($scope.isEnd);
+									//									hideUpData();
+									plugin.mescroll.obj.endSuccess((res.DataRows || res.Data).length);
+
+									if((res.DataRows || res.Data).length == 0) {
+										document.querySelector("md-no-data").style.display = "block";
+										plugin.mescroll.obj.hideUpScroll();
+									}
+								}, 300);
+								RpcClient.invoke("msg-list.html", "RPC_MaskToggle");
+							}
+						}, function(error) {
+							$scope.Network = false;
+							$scope.isLoad = true;
+							$scope.data == null && ($scope.data = []);
+							pull.endPullDownToRefresh();
+							pull.endPullUpToRefresh($scope.isEnd);
+							RpcClient.invoke("msg-list.html", "RPC_MaskToggle");
+							hideUpData();
+						})
+					};
+
+					//行点击 跳转
+					$scope.tap = function(item) {
+						//未读消息处理
+						if(item.Type == 0) {
+							//全部
+							//列表页 设置已读 处理
+							$scope.data.forEach(function(_item, _index) {
+								if(_item.ID == item.ID) {
+									//全部
+									if($scope.matReadType == 2) {
+										//改变当前项未读状态
+										_item.Type = 1;
+									} else {
+										//未读
+										$scope.data.splice(_index, 1);
+										plugin.mescroll.obj.hideUpScroll();
+									}
+									return;
+								}
+							})
+							setTimeout(function() {
+								//页签 消息未读 处理
+								RpcClient.invoke("msg-list.html", "RPC_UnreadRefresh", item);
+							}, 400);
+						}
+						//					
+						var url, urlId;
+						var id = item.Data.ID;
+						var sendLogId = item.ID;
+						if(item.Data.WorkOrderType == 1 || (item.Data.WorkOrderType == 2 && item.Data.JobFrom == 2)) {
+							urlId = "mat-fault-info.html";
+							url = "../aftersale/mat-fault-info.html?id=" + id;
+						} else {
+							urlId = "fault-info.html";
+							url = "../eqmentlib/fault-info.html?id=" + id;
+						}
+						url += "&logid=" + sendLogId;
+						UtilsService.openWindow({
+							needLogin: true,
+							id: urlId,
+							url: url
+						});
+						if(item.Type == 0 && $scope.data.length == 0) {
+							if(item.Data.WorkOrderType == 1 || (item.Data.WorkOrderType == 2 && item.Data.JobFrom == 2)) {
+								sendLogId && ShareLogService.add(sendLogId, 4, function() {
+									plugin.mescroll.obj.triggerDownScroll();
+								});
+							} else {
+								sendLogId && ShareLogService.add(sendLogId, 1, function() {
+									plugin.mescroll.obj.triggerDownScroll();
+								});
+							}
+						}
+					}
+
+					$scope.inventory = function(item) {
+						UtilsService.openWindow({
+							needLogin: true,
+							id: "equ-inventoryEqu-list.html",
+							url: "../eqmentlib/equ-inventoryEqu-list.html?id=" + item.ID
+						})
+					}
+
+					//防伪报警 点击
+					$scope.abnormalTap = function(item) {
+						//未读消息处理
+						if(item.IsRead == 0) {
+							//全部
+							//列表页 设置已读 处理
+							$scope.data.forEach(function(_item, _index) {
+								if(_item.ID == item.ID) {
+									//全部
+									if($scope.abnormalReadType == -1) {
+										//改变当前项未读状态
+										_item.IsRead = 1;
+									} else {
+										//未读
+										$scope.data.splice(_index, 1);
+										plugin.mescroll.obj.hideUpScroll();
+									}
+									return;
+								}
+							})
+							setTimeout(function() {
+								//页签 消息未读 处理
+								RpcClient.invoke("msg-list.html", "RPC_UnreadRefresh", item);
+							}, 400);
+						}
+						UtilsService.openWindow({
+							needLogin: true,
+							id: "scan-abnormal-info.html",
+							url: "../problib/scan-abnormal-info.html?id=" + item.ID + "&logid=" + item.LogID
+						});
+						if(item.IsRead == 0 && $scope.data.length == 0) {
+							item.LogID && ShareLogService.add(item.LogID, 11, function() {
+								plugin.mescroll.obj.triggerDownScroll();
+							});
+						}
+					}
+					//窜货预警点击
+					$scope.cabnormalTap = function (item){
+						//未读消息处理
+						if(item.IsRead == 0) {
+							//全部
+							//列表页 设置已读 处理
+							$scope.data.forEach(function(_item, _index) {
+								if(_item.ID == item.ID) {
+									//全部
+									if($scope.scabnormalReadType == -1) {
+										//改变当前项未读状态
+										_item.IsRead = 1;
+									} else {
+										//未读
+										$scope.data.splice(_index, 1);
+										plugin.mescroll.obj.hideUpScroll();
+									}
+									return;
+								}
+							})
+							setTimeout(function() {
+								//页签 消息未读 处理
+								RpcClient.invoke("msg-list.html", "RPC_UnreadRefresh", item);
+							}, 400);
+						}
+						UtilsService.openWindow({
+							needLogin: true,
+							id: "scan-cabnormal-info.html",
+							url: "../problib/scan-cabnormal-info.html?id=" + item.ID + "&logid=" + item.LogID,
+						    extras:{
+						    	info:item
+						    }
+						});
+						if(item.IsRead == 0 && $scope.data.length == 0) {
+							item.LogID && ShareLogService.add(item.LogID, 19, function() {
+								plugin.mescroll.obj.triggerDownScroll();
+							});
+						}
+						
+					}
+
+					//当数据为空时，隐藏上拉的提示
+					function hideUpData() {
+						var tip = document.querySelector(".mui-pull-bottom-tips");
+						if(tip) {
+							if(!$scope.data || $scope.data.length == 0) {
+								tip.classList.add("mui-hidden");
+							} else {
+								tip.classList.remove("mui-hidden");
+							}
+						}
+					}
+
+					//rpc刷新
+					RPCObserver.on('refresh_msg_all_list', 'refresh_msg_all_list');
+					window.refresh_msg_all_list = function(type) {
+						if(type == 'fromRepair' || type == 'fault' || type == 'equ-fault' || !type) {
+							///pull.refresh(true);
+
+							///pull.pullUpTips.classList.add("mui-hidden");
+
+							//pull.pullDownLoading();
+
+							plugin.mescroll.obj.triggerDownScroll();
+						}
+						RpcClient.invoke("msg-list.html", "RPC_UnreadRefreshForChat");
+					};
+
+					//全部 未读
+					RpcServer.expose("RPC_AllOrUnread", function(params) {
+						document.querySelector("md-no-data").style.display = "none";
+						$scope.matReadType = params == 'all' ? 2 : 0;
+						$scope.data = null;
+						//pageIndex = 1;
+						//hideUpData();
+						$scope.$apply();
+						//	pull.refresh(true);
+
+						//pull.pullUpTips.classList.add("mui-hidden");
+
+						//pull.pullDownLoading();
+						//getPagedDataListByDataFrom('down');
+
+						plugin.mescroll.obj.triggerDownScroll();
+
+					})
+
+					//全部 未读
+					mui(".md-tab-div").on("tap", ".md-tab-button,.md-tab-item", function() {
+						if($scope.dataFrom == 19 && $scope.scabnormalReadType == this.getAttribute("dataId")) return;
+						if($scope.dataFrom == 7 && $scope.abnormalReadType == this.getAttribute("dataId")) return;
+						if($scope.dataFrom == 4 && $scope.matReadType == this.getAttribute("dataId")) return;
+						document.querySelector("md-no-data").style.display = "none";
+						$scope.dataFrom == 7 && ($scope.abnormalReadType = this.getAttribute("dataId"));
+						$scope.dataFrom == 19 && ($scope.scabnormalReadType = this.getAttribute("dataId"));
+						$scope.dataFrom == 4 && ($scope.matReadType = this.getAttribute("dataId"));
+						$scope.data = null;
+						pageIndex = 1;
+						$scope.$apply();
+
+						hideUpData();
+						//pull.refresh(true);
+
+						//getPagedDataListByDataFrom('down');
+						//pull.pullUpTips.classList.add("mui-hidden");
+
+						//pull.pullDownLoading();
+
+						plugin.mescroll.obj.triggerDownScroll();
+					});
+
+					//聊天 设置已读
+					RpcServer.expose("RPC_SetReadedStateForChat", function(params) {
+						//列表页 设置已读 处理
+						$scope.data.forEach(function(item, _index) {
+							if(item.ID == params) {
+								//改变当前项未读状态
+								item.Type && (item.Type = 1);
+								$scope.$apply();
+								return;
+							}
+						})
+
+					})
+
+					//rpc 页签切换
+					RpcServer.expose('RPC_Msg_Change', function(dataFrom) {
+						document.querySelector("md-no-data").style.display = "none";
+						$scope.data = null;
+						$scope.dataFrom = dataFrom.init ? dataFrom.key : dataFrom;
+						//pull.endPullUpToRefresh(true);
+						//pageIndex = 1;
+						$scope.$apply();
+
+						//hideUpData();
+
+						//pull.refresh(true);
+
+						//getPagedDataListByDataFrom('down');
+						//pull.pullUpTips.classList.add("mui-hidden");
+						//pull.pullDownLoading();
+
+						plugin.mescroll.obj.triggerDownScroll();
+					})
+
+				}
+			]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

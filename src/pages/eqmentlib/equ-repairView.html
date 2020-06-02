@@ -1,0 +1,162 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/common.css">
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<link rel="stylesheet" href="equ-common.css">
+		<link rel="stylesheet" href="equ-repair.css">
+		<style type="text/css">
+			
+			.partDomHead {
+				color: #000;
+				background: #F7F7F7;
+			}
+			
+			.partDomHead:after {
+				height: 0!important;
+			}
+			
+			.mui-content {
+				padding-bottom: 70px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="RepairViewController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">设备维修</a>
+			<a class="menu-more icon-more right-menu-icon-detail" href="#popover" id="openPopover" style="display: none;" ng-class="{'mui-block':isLoad}" ng-if="'Q10' | hasAuth:repairInfo.CreateUserID:CompID"></a>
+			<i class="mui-pull-right menu-more-share icon-share" ng-click="goRepairShare('share')" style="display: none;" ng-class="{'mui-block':isLoad}"></i>
+		</header>
+		<div class="mui-content md-info-page" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<ul class="data-group">
+				<li class="data-row">
+					<label>维修内容</label>
+					<div class="body">
+						<span ng-bind="repairInfo.RepairDescription"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="repairInfo.IsHasAudio!=0">
+					<label>语音描述</label>
+					<div class="body">
+						<md-audio audio="repairInfo.ArmAttach" readonly="true"></md-audio>
+					</div>
+				</li>
+				<li class="data-row" ng-if="repairInfo.ImgAttach.length!=0||repairInfo.VideoAttach.length!=0">
+					<div class="body attach" style="padding-left: 16px;">
+						<md-image ng-if="repairInfo.ImgAttach.length!=0" images="repairInfo.ImgAttach" readonly="true"></md-image>
+						<md-video ng-if="repairInfo.VideoAttach.length!=0" videos="repairInfo.VideoAttach" readonly="true"></md-video>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>维修结果</label>
+					<div class="body">
+						<span ng-bind="repairInfo.RepairResult"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>维修人员</label>
+					<div class="body">
+						<md-chat-user-list ng-model="repairInfo.RepairUsers"></md-chat-user-list>
+					</div>
+				</li>
+				<li class="data-row" ng-if="repairInfo.EqFaultTypeName.length>0">
+					<label>故障归类</label>
+					<div class="body">
+						<span ng-bind="repairInfo.EqFaultTypeName"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group" ng-style="{'margin-bottom':repairInfo.RepairParts.length==0?'0':'-8px'}">
+				<li class="data-row">
+					<p class="opt md-icon font-15" ng-click="partReplace()" ng-if="'Q9' | hasAuth">
+						<span class="icon-add"></span>
+					</p>
+					<label class="title">配件更换</label>
+				</li>
+			</ul>
+			<md-part-replce-list ng-model="repairInfo.RepairParts" optant="'read'" style="margin-top: 0!important;"></md-part-replce-list>
+			<ul class="data-group">
+				<p class="data-group-tip">相关设备</p>
+				<li class="data-row mui-table-view-cell" ng-click="tap('faultInfo',repairInfo.EqWordOrderFailureID)">
+					<label>设备故障</label>
+					<i class="opt md-icon icon-right"></i>
+					<div class="body">
+						<span ng-bind="repairInfo.FaultIsHasAudio | formatDeviceFaultInfo:repairInfo.FaultAudioLength:repairInfo.FaultDescription"></span>
+					</div>
+				</li>
+				<li class="data-row mui-table-view-cell" ng-click="tap('equDetails',repairInfo.EquipmentID)">
+					<label>设备信息</label>
+					<i class="opt md-icon icon-right"></i>
+					<div class="body">
+						<span ng-bind="repairInfo.EqIdentifier | formatEquInfo:repairInfo.EqName:repairInfo.SkuName"></span>
+					</div>
+				</li>
+			</ul>
+
+			<ul class="data-group">
+				<li class="data-row">
+					<label>维修定位地点</label>
+					<div class="body">
+						<span ng-bind="repairInfo.Province | locationfilter:repairInfo.City:repairInfo.District:repairInfo.Address:repairInfo.Street"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="users.length>0">
+					<label>抄送给</label>
+					<div class="body">
+						<md-chat-user-list ng-model="users"></md-chat-user-list>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<li class="data-row">
+					<label>记录人</label>
+					<p class="opt md-icon" ng-if="repairInfo.CreateUserID!=CurUserID" ng-click="sendMsg(repairInfo.CreateUserID, repairInfo.CreateUserName, repairInfo.ULogoIsExist, repairInfo.CompID)">
+						<span class="icon-chat-single font-15 color-blue"></span>
+					</p>
+					<div class="body">
+						<span ng-bind="repairInfo.CreateUserName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>记录日期</label>
+					<div class="body">
+						<span ng-bind="repairInfo.CreateDate"></span>
+					</div>
+				</li>
+			</ul>
+		</div>
+
+		<!--无网络或请求失败重试-->
+		<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+		<md-info-bottom-bar ng-model="bar" ng-class="{'mui-block':isLoad}" style="display: none;" ng-if="retryModal.state==''"></md-info-bottom-bar>
+		<div id="popover" class="mui-popover menuDivModel">
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell" ng-click="edit()">
+					<a class="mui-icon icon-edit">
+						<font>修改</font>
+					</a>
+				</li>
+				<li class="mui-table-view-cell" ng-click="delectMain()">
+					<a class="mui-icon icon-dustbin">
+						<font>删除</font>
+					</a>
+				</li>
+			</ul>
+		</div>
+
+		<script src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../message/transMessage.js"></script>
+		<script type="text/javascript" src="equ-repairView.js"></script>
+	</body>
+
+</html>

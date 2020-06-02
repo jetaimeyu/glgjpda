@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+	</head>
+	<style type="text/css">
+		.mdApproveSearch .search_group .title {
+			color: #3296FA;
+			font-size: 1.3rem;
+		}
+		
+		.mdApproveSearch .seclet-title {
+			color: #333;
+			font-size: 1.6rem;
+			margin-top: 60px;
+			padding-left: 15px;
+		}
+		
+		.search_group .data-group .data-row .body { 
+			padding-left: 16px;
+		}
+		.search_group{
+			margin-top: 0px;
+			width: 48%;
+		}
+		.with{
+			font-size: 1.4rem;
+			
+			margin-top: 10px;
+		}
+		.mui-con-wrapper{
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
+	</style>
+
+	<body ng-controller="equInventorySearchController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">搜索</a>
+		</header>
+		<div style="display: block;" class="mdApproveSearch">
+			<div class="seclet-title" style="color: #0099FF;" ng-bind="'盘点时间'" ng-if="type==''"></div>
+			<div class="seclet-title" style="color: #0099FF;" ng-bind="'保养时间'" ng-if="type=='maintent'"></div>
+			<div class="mui-con-wrapper">
+			
+			<div class="search_group">
+				<ul class="data-group">
+					<li class="mui-table-view-cell data-row">
+						<p class="opt md-icon font-15" ng-click="chooseDate('startDate')">
+							<span class="icon-right"></span>
+						</p>
+						
+						<div class="body" ng-click="chooseDate('startDate')">
+							<span ng-if="!dateObj.startDate" class="placeholder">请选择时间</span>
+							<span ng-if="dateObj.startDate" ng-bind="dateObj.startDate"></span>
+						</div>
+					</li>
+				</ul>
+			</div>
+			<div class="with">-</div>
+			<div class="search_group">
+				<ul class="data-group">
+					<li class="mui-table-view-cell data-row">
+						<p class="opt md-icon font-15" ng-click="chooseDate('endDate')">
+							<span class="icon-right"></span>
+						</p>
+						
+						<div class="body" ng-click="chooseDate('endDate')">
+							<span ng-if="!dateObj.endDate" class="placeholder">请选择时间</span>
+							<span ng-if="dateObj.endDate" ng-bind="dateObj.endDate"></span>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+		</div>
+		<footer class="f_btns">
+			<a ng-click="reset()">重置</a>
+			<a ng-click="search()">搜索</a>
+		</footer>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript">
+			app.controller("equInventorySearchController", ["$scope", "ApiService", "RPCObserver", "DatePickerService", function($scope, ApiService, RPCObserver, DatePickerService) {
+				$scope.type = query('type')||''
+				
+				$scope.dateObj = {
+					startDate: "",
+					endDate: ""
+				}
+                var selectDate = plus.webview.currentWebview().selectDate;
+                if(selectDate){
+                	$scope.dateObj = selectDate;
+                }
+				
+
+				//选择盘点日期
+				$scope.chooseDate = function(type) {
+					DatePickerService.pickDate({
+						selected: $scope.dateObj[type]
+					}).then(function(res) {
+						$scope.dateObj[type] = res;
+					});
+				};
+
+				$scope.reset = function() {
+					$scope.dateObj = {
+						startDate: "",
+						endDate: ""
+					}
+				};
+
+				$scope.search = function() {
+					if($scope.dateObj.startDate && $scope.dateObj.endDate && ($scope.dateObj.startDate > $scope.dateObj.endDate)){
+						mui.toast("开始时间不能大于结束时间");
+						return;
+					}
+					var view = plus.webview.currentWebview();
+					var opener = view.opener();
+					if(view.callback) {
+						opener.evalJS(view.callback + "(" + JSON.stringify($scope.dateObj) + ")")
+					}
+					setTimeout(function() {
+						mui.back();
+					}, 300);
+				}
+			}]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

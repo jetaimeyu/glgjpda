@@ -1,0 +1,63 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<link rel="stylesheet" href="../../css/mui.min.css" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	<style type="text/css">
+		.icon {
+			width: 16px;
+		}
+	</style>
+</head>
+
+<body ng-controller="inspListController">
+	<header class="mui-bar mui-bar-nav" style="display:none;" ng-if="!isTitle">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left">设计圈</a>
+	</header>
+	<md-tab options="options" ng-model="tabs"></md-tab>
+	<script type="text/javascript" src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript">
+		var isTitle = query("isTitle");
+		if (isTitle == "false") {
+			document.querySelector(".mui-bar-nav").style.display = "none";
+		} else {
+			document.querySelector(".mui-bar-nav").style.display = "block";
+		}
+		app.controller("inspListController", ["$scope", "UtilsService", function ($scope, UtilsService) {
+			$scope.options={};
+			$scope.isTitle = isTitle;
+			if(isTitle == "false")
+				$scope.options.header=false;
+
+			$scope.tabs = [{
+				url: "ing-all.html?type=follow",
+				id: "ing-my-follow.html",
+				title: "我关注的"
+			}, {
+				url: "ing-all.html?type=reply",
+				id: "ing-my-reply.html",
+				title: "我回复的"
+			}, {
+				url: "ing-all.html?type=my",
+				id: "ing-my-publish.html",
+				title: "我发布的"
+			}]
+
+		}]);
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+		});
+	</script>
+</body>
+
+</html>

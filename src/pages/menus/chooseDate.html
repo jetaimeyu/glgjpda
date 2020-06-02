@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<link rel="stylesheet" href="../../css/mui.css" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	<link rel="stylesheet" href="../../css/selecttime.css" />
+	<title></title>
+	<style type="text/css">
+		html {
+			width: 100%;
+			height: 100%;
+		}
+
+		body {
+			height: 100%;
+			background-color: transparent;
+		}
+
+		.mui-table-view-cell:after {
+			position: absolute;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			height: 1px;
+			content: '';
+			-webkit-transform: scaleY(.5);
+			transform: scaleY(.5);
+			background-color: #ccc;
+		}
+
+		.mui-fullscreen {
+			position: absolute;
+			top: 0px;
+			right: 0;
+			bottom: 50%;
+			left: 0;
+			background: #fff;
+		}
+
+		.mask {
+			position: fixed;
+			top: 0px;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			height: 100%;
+		}
+
+		.mask .body {
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			right: 0px;
+			bottom: 0px;
+			background: url(../../images/mask.png);
+		}
+
+		.mui-col-xs-3,
+		.mui-col-xs-9 {
+			height: 100%;
+			overflow-y: scroll;
+		}
+
+		.item-link {}
+
+		.mui-col-xs-3 {
+			background: #efeff4;
+		}
+
+		.item-link.active {
+			background: #fff;
+		}
+
+		.item-link {
+			border-bottom: 1px solid #c8c7cc;
+			display: block;
+			font-size: 12px;
+			text-align: center;
+			line-height: 13px;
+			padding: 10px 0px;
+		}
+
+		.mui-table-view .mui-table-view-cell {
+			font-size: 12px;
+		}
+
+		.mgr-5 {
+			margin-right: 5px;
+		}
+	</style>
+</head>
+
+<body ng-controller="bodyCtl">
+	<a class="mask">
+		<div class="body">
+
+		</div>
+	</a>
+
+	<script src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/angular.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/city2017.js"></script>
+	<script type="text/javascript">
+		var ws;
+		var opener;
+		app.controller("bodyCtl", ["$scope", "ApiService", "DataService", "DatePickerService", "UtilsService", "CacheService",
+			"$Modal",
+			function ($scope, ApiService, DataService, DatePickerService, UtilsService, CacheService, $Modal) {
+				$scope.isLoad = true;
+				window.chooseDate = function (_date) {
+					ws.show("zoom-fade-out");
+					DatePickerService.getTime(
+						_date.curYear,
+						_date.curValue,
+						_date.curType
+					).then(function (data) {
+						ws.opener().evalJS(ws.callback + "(" + JSON.stringify(data) + ")");
+					});
+				};
+
+				$scope.$on("modal_close", function () {
+					ws.hide();
+				});
+			}
+		]);
+
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			ws = plus.webview.currentWebview();
+			ws.setStyle({
+				mask: "none"
+			});
+			document.querySelector(".mask").addEventListener("tap", function () {
+				ws.hide();
+			});
+			mui.back = function () {
+				ws.hide();
+			}
+			//				window.addEventListener("dragstart", function() {
+			//					ws.hide();
+			//				})
+		});
+	</script>
+</body>
+
+</html>

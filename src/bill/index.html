@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-cn" id="testForm">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="Expires" content="0">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-control" content="no-cache">
+		<meta http-equiv="Cache" content="no-cache">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="format-detection" content="telephone=no" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title ng-bind="title"></title>
+		<link href="../css/mui.min.css" rel="stylesheet">
+		<link href="../css/common.css" rel="stylesheet">
+		<link href="./css/common.min.css?version=0.0.10" rel="stylesheet">
+		<link href="./css/app.min.css?v=dd3424b5e5b9713b0203" rel="stylesheet">
+		<link href="../icon-font/iconfont.css" rel="stylesheet" />
+		<style>
+			.mui-scroll-wrapper {
+				overflow: auto;
+			}
+			
+			header+.mui-scroll-wrapper,
+			header+.md-tab {
+				margin-top: 44px;
+			}
+			
+			.full-parent-absolute,
+			.bill-search .show-shadow,
+			.bill-search .show-select,
+			.md-modal:not(.auto-size) {
+				top: 44px;
+			}
+			
+			.md-modal .md-modal-content input[type='text'] {
+				margin-bottom: 0;
+				font-size: 1.3rem;
+			}
+			
+			.mui-bar {
+				z-index: 300
+			}
+		</style>
+	</head>
+
+	<body ng-controller="TestFormCtl">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left"></a>
+			<h1 class="mui-title" ng-bind="title"></h1>
+		</header>
+		<ui-view></ui-view>
+		<script type="text/javascript" src="./script/libs.min.js?version=0.0.10"></script>
+		<script type="text/javascript" src="./script/common.min.js?version=0.0.10"></script>
+		<script type="text/javascript" src="./script/app.min.js?v=dd3424b5e5b9713b0203"></script>
+		<script type="text/javascript" src="../js/mui.min.js"></script>
+		<script type="text/javascript" src="../js/utils.js"></script>
+		<script>
+			var TestFormApp = angular.module('TestForm', ["Bill"]);
+			TestFormApp.controller("TestFormCtl", ["$scope", "$Modal", "ApiService", function($scope, $Modal, ApiService) {
+				$scope.title = "";
+				$scope.skinkey = plus.webview.currentWebview().id;
+				
+
+				//title
+				switch($scope.skinkey) {
+					case "S1211022":
+						$scope.title = "投产地维护";
+						break;
+					default:
+						break;
+				}
+			}]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("testForm"), ["TestForm"]);
+			});
+		</script>
+	</body>
+
+</html>

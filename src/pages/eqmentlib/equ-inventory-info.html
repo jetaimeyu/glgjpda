@@ -1,0 +1,423 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>盘点计划详情</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.equInventoryInfo .grey-btn {
+				color: #c7c7cc!important;
+			}
+			
+			.equInventoryInfo .body-inventory {
+				width: calc(100%-104px);
+				width: -moz-calc(100% - 104px);
+				width: -webkit-calc(100% - 104px);
+			}
+			
+			.equInventoryInfo .mui-media {
+				display: flex;
+				align-items: center;
+			}
+			
+			.data-group-tip {
+				margin-top: 10px;
+			}
+			
+			.prodLibUl.mui-table-view:after {
+				height: 0px!important;
+			}
+			
+			.prodLibUl .mui-table-view-cell {
+				padding: 8px 16px!important;
+			}
+			
+			.prodLibUl .mui-media-body {
+				position: relative;
+				left: 70px;
+				width: 80%;
+			}
+			
+			.prodLibUl .productName {
+				font-size: 1.5rem;
+				color: #000;
+				margin-top: 2px;
+				margin-bottom: 10px;
+				line-height: initial;
+				max-width: 90%;
+			}
+			
+			.prodLibUl .productType {
+				font-size: 1.2rem;
+				color: #AAA;
+				max-width: 90%;
+			}
+			
+			.prodLibUl .opt {
+				color: #AEAEAE;
+				position: absolute;
+				top: 50%;
+				right: 10px;
+				-webkit-transform: translateY(-50%);
+				transform: translateY(-50%);
+				overflow: hidden;
+				margin: 0px;
+			}
+			
+			.mui-table-view-cell:after {
+				left: 0px;
+			}
+			
+			.photo.file .icon-add {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+			}
+			
+			.photo.file .img-body {
+				position: relative;
+				overflow: hidden;
+				height: 35px;
+				background-color: #eaf6fe;
+			}
+			
+			.photo {
+				width: 35px;
+				height: 35px;
+				margin-right: 5px;
+				/*display: block;
+				float:left;*/
+			}
+			
+			.photo.content-box {
+				width: 120px;
+				text-align: center;
+				line-height: 35px;
+				color: #3296FA;
+			}
+			
+			.photo.content-box .img-body span.content-box-span {
+			
+					width: 100%;
+				position: absolute;
+				top: 50%;
+				left: 0;
+				-webkit-transform: translateY(-50%);
+				transform: translateY(-50%);
+				
+			}
+			.photo.content-box .icon-topright-corner-delete {
+				margin-right: 0;
+				margin-top: -8px;
+				font-size: 2rem;
+			}
+			
+			.photo.file .img {
+				height: 100%;
+				background-size: cover;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="equInventoryEditController" class="equInventoryInfo">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">盘点计划详情</a>
+			<a class="menu-more icon-more right-menu-icon-detail" href="#popover" id="openPopover" style="display: none;" ng-class="{'mui-block':isLoad&&state==0&&((CreateUserID==userId)||hasAuth)}"></a>
+		</header>
+		<div class="mui-scroll-wrapper  " ng-class="{'mui-block':isLoad}" style="display: none;">
+			<p class="data-group-tip">基本信息</p>
+			<ul class="data-group">
+				<li class="data-row must">
+					<label>盘点名称</label>
+					<div class="body">
+						<span ng-bind="inventoryName"></span>
+					</div>
+				</li>
+				<li class="mui-table-view-cell data-row must">
+					<label>计划盘点时间</label>
+					<div class="body">
+						<span ng-bind="inventoryDate"></span>
+					</div>
+				</li>
+
+				<li class="mui-table-view-cell data-row must">
+					<label>盘点人</label>
+					<div class="body">
+						<span ng-repeat="user in inventoryUserList" ng-if="(userNums==inventoryUserList.length)||((userNums<=inventoryUserList.length)&&user.State!=9)" ng-bind="user.RealName+((user.RealName+(userNums==inventoryUserList.length)||((userNums<=inventoryUserList.length)&&user.State!=9))&&$index!=(inventoryUserList.length-1)?',':'')"></span>
+						<!--<span ng-repeat="user in inventoryUserList" ng-if="inventoryUserList.length>0" ng-bind="$index==0?user.RealName:'，'+user.RealName"></span>
+						<span ng-repeat="user in deleteUserList" ng-if="inventoryUserList.length==0" ng-bind="$index==0?user.RealName:'，'+user.RealName"></span>-->
+					</div>
+				</li>
+				<li class="data-row">
+					<label>设备归类</label>
+					<div class="body">
+						<span ng-repeat="cata in equCatalogDataList" ng-bind="$index==0?cata.DirName:','+cata.DirName"></span>
+					</div>
+				</li>
+
+				<li class="data-row">
+					<label>备注</label>
+					<div class="body">
+						<span ng-bind="inventoryRemark"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<li class="data-row must">
+					<label>盘点内容</label>
+					<div class="body attach" style="padding-bottom: 5px;">
+						<div class="photo file content-box" ng-repeat="con in inventoryContentList" ng-show="inventoryContentList.length>0&&con.IsDel!=1">
+							<div class="img-body">
+								<span class="content-box-span" ng-bind="con.Content.length>6?con.Content.substr(0,5)+'...':con.Content"></span>
+							</div>
+						</div>
+					</div>
+				</li>
+
+			</ul>
+			<p class="data-group-tip">
+				设备信息
+				<!--<a class="mui-pull-right" id="add" ng-click="tap('chooseEqu')">
+					<span class="icon-add"></span>
+				</a>-->
+			</p>
+			<ul class="data-group prodLibUl" ng-repeat="equ in equInfoList" ng-if="equ.IsDel!=1">
+				<li class="mui-table-view-cell mui-media">
+					<label style="width: 100px;display: inline-block;">设备名称</label>
+					<div class="body body-inventory" style="display: inline-block;">
+						<div ng-bind="equ.EqName"></div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>设备型号</label>
+					<div class="body">
+						<div ng-bind="equ.SkuName"></div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>设备编号</label>
+					<div class="body">
+						<div ng-bind="equ.EqIdentifier"></div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>上次盘点时间</label>
+					<div class="body">
+						<div ng-bind="equ.LastPlanDate"></div>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<div id="popover" class="mui-popover menuDivModel">
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell" ng-click="tap()">
+					<a class="mui-icon icon-edit" ng-class="state!=0?'grey-btn':''">
+						<font>修改</font>
+					</a>
+				</li>
+				<li class="mui-table-view-cell" ng-click="del()">
+					<a class="mui-icon icon-dustbin" ng-class="state!=0?'grey-btn':''">
+						<font>删除</font>
+					</a>
+				</li>
+			</ul>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<!--<script type="text/javascript" src="../message/transMessage.js"></script>-->
+		<script>
+			app.controller("equInventoryEditController", ["$scope", "ApiService", "DataService", "UtilsService", "Loading", "RPCObserver", "CacheService",function($scope, ApiService, DataService, UtilsService, Loading, RPCObserver,CacheService) {
+				$scope.ID = query("planId");
+				var curUser = CacheService.get('user');
+				$scope.CreateUserID=query("cId")||0;
+//					console.log($scope.CreateUserID)
+				$scope.userId = curUser.UserID;
+				//获取admin或者管理员权限
+				$scope.hasAuth = false;
+				getAdminAuth();
+				function getAdminAuth(){
+					var userUrl = ApiService.Api50 + "/api/v1/Common/MdtGetIsAdmin/" + $scope.userId;
+
+					DataService.get(userUrl).then(function(res) {
+						if(res) {
+//							console.log(JSON.stringify(res))
+							if(res.IsAdmin||res.IsCreater){
+								$scope.hasAuth=true;
+							}
+						};
+					}, function(error) {
+						
+
+					})
+				}
+				
+				if($scope.ID > 0) {
+					$scope.isLoad = false;
+					getInventoryInfo();
+					getEqInventoryInfo();
+				}
+				$scope.state = -1; //0待盘点1盘点中2已盘点
+				var equList = [];
+				$scope.equNums = 0; //设备数量
+				$scope.inventoryName = "";
+				//盘点人信息
+				$scope.inventoryUserList = [];
+				$scope.userNums = 0;
+				$scope.deleteUserList=[];
+				//申请到货时间
+				$scope.inventoryDate = "";
+				//备注
+				$scope.inventoryRemark = "";
+				//设备信息列表
+				$scope.equInfoList = [];
+				//设备归类
+				$scope.equCatalogDataList = [];
+				//盘点内容
+				$scope.inventoryContentList = [];
+				//获取盘点计划信息
+				function getInventoryInfo() {
+					var url = ApiService.Api52 + "/api/v1/EqApply/GetEqInventoryPlanByID/" + $scope.ID;
+					DataService.get(url).then(function(res) {
+						Loading.hide();
+						$scope.isLoad = true;
+						if(res) {
+							$scope.state = res.State;
+							query("from") == "unchecklist" && ($scope.state = -1);
+							$scope.inventoryName = res.PlanName;
+							$scope.inventoryDate = res.PlanDate.substr(0, 10);
+							$scope.inventoryRemark = res.Remarks;
+							$scope.inventoryContentList = res.PlanContentList.map(function(item) {
+								return {
+									"PlanID": item.PlanID,
+									"CID": item.ID,
+									"ID": item.ContentID,
+									"Content": item.Content,
+									"IsDel": item.IsDel || 0
+								}
+							});
+							$scope.equCatalogDataList = res.CatalogList;
+							$scope.inventoryUserList = res.OperatorList.map(function(item) {
+								return {
+									"UserID": item.ID,
+									"CompID": item.CompID,
+									"RealName": item.Name,
+									"State": item.State
+								}
+							});
+							$scope.userNums = 0;
+							$scope.inventoryUserList.forEach(function(item,idx) {
+//								item.State == 9 && $scope.userNums++;
+								if(item.State==9){
+									$scope.userNums++;
+//									$scope.deleteUserList.push(item);
+//									$scope.inventoryUserList.splice(idx,1)
+								}
+							})
+//							console.log("inventoryUserList:"+JSON.stringify($scope.inventoryUserList))
+//								console.log("deleteUserList:"+JSON.stringify($scope.deleteUserList))
+						};
+
+					}, function(error) {
+						$scope.isLoad = true;
+
+					})
+				};
+				//获取设备信息
+				function getEqInventoryInfo() {
+					var url = ApiService.Api52 + "/api/v1/EqApply/GetPlanDetailsPageList?planId=" + $scope.ID + "&pageIndex=1&pageSize=99999";
+					DataService.get(url).then(function(res) {
+						Loading.hide();
+						$scope.isLoad = true;
+						if(res) {
+							$scope.equInfoList = res.DataRows.map(function(item) {
+								return {
+									"ID": item.ID,
+									"EqIdentifier": item.EqIdentifier,
+									"LastPlanDate": item.LastPlanDate,
+									"EqName": item.EqName,
+									"SkuName": item.SkuName,
+									"EQID": item.EQID,
+									"IsDel": 0,
+									"PlanID": item.PlanID
+								}
+							});
+							equList = res.DataRows.map(function(item) {
+								return {
+									"EqIdentifier": item.EqIdentifier,
+									"LastPlanDate": item.LastPlanDate,
+									"EqName": item.EqName,
+									"SkuName": item.SkuName,
+									"ID": item.EQID,
+									"IsDel": 0,
+									"PlanID": item.PlanID
+								}
+							});
+							$scope.equNums = res.TotalCount;
+						};
+					}, function(error) {
+						$scope.isLoad = true;
+
+					})
+				};
+				//删除
+				$scope.del = function() {
+					if($scope.state == 1 || $scope.state == 2) {
+						mui.toast("盘点中或已盘点状态的设备不能进行删除操作");
+						return;
+					}
+					mui.confirm("确认删除吗？", function(e) {
+						if(e.index == 0) {
+							var url = ApiService.Api52 + "/api/v1/EqApply/DeleteInventoryPlan?Id=" + $scope.ID;
+							DataService.get(url).then(function(res) {
+								RPCObserver.broadcast('refresh_equ_inventory_list'); //刷新列表
+								mui.toast("删除成功");
+								mui('#popover').popover('hide');
+								setTimeout(function() {
+									mui.back();
+								}, 300);
+
+							}, function(error) {
+								mui('#popover').popover('hide');
+							});
+						} else {
+							mui('#popover').popover('hide');
+						}
+					});
+				}
+				//修改
+				$scope.tap = function() {
+					if($scope.state == 1 || $scope.state == 2) {
+						mui.toast("盘点中或已盘点状态的设备不能进行修改操作");
+						return;
+					}
+					mui('#popover').popover('hide');
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'equ-inventory-edit.html',
+						url: "equ-inventory-edit.html?planId=" + $scope.ID,
+
+					});
+				};
+				RPCObserver.on('refresh_inventory_info', 'refresh_inventory_info');
+				window.refresh_inventory_info = function() {
+					getInventoryInfo()
+					getEqInventoryInfo()
+
+				}
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

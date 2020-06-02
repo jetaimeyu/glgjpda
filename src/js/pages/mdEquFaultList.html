@@ -1,0 +1,76 @@
+<ul class="data-group" style="margin-top: 0px;">
+	<li class="mui-table-view-cell data-row" ng-repeat="fault in model" ng-click="faultRecord.PageJump(0,fault)">
+		<!--<p class="opt md-icon font-15" ng-click="faultRecord.PageJump(1,fault)">
+			<span ng-if="action!='select'" class="icon-edit"></span>
+			<span ng-if="action=='select'" class="icon-check chekbox" ng-class="{'icon-round color-gray-deep':fault.ID!=selectedId,'icon-check color-blue-dark':fault.ID==selectedId}"></span>
+		</p>-->
+		<div class="bodyTxt">
+			<p class="recordTXT mui-ellipsis-2" ng-bind="fault.IsHasAudio | formatDeviceFaultInfo:fault.AudioLength:fault.FaultDescription"></p>
+			<p class="recordSign">
+				<span style="max-width: 30vw;" ng-bind="fault.CreateDate"></span>
+				<span class="equiType" ng-bind="fault.EqIdentifier" ng-if="fault.EqIdentifier"></span>
+				<span class="equFaultType" ng-bind="fault.EqFaultTypeName"></span>
+			</p>
+		</div>
+	</li>
+</ul>
+<style type="text/css">
+	.data-group .data-row {
+		padding: 10px 16px;
+	}
+	
+	.recordTXT {
+		word-break: break-all;
+		font-size: 1.5rem;
+		line-height: 17px;
+		color: #000000;
+		margin-bottom: 10px!important;
+	}
+	
+	.recordSign {
+		margin-bottom: 0px;
+		font-size: 1.2rem;
+		line-height: 14px;
+		color: #AAAAAA;
+		/*CSS3弹性盒子*/
+		display: -ms-flex;
+		display: -webkit-flex;
+		display: flex;
+		-ms-flex-align: center;
+		-webkit-align-items: center;
+		-webkit-box-align: center;
+		align-items: center;
+	}
+	
+	.recordSign>span {
+		display: inline-block;
+		margin-right: 10px;
+	}
+	
+	.recordSign>span:last-child {
+		margin-right: 0;
+	}
+	
+	.equiType,
+	.equFaultType {
+		max-width: 30vw;
+		/*字符串截取*/
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		text-overflow: ellipsis;
+		-ms-text-overflow: ellipsis;
+	}
+	
+	/*.bodyTxt {
+		margin-right: 22px;
+	}*/
+	
+	.chekbox {
+		display: inline-block;
+		margin-right: 16px;
+		font-size: 20px;
+	}
+</style>

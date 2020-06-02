@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+	</head>
+
+	<body ng-controller="selectSku">
+		<header class="mui-bar mui-bar-nav">
+			<!--<a class="mui-action-back mui-icon icon-back mui-pull-left">选择部门</a>-->
+			<a class="mui-icon icon-back mui-pull-left font-18" style="line-height: 45px;font-size: 1.7rem!important;padding: 0 16px!important;" ng-click="cancel()">选择分类</a>
+		</header>
+		<ul class="md-tab" top="40">
+			<li class="md-tab-item" ng-class="{'md-active':type==2}" href="#tab_2">设备分类</li>
+			<li class="md-tab-item" ng-class="{'md-active':type==1}" href="#tab_1">最近浏览</li>
+		</ul>
+		<div style="margin-bottom:40px;">
+			<div id="slider" class="mui-slider" style="background: #fff;position: absolute;bottom: 0px;left: 0px;right: 0px;top: 84px;">
+				<div id="tab_1" style="display:none;">
+					<ul class="data-group" ng-if="historyList.length>0">
+						<li class="mui-table-view-cell data-row" ng-repeat="o in historyList" ng-click="selected(o)">
+							<span class="name">{{o.name}}</span>
+							<i class="icon-roundcheckfill color-blue" ng-if="o.id==selectedID"></i>
+							<i class="icon-round color-gray" ng-if="o.id!=selectedID"></i>
+						</li>
+					</ul>
+					<md-no-data ng-show="historyList.length==0">暂无数据</md-no-data>
+				</div>
+				<div id="tab_2" style="display:none;">
+					<md-select-eq-class id='selectedID' curpid="3383" callback='selected'></md-select-eq-class>
+				</div>
+			</div>
+		</div>
+
+		<footer class="f_btns">
+			<a ng-click="cancel()">取消</a>
+			<a ng-click="save()">确定</a>
+		</footer>
+		<script src="../../js/angular.min.js"></script>
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/common.js"></script>
+		<script src="../../js/utils.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			app.controller("selectSku", ["$scope", "UtilsService", "CacheService",
+				function($scope, UtilsService, CacheService) {
+					var ws = plus.webview.currentWebview();
+					$scope.selectedID = ws.selectObj ? ws.selectObj.id : 0;
+					$scope.showHistory = ws.selectObj ? ws.selectObj.showHistory : true;
+					$scope.type = 1;
+					$scope.historyList = [];
+					$scope.result = "";
+					$scope.selected = function(item) {
+
+						if(!angular.isArray(item)) {
+							item = [item];
+						}
+
+						if(!item[0] || item[0].id == $scope.selectedID) {
+							$scope.selectedID = 0;
+							$scope.result = "";
+						} else {
+
+							$scope.result = item ? item : "";
+							$scope.selectedID = item ? item[0].id : 0;
+						}
+
+					};
+
+					var history = CacheService.get("dev-class-his") || [];
+
+					if(history && history.length > 0) {
+						$scope.historyList = JSON.parse(JSON.stringify(history));
+						$scope.type = 1;
+						document.querySelector("#tab_1").style.display = "block";
+					} else {
+						$scope.type = 2;
+						document.querySelector("#tab_2").style.display = "block";
+					}
+
+					MdConfig.StartUsingTab();
+
+					$scope.save = function() {
+						if(!$scope.result) {
+							//如果已经存在已选中的，点击确定，直接返回
+							if($scope.selectedID) {
+								$scope.cancel();
+								return;
+							}
+
+							ws.opener().evalJS(ws.callback + "(" + JSON.stringify($scope.result) + ")")
+							$scope.$broadcast("mui_back");
+							//mui.toast("请选择设备分类!");
+							return false;
+						}
+
+						//记录history
+						if(history.length > 20) {
+							history.splice($scope.historyList.length - 1, 1);
+						}
+
+						var curIdx = -1;
+						history.forEach(function(item, idx) {
+							if(item.id == $scope.result[0].id) {
+								curIdx = idx;
+								return false;
+							}
+						});
+
+						if(curIdx >= 0) {
+							history.splice(curIdx, 1);
+						}
+
+						history.splice(0, 0, {
+							id: $scope.result[0].id,
+							name: $scope.result[0].name,
+							CPath: $scope.result[0].CPath,
+						});
+
+						CacheService.set("dev-class-his", history, true);
+
+						ws.opener().evalJS(ws.callback + "(" + JSON.stringify($scope.result) + ")")
+						$scope.$broadcast("mui_back");
+					};
+
+					$scope.cancel = function() {
+						$scope.$broadcast("mui_back");
+					}
+				}
+			]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

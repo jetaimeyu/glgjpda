@@ -1,0 +1,229 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="equ-maintenance-details.css" />
+	</head>
+
+	<body ng-controller="EquMainDetailController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">巡检明细</a>
+			<a class="menu-more icon-more right-menu-icon-detail" href="#popover" id="openPopover"></a>
+			<i class="mui-pull-right menu-more-share icon-share" ng-click="goMainteShare()" style="display: none;" ng-class="{'mui-block':isLoad}"></i>
+		</header>
+		<div class="mui-content md-info-page" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<ul class="data-group mt0">
+				<li class="data-row mui-table-view-cell">
+					<label>巡检设备</label>
+					<p class="opt md-icon font-15" ng-click="tap('equ')">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="tap('equ')">
+						<span ng-bind="MainInfo.EqName"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="MainInfo.EqIdentifier">
+					<label>设备编号</label>
+					<div class="body">
+						<span ng-bind="MainInfo.EqIdentifier"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="MainInfo.Users.length>0">
+					<label>巡检人</label>
+					<div class="body">
+						<md-chat-user-list ng-model="MainInfo.Users"></md-chat-user-list>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>巡检时间</label>
+					<div class="body">
+						<span ng-if="MainInfo.OverhaulDate" ng-bind="MainInfo.OverhaulDate"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>位置</label>
+					<div class="body prod-address">
+						<span ng-bind="MainInfo.Province | locationfilter:MainInfo.City:MainInfo.District:MainInfo.Address:MainInfo.Street"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="MainInfo.ImgAttach.length>0">
+					<label>图片</label>
+					<div class="body attach" style="padding-bottom: 5px;">
+						<md-image images="MainInfo.ImgAttach" readonly="true" canadd="false"></md-image>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>备注</label>
+					<div class="body">
+						<span ng-bind="MainInfo.Remark"></span>
+					</div>
+				</li>
+				
+			</ul>
+			<ul class="data-group" ng-if="MainInfo.NextCheckDate">
+				<li class="data-row">
+					<label>下次巡检日期</label>
+					<div class="body">
+						<span ng-bind="MainInfo.NextCheckDate"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group" ng-if="MainInfo.SendUsers.length>0">
+				<li class="data-row" >
+					<label>抄送给</label>
+					<div class="body">
+						<md-chat-user-list ng-model="MainInfo.SendUsers"></md-chat-user-list>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group" ng-if="MainInfo.Params.length>0">
+				<p class="data-group-tip" ng-bind="MainInfo.StandardName"></p>
+				<li class="data-row" ng-repeat="param in MainInfo.Params">
+					<label ng-bind="param.ItemName"></label>
+					<div class="body">
+						<span ng-bind="param.ParamValue"></span>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<!--无网络或请求失败重试-->
+		<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+		<div id="popover" class="mui-popover menuDivModel">
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell" ng-click="tap('edit')">
+					<a class="mui-icon icon-edit">
+						<font>修改</font>
+					</a>
+				</li>
+				<li class="mui-table-view-cell" ng-click="del()">
+					<a class="mui-icon icon-dustbin">
+						<font>删除</font>
+					</a>
+				</li>
+			</ul>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../message/transMessage.js"></script>
+
+		<script>
+			app.controller("EquMainDetailController", ["$scope", "ApiService", "DataService", "UtilsService", "CacheService", "DatePickerService", "AuthService", "Loading", "$timeout", "ChatUserService", "$filter", "$Modal", "$q", "RPCObserver", function($scope, ApiService, DataService, UtilsService, CacheService, DatePickerService, AuthService, Loading, $timeout, ChatUserService, $filter, $Modal, $q, RPCObserver) {
+				var curUser = CacheService.get("user");
+				//明细编号
+				$scope.id = query("id");
+				//巡检明细
+				$scope.MainInfo = [];
+				Loading.show();
+				getMaintInfo();
+				//获取明细详情
+				function getMaintInfo() {
+					var url = ApiService.Api50 + "/api/v1/Equipment/GetEqOverhaulPlanRecordByID?recordId=" + $scope.id;
+					DataService.get(url).then(function(res) {
+						Loading.hide();
+						res.OverhaulDate = res.OverhaulDate ? res.OverhaulDate.replace(" 00:00:00", "") : "";
+						$scope.MainInfo = res;
+						$scope.isLoad = true;
+					})
+				};
+				//跳转
+				$scope.tap = function(key) {
+					mui('#popover').popover('hide');
+					var url = {
+						edit: 'equ-maintenance-details.html?id=' + $scope.id,
+						equ : "equ-details.html?equid=" + $scope.MainInfo.EqID
+					};
+					UtilsService.openWindow({
+						needLogin: true,
+						id: url[key].substring(url[key].lastIndexOf('/') + 1, url[key].indexOf('?')),
+						url: url[key]
+					});
+				};
+				//删除
+				$scope.del = function() {
+					mui('#popover').popover('hide');
+					mui.confirm("确认删除吗？", function(e) {
+						if(e.index == 0) {
+							var url = ApiService.Api50 + "/api/v1/Equipment/DelEqOverhaulPlanRecord?recordId=" + $scope.id;
+							DataService.get(url).then(function(res) {
+								if(res) {
+									//刷新巡检列表
+									RPCObserver.broadcast('refresh_equ_insp_list');
+									mui('#popover').popover('hide');
+									mui.back();
+								}
+							});
+						} else {
+							mui('#popover').popover('hide');
+						}
+					});
+				};
+				//详情分享
+				$scope.goMainteShare = function() {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: "contact-select.html",
+						url: "../common/contact-select.html?action=select&must=true&multiselect=true&hideself=true&type=org",
+						extras: {
+							selectObj: [],
+							callback: 'shareEqu'
+						}
+					});
+				};
+				RpcServer.expose("RPC_FaultMaintenanceInsp", function() {
+					getMaintInfo();
+				});
+				
+				$scope.doMainteShare = function(sltUsers) {
+					var obj = {
+						id: $scope.MainInfo.ID,
+						img: ApiService.Down + "/chat/equ-insp.png",
+						title: "设备巡检",
+						desc: $scope.MainInfo.EqName,
+					}
+					UtilsService.shareMsg(obj, sltUsers).then(function() {
+						var userNames = [];
+						sltUsers.forEach(function(user) {
+
+							userNames.push(user.ViewName);
+
+							ChatUserService.send({
+								chatId: user.UserID,
+								chatName: user.CompID,
+								chatCompId: user.CompID,
+								hasLogo: curUser.ULogoIsExist,
+								chatLogo: user.ULogoIsExist,
+								type: 7,
+								content: {
+									eventName: "equ-insp",
+									logo: ApiService.Down + "/chat/equ-insp.png",
+									title: "设备巡检",
+									desc: $scope.MainInfo.EqName,
+									params: [$scope.MainInfo.ID]
+								}
+							});
+						})
+						mui.toast("成功分享给：" + userNames.join("，"));
+					});
+				}
+			}]);
+			function shareEqu(sltObjs) {
+				var appElement = document.querySelector('[ng-controller=EquMainDetailController]');
+				var $scope = angular.element(appElement).scope();
+				$scope.doMainteShare(angular.copy(sltObjs));
+			}
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

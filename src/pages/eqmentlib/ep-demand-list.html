@@ -1,0 +1,162 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link rel="stylesheet" href="../../css/mui.min.css" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	<style type="text/css">
+			.md-user-list .mui-table-view-cell i {
+		line-height: 48px;
+		margin-right: 10px;
+	}
+	
+	.md-user-list.mui-table-view .mui-media-object {
+		border: none;
+	}
+	
+	.md-user-list.mui-table-view:before,
+	.md-user-list.mui-table-view:after {
+		content: none;
+	}
+	
+	.md-user-list.mui-table-view .mui-table-view-cell {
+		padding: 8px 16px;
+		height: 64px;
+	}
+	
+	.md-user-list.mui-table-view .mui-table-view-cell .mui-media-object {
+		line-height: 48px;
+		max-width: 50px;
+		border-radius: 50%;
+		background-color: #FFFFFF;
+		width: 48px;
+		height: 48px;
+		background-size: cover;
+	}
+	
+	.mui-media-ex-username {
+		font-size: 1.5rem;
+		color: #323232;
+		padding-right: 58px;
+	}
+	
+	.mui-ellipsis {
+		white-space: nowrap!important;
+	}
+	
+	.news-title {
+		line-height: 48px;
+		font-size: 1.6rem;
+		color: #323232;
+	}
+	
+	.mui-table-view .mui-table-view-cell label,
+	.mui-table-view .mui-table-view-cell .opt {
+		position: absolute;
+		top: 50%;
+		-webkit-transform: translateY(-50%);
+		transform: translateY(-50%);
+		overflow: hidden;
+		margin: 0;
+	}
+	
+	.mui-table-view .mui-table-view-cell .opt,
+	.data-group .data-row .opt {
+		color: #AEAEAE;
+		top: 50%;
+	}
+	
+	.mui-table-view .mui-table-view-cell .opt:active {
+		color: #169BD5;
+	}
+	
+	.mui-table-view .mui-table-view-cell .opt,
+	.mui-table-view .mui-table-view-cell .body.arrow:after {
+		font-size: 1.7rem;
+		right: 1px;
+		padding: 10px 10px 11px 10px;
+	}
+	
+	.mui-table-view-cell:after {
+		background-color: #ECECEC;
+	}
+	
+	.mui-table-view .mui-table-view-cell:after {
+		left: 10px;
+		right: 10px;
+	}
+	</style>
+</head>
+
+<body ng-controller="ParentPageController">
+	<div id="pullrefresh" ng-controller="pullrefreshController" class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}"
+	 style="display: none;">
+		<div class="mui-content">
+			<ul class="md-user-list mui-table-view mui-table-view-chevron">
+				<li class="mui-table-view-cell mui-media" ng-repeat="item in data" ng-click="tap(item)">
+					<i class="mui-pull-left font-18 ng-scope" ng-class="{'icon-round color-gray':activeData.ID!=item.ID,'icon-roundcheckfill color-blue':activeData.ID==item.ID}"></i>
+					<div class="mui-media-object mui-pull-left avatar" ng-style="{'background-image':'url('+ getDemandImages(item) +')'}"></div>
+					<div class="mui-clearfix" style="margin-right: 16px;" >
+						<div class="mui-ellipsis news-title" ng-bind="item.DemandName"></div>
+					</div>
+				</li>
+			</ul>
+			<md-no-data class="no-data" ng-show="data && data.length==0">暂无设备数据</md-no-data>
+		</div>
+	</div>
+	<script type="text/javascript" src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/rpc.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script>
+		app.controller("ParentPageController", ["$scope", "ApiService", "DataService", "UtilsService", "RPCObserver",
+			"$filter",
+			function ($scope, ApiService, DataService, UtilsService, RPCObserver, $filter) {
+				var view = plus.webview.currentWebview();
+
+
+				$scope.getDemandImages = function (info) {
+					if (info && info.PictureInfo != null) {
+						return ApiService.Api45 + "/api/v1.0/epdemand/" + info.PictureInfo.ID + "_" + ex + info.PictureInfo.Ext;
+					} else {
+						return "../../images/mdempty1.png";
+					}
+				};
+				$scope.activeData = view.data;
+				$scope.pageIndex = 0;
+				$scope.pageSize = 20;
+				$scope.autoUserPull = true;
+				$scope.realUrl = ApiService.Api45 + "/api/v1/EpDemand/GetJoinDemandList?joinState=2";
+
+				$scope.action = "view";
+				$scope.tap = function (item) {
+					if($scope.activeData.ID==item.ID)
+					{
+						$scope.activeData={};
+					}
+					else
+					{
+						$scope.activeData=item;
+					}
+
+					view.parent().evalJS("callback("+JSON.stringify($scope.activeData)+")");
+				}
+
+				$scope.$on("refresh_pageindex", function () {
+					$scope.url = $scope.realUrl + "&page=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize;
+				});
+			}
+		]);
+
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+		});
+	</script>
+</body>
+
+</html>

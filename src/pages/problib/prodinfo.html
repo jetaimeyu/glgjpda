@@ -1,0 +1,522 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="../../css/mui.previewimage.css" />
+		<style type="text/css">
+			.mui-table-view {
+				margin-top: 0px !important;
+			}
+			
+			.prodLibUl {
+				z-index: 99;
+				margin-bottom: 4px;
+			}
+			
+			.tab-content {
+				margin-top: 1px;
+			}
+			
+			.imgslist {
+				float: left;
+				width: 56px;
+				height: 56px;
+				background-size: cover !important;
+			}
+			
+			.skuID .imgslist {
+				width: 62px;
+				height: 62px;
+			}
+			
+			.prodLibUl .mui-table-view-cell {
+				padding: 8px 16px !important;
+			}
+			
+			.prodLibUl .mui-media-body {
+				padding-left: 10px;
+			}
+			
+			.prodLibUl .productName {
+				font-size: 1.5rem;
+				color: #000;
+				line-height: 2rem;
+			}
+			
+			.prodLibUl .productType {
+				font-size: 1.3rem;
+				color: #AAA;
+			}
+			
+			.mui-table-view-cell:after {
+				left: 0px;
+			}
+			
+			.prodTypeChoose .opt {
+				width: 18px;
+				height: 18px;
+				position: absolute;
+				top: 50%;
+				right: 16px;
+				-webkit-transform: translateY(-50%);
+				transform: translateY(-50%);
+				overflow: hidden;
+				margin: 0px;
+			}
+			
+			.optBorder {
+				border: 1px solid #999;
+				border-radius: 50%;
+			}
+			
+			.optColor {
+				color: #057bf9;
+			}
+			
+			.prodTypeChoose .icon-check:before {
+				position: relative;
+				top: -3px;
+				left: -1px;
+			}
+			
+			.prodTypeChoose .news-title {
+				font-size: 1.5rem;
+				line-height: 23px;
+				color: #000;
+			}
+			/*底部按钮*/
+			
+			.btns {
+				position: fixed;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				border-top: 1px solid #EEEEEE;
+				background: #FFFFFF;
+			}
+			
+			.btns a {
+				display: block;
+				width: 50%;
+				height: 40px;
+				line-height: 40px;
+				font-size: 1.4rem;
+				text-align: center;
+				float: left;
+			}
+			
+			.btns a:first-child {
+				color: #B1B1B1;
+			}
+			
+			.btns a:last-child {
+				border-left: 1px solid #EEEEEE;
+				color: #3296FA;
+			}
+			
+			.prodTypeChoose.mui-table-view:before,
+			.prodTypeChoose.mui-table-view:after {
+				height: 0px;
+			}
+			
+			.imgs-container::after {
+				content: "";
+				clear: both;
+				height: 0;
+				display: block;
+			}
+			
+			.img-wrap {
+				width: 49%;
+				float: left;
+				height: 150px;
+				margin: 0.5%;
+				background-color: #fff;
+				overflow: hidden;
+			}
+			
+			.img-wrap-single {
+				height: 300px;
+				padding: 10px;
+				overflow: hidden;
+			}
+			
+			.imageview-native,
+			.imageview-native-single {
+				object-fit: cover;
+				height: 100%;
+				width: 100%;
+				max-width: 100%;
+				max-height: 100%;
+			}
+			
+			.data-group .data-row .body {
+				padding-left: 16px;
+			}
+			
+			.details * {
+				max-width: 100%;
+				word-break: break-all;
+			}
+			
+			.data-group .data-row:after {
+				left: 0px;
+				right: 0px;
+			}
+			
+			#tab2 .noSku {
+				background: #FFFFFF;
+				position: absolute;
+				width: 97px;
+				height: 21px;
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				transform: translate;
+				margin-left: -50px;
+				margin-top: -10px;
+			}
+			
+			.mui-preview-image.mui-fullscreen {
+				z-index: 9999999;
+			}
+			
+			.params-title {
+				background: #F1F1F1;
+				padding: 10px 10px 6px 16px;
+				font-weight: bold;
+				color: #323232;
+				text-align: left;
+				font-size: 1.4rem;
+				margin: 0;
+			}
+			
+			md-compile ul {
+				padding-left: 40px;
+				list-style: disc;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="productLibraryList">
+		<div id="pullrefresh" class="mui-scroll-wrapper" ng-class="{'mui-block':domShow}" style="display: none;">
+			<div class="mui-content" ng-class="{'mui-block':domShow}" style="display: none;">
+				<ul class="mui-table-view prodLibUl">
+					<li class="mui-table-view-cell mui-media">
+						<div class="body" ng-class="{'skuID':SkuID && SkuID!='null'}">
+							<img src="../../images/imgPre.png" ng-if="prodHead!=null" ng-style="{'background-image':'url('+ (prodHead | getProdLogo:62:62) +')'}" class="imgslist border-f2" />
+							<div class="mui-media-body">
+								<p class="productName mui-ellipsis" ng-bind="prodHead.ProdName" id="proName"></p>
+								<p class="productType mui-ellipsis" ng-bind="'型号：'+ prodHead.SkuName" ng-if="SkuID && SkuID!='null'"></p>
+								<p class="productType mui-ellipsis" ng-bind="InnerCodeName + '：' + ProdInnerCode" ng-if="ProdInnerCode"></p>
+								<!--  ng-if="!ProdInnerCode" -->
+							</div>
+						</div>
+					</li>
+				</ul>
+				<ul id="tab-type" class="md-tab data-group" style="margin-top: 0px;">
+					<li class="md-tab-item" ng-class="{'md-active':TabType=='1'}" href="#tab1" ng-if="!SkuID">型号</li>
+					<li class="md-tab-item" ng-class="{'md-active':TabType=='2'}" href="#tab2">参数</li>
+					<li class="md-tab-item" ng-class="{'md-active':TabType=='3'}" href="#tab3">详情</li>
+					<li class="md-tab-item" ng-class="{'md-active':TabType=='6'}" href="#tab6" ng-if="isShowOnePro">一机一册</li>
+					<li class="md-tab-item" ng-class="{'md-active':TabType=='4'}" href="#tab4">图册</li>
+					<li class="md-tab-item" ng-class="{'md-active':TabType=='5'}" href="#tab5">视频</li>
+				</ul>
+			</div>
+			<div class="mui-content tab-content">
+				<!-- 型号 -->
+				<div id="#tab1" class="prod-details skudetails" ng-show="TabType=='1'" ng-if="!skuName">
+					<ul class="mui-table-view prodTypeChoose" ng-if="skuList&&skuList.length>0">
+						<li class="mui-table-view-cell mui-media" ng-repeat="item in skuList" ng-click="chooseSku(item.SkuName,item.SkuID)">
+							<i class="opt md-icon icon-right font-15" style="color: #AEAEAE;"></i>
+							<div class="mui-ellipsis news-title" ng-bind="item.SkuName" style="width: 80%;"></div>
+						</li>
+					</ul>
+					<md-no-data ng-show="skuList&&skuList.length==0">暂无数据</md-no-data>
+				</div>
+				<!-- 参数 -->
+				<div id="#tab2" class="prod-details md-info-page" ng-show="TabType=='2'">
+					<div ng-if="params.PkgInfoExtList&&params.PkgInfoExtList.length>0">
+						<p class="params-title">产品属性</p>
+						<md-sku-list ng-model="params.PkgInfoExtList"></md-sku-list>
+					</div>
+					<div ng-if="params.PkgSkuValueList&&params.PkgSkuValueList.length>0">
+						<p class="params-title">规格参数</p>
+						<md-sku-list ng-model="params.PkgSkuValueList"></md-sku-list>
+					</div>
+					<div ng-if="params.ProduceParams&&params.ProduceParams.length>0">
+						<p class="params-title">生产参数</p>
+						<md-sku-list ng-model="params.ProduceParams"></md-sku-list>
+					</div>
+					<md-no-data ng-show="showParamsList">暂无数据</md-no-data>
+				</div>
+				<!-- 详情 -->
+				<div id="#tab3" class="prod-details details" ng-show="TabType=='3'" style="background: #fff;">
+					<md-compile data-template="prodHead.Intro"></md-compile>
+					<md-no-data ng-show="!prodHead.Intro">暂无数据</md-no-data>
+				</div>
+				<!-- 图册 -->
+				<div id="#tab4" class="prod-details" ng-show="TabType=='4'">
+					<div class="imgs-container">
+						<div ng-repeat="obj in eBook" class="img-wrap">
+							<img ng-src="{{getImgPath(obj,200)}}" class="imageview-native" fullpath="{{getImgPath(obj,0) | filePathReg}}" />
+						</div>
+					</div>
+					<md-no-data ng-show="eBook&&eBook.length==0">暂无数据</md-no-data>
+				</div>
+				<!-- 视频 -->
+				<div id="#tab5" class="prod-details" ng-show="TabType=='5'">
+					<ul class="data-group tab-video mt0" ng-if="video&&video.length>0">
+						<li class="data-row mui-table-view-cell" ng-repeat="obj in video" ng-attr-videoname="{{obj.VideoName}}" ng-attr-videourl="{{obj.VideoUrl}}">
+							<p class="opt md-icon font-15">
+								<span class="icon-right"></span>
+							</p>
+							<div class="body">
+								<a style="color: #323232;" ng-bind="obj.VideoName"> </a>
+							</div>
+						</li>
+					</ul>
+					<md-no-data ng-show="video&&video.length==0">暂无数据</md-no-data>
+				</div>
+				<!-- 一机一册 -->
+				<div id="#tab6" class="prod-details" ng-show="TabType=='6'">
+					<div class="imgs-container">
+						<div ng-repeat="src in oneProImgs track by $index" class="img-wrap-single">
+							<img class="imageview-native-single" ng-src="{{src}}" data-preview-src="{{src}}" data-preview-group="1" />
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/mui.zoom.js"></script>
+		<script type="text/javascript" src="../../js/mui.previewimage.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/xss.min.js"></script>
+		<script>
+			app.controller("productLibraryList", ["$scope", "ApiService", "DataService", "Loading", "$filter", "$Modal", "UtilsService", function(
+				$scope, ApiService, DataService, Loading, $filter, $Modal, UtilsService) {
+				var view = plus.webview.currentWebview();
+				$scope.prodId = query("prodId") || 0;
+				$scope.MdCode = query("MdCode") || '';
+				$scope.SkuID = query("SkuID") || '';
+				$scope.ProdInnerCode = (query("ProdInnerCode") || view.ProdInnerCode || '').replace(/@and@/g, "&").replace(/@hash@/g, "#");
+				$scope.InnerCodeName = query("InnerCodeName") || view.InnerCodeName || '出厂编号';
+				$scope.prodHead = "";
+				$scope.skuList = null; //接口返回的所有型号
+				$scope.eBook = null; //电子图册
+				$scope.video = null; //视频
+				$scope.params = null; //参数
+				$scope.domShow = false;
+				$scope.Skuid = 0;
+				$scope.SkuItem = '';
+				$scope.showParamsList = false
+				if($scope.SkuID) {
+					$scope.TabType = "2";
+				} else {
+					$scope.TabType = "1";
+				}
+				// 一机一册 数据
+				$scope.isShowOnePro = false;
+				$scope.oneProImgs = null;
+				$scope.mdcodes = {
+					//				"201285113724355353317316293057516": ["../../images/mdcode/one-prod-img.png"]
+					"201286888155166733885436135060555": ["../../images/mdcode/one-prod-img.png"]
+				};
+				if($scope.MdCode && $scope.mdcodes.hasOwnProperty($scope.MdCode)) {
+					$scope.isShowOnePro = true;
+					$scope.oneProImgs = $scope.mdcodes[$scope.MdCode];
+				}
+
+				Loading.show();
+				mui.previewImage();
+				//产品信息 详情
+				function getProdLibrary() {
+					var url = ApiService.Api50 + "/api/v2/Prod/GetProdInfo?prodId=" + $scope.prodId + "&skuId=" + $scope.SkuID;
+					DataService.get(url).then(function(res) {
+						res.Intro = res.Intro.replace(/http:\/\/api3.maidiyun.com/g, ApiService.Api30).replace(
+							/\/\/mdcloud.maidiyun.com\/50/g, ApiService.Api50);
+						$scope.prodHead = res;
+						$scope.domShow = true;
+						setTimeout(function() {
+							$scope.ProdInfoHeight = document.getElementById("proName").clientHeight;
+						})
+					});
+				};
+				//产品参数
+				function getPkgInfoExtList() {
+					var url = ApiService.Api50 + "/api/v1/Prod/GetPkgInfoParamsList?prodId=" + $scope.prodId + "&skuId=" + $scope.SkuID +
+						"&mdCode=" + $scope.MdCode;
+					DataService.get(url).then(function(res) {
+						Loading.hide();
+						$scope.domShow = true;
+						$scope.params == null && ($scope.params = []);
+						$scope.params = res;
+						var info = $scope.params.PkgInfoExtList;
+						var sku = $scope.params.PkgSkuValueList;
+						var prod = $scope.params.ProduceParams;
+						if(!((info && info.length > 0) || (sku && sku.length > 0) || (prod && prod.length > 0))) {
+							$scope.showParamsList = true
+						}
+					});
+				};
+				//电子图册
+				function getProdShapes() {
+					var url = ApiService.Api50 + "/api/v1/Prod/GetImageList?prodId=" + $scope.prodId;
+					DataService.get(url).then(function(res) {
+						$scope.domShow = true;
+						$scope.eBook == null && ($scope.eBook = []);
+						$scope.eBook = res;
+					});
+
+				};
+
+				//产品型号
+				function getProdLibraryList(type) {
+					var url = ApiService.Api50 + "/api/v1/Prod/GetMdtPkgSkuList?prodId=" + $scope.prodId;
+					DataService.get(url).then(function(res) {
+						$scope.domShow = true;
+						$scope.skuList == null && ($scope.skuList = []);
+						$scope.skuList = $scope.skuList.concat(res.DataRows);
+						if($scope.skuList.length > 0) {
+							$scope.Skuid = $scope.skuList[0].SkuID;
+							$scope.SkuItem = $scope.skuList[0] || '';
+						}
+					});
+				};
+				//电子图册
+				function getProdShapes() {
+					var url = ApiService.Api50 + "/api/v1/Prod/GetImageList?prodId=" + $scope.prodId;
+					DataService.get(url).then(function(res) {
+						$scope.domShow = true;
+						$scope.eBook == null && ($scope.eBook = []);
+						$scope.eBook = res;
+					});
+
+				};
+
+				//产品视频说明书
+				function loadVideo() {
+					var url = ApiService.Api50 + "/api/v1/Prod/GetVideoInstructions?prodId=" + $scope.prodId;
+					DataService.get(url).then(function(res) {
+						$scope.domShow = true;
+						$scope.video == null && ($scope.video = []);
+						$scope.video = res;
+					});
+				};
+				setTimeout(function() {
+					mui("#tab-type").on("tap", ".md-tab-item", function() {
+						if(this.getAttribute("href") == "#tab1") {
+							$scope.TabType = "1"
+						} else if(this.getAttribute("href") == "#tab2") {
+							$scope.TabType = "2"
+						} else if(this.getAttribute("href") == "#tab3") {
+							$scope.TabType = "3"
+						} else if(this.getAttribute("href") == "#tab4") {
+							previewImages();
+							$scope.TabType = "4";
+						} else if(this.getAttribute("href") == "#tab5") {
+							$scope.TabType = "5"
+						} else if(this.getAttribute("href") == "#tab6") {
+							$scope.TabType = "6"
+						}
+						$scope.$apply();
+					});
+					getProdLibrary();
+					getPkgInfoExtList();
+					if(!$scope.SkuID) {
+						getProdLibraryList();
+					}
+					getProdShapes();
+					loadVideo();
+				})
+
+				var mui_back = mui.back;
+				mui.back = function() {
+					if(isModal) {
+						$Modal.close();
+					} else {
+						mui_back();
+					}
+				}
+				var isModal = false;
+				$scope.chooseSku = function(skuName, skuID) {
+					var skudetail = document.querySelector(".skudetails");
+					skudetail.style.overflow = 'hidden';
+					var prodId = $scope.prodId;
+					$Modal.modal({
+						size: "small",
+						footer: false,
+						autoClose: true,
+						template: "<div class='skuName font-16' style='width:100vw;min-height:40px;padding:10px 10px 5px 0px;margin-top:-20px;word-wrap:break-word;' ng-bind='params.skuname'></div><div style='width:100vw;height:1px;background:#CCC;margin-left: -10px;'></div><div class='data-group' style='max-height:50vh;overflow:auto;margin: 0 -10px -20px -10px;'><md-sku-list ng-model='params.prodSkuData'></md-sku-list></div>",
+						params: {
+							skuname: skuName,
+							skuid: skuID,
+							prodSkuData: []
+						},
+						controller: ['$scope', "ApiService", "DataService", function($scope, ApiService, DataService) {
+							isModal = true;
+							getProdSkuValueList();
+							$scope.$on("modal_close", function() {
+								isModal = false;
+							});
+
+							function getProdSkuValueList() {
+								var url = ApiService.Api50 + "/api/v1/Prod/GetProdSkuValueList?prodId=" + prodId + "&skuId=" + $scope.params
+									.skuid;
+								DataService.get(url).then(function(res) {
+									$scope.params.prodSkuData = res;
+								})
+							}
+
+						}]
+					}).show();
+				}
+
+				$scope.cancel = function() {
+					mui_back();
+				}
+				$scope.getImgPath = function(img, w) {
+					if($scope.prodHead.IsNew > 0) {
+						if(img.PicType) {
+							return ApiService.Img + "/prod/photo/" + $scope.prodId + "/" + img.ID + "_" + w + "x0.jpg";
+						} else {
+							return ApiService.Img + "/prod/logo/" + $scope.prodId + "_" + w + "x200.jpg";
+						}
+					} else {
+						return ApiService.Pic + "/cGtnL2ltYWdlcw==_" + $scope.prodId + "_" + img.ID + "sw_" + w + "x200.jpg";
+					}
+				};
+				mui("body").on("tap", ".tab-video>.data-row", function() {
+					var name = this.getAttribute("videoname");
+					var path = ApiService.Down + "\\" + this.getAttribute("videourl");
+					UtilsService.playVideo(name, path);
+					//					var name = this.getAttribute("videoname");
+					//					var path = this.getAttribute("videourl");
+					//					openWindow('../common/video.html', {
+					//						id: 'video.html',
+					//						url: '../common/video.html',
+					//						extras: {
+					//							path: path
+					//						}
+					//					});
+				});
+
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,366 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.phraseList .mui-icon-back {
+				line-height: 44px;
+				margin-left: -17px!important;
+				color: #323232;
+				font-size: 2.7rem!important;
+			}
+			
+			.phraseList .mui-bar .mui-title {
+				left: 19px;
+				color: #323232;
+				font-weight: 420;
+				line-height: 46px;
+			}
+			
+			.phraseList .mui-bar .icon-add {
+				line-height: 44px;
+				color: #323232;
+			}
+			
+			.phraseList .data-group {
+				font-size: 1.5rem;
+				margin-top: 0;
+			}
+			
+			.phraseList .data-group .data-row .body {
+				padding-left: 16px;
+			}
+			
+			.phraseList .data-group .data-row .body span.phrase-content {
+				color: #000;
+				font-size: 1.5rem;
+				margin-left: 25px;
+				display: block;
+			}
+			
+			#adpopover {
+				/*min-width: 260px;*/
+				/*height: 370px;*/
+				top: 55% !important;
+				margin-top: -150px;
+				left: 50% !important;
+				margin-left: -141px;
+				border-radius: 3px;
+				background-color: #fff;
+			}
+			
+			#adpopover.mui-popover .mui-popover-arrow {
+				display: none !important;
+			}
+			
+			#adpopover .data-group:before {
+				height: 0;
+			}
+			
+			#adpopover .data-group .data-row .body {
+				padding: 10px 5px 11px 10px;
+			}
+			
+			#adpopover .data-group .data-row:after {
+				left: 10px;
+				background-color: #E5E5E5;
+			}
+			
+			#adpopover .data-group .data-row.first:after {
+				left: 5px;
+				right: 5px;
+				background-color: #E5E5E5;
+			}
+			
+			#adpopover .data-group .data-row:last-child:after {
+				height: 1px;
+				left: 5px;
+				right: 5px;
+			}
+			
+			#adpopover .data-group .data-row.first {
+				min-height: 38px
+			}
+			
+			.phraseList .addelment {
+				margin: 12px 20px 12px 20px;
+			}
+			
+			.phraseList .addelment a {
+				background-color: #3296FA;
+				color: #fff;
+				padding: 5px 0;
+				border: 1px solid #3296FA;
+			}
+			
+			.phraseList .data-group .data-row .label-gray {
+				color: #333333;
+			}
+			
+			.phraseList .info-title {
+				margin-left: 10px;
+				line-height: 1;
+				color: #1f1f1f;
+			}
+			
+			.phraseList .title {
+				color: #1f1f1f;
+			}
+			
+			.phraseList .mdt_leftline {
+				width: 3px;
+				height: 14px;
+				background: #169BD5;
+				margin-top: -13px;
+				margin-left: -3px;
+			}
+			
+			#adpopover .data-group .data-row label {
+				width: 70px;
+			}
+			#adpopover .body-edit {
+				max-height: 30vh;
+				overflow-y: auto;
+			}
+			.phraseList span.placeholder a {
+				color: #dddddd !important;
+			}
+			
+			.phraseList .color-theme {
+				color: #108cee;
+			}
+			
+			.phraseList .body>i {
+				font-size: 1.8rem;
+				padding: 0 16px;
+				position: absolute;
+				top: 50%;
+				left: 0;
+				transform: translateY(-50%);
+				-webkit-transform: translateY(-50%);
+			}
+			
+			.phraseList .icon-roundcheckfill:before {
+				content: "\E656";
+			}
+			
+			.phraseList .icon-round:before {
+				content: "\E6D7";
+			}
+		</style>
+	</head>
+
+	<body ng-controller="phraseController" class="phraseList">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-back mui-pull-left"></a>
+			<h1 class="mui-action-back mui-title" ng-bind="title"></h1>
+			<a class="mui-pull-right icon-add" ng-click="addPhrase()" ng-class="{'mui-block':isShowAdd}" style="display: none;"></a>
+		</header>
+		<div id="pullrefresh" class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<div class="mui-scroll">
+				<div class="mui-content" ng-if="remindlist.length>0">
+					<ul class="data-group ">
+						<li class="data-row mui-table-view-cell searchlist" ng-repeat="item in remindlist" ng-click="selectPhrase(item)">
+							<div class="body">
+								<i ng-class="(item.ID==selectId)?'icon-roundcheckfill color-theme':'icon-round color-gray'"></i>
+								<!--<i ng-class="(item.Content==selectContent)?'icon-roundcheckfill color-theme':'icon-round color-gray'"></i>-->
+								<span ng-bind="item.text" class="phrase-content"></soan>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</div>
+			<md-no-data ng-show="remindlist && remindlist.length==0">暂无数据</md-no-data>
+		</div>
+		<!--新增快捷短语-->
+		<div id="adpopover" class="mui-popover" style="padding: 0 0px;">
+			<ul class="data-group" style="margin-top: 3px;">
+				<li class="data-row first">
+					<a class="opt md-icon icon-close" href="#adpopover"></a>
+					<div class="body">
+						<div class="pdLeft100 mui-ellipsis info-title">
+							<span class="color-gray-dark font-14" ng-bind="'添加'+title"></span>
+							</div>
+							<div class="mdt_leftline mui-pull-left"></div>
+				</div>
+				</li>
+				<li class="data-row must">
+					<label class="label-gray" ng-bind='title'></label>
+					<div class="body body-edit">
+						<div class="edit" style="margin-right: -5px;">
+							<div class="needsclick" id="newPhraseDesc" contenteditable="true" placeholder="{{'请输入'+title}}"  lenlimit="100"></div>
+						</div>
+					</div>
+				</li>
+				</ul>
+				<div class="addelment">
+					<a type="button" class="font-15 mui-btn mui-btn-block savePhrase">保存</a>
+				</div>
+			</div>
+			<script type="text/javascript" src="../../js/mui.min.js"></script>
+			<script type="text/javascript" src="../../js/angular.min.js"></script>
+			<script type="text/javascript" src="../../js/common.js"></script>
+			<script type="text/javascript" src="../../js/utils.js"></script>
+			<script>
+				app.controller("phraseController", ["$scope", "Loading", "DataService", "ApiService", "RPCObserver", "$filter","CacheService", function($scope, Loading, DataService, ApiService, RPCObserver, $filter,CacheService) {
+					$scope.curUser = CacheService.get("user");
+					$scope.remindlist = [];
+					$scope.pageIndex = 0;
+					$scope.pageSize = 20;
+					var networkCanUse = true;
+					var type = query("type");
+
+					var selectObj = plus.webview.currentWebview().selectObj;
+					$scope.selectId=selectObj.ID;
+					//$scope.selectContent = selectObj.Content;
+					//根据权限控制新增短语按钮的展示
+					$scope.isShowAdd = $filter("hasAuth")(['Q18']);
+					Loading.show();
+					$scope.title = "";
+					switch(type) {
+						case "1":
+							$scope.title = "维修内容";
+							break;
+						case "2":
+							$scope.title = "维修结果";
+							break;
+						case "3":
+							$scope.title = "公告类型";
+							break;
+						default:
+							break;
+					}
+
+					function getPhraseList() {
+						var url = ApiService.Api52 + "/api/v1/News/GetMdtCoUnewsType?compId=" + $scope.curUser.CompID;
+						DataService.get(url).then(function(res) {
+                            
+                            Loading.hide()
+                            $scope.remindlist = res
+                            $scope.isLoad=true
+                            
+							
+					}); 
+					}
+					getPhraseList()
+//					//上拉加载
+//					function uppullRefresh() {
+//						if(networkCanUse) {
+//							$scope.pageIndex++; //页数
+//						}
+//						getPhraseList();
+//					};
+
+//					//下拉刷新,上拉加载
+//					setTimeout(function() {
+//						mui.init({
+//							pullRefresh: { 
+//								container: '#pullrefresh',
+//								up: {
+//									auto: true,
+//									callback: uppullRefresh
+//								}
+//							}
+//						});
+//					});
+					//当数据为空时，隐藏上拉的提示
+					function hideUpData() {
+						var tip = document.querySelector('.mui-pull-bottom-pocket');
+						if(tip) {
+							if(!$scope.data || $scope.data.length == 0) {
+								tip.classList.contains('mui-visibility') && tip.classList.remove('mui-visibility');
+								tip.classList.contains('mui-block') && tip.classList.remove('mui-block');
+							} else {
+								!tip.classList.contains('mui-visibility') && tip.classList.add('mui-visibility');
+								!tip.classList.contains('mui-block') && tip.classList.add('mui-block');
+							}
+						}
+					}
+
+					//新增常用短语
+					$scope.addPhrase = function() {
+						mui("#adpopover").popover("toggle");
+						document.getElementById("newPhraseDesc").innerText = "";
+						document.getElementById("newPhraseDesc").focus();
+					}
+					var issaving = false;
+					//保存新增常用短语类
+					mui("#adpopover").on("tap", ".savePhrase", function() {
+						if(issaving) {
+							return false;
+						}
+
+						if(document.getElementById("newPhraseDesc").innerText.trim() == '') {
+							mui.toast("请输入" + $scope.title);
+							return;
+						}
+
+						if(document.getElementById("newPhraseDesc").innerText.trim().length > 20) {
+							mui.toast($scope.title + "最大长度20个字");
+							return;
+						}
+
+						issaving = true;
+						var url = ApiService.Api52 + "/api/v1/News/SaveMdtNewsType";
+						var postData = {
+							ID: 0,
+							Text: document.getElementById("newPhraseDesc").innerText.trim(),
+							
+						};
+						DataService.post(url, postData).then(function(res) {
+
+							mui("#adpopover").popover("hide");
+							setTimeout(function() {
+								issaving = false;
+							}, 600);
+							//刷新列表 情况数据
+
+							Loading.show();
+							getPhraseList()
+							//ios上拉加载后刷新，会出现界面无数据的情况，所以加上下面一句代码
+							getPhraseList()
+							$scope.pageIndex = 0;
+							//console.log(JSON.stringify($scope.pageIndex))
+							
+						}, function() {
+							issaving = false;
+						});
+						return false;
+					})
+					//选中事件
+					$scope.selectPhrase = function(phraseObj) {
+						//反选
+						//phraseObj = phraseObj.Content == $scope.selectContent ? {} : phraseObj;					
+						phraseObj = phraseObj.ID == $scope.selectId ? {} : phraseObj;
+						//选择
+						//$scope.selectContent = phraseObj.Content;
+						$scope.selectId = phraseObj.ID;
+						var view = plus.webview.currentWebview();
+						var opener = view.opener();
+						if(view.callback) {
+							opener.evalJS(view.callback + "(" + JSON.stringify(phraseObj) + ")");
+						}
+
+						mui.back();
+					};
+
+					//去掉回车换行
+					function iGetInnerText(testStr) {
+						var resultStr = testStr.replace(/[\r\n]/g, ""); //去掉回车换行
+						return resultStr;
+					}
+				}]);
+
+				mui.plusReady(function() {
+					angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+				});
+			</script>
+	</body>
+
+</html>

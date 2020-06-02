@@ -1,0 +1,264 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <link rel="stylesheet" href="../../css/mui.min.css">
+    <link rel="stylesheet" href="../../css/common.css">
+    <link rel="stylesheet" href="../../icon-font/iconfont.css">
+    <link rel="stylesheet" href="../../css/selecttime.css" />
+    <style>
+        .mui-bar-nav~.mui-content {
+            padding-top: 132px;
+        }
+
+        .date-picker {
+            position: fixed;
+            top: 44px;
+            width: 100%;
+            z-index: 1;
+        }
+
+        .table-title-fixed {
+            position: fixed;
+            top: 88px;
+            background-color: #fff;
+            z-index: 1;
+        }   
+
+        .mui-table-view-cell:after {
+            left: 0;
+        }
+
+        .mui-table-view-cell {
+            padding: 11px 0 11px 15px !important;
+        }
+
+        .mui-table-cell p {
+            font-size: 1.3rem;
+            color: #666666
+        }
+
+        .mui-table-cell span {
+            color: #555555;
+            font-size: 1.3rem
+        }
+
+        .mui-badge {
+            color: #fff !important;
+            position: relative;
+            left: -4px
+        }
+
+        .date-wrap {
+            text-align: center;
+            line-height: 42px;
+            background-color: #fff;
+            position: relative;
+        }
+
+        .sort-wrap {
+            position: absolute;
+            right: 0;
+            top: 0;
+            padding-right: 20px;
+        }
+
+        .sort-btn {
+            font-size: 1.3rem;
+            color: #666666;
+            padding: 6px;
+        }
+
+        .left {
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        /*排行数字*/
+
+        .rank-n {
+            background-color: #88B2F6;
+            color: #FFFFFF
+        }
+
+        .rank1 {
+            background-color: #FF541B;
+            color: #FFFFFF
+        }
+
+        .rank2 {
+            background-color: #FB7C16;
+            color: #FFFFFF
+        }
+
+        .rank3 {
+            background-color: #FFC001;
+            color: #FFFFFF
+        }
+
+        .break {
+            word-break: break-all;
+            word-wrap: break-word
+        }
+
+        .date-year {
+            font-size: 1.4rem;
+            padding: 8px;
+        }
+
+        .iconfont {
+            padding: 8px;
+        }
+
+        .mui-table-title.mui-active {
+            background-color: #fff;
+        }
+    </style>
+</head>
+
+<body ng-controller="WorkStatisticController">
+    <header class="mui-bar mui-bar-nav">
+        <a class="mui-action-back mui-icon icon-back mui-pull-left">工作量统计</a>
+    </header>
+    <div class="mui-content">
+        <!--选择时间-->
+        <md-date-picker options="DatePicker" class="date-picker"></md-date-picker>
+
+        <ul class="mui-table-view mui-table-view-chevron" style="display: none" ng-class="{'mui-block':isLoad}">
+            <li class="mui-table-view-cell mui-table-title table-title-fixed">
+                <div class="mui-table">
+                    <div class="mui-table-cell mui-col-xs-1"></div>
+                    <div class="mui-table-cell mui-col-xs-5">
+                        <span class="table-title">
+                            <b>厂家</b>
+                        </span>
+                    </div>
+                    <div class="mui-table-cell mui-col-xs-2">
+                        <span class="table-title">
+                            <b>工作量</b>
+                        </span>
+                    </div>
+                    <div class="mui-table-cell mui-col-xs-2">
+                        <span class="table-title">
+                            <b>好评</b>
+                        </span>
+                    </div>
+                    <div class="mui-table-cell mui-col-xs-2">
+                        <span class="table-title">
+                            <b>差评</b>
+                        </span>
+                    </div>
+                </div>
+            </li>
+            <li class="mui-table-view-cell" ng-repeat="(index,item) in Data" ng-click="toListPage(item)">
+                <div class="mui-table">
+                    <div class="mui-table-cell mui-col-xs-1 left">
+                        <span class="mui-badge" ng-class="{'rank1':(index+1)==1,'rank2':(index+1)==2,'rank3':(index+1)==3,'rank-n':(index+1)>3}"
+                            ng-bind="index+1"></span>
+                    </div>
+                    <div class="mui-table-cell mui-col-xs-4 left">
+                        <span class="break" ng-bind="item.ProdCompName"></span>
+                    </div>
+                    <div class="mui-table-cell mui-col-xs-3 center">
+                        <p ng-bind="item.RepairCount"></p>
+                    </div>
+                    <div class="mui-table-cell mui-col-xs-2 left">
+                        <p ng-bind="item.GoodEvalCount"></p>
+                        <p ng-bind="fileterNum(item.GoodRatio)"></p>
+                    </div>
+                    <div class="mui-table-cell mui-col-xs-2 left">
+                        <p ng-bind="item.NegativeCount"></p>
+                        <p ng-bind="fileterNum(item.NegativeRatio)"></p>
+                    </div>
+                </div>
+            </li>
+            <md-no-data ng-if="Data&&Data.length==0">暂无数据</md-no-data>
+        </ul>
+    </div>
+    <!--无网络或请求失败重试-->
+    <md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+    <script type="text/javascript" src="../../js/mui.js"></script>
+    <script type="text/javascript" src="../../js/angular.min.js"></script>
+    <script type="text/javascript" src="../../js/common.js"></script>
+    <script type="text/javascript" src="../../js/utils.js"></script>
+    <script type="text/javascript" src="../../js/rpc.js"></script>
+    <script type="text/javascript">
+        app.controller("WorkStatisticController", ["$scope", "AuthService", "UtilsService", "Loading", "ApiService", "DataService", function ($scope, AuthService, UtilsService, Loading, ApiService, DataService) {
+            $scope.Data = null
+            $scope.isLoad = true
+            var userInfo = null
+            var curDate = null
+            var queryString = ""
+
+            $scope.DatePicker = {
+                limit: 6,
+                callback: getStatisticData
+            }
+            // getStatisticData()
+            //设备人员选择
+            AuthService.getAuth().then(function (res) {
+                userInfo = res
+            }); //跳转
+
+            $scope.fileterNum = function (num) {
+                return Math.round(num * 10000) / 100 + '%'
+            }
+
+            //无网络或请求失败重试
+            $scope.retryModal = {
+                msg: "工作日志",
+                retry: getStatisticData,
+                state: ""
+            };
+
+            $scope.toListPage = function (item) {
+                UtilsService.openWindow({
+                    needLogin: true,
+                    id: "contact-select.html",
+                    url: "../aftersale/mat-repair-statistics.html?prodCompId=" + item.ProdCompID + "&repairUserId=" + userInfo.UserID + "&year=" + curDate.curYear + queryString
+                });
+            }
+
+            // 获取数据
+            function getStatisticData(date) {
+                curDate = date || curDate  // 网络失败时 重新加载时没有date返回 利用缓存的curDate
+                $scope.Data = null
+                Loading.show()
+                switch (curDate.curType) {
+                    case "month":
+                        queryString = "&month=" + (Number(curDate.curValue) + 1)
+                        break;
+                    case "quarter":
+                        queryString = "&quarter=" + curDate.curValue
+                        break;
+                    case "year":
+                    default:
+                        queryString = ""
+                        break;
+                }
+                // sortType : 0默认工作量 1好评量 2好评率 3差评量 4差评率
+                var url = ApiService.Api50 + "/api/v1/Statistics/GetExpertCompRepairStatisticsList?year=" + curDate.curYear + "&sortType=0" + queryString
+                DataService.get(url).then(function (res) {
+                    $scope.Data = res;
+                    Loading.hide()
+                    $scope.retryModal.state = "";
+                }, function (err) {
+                    Loading.hide()
+                    $scope.retryModal.state = err.State;
+                })
+            }
+        }]);
+
+        mui.plusReady(function () {
+            angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+            plus.webview.currentWebview().setStyle({
+                scrollIndicator: 'none'
+            });
+        });
+    </script>
+</body>
+
+</html>

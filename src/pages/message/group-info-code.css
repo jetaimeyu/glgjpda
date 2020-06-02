@@ -1,0 +1,148 @@
+.icon {
+	width: 16px;
+}
+
+.pdl-16 {
+	padding: 0px 0px 0px 16px !important;
+}
+
+.mgt-0 {
+	margin-top: 0px;
+}
+
+.pd0 {
+	padding: 0px !important;
+}
+
+.data-group .data-row.no-bt-line:after {
+	height: 0px;
+}
+
+.mui-table-view-cell.no-bt-line:after {
+	height: 0px;
+}
+
+.members-title .body {
+	color: #323232 !important;
+	font-size: 14px !important;
+	padding: 0px 16px!important;
+}
+
+.members-title .opt~.body {
+	margin-right: 8px!important;
+}
+
+.members-title .mui-pull-right {
+	font-size: 12px !important;
+	color: #999 !important;
+	position: relative;
+}
+
+.members-title .opt {
+	padding: 11px 10px!important;
+}
+
+.data-group .opt.icon-right {
+	color: #AEAEAE;
+	font-size: 14px;
+}
+
+.members-body .members-item div.md-userCustomLogo {
+	display: inline-block;
+	margin-bottom: 7px;
+}
+
+.members-body .members-item {
+	text-align: center;
+	float: left;
+	width: 20%;
+	box-sizing: border-box;
+	padding: 5px 0px 5px 0px !important;
+	height: 88px;
+}
+
+.members-body .members-item p {
+	text-align: center;
+	color: #323232;
+	font-size: 12px;
+	width: 90%;
+	margin: 0 auto;
+}
+
+.members-more {
+	font-size: 14px;
+	color: #888888;
+	text-align: center;
+}
+
+.members-more .icon-right {
+	font-size: 18px !important;
+	color: #AEAEAE !important;
+	position: relative;
+	top: 2px;
+	margin-left: 2px;
+}
+
+.member-name .mui-pull-right {
+	max-width: 65%;
+	color: #323232!important;
+}
+
+.member-name .opt~.body {
+	margin-right: 35px!important;
+}
+
+md-user-logo div {
+	display: inline-block;
+}
+
+.quit-btn {
+	color: #fff;
+	background: #F26651;
+}
+
+.add-member {
+	color: aqua
+}
+
+.add-btn {
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
+	border: 1px solid #3296FA;
+	font-size: 18px;
+	color: #3296FA;
+	margin: auto;
+	line-height: 50px;
+	margin-bottom: 7px;
+}
+
+.add-txt {
+	color: #3296FA !important
+}
+
+.total {
+	text-align: center;
+	line-height: 40px;
+	color: #3296FA;
+	width: 100%;
+	border-top: 1px solid #EAEAEA;
+}
+
+.mui-action-back {
+	max-width: 100% !important;
+}
+
+.group-desc .members-title {
+	min-height: 25px;
+	padding-top: 8px;
+}
+
+.group-desc .desc-content {
+	line-height: 14px;
+	font-size: 1.2rem;
+	padding: 0 16px 8px 16px;
+	color: #888888;
+	min-height: 30px;
+	word-break: break-all;
+}

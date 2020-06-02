@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>延保服务</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style>
+			.text-dot {
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				overflow: hidden;
+			}
+			
+			.product-avatar {
+				height: 30px;
+				width: 30px;
+				background-size: 30px 30px;
+			}
+			
+			.data-wrap {
+				background-color: #fff;
+			}
+			
+			.data-item {
+				padding: 14px 16px 10px;
+				font-size: 1.5rem;
+				line-height: 17px;
+				position: relative;
+			}
+			
+			.data-item::after {
+				position: absolute;
+				left: 10px;
+				right: 10px;
+				bottom: 0;
+				height: 1px;
+				content: '';
+				-webkit-transform: scaleY(0.5);
+				transform: scaleY(0.5);
+				background-color: #EAEAEA;
+			}
+			
+			.user-name {
+				margin-top: 0;
+				font-size: 1.5rem;
+				line-height: 17px;
+				font-weight: normal;
+				color: #000000;
+				margin-bottom: 10px;
+			}
+			
+			.product {
+				background-color: #F7F7F7;
+				padding: 10px;
+				margin-bottom: 10px;
+			}
+			
+			.product-avatar {
+				height: 40px;
+				width: 40px;
+				background-color: #FFF;
+				background-repeat: no-repeat;
+				background-size: cover;
+				float: left;
+			}
+			
+			.product-info {
+				margin-left: 50px;
+				color: #AAAAAA;
+			}
+			
+			.product-name {
+				margin-top: 0;
+				font-size: 1.5rem;
+				line-height: 17px;
+				margin-bottom: 10px;
+			}
+			
+			.product-type-wrap {
+				font-size: 1.2rem;
+				line-height: 14px;
+				color: #8f8f94;
+			}
+			
+			.product-type-item {
+				display: inline-block;
+				max-width: 20vw;
+				margin-right: 10px;
+				vertical-align: top;
+			}
+			
+			.operte-item {
+				float: left;
+				font-size: 1.2rem;
+				line-height: 14px;
+				max-width: 24%;
+				margin-right: 3%;
+				color: #AAAAAA;
+			}
+			
+			.extended-warranty {
+				max-width: 44%;
+				margin-right: 0;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="securingServicesDetail">
+		<div id="pullrefresh" ng-controller="pullrefreshController" class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<div class="mui-content">
+				<ul class="data-wrap">
+					<li ng-repeat="item in data" class="data-item mui-table-view-cell" ng-click="tap(item)">
+						<h1 class="user-name text-dot" ng-bind="item.CustomerName"></h1>
+						<div class="product">
+							<span class="product-avatar" ng-style="{'background-image':'url('+ (item | getProdLogo:40:0) +')'}"></span>
+							<div class="product-info">
+								<h5 class="product-name text-dot" ng-bind="item.ProdName"></h5>
+								<div class="product-type-wrap">
+									<span class="product-type-item text-dot" ng-bind="item.SkuName"></span>
+									<span class="product-type-item" ng-if="item.ProdInnerCode">/</span>
+									<span class="product-type-item text-dot" ng-bind="item.ProdInnerCode"></span>
+								</div>
+							</div>
+						</div>
+						<div class="operate-info">
+							<span class="operte-item text-dot" ng-bind="item.CreateUser"></span>
+							<span class="operte-item text-dot" ng-bind="item.CreateDate"></span>
+							<span class="operte-item extended-warranty text-dot" ng-bind="'延保:'+item.ExtendedWarranty + DateType[item.ExtendWarrantyUnit]">
+						</span>
+						</div>
+					</li>
+				</ul>
+				<md-no-data ng-show="data&&data.length==0">暂无数据</md-no-data>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript">
+			app.controller("securingServicesDetail", ["$scope", "ApiService", "UtilsService", function($scope, ApiService, UtilsService) {
+				$scope.pageIndex = 0;
+				$scope.pageSize = 10;
+				
+				$scope.DateType = {
+					1: "日",
+					2: "月",
+					3: "年"
+				}
+
+				$scope.tap = function(item) {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: "securing-services-info.html",
+						url: 'securing-services-info.html?id=' + item.ID
+					});
+				}
+
+				$scope.extendedWarrantyStr = function(item) {
+					var str = "";
+					var firstStr = item.FirstExtendedWarranty ? item.FirstExtendedWarranty + $scope.DateType[item.FirstExtendWarrantyUnit] : "未设置";
+					if(!item.ExtendedWarranty) {
+						str = '延保: ' + firstStr;
+					} else {
+						var lastStr = item.ExtendedWarranty ? item.ExtendedWarranty + $scope.DateType[item.ExtendWarrantyUnit] : "";
+						str = '延保: ' + firstStr + " --> " + lastStr;
+					}
+					return str;
+				}
+				
+				var mdCode = query('mdCode') || '';
+				
+				function init() {
+					$scope.url = ApiService.Api50 + "/api/v2/Prod/GetPagedPkgWarrantyDelayLogList?pageIndex=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize + "&mdCode=" + mdCode;
+				}
+
+				$scope.$on('refresh_pageindex', init);
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

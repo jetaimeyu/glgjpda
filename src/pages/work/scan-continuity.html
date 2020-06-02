@@ -1,0 +1,143 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="scan-continuity.css" />
+	</head>
+
+	<body ng-controller="SanConController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">连续扫描</a>
+			<a class="mui-pull-right menu-sao font-16" id="saoyisao" ng-click="tap('scan')">
+				<span class="icon-saoyisao"></span>
+			</a>
+		</header>
+		<div class="mui-content" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<ul ng-if="EqInfo.length>0" class="mui-table-view mui-table-view-chevron" style="margin-top: 8px;">
+				<li class="mui-table-view-cell mui-media" ng-repeat="prod in EqInfo">
+					<div ng-click="">
+						<img src="../../images/imgPre.png" ng-src="{{prod | getProdLogo:0:150}}" class="imgslist" ng-style="{'object-fit':pictureStyle==2?'cover':'contain','min-height':pictureStyle==2?'110%':'100%'}" />
+						<div class="mui-clearfix" style="margin-right: 30px;">
+							<div class="mui-ellipsis equ-title" ng-bind="prod.ProdName"></div>
+							<p class="mui-ellipsis equ-sub" ng-bind="'型号：'+prod.SkuName"></p>
+							<p class="mui-ellipsis equ-sub" ng-bind="'编号：'+prod.InnerCode"></p>
+						</div>
+					</div>
+					<i class="opt md-icon icon-delete" ng-click="delProd($index)"></i>
+				</li>
+			</ul>
+			<div ng-if="EqInfo.length>0" class="btn-submit" ng-click="commitProd()">
+				<span class="mui-btn mui-btn-primary mui-btn-block">确认</span>
+			</div>
+			<md-no-data ng-show="EqInfo.length==0">暂无数据</md-no-data>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script>
+			app.controller("SanConController", ["$scope", "ApiService", "DataService", "UtilsService", "CacheService", "Loading", function($scope, ApiService, DataService, UtilsService, CacheService, Loading) {
+				var user = CacheService.get('user');
+				var ws = plus.webview.currentWebview();
+				//是否验证同类型产品 prodID
+				$scope.needCheck = query("check") || '';
+				//已经存在的产品信息
+				$scope.EqInfo = ws.EqInfo ? ws.EqInfo : [];
+				$scope.isLoad = true;
+				if($scope.EqInfo.length == 0) {
+					//直接跳转扫码
+					continueScan();
+				}
+				init();
+				//初始化
+				function init() {};
+				$scope.tap = function(_key) {
+					switch(_key) {
+						case 'scan':
+							continueScan();
+							break;
+						default:
+							break;
+					}
+				};
+
+				var ProdID = "";
+				//扫码回调
+				$scope.scanBack = function(code, mtype, isEmpty, resInfo) {
+					if(checkRepeat(resInfo.MDCode)) {
+						mui.confirm("此迈迪国标通用物联码已存在于清单中，点击【确定】继续扫码，【取消】关闭此弹框！", "确认", ["取消", "确定"], function(e) {
+							if(e.index == 1)
+								continueScan();
+						});
+						return;
+					}
+					if($scope.needCheck) {
+						if($scope.EqInfo.length == 0) {
+							ProdID = resInfo.ProdID;
+						} else if(ProdID != resInfo.ProdID) {
+							mui.confirm("此产品不同于其他产品类型，请检查后点击【确定】重新扫码，【取消】关闭此弹框！", "确认", ["取消", "确定"], function(e) {
+								if(e.index == 1)
+									continueScan();
+							});
+							return;
+						}
+					}
+					$scope.EqInfo.push(resInfo);
+					continueScan();
+				};
+				//连续扫码
+				function continueScan() {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: "scan.html",
+						url: "../scan/scan.html",
+						extras: {
+							callback: 'scanCallBack'
+						}
+					});
+				};
+				//检测是否同一种产品
+				function checkRepeat(mdcode) {
+					return $scope.EqInfo.some(function(item) {
+						return item.MDCode == mdcode;
+					});
+				}
+				//删除
+				$scope.delProd = function(index) {
+					$scope.EqInfo.splice(index, 1);
+				};
+				//确认
+				$scope.commitProd = function() {
+					var opener = ws.opener();
+					if(ws.callback) {
+						opener.evalJS(ws.callback + "(" + JSON.stringify($scope.EqInfo) + ")");
+					}
+					mui.back();
+				};
+			}]);
+			//扫码回调
+			function scanCallBack(obj) {
+				obj = JSON.parse(obj);
+				if(obj.resType == 1) {
+					obj.resInfo.MDCode = obj.codeValue;
+					obj.resInfo.SkuName = decodeURIComponent(obj.resInfo.SkuName).replace(/@squotes@/g, "'").replace(/@dquotes@/g, "\"");
+					obj.resInfo.ProdName = decodeURIComponent(obj.resInfo.ProdName).replace(/@squotes@/g, "'").replace(/@dquotes@/g, "\"");
+				}
+				var appElement = document.querySelector('[ng-controller=SanConController]');
+				var $scope = angular.element(appElement).scope();
+				$scope.scanBack(obj.codeValue, obj.resType, obj.isEmpty, obj.resInfo);
+			}
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

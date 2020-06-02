@@ -1,0 +1,84 @@
+body#jinshuhei {
+	background: #000;
+}
+
+
+body#jinshuhei .prod-info
+{
+    background: #282D30;
+}
+body#jinshuhei .prod-info .prod-name
+{
+    color: #fff;
+}
+
+body#jinshuhei .prod-info .sku-name
+{
+    color:#fff;
+}
+body#jinshuhei .prod-info .code-name p
+{
+    color:#fff;
+}
+
+body#jinshuhei .prod-info .comp-name-box
+{
+    color:#fff;
+}
+
+ 
+
+body#jinshuhei .prod-info .comp-name-box .comp-right
+{
+    color: #EA5432;
+}
+
+body#jinshuhei .data-group
+{
+    background: #282D30;
+}
+
+body#jinshuhei .data-group .data-row label.title
+{
+    color: #fff!important;
+}
+
+body#jinshuhei .name-title .names{
+    color:#fff;
+}
+
+body#jinshuhei .fault-description
+{
+    color:#fff;
+}
+ 
+
+body#jinshuhei .total{
+    color:#EA5432;
+}
+
+body#jinshuhei .mui-table-view-cell.mui-active
+{
+    background:none;
+}
+
+body#jinshuhei .ext-btn i{
+    background: #86898B;
+}
+
+
+body#jinshuhei .flex-box{
+    background: #282D30;
+}
+
+body#jinshuhei .prodGrid {
+    background: #282D30;
+}
+
+body#jinshuhei .bottom_line:after {
+    border-bottom: 1px solid #3B3F42;
+}
+
+body#jinshuhei .borderthin_right:after {
+    border-right: 1px solid #3B3F42;
+}

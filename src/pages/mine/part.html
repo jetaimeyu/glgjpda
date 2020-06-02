@@ -1,0 +1,65 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	</head>
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left">我参与的</a>
+		<a class="mui-pull-right menu-search" id="search" ng-click="tap('search')">
+				<img class="icon" src="../../images/search.png" />
+			</a>
+	</header>
+	<style>
+		.icon {
+				width: 16px;
+			}
+	</style>
+	<body ng-controller="partController">
+		<script src="../../js/angular.min.js"></script>
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/common.js"></script>
+		<script src="../../js/utils.js"></script>
+		<script src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("partController", ["$scope", "UtilsService", function($scope, UtilsService) {			
+				mui.init({
+					subpages: [{
+						url: 'part-all.html',
+						id: 'part-all.html',
+						styles: {
+							top: '45px',
+							bottom: '0',
+						},
+						extras: {}
+					}]
+				});
+					$scope.tap = function(key) {
+						
+					var url = {
+						search: 'part-search.html'
+					};
+					var extras = {
+						selectObj: $scope.selectObj
+					}
+				
+					UtilsService.openWindow({
+						needLogin: true,
+						id: url[key].substring(0, url[key].lastIndexOf(".html") + 5),
+						url: url[key]
+						
+					});
+				};
+			}]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

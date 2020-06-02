@@ -1,0 +1,366 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="../../css/mui.loading.css" />
+		<link rel="stylesheet" href="personal-information.css" />
+	</head>
+
+	<body ng-controller="PersonalInformation">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">个人信息</a>
+		</header>
+		<div class="mui-content md-info-page" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<ul class="data-group spare-item">
+				<li class="data-row">
+					<div class="body">
+						<div class="mui-media-object mui-pull-left md-userCustomLogo ng-hide" ng-show="!info.ULogoIsExist" ng-bind="ViewName | getUserCustomLogo"></div>
+						<!--<img class="avatar" ng-src="{{info.UserID|getUserLogo:48:48}}"  ng-class="info.ULogoIsExist?'':'ng-hide'"  />-->
+						<div ng-click="viewAvatar(info.UserID)" class="avatar" ng-style="{'background-image':'url('+ (info.UserID|getUserLogo:48:0) +')'}" ng-class="info.ULogoIsExist?'':'ng-hide'">
+						</div>
+						<div class="name-title">
+							<div class="names mui-ellipsis-2" ng-bind="ViewName"></div>
+							<div ng-if="info.Signature" class="introduction mui-ellipsis-2" ng-bind="info.Signature"></div>
+							<div ng-if="info.Signature==''" class="nointroduction" style="display:none;" ng-class="{'mui-block':info.Signature==''}">添加描述，让大家更好地认识你</div>
+						</div>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<li class="data-row">
+					<label>迈迪通号</label>
+					<div class="body">
+						<span ng-bind="info.Mdt"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>昵称</label>
+					<div class="body">
+						<span ng-bind="info.UserName"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<li class="data-row">
+					<label>姓名</label>
+					<div class="body">
+						<span ng-bind="info.RealName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>性别</label>
+					<div class="body">
+						<span ng-bind="info.Sex|getUserSex"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>手机</label>
+					<div class="body">
+						<span ng-bind="info.Phone"></span>
+						<span class="changephone" ng-click="tap('changephone')">变更手机号</span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>邮箱</label>
+					<div class="body">
+						<span ng-bind="info.EMail"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>详细地址</label>
+					<div class="body" ng-bind="postAddr.Province | locationfilter:postAddr.City:postAddr.District:postAddr.Address:postAddr.Street">
+
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group" ng-if="info.CompID>0">
+				<li class="data-row" ng-if="info.CompID>0">
+					<label>企业</label>
+					<div class="body">
+						<span ng-bind="info.CompName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>部门</label>
+					<div class="body">
+						<span ng-repeat="user in info.OrgList" ng-bind="$index==0?user.OrgName:' > '+user.OrgName"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="info.Duty">
+					<label>职务</label>
+					<div class="body">
+						<span ng-bind="info.Duty"></span>
+					</div>
+				</li>
+			</ul>
+			<div ng-if="extendData" class="extend-body">
+				<div ng-if="extendData.IndData.length>0">
+					<p class="data-group-tip">所处行业</p>
+					<ul class="data-group">
+						<li class="data-row" style="padding-left: 15px;" style="height:auto;" ng-repeat="item in extendData.IndData">
+							<div class="body" ng-bind="item.CName"></div>
+						</li>
+					</ul>
+				</div>
+
+				<div ng-if="extendData.Edus.length>0">
+					<p class="data-group-tip">教育背景</p>
+					<ul class="data-group" style="margin-top:3px;" ng-repeat="item in extendData.Edus">
+						<li class="data-row">
+							<label>学校名称</label>
+							<div class="body" ng-bind="item.SchoolName">
+							</div>
+						</li>
+						<li class="data-row">
+							<label>就读时间</label>
+							<div class="body">
+								<span ng-bind="item.EduStartDate"></span> ~ <span ng-bind="item.EduEndDate"></span>
+							</div>
+						</li>
+
+						<li class="data-row">
+							<label>学历</label>
+							<div class="body" ng-bind="item.Education">
+							</div>
+						</li>
+						<li class="data-row">
+							<label>专业</label>
+							<div class="body" ng-bind="item.Major">
+							</div>
+						</li>
+					</ul>
+				</div>
+
+				<div ng-if="extendData.Tracks.length>0">
+					<p class="data-group-tip">工作履历</p>
+					<ul class="data-group" style="margin-top:3px;" ng-repeat="item in extendData.Tracks">
+						<li class="data-row">
+							<label>公司名称</label>
+							<div class="body" ng-bind="item.CompName">
+							</div>
+						</li>
+						<li class="data-row">
+							<label>工作时间</label>
+							<div class="body">
+								<span ng-bind="item.StartDate"></span> ~ <span ng-bind="item.EndDate"></span>
+							</div>
+						</li>
+
+						<li class="data-row">
+							<label>职位</label>
+							<div class="body" ng-bind="item.DutyName">
+							</div>
+						</li>
+						<li class="data-row">
+							<label>工作说明</label>
+							<div class="body" ng-bind="item.WorkInfo">
+							</div>
+						</li>
+					</ul>
+				</div>
+				<div ng-if="extendData.UserType==6" style="margin-top:8px;">
+					<ul class="data-group">
+						<li class="data-row">
+							<label>擅长设计软件</label>
+							<div class="body">
+								<p ng-repeat="item in extendData.DesignSoft" style="display:inline-block;float:left;margin-right:5px;" ng-bind="item">
+								</p>
+								<p style="display:inline-block;float:left;margin-right:5px;" ng-bind="extendData.DesignSoftOther" ng-show="extendData.DesignSoftOther"></p>
+							</div>
+						</li>
+
+						<li class="data-row">
+							<label>擅长分析软件</label>
+							<div class="body">
+								<p ng-repeat="item in extendData.AnalyzeSoft" style="display:inline-block;float:left;margin-right:5px;" ng-bind="item">
+								</p>
+								<p style="display:inline-block;float:left;margin-right:5px;" ng-bind="extendData.AnalyzeSoftOther" ng-show="extendData.AnalyzeSoftOther"></p>
+							</div>
+						</li>
+						<li class="data-row">
+							<label>技术能力</label>
+							<div class="body">
+								<p ng-repeat="item in extendData.Technical" style="display:inline-block;float:left;margin-right:5px;" ng-bind="item">
+								</p>
+								<p style="display:inline-block;float:left;margin-right:5px;" ng-bind="extendData.TechnicalOther" ng-show="extendData.TechnicalOther"></p>
+							</div>
+						</li>
+
+						<li class="data-row">
+							<label>擅长产品</label>
+							<div class="body" ng-bind="extendData.ProdName">
+							</div>
+						</li>
+					</ul>
+				</div>
+
+				<div ng-if="extendData.UserType==7" style="margin-top:8px;">
+
+					<ul class="data-group">
+						<li class="data-row">
+							<label>擅长领域</label>
+							<div class="body" ng-bind="extendData.Territory">
+							</div>
+						</li>
+						<li class="data-row">
+							<label>擅长操作设备</label>
+							<div class="body" ng-bind="extendData.OprationProdName">
+							</div>
+						</li>
+
+						<li class="data-row">
+							<label>擅长维修设备</label>
+							<div class="body" ng-bind="extendData.RepairProdName">
+							</div>
+						</li>
+						<li class="data-row">
+							<label>工时费</label>
+							<div class="body" ng-bind="extendData.ManHourCost">
+							</div>
+						</li>
+					</ul>
+				</div>
+				<ul class="data-group">
+					<li class="data-row">
+						<label>等级证书</label>
+						<div class="body">
+							<div class="photo file" ng-repeat="img in extendData.Photos" ng-show="img.ID>0">
+								<div class="img-body">
+									<img class="img" ng-style="{'background-image':'url(' + (event.getPreSrc(img) | filePathReg) +')'}" ng-click="event.preview($index)" src="../../images/imgPre.png" />
+								</div>
+							</div>
+						</div>
+					</li>
+					<li class="data-row">
+						<label>能力描述</label>
+						<div class="body" ng-bind="extendData.TechnicalInfo">
+
+						</div>
+					</li>
+
+				</ul>
+			</div>
+			<div class="btn-submit" ng-click="tap('usermodify')">
+				<span class="mui-btn mui-btn-block">修改个人信息</span>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../../js/mui.loading.js"></script>
+		<script>
+			app.controller("PersonalInformation", ["$scope", "CacheService", "UtilsService", "$filter", "DataService",
+				"ApiService",
+				function($scope, CacheService, UtilsService, $filter, DataService, ApiService) {
+					$scope.info = {
+						UserName: '',
+						RealName: '',
+						Sex: '',
+						Phone: '',
+						EMail: '',
+						Duty: '',
+						UserID: '',
+						ULogoIsExist: '',
+						OrgID: '',
+						OrgName: ''
+					};
+					$scope.viewAvatar = function(userid) {
+						var url = ApiService.Pic + '/dXNlci9sb2dv_' + userid + '.jpg';
+						if(plus.os.name == "Android") {
+							plus.Push.previewImage(url + ";" + url, 0);
+						} else {
+							plus.Push.openImageBrowser([url], 0);
+						}
+					}
+					//跳转
+					$scope.tap = function(_key) {
+						var url = {
+							"usermodify": 'personal-modify.html',
+							"changephone": 'personal-changephone.html'
+						};
+						UtilsService.openWindow({
+							needLogin: true,
+							id: url[_key],
+							url: url[_key]
+						});
+					};
+					var user = CacheService.get('user');
+					$scope.extendData = "";
+					curData = {
+						getData: function() {
+							DataService.get(ApiService.Api50 + "/api/v1/user/GetUserExtendByUserId?userId=" + user.UserID).then(function(
+								res) {
+								mui.hideLoading();
+								$scope.extendData = res;
+							}, function() {
+								mui.hideLoading();
+							})
+						}
+					};
+					$scope.event = {
+						preview: function(index) {
+							var images = $scope.extendData.Photos.map(function(img) {
+								if(img.ID) {
+									return ApiService.Api45 + "/api/v1/usercerif/" + img.UserID + "/" + img.ID + "_0x0.png";
+								} else {
+									return mui.os.android ? img.FilePath.replace("file://", "") : img.FilePath;
+								}
+							});
+							plus.nativeUI.previewImage(images, {
+								current: index,
+								loop: true,
+								indicator: 'number'
+							});
+						},
+						getPreSrc: function(img) {
+							if(img.ID)
+								return ApiService.Api45 + "/api/v1/usercerif/" + img.UserID + "/" + img.ID + "_100x0.png";
+							else
+								return img.FileSmall;
+						}
+					};
+					$scope.info = user;
+					$scope.postAddr = {};
+
+					function getDefPostAddr() {
+						DataService.get(ApiService.Api42 + "/api/PostAddr/GetDefault?userId=" + user.UserID).then(function(res) {
+							$scope.postAddr = res;
+						});
+					};
+
+					getDefPostAddr();
+
+					// if ($scope.info.CompID == 0) {
+					mui.showLoading("", "div");
+					curData.getData();
+					// }
+					$scope.ViewName = $filter("getViewName")($scope.info.UserName, $scope.info.RealName, $scope.info.Mdt);
+					$scope.isLoad = true;
+					//刷新用户信息
+					RpcServer.expose("RPC_RefreshUserInfo", function(params) {
+						params && (document.querySelector(".avatar").style.backgroundImage = "url(" + params + ")");
+						var user = CacheService.get('user');
+						$scope.info = user;
+						$scope.ViewName = $filter("getViewName")($scope.info.UserName, $scope.info.RealName, $scope.info.Mdt);
+						curData.getData();
+
+						$scope.$apply();
+
+					});
+				}
+			]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

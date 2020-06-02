@@ -1,0 +1,31 @@
+.data-group:first-child {
+	margin-top: 0;
+}
+
+
+/*更多按钮*/
+.vertical-right {
+	height: 22px;
+	width: 1px;
+	background: #EAEAEA;
+	margin-right: 48px;
+	position: absolute;
+	right: 0;
+	top: 50%;
+    margin-top: -11px;
+}
+
+.icon-chat-single {
+	color: #3296FA;
+}
+
+.menu-more {
+	z-index: 20;
+	padding: 13px 6px 13px 10px
+}
+.mui-table-view-cell {
+	overflow: visible;
+}
+#popover .mui-table-view-cell{
+	overflow: hidden;
+}

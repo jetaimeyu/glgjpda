@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link href="../../css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	<style type="text/css">
+		body,
+		html {
+			background: transparent;
+		}
+
+		.custom-tools .tools-item {
+			background: rgba(255, 255, 255, 1);
+			-webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .4);
+			border-radius: 3px;
+		}
+
+		.custom-tools .tools-item-body {
+			width: 50px;
+			height: 35px;
+			font-size: 13px;
+			font-family: SourceHanSansCN-Regular;
+			color: rgba(102, 102, 102, 1);
+			line-height: 35px;
+			text-align: center;
+		}
+
+		.custom-tools .tools-item-active {
+			background: red;
+			color: #fff;
+		}
+	</style>
+</head>
+
+<body ng-controller="devListCtl">
+	<div class="custom-tools">
+		<div class="tools-item demand">
+			<div class="tools-item-body" ng-click="event.choose(1)" ng-class="{'tools-item-active':domData.value ==1}">
+				今天
+			</div>
+			<div style="border-top:1px solid #dedede;"></div>
+			<div class="tools-item-body" ng-click="event.choose(2)" ng-class="{'tools-item-active':domData.value ==2}">
+				三天
+			</div>
+			<div style="border-top:1px solid #dedede;"></div>
+			<div class="tools-item-body" ng-click="event.choose(3)" ng-class="{'tools-item-active':domData.value ==3}">
+				一周
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript" src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript">
+		app.controller("devListCtl", ["$scope", "UtilsService", function ($scope, UtilsService) {
+			var view = plus.webview.currentWebview();
+			$scope.domData = {
+				value: 0
+			};
+
+			$scope.event = {
+				choose: function (value) {
+					if (value != $scope.domData.value) {
+						$scope.domData.value = value;
+					} else {
+						$scope.domData.value = 0;
+					}
+					view.opener().evalJS(view.callback + "(" + $scope.domData.value + ")");
+				}
+			}
+
+		}]);
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+		});
+	</script>
+</body>
+
+</html>

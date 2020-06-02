@@ -1,0 +1,115 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<style type="text/css">
+			body {
+				background-color: #fff;
+			}
+			
+			.guide-img {
+				width: 100%;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="guideCtrl">
+		<div class="mui-content">
+			<div class="mui-slider mui-fullscreen">
+				<div class="mui-slider-group">
+					<div class="mui-slider-item">
+						<a href="javascript:;">
+							<img class="guide-img" src="images/splash/01.jpg">
+						</a>
+					</div>
+					<div class="mui-slider-item">
+						<a href="javascript:;">
+							<img class="guide-img" src="images/splash/02.jpg">
+						</a>
+					</div>
+					<div class="mui-slider-item">
+						<a href="javascript:;">
+							<img class="guide-img" src="images/splash/03.jpg">
+						</a>
+					</div>
+					<div class="mui-slider-item">
+						<a href="javascript:;">
+							<img class="guide-img" src="images/splash/04.jpg">
+						</a>
+					</div>
+					<div class="mui-slider-item">
+						<a href="javascript:;">
+							<img id="start" class="guide-img" src="images/splash/05.jpg">
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="js/angular.min.js"></script>
+		<script src="js/mui.min.js"></script>
+		<script type="text/javascript" src="js/common.js"></script>
+		<script type="text/javascript">
+			mui.init({
+				keyEventBind: {
+					backbutton: false //关闭back按键监听
+				}
+			});
+			app.controller("guideCtrl", ["$scope", "CacheService",
+				function($scope, CacheService) {
+					var user = CacheService.get('user');
+					init();
+
+					function init() {
+						/*
+						 * 进入主页
+						 */
+						document.getElementById("start").addEventListener("tap", function() {
+							localStorage.setItem("isLaunched", "true");
+							var navId = "";
+							if(user) {
+								navId = "tab.html";
+							} else {
+								navId = "login.html";
+							}
+							mui.openWindow({
+								id: navId
+							});
+						});
+					}
+					//图片切换时，触发动画
+					mui.os.android&&document.querySelector('.mui-slider').addEventListener('slide', function(event) {
+						//注意slideNumber是从0开始的；
+						var index = event.detail.slideNumber + 1;
+						switch(index) {
+							case 1:
+								plus.navigator.setStatusBarBackground('#3296FA');
+								break;
+							case 2:
+								plus.navigator.setStatusBarBackground('#F05754');
+								break;
+							case 3:
+								plus.navigator.setStatusBarBackground('#FEB749');
+								break;
+							case 4:
+								plus.navigator.setStatusBarBackground('#0381A9');
+								break;
+							case 5:
+								plus.navigator.setStatusBarBackground('#3296FA');
+								break;
+							default:
+								break;
+						}
+					});
+				}
+			]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,118 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.data-group .data-row label {
+				margin-right: 30px;
+				width: 100vw;
+			}
+			
+			footer {
+				width: 100%;
+				height: 40px;
+				position: fixed;
+				bottom: 0;
+				left: 0;
+				line-height: 40px;
+				text-align: center;
+				color: #FFFFFF;
+				font-size: 1.6rem;
+				background-color: #3296FA;
+			}
+			.margin{
+				margin-bottom:40px;
+			}
+			
+		</style>
+	</head>
+
+	<body ng-controller="ServiceIndexController">
+		<p class="data-group-tip" style="margin-top: 10px;display: none;" ng-class="{'mui-block':isLoad}">分类服务数据查询</p>
+		<div class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad,'margin':isTtrue}" style="display: none;margin-top: 40px;">
+			<div class="mui-content">
+				<ul class="data-group" style="margin-top: 0;">
+					<li class="data-row mui-table-view-cell" ng-repeat="param in debugParams" ng-click="tap(param)">
+						<p class="opt md-icon icon-right"></p>
+						<label ng-bind="param.title"></label>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<footer ng-click="inputData()" ng-if="'Q50' | hasAuth" ng-class="{'mui-block':isLoad} " style="display: none;">
+			<span>数据录入</span>
+		</footer>
+		<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script>
+			app.controller("ServiceIndexController", ["$scope", "$Modal","$filter", "ApiService", "DataService", "UtilsService", "RPCObserver", "CustomModalService", function($scope, $Modal,$filter, ApiService, DataService, UtilsService, RPCObserver, CustomModalService) {
+				$scope.debugParams = [{
+					id: -1,
+					title: '其他服务'
+				}];
+				GetCustomerServiceParamsTypeList();
+				$scope.isTtrue=$filter("hasAuth")('Q50');
+				
+				$scope.retryModal = {
+					msg: "其他服务",
+					retry: GetCustomerServiceParamsTypeList,
+					state: ''
+				};
+				
+				//获取客户服务参数分组
+				function GetCustomerServiceParamsTypeList() {
+					var url = ApiService.Api50 + "/api/v2/Customer/GetCustomerServiceParamsTypeList";
+					DataService.get(url).then(function(res) {
+						$scope.retryModal.state = "";
+						$scope.isLoad = true;
+						res.forEach(function(item) {
+							$scope.debugParams.push({
+								id: item.ID,
+								title: item.Name
+							})
+						})
+					},function(error){
+						$scope.retryModal.state = error.State;
+					})
+				};
+
+				$scope.tap = function(param) {
+              UtilsService.openWindow({
+						needLogin: true,
+						id: "service-list.html",
+						url: "service-list.html",
+						extras:{
+							dataId:param.id,
+							dataTitle:param.title
+						}
+					})
+				}
+				var mui_back = mui.back;
+				mui.back = function() {
+					if($Modal.modals().length > 0) {
+						$Modal.close();
+						return;
+					}
+					mui_back()
+				}
+				$scope.inputData = function() {
+					CustomModalService.service();
+				}
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

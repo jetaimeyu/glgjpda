@@ -1,0 +1,37 @@
+<ul class="data-group" style="margin-top: 0px;">
+	<li class="mui-table-view-cell data-row" ng-repeat="item in model" ng-click="tap($event,'maintenView',item.ID)">
+		<!--<p class="opt md-icon font-15" ng-click="tap($event,'maintenEdit',item.ID)">
+			<span class="icon-edit"></span>
+		</p>-->
+		<div class="body">
+			<span class="equInspSpan mui-ellipsis-2" style="color: #000000;" ng-bind="item.CheckContent"></span>
+			<p class="equInspP">
+				<span class="font-12" style="color: #AAAAAA;" ng-bind="item.CreateDate"></span>
+				<md-chat-user-list ng-model="item.user"></md-chat-user-list>
+			</p>
+		</div>
+	</li>
+</ul>
+<style>
+	.data-group .data-row .body {
+		padding: 10px 16px;
+	}
+	
+	.equInspSpan {
+		font-size: 1.5rem!important;
+		line-height: 17px;
+		color: #000;
+		margin-bottom: 8px!important;
+	}
+	
+	.equInspP {
+		font-size: 1.2rem!important;
+		line-height: 14px;
+		color: #AAAAAA!important;
+	}
+	/*.data-group .data-row .opt,
+	.data-group .data-row .body.arrow:after {
+		padding: 10px 16px 11px 10px;
+		color: #AEAEAE!important;
+	}*/
+</style>

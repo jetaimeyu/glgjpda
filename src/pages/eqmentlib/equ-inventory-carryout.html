@@ -1,0 +1,475 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.data-group-tip {
+				margin-top: 10px;
+			}
+			
+			footer {
+				width: 100%;
+				height: 40px;
+				position: fixed;
+				bottom: 0;
+				left: 0;
+				line-height: 40px;
+				text-align: center;
+				background-color: #FFFFFF;
+			}
+			
+			.Check {
+                  background: rgba(153, 204, 255, 0.2);
+            }
+			
+			.inventory-content .data-group .data-row:after {
+				left: 0;
+				right: 0;
+			}
+			
+			.inventory-content div.edit>div[contenteditable] {
+				-webkit-user-modify: read-write-plaintext-only;
+				-webkit-user-select: auto;
+				line-height: 20px;
+				min-height: 40px;
+				z-index: 100;
+			}
+			
+			.inventory-content {
+				border-bottom: 1px solid #EAEAEA;
+			}
+			
+			.inventory-table {
+				border-left: 1px solid #EAEAEA;
+			}
+			
+			.inventory-table-cell {
+				text-align: center;
+				border: none;
+				min-height: 40px;
+				line-height: 40px;
+			}
+			
+			.inventory-table-span {
+				text-align: center;
+				border: none;
+				/*min-height: 40px;*/
+			}
+			
+			.mui-checkbox.mui-left input[type=checkbox],
+			.mui-radio.mui-left input[type=radio] {
+				left: 32%;
+			}
+			
+			.mui-checkbox input[type=checkbox],
+			.mui-radio input[type=radio] {
+				top: 9px;
+			}
+			
+			.mui-checkbox input[type=checkbox]:before,
+			.mui-radio input[type=radio]:before {
+				font-size: 22px;
+			}
+			
+			.mui-checkbox input[type=checkbox][disabled]:before,
+			.mui-radio input[type=radio][disabled]:before {
+				opacity: 1.3;
+			}
+			
+			.inventory-table .inventory-table-cell input[type=text] {
+				border: none;
+				background: #F7F7F7;
+				margin-bottom: 0;
+				padding: 3px;
+				height: 26px;
+				font-size: 1.3rem;
+			}
+			
+			.exception-red {
+				color: red;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="equInventoryEditController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">盘点内容</a>
+		</header>
+		<div class="mui-scroll-wrapper equInventoryEdit " ng-class="{'mui-block':isLoad}" style="display: none;margin-bottom: 41px;">
+			<p class="data-group-tip">基本信息</p>
+			<ul class="data-group">
+				<li class="data-row">
+					<label>设备名称</label>
+					<div class="body">
+						<span ng-bind="data.EqInfo.EqName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>设备型号</label>
+					<div class="body">
+						<span ng-bind="data.EqInfo.SkuName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>设备编号</label>
+					<div class="body">
+						<span ng-bind="data.EqInfo.EqIdentifier"></span>
+					</div>
+				</li>
+				<li class=" mui-table-view-cell data-row must" ng-click="tap('Operator')">
+					<label>执行人</label>
+					<i class="opt md-icon icon-right" id="repair-personnel"></i>
+					<div class="body">
+						<span class="placeholder" ng-if="Operator.length==0">请选择执行人</span>
+						<span ng-if="Operator.length>0" ng-repeat="user in Operator" ng-bind="$index==0?user.ViewName:'，'+user.ViewName"></span>
+					</div>
+				</li>
+				<li class="mui-table-view-cell data-row">
+					<label>抄送给</label>
+					<p class="opt md-icon font-15" ng-click="tap('selectUser')">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="tap('selectUser')">
+						<span class="placeholder" ng-show="sendUsers.length==0">请选择抄送人</span>
+						<span ng-show="sendUsers.length>0" ng-repeat="user in sendUsers" ng-bind="$index==0?user.ViewName:'，'+user.ViewName"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="data.EqInfo.LastModifyDate&&data.EqInfo.State==1">
+					<label>盘点时间</label>
+					<div class="body">
+						<span ng-bind="data.EqInfo.LastModifyDate"></span>
+					</div>
+				</li>
+			</ul>
+			<p class="data-group-tip">盘点内容</p>
+			<div class="inventory-content">
+				<ul class="data-group mt0">
+					<li class="data-row inventory-table">
+						<div class="inventory-table-cell mui-col-sm-3 mui-col-xs-3">内容</div>
+						<div class="inventory-table-cell mui-col-sm-5 mui-col-xs-5">值</div>
+						<div class="inventory-table-cell mui-col-sm-2 mui-col-xs-2">确认</div>
+						<div class="inventory-table-cell mui-col-sm-2 mui-col-xs-2">是否异常</div>
+					</li>
+					<li class="data-row inventory-table" ng-class="{'Check':item.isCheckSure}" ng-repeat="item in data.Content">
+						<div class="inventory-table-cell mui-col-sm-3 mui-col-xs-3">
+							<span style="word-break: break-all;" ng-bind="item.Content" ng-class="{'exception-red':item.Exception}"></span>
+						</div>
+						<div class="inventory-table-cell mui-col-sm-5 mui-col-xs-5" ng-if="!item.isCheckSure">
+							<input type="text" style=" width: 100%;" maxlength="60" ng-model="item.Value" placeholder="请输入">
+						</div>
+						<div class="inventory-table-span mui-col-sm-5 mui-col-xs-5" ng-if="item.isCheckSure">
+							<span style="word-wrap:break-word" ng-bind="item.Value"></span>
+						</div>
+						<div class="inventory-table-cell mui-col-sm-2 mui-col-xs-2 mui-checkbox mui-input-row mui-left">
+							<input name="checkbox" type="checkbox" ng-model="item.isCheckSure" />
+						</div>
+						<div class="inventory-table-cell mui-col-sm-2 mui-col-xs-2 mui-checkbox mui-input-row mui-left">
+							<input name="checkbox" type="checkbox" ng-model="item.Exception" />
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<footer ng-class="{'mui-block':isLoad}" style="display: none;">
+			<ul class="mui-table-view mui-row">
+				<li class="mui-media mui-col-sm-6 mui-col-xs-6" style="background: #C0C0C0;color: #FFFFFF;" ng-click="tap('cancel')">取消</li>
+				<li class="mui-media mui-col-sm-6 mui-col-xs-6" style="background: #3296FA;color: #FFFFFF;" ng-click="tap('save')">保存</li>
+			</ul>
+		</footer>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../message/transMessage.js"></script>
+		<script>
+			app.controller("equInventoryEditController", ["$scope", "ApiService", "DataService", "UtilsService", "CacheService", "ChatUserService", "$filter", "AuthService", "Loading", "$timeout", "RPCObserver",
+				function($scope, ApiService, DataService, UtilsService, CacheService, ChatUserService, $filter, AuthService, Loading, $timeout, RPCObserver) {
+					$scope.curUser = CacheService.get("user");
+					$scope.planId = query("planId") || 0;
+					$scope.ID = query("id") || 0;
+					$scope.eqId = query("eqId") || 0;
+					//是否已执行
+					$scope.hasDone = query("hasDone");
+					$scope.Operator = []; //执行人
+					$scope.sendUsers = []; //抄送人
+					if($scope.hasDone == "false") {
+						//默认当前登录人为执行人，且不能修改
+						$scope.Operator.push({
+							"UserID": $scope.curUser.UserID,
+							"ViewName": $filter("getViewName")($scope.curUser.RealName, $scope.curUser.UserName, $scope.curUser.Mdt),
+							"CompID": $scope.curUser.CompID
+						});
+						//获取默认抄送人
+						UtilsService.getDefaultRecipient().then(function(res) {
+							//Send 0不发信息 1发送信息
+							res && $scope.sendUsers.length == 0 && $scope.sendUsers.push({
+								"UserID": res.UserID,
+								"ViewName": res.ViewName,
+								"CompID": res.CompID,
+								"Send": 1
+							})
+						});
+					}
+
+					if($scope.ID > 0) {
+						Loading.show();
+						$scope.isLoad = false;
+						inventoryDetailsJudge();
+					}
+
+					function inventoryDetailsJudge() {
+						var url = ApiService.Api52 + "/api/v1/EqApply/InventoryDetailsJudge?detailsId=" + $scope.ID + "&planId=" + $scope.planId;
+						DataService.get(url).then(function(res) {
+							if((res.EqState == 9 || res.EqState == 2) && res.State == 2) {
+								//未盘点的设备报废或删除，返回盘点设备列表并刷新
+								mui.toast("该设备已报废或被删除");
+								RPCObserver.broadcast("inventory-equ-refresh");
+								RPCObserver.broadcast("refresh_msg_all_list");
+								RPCObserver.broadcast("equ-check-list-refresh");
+								setTimeout(function() {
+									mui.back();
+								}, 300);
+								return;
+							} else {
+								getInventoryEqContent();
+							}
+						})
+					}
+
+					//获取盘点计划信息
+					function getInventoryEqContent() {
+						var url = ApiService.Api52 + "/api/v1/EqApply/GetInventoryEqContent?detailsId=" + $scope.ID + "&planId=" + $scope.planId + "&eqId=" + $scope.eqId;
+						DataService.get(url).then(function(res) {
+							Loading.hide();
+							$scope.isLoad = true;
+							res.EqState == 9 && mui.toast("该设备已删除或报废，不允许修改");
+							res && ($scope.data = res);
+							res.Content.map(function(one) {
+								if(one.FieldName === 'EqState') {
+									if(one.Value === 1) {
+										one.Value = '在用';
+									} else if(one.Value === 2) {
+										one.Value = '保养';
+									} else if(one.Value === 3) {
+										one.Value = '待售';
+									} else if(one.Value === 4) {
+										one.Value = '空闲';
+									} else if(one.Value === 7) {
+										one.Value = '维修';
+									} else if(one.Value === 8) {
+										one.Value = '停用';
+									} else if(one.Value === 9) {
+										one.Value = '报废';
+									} else if(one.Value === 11) {
+										one.Value = '租赁';
+									}
+								}
+							});
+							$scope.data.Content = res.Content.map(function(one) {
+								one.isCheckSure = $scope.hasDone == "true" ? true : false;
+								if(one.Exception == 1) {
+									one.Exception = true;
+								}
+								return one;
+							});
+							res.EqInfo.SendUserList.forEach(function(user) {
+								$scope.sendUsers.push({
+									"UserID": user.ID,
+									"ViewName": user.Name,
+									"CompID": user.CompID,
+									"Send": 0
+								})
+							})
+							res.EqInfo.OperatorList.forEach(function(user) {
+								$scope.Operator.push({
+									"UserID": user.ID,
+									"ViewName": user.Name,
+									"CompID": user.CompID
+								})
+							})
+
+						}, function(error) {
+							$scope.isLoad = true;
+
+						})
+					};
+					$scope.tap = function(key) {
+						switch(key) {
+							//选择盘点人
+							case 'Operator':
+								UtilsService.openWindow({
+									needLogin: true,
+									id: "contact-select.html",
+									url: "../common/contact-select.html?action=select&multiselect=true&type=org&isView=false",
+									extras: {
+										selectObj: $scope.Operator,
+										callback: "selectOperatorCallback"
+									}
+								});
+								break;
+								//选择抄送人
+							case 'selectUser':
+								UtilsService.openWindow({
+									needLogin: true,
+									id: "contact-select.html",
+									url: "../common/contact-select.html?action=select&multiselect=true&type=org&isView=false",
+									extras: {
+										selectObj: $scope.sendUsers,
+										callback: "selectUserCallback"
+									}
+								});
+								break;
+							case 'save':
+								$scope.save();
+								break;
+							case 'cancel':
+								mui.back();
+								break;
+						}
+					}
+					var saving = false;
+					//保存更改
+					$scope.save = function() {
+						if(saving) {
+							return;
+						}
+						document.activeElement.blur();
+						var isCheckSure = $scope.data.Content.some(function(_one) {
+							return !_one.isCheckSure;
+						});
+						if(isCheckSure) {
+							mui.toast("有未确认项，不能保存");
+							return false;
+						}
+						if(!checkLengthUtil.check()) {
+							return false;
+						}
+						if($scope.Operator.length == 0) {
+							mui.toast("请选择盘点执行人");
+							return false;
+						}
+						saving = true;
+						Loading.show();
+						submitData();
+					}
+
+					function submitData() {
+						var url = ApiService.Api52 + "/api/v1/EqApply/SavePlanDetails";
+						var postdata = angular.copy($scope.data.EqInfo);
+						postdata.Operator = $scope.Operator.map(function(item) {
+							return item.UserID;
+						}).join('/');
+						postdata.SendUsers = $scope.sendUsers.map(function(item) {
+							return item.UserID;
+						}).join('/');
+						var eqContent = angular.copy($scope.data.Content);
+						postdata.EqContentList = eqContent.map(function(item) {
+							item.Exception = item.Exception ? 1 : 0;
+							return item;
+						})
+						DataService.post(url, postdata).then(function(res) {
+							//							if($scope.ID == 0) {
+							//								var url = ApiService.Api50 + '/api/v1/Common/SaveShare';
+							//								var sharePostData = {
+							//									"DataFrom": shareLog['inventory-detail'],
+							//									"DataID": res,
+							//									"Operate": "盘点内容",
+							//									"Content": "盘点内容",
+							//									"SendUsers": postdata.SendUsers,
+							//									ActionType: 0
+							//								}
+							//								DataService.post(url, sharePostData).then(function(res) {
+							//
+							//								});
+							//							}
+							sendWorkMsg();
+							Loading.hide();
+							RPCObserver.broadcast("inventory-equ-refresh");
+							RPCObserver.broadcast("refresh_msg_all_list");
+							RPCObserver.broadcast("equ-check-list-refresh");
+							mui.toast("保存盘点内容成功");
+							setTimeout(function() {
+								saving = false;
+								mui.back();
+							}, 300);
+						})
+					}
+					//给抄送人发送消息
+					function sendWorkMsg() {
+						$scope.sendUsers.forEach(function(user) {
+							user.Send == 1 && ChatUserService.send({
+								chatId: user.UserID,
+								chatName: user.ViewName,
+								chatCompId: user.CompID,
+								hasLogo: $scope.curUser.ULogoIsExist,
+								chatLogo: user.ULogoIsExist,
+								type: 7,
+								content: {
+									eventName: "inventory-detail",
+									logo: ApiService.Down + "/chat/equ-inventory-content.png",
+									title: "设备盘点", 
+									desc: $scope.data.EqInfo.EqName + " " + $scope.data.EqInfo.SkuName,
+									params: [$scope.ID, $scope.planId, $scope.eqId]
+								}
+							});
+						})
+					}
+					//选择盘点人回调
+					window.selectOperatorCallback = function(obj) {
+						var hasCurrentUser = false;
+						$scope.Operator = [];
+						obj && obj.forEach(function(user) {
+							user.UserID == $scope.curUser.UserID && (hasCurrentUser = true);
+							user.ViewName = user.RealName;
+						})
+						if(!hasCurrentUser && $scope.hasDone == "false") {
+							mui.toast("当前登录人不允许删除");
+							$scope.Operator.push({
+								"UserID": $scope.curUser.UserID,
+								"ViewName": $filter("getViewName")($scope.curUser.RealName, $scope.curUser.UserName, $scope.curUser.Mdt),
+								"CompID": $scope.curUser.CompID,
+								"ULogoIsExist": $scope.curUser.ULogoIsExist
+							})
+						}
+						$scope.Operator = $scope.Operator.concat(obj);
+						$scope.$apply();
+					}
+
+					//选择抄送人员回调
+					window.selectUserCallback = function(obj) {
+						var temp = angular.copy($scope.sendUsers);
+						$scope.sendUsers = [];
+						obj && obj.forEach(function(user) {
+							var isSend = 1;
+							for(var i = 0; i < temp.length; i++) {
+								if(temp[i].UserID == user.UserID) {
+									isSend = 0;
+								}
+							}
+							$scope.sendUsers.push({
+								"UserID": user.UserID,
+								"ViewName": user.RealName,
+								"CompID": user.CompID,
+								"Send": isSend
+							})
+						})
+						$scope.$apply();
+					}
+
+				}
+			]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

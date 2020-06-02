@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link href="../../css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+</head>
+
+<body ng-controller="devListCtl">
+	<script type="text/javascript" src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript">
+		app.controller("devListCtl", ["$scope", "UtilsService", function ($scope, UtilsService) {
+			var view = plus.webview.currentWebview();
+
+			mui.init({
+				subpages: [{
+					url: 'customer-map-list-sub.html' + location.search,
+					id: 'customer-map-list-sub.html',
+					styles: {
+						top: 0,
+						bottom: 0
+					},
+					extras: {
+						activeMap: view.activeMap,
+						activeDate: view.activeDate,
+						province: view.province,
+						city: view.city
+					}
+				}]
+			})
+		}]);
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+		});
+	</script>
+</body>
+
+</html>

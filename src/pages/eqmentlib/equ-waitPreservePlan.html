@@ -1,0 +1,96 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.icon {
+				width: 16px;
+			}
+			
+			.menu-work {
+				padding: 13px 6px 13px 10px;
+				z-index: 20;
+				position: relative;
+			}
+			
+			.mui-bar-nav~.mui-content .mui-pull-top-pocket {
+				top: 80px!important;
+			}
+			
+			.mui-bar-nav~.has-tab .mui-pull-top-pocket {
+				top: 84px!important;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="inspListController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left" ng-bind="checkType==1?'待保养计划':'已保养计划'"></a>
+			<a class="mui-pull-right menu-search" id="search" ng-click="search()">
+				<img class="icon" src="../../images/search.png" />
+			</a>
+		</header>
+		<!--<md-tab ng-model="tabs"></md-tab>-->
+		<div class="mui-content" >
+			<ul class="md-tab" top="84" style="display: none;" ng-class="{'mui-block':isLoad}">
+				<li class="md-tab-item md-active" href="equ-waitpreservplan-list.html?type=my&checkType={{checkType}}&startDate={{searchDate.startDate}}&&endDate={{searchDate.endDate}}" winid="work-my.html">我负责的</li>
+				<li class="md-tab-item" href="equ-waitpreservplan-list.html?type=dept&checkType={{checkType}}&startDate={{searchDate.startDate}}&&endDate={{searchDate.endDate}}" winid="work-dept.html" ng-if="['Q6','Q7','Q8','Q10'] | hasAuth">本部门的</li>
+				<li class="md-tab-item" href="equ-waitpreservplan-list.html?type=depts&checkType={{checkType}}&startDate={{searchDate.startDate}}&&endDate={{searchDate.endDate}}" winid="work-depts.html" ng-if="['Q7','Q8','Q10'] | hasAuth">下级部门</li>
+				<li class="md-tab-item" href="equ-waitpreservplan-list.html?type=all&checkType={{checkType}}&startDate={{searchDate.startDate}}&&endDate={{searchDate.endDate}}" winid="work-all.html" ng-if="['Q8','Q10'] | hasAuth">所有计划</li>
+			</ul>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript">
+			app.controller("inspListController", ["$scope", "UtilsService", "$filter", "RPCObserver", function($scope, UtilsService, $filter, RPCObserver) {
+				$scope.showadd = true;
+				$scope.checkType = query("type"); //1 待保养 2 已保养
+				
+				$scope.isLoad = $filter("hasAuth")(['Q6', 'Q7', 'Q8','Q10']);
+				!$scope.isLoad && document.querySelector(".md-tab").setAttribute("top", "44");
+				setTimeout(function() {
+					MdConfig.StartUsingTab();
+				}, 200);
+
+				$scope.searchDate = {
+					startDate: "",
+					endDate: ""
+				}
+
+				$scope.search = function() {
+					UtilsService.openWindow({
+						id: "equ-check-search.html",
+						url: "equ-check-search.html?type=maintent",
+						extras: {
+							selectDate: $scope.searchDate,
+							callback: "selectDateCallback"
+						}
+					})
+				}
+
+				window.selectDateCallback = function(dateObj) {
+					$scope.searchDate.startDate = dateObj && dateObj.startDate ? dateObj.startDate : "";
+					$scope.searchDate.endDate = dateObj && dateObj.endDate ? dateObj.endDate : "";
+					$scope.$apply();
+					RPCObserver.broadcast("equ-check-list-refresh", dateObj);
+				}
+
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

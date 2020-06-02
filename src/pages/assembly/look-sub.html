@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/common.css">
+		<style>
+			.mui-card {
+				box-shadow: none;
+			}
+			
+			.mui-card-header {
+				background-color: #F6FBFF;
+			}
+			
+			.mui-card-header:after {
+				height: 0;
+			}
+			
+			.mui-table-view .mui-media-object {
+				border: 0;
+				background: none;
+			}
+			
+			.mui-table-view .mui-media-object {
+				width: 80px;
+				text-align: right;
+				max-width: 80px;
+			}
+			
+			.right-boder {
+				border-right: 1px solid #63B1FF;
+			}
+			
+			.mui-card-header .pro-title {
+				font-size: 16px;
+				color: #333333;
+				margin-left: 5px;
+				font-weight: bold;
+			}
+			
+			.mui-card-header .pro-state {
+				font-size: 13px;
+				flex: none;
+			}
+			
+			.mui-card-header .state-ing {
+				color: #04CDDB;
+			}
+			
+			.mui-card-header .state-wait {
+				color: #FFB76F;
+			}
+			
+			.mui-card-header .state-done {
+				color: #999999;
+			}
+			
+			.mui-card-content .mui-media-body {
+				font-size: 14px;
+				color: #323232;
+			}
+			
+			.mui-card-content .mui-media-body .codenumber {
+				font-size: 13px;
+				color: #333333;
+			}
+			
+			.mui-card-content .mui-media-body .sku {
+				font-size: 13px;
+				color: #999999;
+			}
+			
+			.mui-card-footer .mui-row {
+				text-align: center;
+				font-size: 13px;
+				color: #3296FA;
+			}
+			
+			.mui-card-content .mui-empty {
+				text-align: center;
+				color: #3296FA;
+				font-size: 13px;
+			}
+			
+			.show-more {
+				display: flex;
+				color: #ffffff;
+				text-align: center;
+				height: 40px;
+				line-height: 40px;
+				font-size: 16px;
+				box-shadow: 0 -1px 5px #eee;
+				position: fixed;
+				bottom: 0;
+				left: 0;
+				width: 100%;
+				box-sizing: border-box;
+				background-color: #007aff;
+			}
+			
+			.scanline {
+				display: inline-block;
+				height: 20px;
+				width: 1px;
+				line-height: 40px;
+				background: #FFFFFF;
+				float: right;
+				margin-top: 8px;
+				opacity: 0.3116;
+				box-shadow: 1px 0 0 #124477;
+			}
+			
+			.mui-popover {
+				/*min-width: 260px;*/
+				/*height: 370px;*/
+				position: fixed;
+				top: 50%;
+				/*bottom: 50%;*/
+				/*position: absolute;
+				top: 65%;
+				margin-top: -150px;*/
+				left: 50% !important;
+				margin-left: -141px;
+				border-radius: 3px;
+				background-color: #fff;
+				margin-top: -100px;
+			}
+			
+			.mui-popover .mui-popover-arrow {
+				display: none !important;
+			}
+			
+			.mui-popover .data-group:before {
+				height: 0;
+			}
+			
+			.mui-popover .data-group .data-row:after {
+				left: 10px;
+				background-color: #E5E5E5;
+			}
+			
+			.mui-popover .data-group .data-row.first:after {
+				left: 5px;
+				right: 5px;
+				background-color: #E5E5E5;
+				height: 0!important;
+			}
+			
+			.mui-popover .data-group .data-row:last-child:after {
+				height: 1px;
+				left: 5px;
+				right: 5px;
+			}
+			
+			.mui-popover .data-group .data-row.first {
+				min-height: 38px
+			}
+			
+			.addelment a {
+				background-color: #3296FA;
+				color: #fff;
+				padding: 10px 0;
+				border: 1px solid #3296FA;
+				border-top-left-radius: 0;
+				border-top-right-radius: 0;
+			}
+			
+			.data-group .data-row .label-gray {
+				color: #333333;
+			}
+			
+			.info-title {
+				margin-left: 10px;
+				line-height: 1;
+				color: #1f1f1f;
+			}
+			
+			.title {
+				color: #1f1f1f;
+			}
+			
+			.data-group .data-row label~.body {
+				margin-left: 60px;
+				margin-right: 25px;
+			}
+			
+			.mui-popover {
+				padding: 0;
+				background: #F6FBFF;
+			}
+			
+			.mui-popover .mui-icon-closeempty {
+				float: right;
+				margin-top: 5px;
+				margin-right: 5px;
+				height: 29px;
+				width: 25px;
+			}
+			
+			.mui-popover .data-group .data-row .body {
+				padding: 8px 0px 5px 10px;
+			}
+			
+			.data-group .data-row .body input,
+			.data-group .data-row .body>span,
+			.data-group .data-row .body select {
+				padding: 0 5px 5px 5px;
+			}
+			
+			.mui-popover .needsclick {
+				width: 100%;
+			}
+			
+			.mui-popover .edit {
+				margin: 0px 0px 0px 10px !important;
+			}
+			
+			.mui-content>.mui-card:first-child {
+				margin-top: 0px;
+			}
+			
+			.mui-card {
+				margin: 0 10px 10px;
+			}
+			
+			.mui-card-header .mui-icon img {
+				width: 18px;
+				width: 15px;
+			}
+			
+			.selProducticon {
+				width: 25px;
+				float: right;
+				padding-top: 7px;
+				height: 40px;
+			}
+			
+			.del-button {
+				background-color: #E64340 !important;
+				border: 1px solid #E64340 !important;
+				/*background-color: #F5F5F5 !important;
+                border: 1px solid #F5F5F5 !important;
+                 color: #333333 !important;*/
+			}
+			
+			.mui-show {
+				display: block;
+			}
+			
+			.noParts {
+				text-align: center;
+				color: #999999;
+			}
+			
+			.start-ass {
+				font-size: 13px;
+				color: #3296FA;
+				text-align: center;
+			}
+			
+			.adjust-ass {
+				font-size: 13px;
+				color: #93ABC3;
+				text-align: center;
+			}
+			
+			.data-group .data-row label,
+			.data-group .data-row .opt,
+			.data-group .data-row .body.arrow:after {
+				position: absolute;
+				top: 50%;
+				-webkit-transform: translateY(-50%);
+				transform: translateY(-50%);
+				overflow: hidden;
+				margin: 0;
+			}
+			
+			.data-group .data-row {
+				display: block;
+			}
+			
+			.data-group .data-row label {
+				width: 70px;
+				left: 10px;
+				color: #666;
+			}
+			
+			.part-right-btn {
+				width: 50%;
+				display: inline-block;
+				margin-bottom: 0px !important;
+				border-bottom-right-radius: 0;
+			}
+			
+			.part-left-btn {
+				width: 50%;
+				display: inline-block;
+				border-bottom-left-radius: 0;
+			}
+			
+			.dis-none {
+				display: none;
+			}
+			
+			.dis-block {
+				display: block;
+			}
+			
+			.mui-table-view-cell:after {
+				left: 0;
+			}
+			
+			.top-line:before {
+				height: 1px !important;
+			}
+			
+			.edit {
+				margin-top: 10px;
+				height: auto;
+			}
+			
+			.startDataNone {
+				height: 190px;
+				background: #fff;
+				text-align: center;
+				position: relative;
+				padding-top: 60px;
+			}
+			
+			.startDataNone .noneConcent {
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				right: 0;
+				left: 0;
+				margin: auto;
+				height: 70px;
+			}
+			
+			.startDataNone p {
+				color: #999999;
+				font-size: 15px;
+			}
+			
+			.mui-popover .edit input {
+				margin-right: 0px !important;
+			}
+			
+			.empty {
+				margin-top: 30vh;
+				width: 100%;
+				text-align: center;
+				word-break: break-all;
+				color: #666666;
+				font-size: 1.5rem;
+				padding: 0 15px;
+			}
+		</style>
+	</head>
+
+	<body ms-controller="productCtrl" class="ms-controller">
+		<!--头部-->
+		<div id="pullrefresh" class="mui-scroll-wrapper" style="margin-top: 10px;">
+			<div class="mui-scroll">
+				<div class="mui-content main-content">
+					<!--<div class="mui-input-row mui-search">
+						<input type="search" class="mui-input-clear" placeholder="">
+					</div>-->
+					<div class="mui-card" ms-for="(index,item) in palletList">
+						<div class="mui-card-header"><span class="mui-ellipsis"><i class="mui-icon "><img src="../../images/Bitmap.png"></i><span class="pro-title" ms-attr="{'data-index':index}">{{item.HostProdInnerCode}}</span></span>
+							<span ms-class="['mui-pull-right pro-state',(item.PartList==null||item.PartList.length==0)?'':'conparts']" ms-html="item.State|getAssState(item.PartList)"></span>
+						</div>
+						<!--内容区-->
+						<div ms-class="['mui-card-content',item.State==1?'dis-block':'dis-none']">
+							<ul class="mui-table-view">
+								<li class="mui-table-view-cell mui-media" ms-for="(indexchi,parts) in item.PartList" ms-attr="{'data-partindex':indexchi,'data-index':index}">
+									<a href="javascript:;">
+										<div class="mui-media-object mui-pull-right codenumber mui-ellipsis">{{parts.PartProdInnerCode}}</div>
+										<div class="mui-media-body ">
+											<span class="mui-ellipsis">{{parts.PartProdName}}</span>
+											<p class='mui-ellipsis sku'>{{parts.PartSkuName}}</p>
+										</div>
+									</a>
+								</li>
+							</ul>
+
+						</div>
+						<ul class="mui-table-view top-line">
+							<li class="mui-table-view-cell adjust-ass StartHostAss" ms-attr="{'data-index':index,'data-id':item.GroupHostAssID}">
+								已装{{item.PartList==null?0:item.PartList.length}}个配件
+							</li>
+						</ul>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+		<div class="empty" ms-visible="palletList&&palletList.length==0" style="margin-top: 35vh;display: none;"><span class="mui-icon mui-icon-info" style="font-size: 20px;margin-right: 5px;"></span>暂无装配信息</div>
+		<!--零件信息弹框  end-->
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/avalon.js"></script>
+		<script src="../../js/utils.js"></script>
+		<script>
+			mui(".mui-content").on('tap', '.conparts', function() {
+				//状态切换 显隐零件功能  ---是否去除该功能 todo
+				var obj = this.parentNode.nextElementSibling
+				var icon = this.children[0].children[0].classList; //this.firstElementChild.firstElementChild.classList
+				if(obj.classList.contains('dis-none')) {
+					obj.classList.remove('dis-none');
+					obj.classList.add('dis-block');
+
+					//图标
+					icon.remove('mui-icon-arrowdown');
+					icon.add('mui-icon-arrowup');
+				} else {
+
+					obj.classList.remove('dis-block');
+					obj.classList.add('dis-none');
+
+					//图标
+					icon.remove('mui-icon-arrowup');
+					icon.add('mui-icon-arrowdown');
+
+				}
+				obj.classList.add('mui-card-content');
+				icon.add('mui-icon');
+
+			})
+
+			var app = avalon.define({
+				$id: "productCtrl",
+				GroupID: query('id'), //小组ID
+				GroupName: query('w'), //车间
+				isdown: 0,
+				PageIndex: 1,
+				palletList: null, //装配列表
+				//获取装配列表
+				getAssembly: function(type, callback) {
+					if(type == undefined) {
+						app.PageIndex = 1;
+					}
+					var url = MdAppUrl.Api50 + "/api/v1/Assemble/GetGroupHost_PartList?page=" + app.PageIndex + "&pageSize=5&groupId=" + app.GroupID;
+					getAjaxData(url, function(data) {
+						hideWaiting();
+						if(data.State == 1) {
+
+							//取正在装配的标识
+							if(type == "up") {
+								if(app.palletList == null) {
+									app.palletList = [];
+								}
+
+								app.palletList.pushArray(data.Data.DataRows); //上拉加载拼接数据
+							} else {
+								app.palletList = data.Data.DataRows; //下拉刷新重新赋值
+							}
+						} else {
+							if(!app.palletList) {
+								app.palletList = [];
+							}
+							mui.toast(data.ErrorMessage);
+						}
+						if(app.PageIndex == 1) {
+							app.isdown = 0;
+							//							var all = document.getElementsByClassName("mui-card-content");
+							//							for(var i = 0; i < all.length; i++) {
+							//								all[i].style.display = 'block';
+							//							}
+						}
+						if(type == "down") {
+							mui("#pullrefresh").pullRefresh().endPulldownToRefresh();
+						}
+						if(data.State == 1 && app.palletList.length >= data.Data.TotalCount) {
+							mui("#pullrefresh").pullRefresh().endPullupToRefresh(true);
+						} else {
+							mui("#pullrefresh").pullRefresh().endPullupToRefresh(false);
+
+							if(type == "down") {
+								mui("#pullrefresh").pullRefresh().refresh(true);
+							}
+						}
+						if(data.Data.TotalCount <= 5) {
+							mui('#pullrefresh').pullRefresh().disablePullupToRefresh();
+						}
+						if(typeof callback == "function") {
+							callback();
+						}
+
+					}, true)
+				}
+			})
+
+			mui.init({
+				pullRefresh: {
+					container: '#pullrefresh',
+					down: {
+						callback: pulldownRefresh
+					},
+					up: {
+						callback: pullupRefresh,
+						contentrefresh: '正在加载...',
+						contentnomore: '没有更多数据了'
+					}
+				}
+			});
+
+			mui.plusReady(function() {
+				user.ready(function() {
+					showWaiting();
+					setTimeout(function() {
+						app.getAssembly("down");
+					}, 300);
+				});
+			})
+			/**
+			 * 下拉刷新具体业务实现
+			 */
+			function pulldownRefresh() {
+				setTimeout(function() {
+					app.PageIndex = 1;
+					app.palletList = "";
+					app.getAssembly("down");
+
+				}, 500);
+			}
+			/**
+			 * 上拉加载具体业务实现
+			 */
+			function pullupRefresh() {
+				setTimeout(function() {
+					//加载更多页数+1
+					app.PageIndex += 1;
+					app.getAssembly("up")
+				}, 500);
+			}
+
+			avalon.filters.getAssState = function(a, partlist) {
+				var state = '';
+				var ico = '<i class="mui-icon mui-icon-arrowdown" style="font-size: 20px;"></i>';
+				var icoing = '<i class="mui-icon mui-icon-arrowup" style="font-size: 20px;"></i>';
+				if(partlist == null || partlist.length == 0) {
+					ico = '';
+					icoing = '';
+				}
+				switch(a) {
+					case 1:
+						state = '<span class="state-ing">正在装配' + icoing + '</span>';
+						break;
+					case 2:
+						state = '<span class="state-wait">等待装配' + ico + '</span>';
+						break;
+					case 3:
+						state = '<span class="state-done">已装完' + ico + '</span>';
+						break;
+
+				}
+				return state;
+			}
+		</script>
+	</body>
+
+</html>

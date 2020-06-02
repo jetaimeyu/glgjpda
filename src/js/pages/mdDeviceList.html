@@ -1,0 +1,130 @@
+<ul class="mui-table-view mui-table-view-chevron" style="margin-top: 8px;" ng-show="model && model.length>0">
+	<li class="mui-table-view-cell mui-media" ng-repeat="equ in model" ng-click="equTap('checkEqu',equ)">
+		<i class="mui-pull-left" ng-class="{'icon-round color-gray':selectedIds.indexOf(equ.ID)<0,'icon-roundcheckfill color-blue ':selectedIds.indexOf(equ.ID)>=0}" ng-if="action=='select'"></i>
+		<img src="../../images/imgPre.png" ng-style="{'background-image':'url('+ (equ.AttachFilePath | getEquLogo:55) +')'}" class="imgslist" ng-style="{'margin-left':action=='select'?'30px':''}" />
+		<div class="mui-clearfix">
+			<div class="mui-ellipsis equ-title" ng-bind="equ.EqName"></div>
+			<p class="mui-ellipsis equ-sub" ng-style="{'line-height':type!='purchase'?'20px':'40px'}" ng-bind="'型号：'+equ.SkuName"></p>
+			<p class="mui-ellipsis equ-sub" ng-if="!type" ng-bind="'编号：'+equ.EqIdentifier"></p>
+		</div>
+	</li>
+</ul>
+<style type="text/css">
+	.mui-table-view .mui-table-view-cell i {
+		line-height: 55px;
+		margin-right: 10px;
+		font-size: 1.8rem;
+		margin-left: -6px;
+	}
+	
+	.data-group:after,
+	.data-group .data-row:last-child:after {
+		content: none;
+	}
+	
+	.data-group .data-row label {
+		left: 16px;
+		right: 16px;
+	}
+	
+	.data-group .data-row .icon-bumenguanli span {
+		font-size: 1.4rem;
+		font-family: MicrosoftYaHei;
+		color: #323232;
+	}
+	
+	.data-group:before,
+	.data-group:after,
+	.data-group .data-row:after {
+		background-color: #EAEAEA;
+	}
+	
+	.data-group .data-row:after {
+		left: 10px;
+		right: 10px;
+	}
+	
+	.mui-table-view .mui-media-object {
+		border: none;
+	}
+	
+	.mui-table-view:before,
+	.mui-table-view:after {
+		content: none;
+	}
+	
+	.mui-table-view .mui-table-view-cell {
+		padding: 8px 16px;
+		height: 71px;
+	}
+	
+	.mui-table-view .mui-table-view-cell .mui-media-object {
+		line-height: 71px;
+		background-color: #FFFFFF;
+		width: 55px;
+		height: 55px;
+		max-width: 55px;
+		background-size: 50px;
+	}
+	
+	.mui-ellipsis {
+		white-space: nowrap!important;
+	}
+	
+	.equ-title {
+		/*line-height: 48px;*/
+		font-size: 1.5rem;
+		color: #000000;
+	}
+	
+	.equ-sub {
+		line-height: 16px;
+		font-size: 1.2rem;
+		color: #AAAAAA;
+		font-family: MicrosoftYaHei;
+	}
+	
+	.mui-table-view .mui-table-view-cell label,
+	.mui-table-view .mui-table-view-cell .opt {
+		position: absolute;
+		top: 50%;
+		-webkit-transform: translateY(-50%);
+		transform: translateY(-50%);
+		overflow: hidden;
+		margin: 0;
+	}
+	
+	.mui-table-view .mui-table-view-cell .opt,
+	.data-group .data-row .opt {
+		color: #AEAEAE;
+		top: 50%;
+	}
+	
+	.mui-table-view .mui-table-view-cell .opt:active {
+		color: #169BD5;
+	}
+	
+	.mui-table-view .mui-table-view-cell .opt,
+	.mui-table-view .mui-table-view-cell .body.arrow:after {
+		font-size: 1.7rem;
+		right: 0;
+		padding: 10px 14px 11px 10px;
+	}
+	
+	.mui-table-view-cell:after {
+		background-color: #ECECEC;
+	}
+	
+	.mui-table-view .mui-table-view-cell:after {
+		left: 10px;
+		right: 10px;
+	}
+	
+	.imgslist {
+		float: left;
+		width: 55px;
+		height: 55px;
+		margin-right: 10px;
+		background-size: cover!important;
+	}
+</style>

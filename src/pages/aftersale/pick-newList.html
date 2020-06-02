@@ -1,0 +1,563 @@
+<!--新增维修领料-->
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style>
+			.data-group:first-child {
+				margin-top: 8px;
+			}
+			/*li边线离左右距离、边线颜色*/
+			
+			.data-group:not(:first-child) .data-row:after {
+				width: 100%;
+				left: 0px;
+				right: 0px;
+				background-color: #EAEAEA;
+			}
+			/*新增配件更换样式*/
+			
+			.newadd {
+				width: 84px;
+				text-align: center;
+				margin: 0 auto;
+				color: #3296FA;
+			}
+			/*除了第一列表外的内边距设置为0*/
+			
+			.bodyHead {
+				font-weight: bold;
+				padding: 0 20px 0 0!important;
+			}
+			/*除了第一列表外行高*/
+			
+			.data-group:not(:first-child) .data-row {
+				line-height: 40px!important;
+			}
+			
+			.partDomUl.data-group {
+				margin-top: 8px;
+			}
+			/*新增配件列表样式*/
+			
+			div.remarkscontent {
+				color: #323232;
+				font-size: 1.4rem;
+				line-height: 1.8rem;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+			/*删除按钮*/
+			
+			.partDomList .icon-right,
+			.partDomList .icon-delete {
+				color: #AEAEAE!important;
+				padding-left: 10px;
+				margin-right: 12px!important;
+			}
+			
+			.close {
+				padding: 0px!important;
+			}
+			/*配件列表栅格样式*/
+			
+			.mui-grid-view.mui-grid-9 {
+				border: 0;
+				background: #fff;
+			}
+			
+			.mui-grid-view.mui-grid-9 .mui-table-view-cell {
+				border: 0;
+			}
+			
+			.mui-grid-view.mui-grid-9 .mui-media {
+				color: #323223;
+			}
+			
+			.partDomUl .mui-table-view-cell:after {
+				height: 0px;
+			}
+			
+			.mui-grid-view.mui-grid-9 .mui-table-view-cell {
+				padding-left: 15px!important;
+			}
+			
+			.mui-grid-view.mui-grid-9 .mui-table-view-cell {
+				padding: 0px;
+			}
+			
+			.mui-table-view-cell {
+				padding: 0px;
+			}
+			
+			.mui-table-view-cell.mui-active {
+				/*background-color: transparent;*/
+			}
+			
+			.mui-col-xs-4.mui-col-sm-4 {
+				margin-left: 16px;
+			}
+			
+			.data-group .data-row .body {
+				min-height: 40px;
+				padding: 9px 20px 10px 0;
+			}
+			
+			.data-group .data-row .bodyFlex {
+				display: flex;
+				align-items: center;
+			}
+			
+			.bodySend {
+				padding-right: 12px!important;
+			}
+			
+			.bodySend>span {
+				display: inline-block;
+				float: left;
+				margin-right: 8px!important;
+				line-height: 1.8rem;
+				/*CSS3弹性盒子*/
+				display: -ms-flex;
+				display: -webkit-flex;
+				display: flex;
+				-webkit-flex-direction: row;
+				-ms-flex-direction: row;
+				flex-direction: row;
+				-webkit-flex-wrap: wrap;
+				flex-wrap: wrap;
+			}
+			
+			.width50 {
+				width: 50%;
+			}
+			
+			.width30 {
+				width: 30%;
+			}
+			
+			.width20 {
+				width: 20%;
+				text-align: center;
+			}
+			
+			.partDomUl li {
+				padding-left: 16px!important;
+			}
+			
+			.MaterialName {
+				color: #000000!important;
+			}
+			
+			.Spec,
+			.DwgNo {
+				color: #AAAAAA!important;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="ReplaceMentParts">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">领料单</a>
+		</header>
+		<div class="mui-scroll-wrapper" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<div class="mui-content">
+				<ul class="data-group">
+					<li class="mui-table-view-cell data-row must">
+						<label>故障工单</label>
+						<p class="opt md-icon font-15" ng-click="tap('faultSelect')">
+							<span class="icon-right"></span>
+						</p>
+						<div class="body bodyFlex" ng-click="tap('faultSelect')">
+							<span class="placeholder" ng-show="!faultInfo.content.ID">请选择故障工单</span>
+							<span ng-show="faultInfo.content.ID>0" ng-bind="faultInfo.content.IsHasAudio | formatDeviceFaultInfo:faultInfo.content.AudioLength:faultInfo.content.Description"></span>
+						</div>
+					</li>
+					<li class="mui-table-view-cell data-row must">
+						<label>领料日期</label>
+						<p class="opt md-icon font-15" ng-click="chooseDate()">
+							<span class="icon-right"></span>
+						</p>
+						<div class="body bodyFlex" ng-click="chooseDate()">
+							<span class="placeholder" ng-if="!pickDate">请选择领料日期</span>
+							<span ng-if="pickDate" ng-bind="pickDate"></span>
+						</div>
+					</li>
+				</ul>
+				<ul class="partDomUl data-group">
+					<li class="data-row partDomHead" ng-show="pickListData.length!=0">
+						<div class="body bodyFlex bodyHead mui-grid-view mui-row">
+							<div class="mui-media mui-col-xs-6 width50 mui-col-sm-6">物料名称</div>
+							<div class="mui-media mui-col-xs-2 width20 mui-col-sm-2">数量</div>
+							<div class="mui-media mui-col-xs-4 width30 mui-col-sm-4">备注</div>
+						</div>
+					</li>
+					<li class="data-row mui-table-view-cell partDomList" ng-repeat="(index,item) in pickListData" ng-if="item.IsDelete==0">
+						<div class="body bodyFlex mui-grid-view  mui-row" ng-click="pickItem(index)">
+							<div class="mui-media mui-col-xs-6 mui-col-sm-6 width50  remarkscontent">
+								<span ng-bind="item.MaterialName" class="mui-ellipsis-2 MaterialName font-13" ng-if="item.MaterialName"></span>
+								<span ng-bind="'型号'+ ':' + ' ' + item.Spec" class="mui-ellipsis-2 Spec font-13" ng-if="item.Spec"></span>
+								<span ng-bind="'图号'+ ':' + ' ' + item.DwgNo" class="mui-ellipsis-2 DwgNo font-13" ng-if="item.DwgNo"></span>
+							</div>
+							<div class="mui-media mui-col-xs-2 mui-col-sm-2 width20 mui-ellipsis-2 remarkscontent font-13" style="padding: 0 8px;" ng-bind="item.Nums"></div>
+							<div class="mui-media mui-col-xs-4 mui-col-sm-4 width30 mui-ellipsis-2 remarkscontent font-13" style="padding-right: 8px;" ng-bind="item.Remark"></div>
+						</div>
+						<p class="opt md-icon font-15 close">
+							<span class="icon-delete partDomIcon" ng-click="delpartListItem(index)"></span>
+						</p>
+					</li>
+				</ul>
+				<ul class="data-group" ng-style="{'margin-top':pickListData.length==0?'8px':'1px'}">
+					<li class="mui-table-view-cell data-row" ng-click="tap('pickEdit')">
+						<div class="newadd">新增物料</div>
+					</li>
+				</ul>
+				<ul class="data-group" ng-if="id==0">
+					<li class="mui-table-view-cell data-row">
+						<label>抄送给</label>
+						<p class="opt md-icon font-15" ng-click="tap('selectUser')">
+							<span class="icon-right"></span>
+						</p>
+						<div class="body bodySend" ng-click="tap('selectUser')">
+							<span class="placeholder" ng-show="sendUsers.length==0">请选择抄送人</span>
+							<span ng-show="sendUsers.length>0" ng-repeat="user in sendUsers" ng-bind="$index==0?user.ViewName:'，'+user.ViewName"></span>
+						</div>
+					</li>
+				</ul>
+				<div class="mui-content-padded" ng-click="save()">
+					<span class="mui-btn mui-btn-block">保存领料单</span>
+				</div>
+			</div>
+		</div>
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../message/transMessage.js"></script>
+		<script>
+			app.controller("ReplaceMentParts", ["$scope", "ApiService", "DataService", "CacheService", "UtilsService", "DatePickerService", "$Modal", "$timeout", "ChatUserService", function($scope, ApiService, DataService, CacheService, UtilsService, DatePickerService, $Modal, $timeout, ChatUserService) {
+				$scope.process = {
+					SaveState: 0, //0未保存 1保存成功 2保存中 3保存失败
+					ProcessList: [{
+						Text: "保存领料单",
+						State: 0,
+						RetryMethod: $scope.save
+					}, {
+						Text: "通知抄送人",
+						State: 0,
+						RetryMethod: sendMsg
+					}]
+				};
+				var curUser = CacheService.get("user");
+				$scope.oneSave = true; //保存一次
+				//领料列表
+				$scope.pickListData = [];
+				//故障
+				$scope.faultInfo = {
+					//故障设备
+					content: {}
+				}
+				//领料日期
+				$scope.pickDate = "";
+				//抄送人
+				$scope.sendUsers = [];
+				UtilsService.getDefaultRecipient().then(function(res) {
+					if(res){
+						$scope.sendUsers.push(res);
+					}
+				});
+				var sendUserIDs = [];
+				//设备id
+				$scope.id = 0;
+				//选择维修内容
+				$scope.isLoad = true;
+				//详情id
+				$scope.id = query("id") || 0;
+				//跳转出来的数据（修改）
+				//根据id获取详情
+				function getIdDetailsPick() {
+					var url = ApiService.Api50 + "/api/v1/MatWorkOrder/GetMatReceiveMaterialsInfo?receiveMaterialsId=" + $scope.id;
+					DataService.get(url).then(function(res) {
+						$scope.isLoad = true;
+						$scope.pickDetails = res;
+						pickDetails();
+
+					}, function(error) {
+						$scope.pickDetails = [];
+					})
+				}
+				if($scope.id > 0) {
+					getIdDetailsPick();
+				}
+
+				function pickDetails() {
+					var pickDetails = $scope.pickDetails;
+					var pickSendUsers = [];
+					if(pickDetails) {
+						pickDetails.Users.forEach(function(user) {
+							pickSendUsers.push({
+								UserID: user.ID,
+								ViewName: user.Name,
+								ULogoIsExist: user.ULogoIsExist,
+								CompID: user.CompID
+							});
+						});
+						sendUserIDs = pickDetails.Users.map(function(user) {
+							return user.ID;
+						});
+						$scope.id = pickDetails.ID;
+						$scope.faultInfo.content.ID = pickDetails.MatWordOrderFailureID;
+						$scope.faultInfo.content.IsHasAudio = pickDetails.IsHasAudio;
+						$scope.faultInfo.content.AudioLength = pickDetails.AudioLength;
+						$scope.faultInfo.content.Description = pickDetails.Description;
+						$scope.pickDate = pickDetails.ReceiveDate;
+						$scope.pickListData = pickDetails.Details;
+						$scope.sendUsers = pickSendUsers;
+					}
+				}
+
+				$scope.tap = function(key) {
+					switch(key) {
+						case 'faultSelect':
+							UtilsService.openWindow({
+								needLogin: true,
+								id: "mat-fault-list.html",
+								url: "mat-fault-list.html?action=select&must=true&prodid=0",
+								extras: {
+									selectObj: $scope.faultInfo.content,
+									callback: "faultSelectCallback"
+								}
+							});
+							break;
+							//查看故障详情
+						case 'selectUser':
+							UtilsService.openWindow({
+								needLogin: true,
+								id: "contact-select.html",
+								url: "../common/contact-select.html?action=select&multiselect=true&type=org",
+								extras: {
+									selectObj: $scope.sendUsers,
+									callback: "selectUserCallback"
+								}
+							});
+							break;
+							//选择物料
+						case 'pickEdit':
+							UtilsService.openWindow({
+								needLogin: true,
+								id: "pick-edit.html",
+								url: "pick-edit.html"
+							});
+							break;
+						default:
+							break;
+					}
+				}
+
+				$scope.pickItem = function(index) {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: "pick-edit.html",
+						url: "pick-edit.html",
+						extras: {
+							newPick: $scope.pickListData[index],
+							newPickIndex: index
+						}
+					});
+				}
+				//新增领料 删除
+				$scope.delpartListItem = function(index) {
+					if($scope.pickListData[index].ID > 0) {
+						$scope.pickListData[index].IsDelete = 1;
+					} else {
+						$scope.pickListData.splice(index, 1);
+					}
+				}
+				//保存
+				$scope.save = function() {
+					if(!$scope.oneSave) return;
+					var url = ApiService.Api50 + "/api/v1/MatWorkOrder/SaveReceiveMaterials";
+					var objData = {
+						"ID": $scope.id,
+						"MatWordOrderFailureID": $scope.faultInfo.content.ID,
+						"ReceiveDate": $scope.pickDate + " 00:00:00",
+						"SendUsers": $scope.sendUsers.map(function(item) {
+							return item.UserID;
+						}).join('/'),
+						"Details": $scope.pickListData
+					}
+					if(!$scope.faultInfo.content.ID) {
+						mui.toast("请选择故障工单！", {
+							duration: 1300,
+							type: 'div'
+						});
+						return false;
+					} else if($scope.pickDate == '') {
+						mui.toast("请选择领料日期！", {
+							duration: 1300,
+							type: 'div'
+						});
+						return false;
+					} else if($scope.pickListData.length == 0) {
+						mui.toast("请新增物料！", {
+							duration: 1300,
+							type: 'div'
+						});
+						return false;
+					}
+					var pickListDel = 0;
+					for(var i = 0; i < $scope.pickListData.length; i++) {
+						if($scope.pickListData[i].IsDelete == 1) {
+							pickListDel += 1;
+						}
+						if($scope.pickListData.length == pickListDel) {
+							mui.toast("请新增物料！", {
+								duration: 1300,
+								type: 'div'
+							});
+							return false;
+						}
+					}
+
+					UtilsService.submitModal($scope.process, function() {
+						mui.back();
+					}, function() {
+						$scope.process.SaveState = 0;
+						$scope.process.ProcessList.forEach(function(item) {
+							item.State = 0;
+						})
+						$scope.oneSave = true;
+						var url = ApiService.Api50 + "/api/v1/MatWorkOrder/GetMatReceiveMaterialsInfo?receiveMaterialsId=" + $scope.id;
+						DataService.get(url).then(function(resData) {
+							$scope.id = resData.ID;
+							$scope.pickListData = resData.Details;
+						});
+					}, function() {
+						$scope.oneSave = true;
+						$scope.process.ProcessList.forEach(function(item) {
+							item.State = 0;
+						})
+						postData.ImgAttach = [];
+						$scope.imageList.forEach(function(item) {
+							item.State = 0;
+						})
+						postData.VideoAttach = [];
+						$scope.videoList.forEach(function(item) {
+							item.State = 0;
+						})
+					});
+					if($scope.oneSave) {
+						document.activeElement.blur();
+						$scope.oneSave = false; //防止重复点击
+
+						$scope.process.ProcessList[0].State = 1;
+						$scope.process.SaveState = 2;
+						DataService.post(url, objData).then(function(res) {
+							$scope.process.ProcessList[0].State = 2;
+							//rpc
+							RpcClient.invoke("pick-all.html", "RPC_PickMainDetails", {
+								"state": "main"
+							});
+							RpcClient.invoke("pick-my.html", "RPC_PickMainDetails", {
+								"state": "main"
+							});
+							RpcClient.invoke("pick-at.html", "RPC_PickMainDetails", {
+								"state": "main"
+							});
+							RpcClient.invoke("pick-detailsList.html", "RPC_PickMainDetails", {
+								"state": "main",
+								"id": $scope.id
+							});
+							//发送消息
+							$scope.id = res;
+							sendMsg(objData);
+							$timeout(function() {
+								$scope.process.SaveState = 1;
+							}, 800);
+						}, function(res) {
+							setTimeout(function() {
+								$scope.process.ProcessList[0].State = 3;
+								$scope.process.ProcessList[1].State = 3;
+							})
+						})
+					}
+				};
+				//选择日期
+				$scope.chooseDate = function() {
+					DatePickerService.pickDate({
+						selected: $scope.pickDate
+					}).then(function(res) {
+						$scope.pickDate = res;
+					});
+				};
+
+				//给抄送人发送消息
+				function sendMsg(objData) {
+					if($scope.process.ProcessList[0].State != 2) {
+						return;
+					}
+					$scope.process.ProcessList[1].State = 2;
+					$scope.sendUsers.filter(function(user) {
+						return sendUserIDs.indexOf(user.UserID) < 0
+					}).forEach(function(user) {
+						ChatUserService.send({
+							chatId: user.UserID,
+							chatName: user.ViewName,
+							chatCompId: user.CompID,
+							hasLogo: curUser.ULogoIsExist,
+							chatLogo: user.ULogoIsExist,
+							type: 7,
+							content: {
+								eventName: "repair-req",
+								logo: ApiService.Down + "/chat/repair-req.png",
+								title: "领料单",
+								desc: '',
+								params: [$scope.id]
+							}
+						});
+					})
+				}
+				//rpc 新增领料的rpc
+				RpcServer.expose("RPC_PickNewItem", function(params) {
+					if(params.state == "main") {
+						if(params.index === '') {
+							$scope.pickListData.push(params.partData);
+						} else {
+							$scope.pickListData.splice(params.index, 1, params.partData);
+						}
+						$scope.$apply();
+					}
+				});
+			}]);
+
+			//故障选择回调
+			function faultSelectCallback(obj) {
+				var appElement = document.querySelector('[ng-controller=ReplaceMentParts]');
+				var $scope = angular.element(appElement).scope();
+				$scope.faultInfo.content = obj;
+				$scope.$apply();
+			};
+
+			//选择抄送人员回调
+			function selectUserCallback(obj) {
+				var appElement = document.querySelector('[ng-controller=ReplaceMentParts]');
+				var $scope = angular.element(appElement).scope();
+				$scope.sendUsers = angular.copy(obj);
+				$scope.$apply();
+			}
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

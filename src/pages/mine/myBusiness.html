@@ -1,0 +1,111 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<link href="../../css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	<style>
+		#segmentedControl {
+			left: -10px;
+		}
+
+		.mui-segmented-control .mui-control-item {
+			line-height: 27px;
+			width: 80px;
+		}
+
+		.menu-add {
+			top: -29px;
+		}
+	</style>
+</head>
+
+<body ng-controller="bodyCtl">
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left" ng-bind="UserInfo.CompID==0?'资源圈':''"></a>
+		<div id="segmentedControl" class="mui-segmented-control" ng-if="UserInfo.CompID>0">
+			<a class="mui-control-item mui-active" id="mine-fault">
+				我的报修
+			</a>
+			<a class="mui-control-item" id="mine-demand-list">
+				我的外协
+			</a>
+		</div>
+	</header>
+	<script src="../../js/mui.min.js"></script>
+	<script src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script src="../../js/utils.js"></script>
+	<script type="text/javascript">
+		app.controller("bodyCtl", ["$scope", "CacheService", "UtilsService", "$filter", "RPCObserver", "ApiService",
+			"DataService",
+			function ($scope, CacheService, UtilsService, $filter, RPCObserver, ApiService, DataService) {
+
+				var user = CacheService.get('user');
+				$scope.UserInfo = user;
+				$scope.canPublish = false;
+				$scope.activeTab = '';
+				var subpage_style = {
+					top: '45px',
+					bottom: '0px'
+				};
+				var subViews = [{
+						url: "../outsourcing/demand-list.html?isTitle=false",
+						id: "mine-demand-list",
+
+					},
+					{
+						url: "fault-list.html?isTitle=false",
+						id: "mine-fault",
+
+					}
+				];
+
+				var curView = plus.webview.currentWebview();
+
+
+				$scope.active = function (id) {
+					if ($scope.activeTab == id)
+						return;
+					$scope.activeTab = id;
+
+					curView.children().forEach(function (item) {
+						if (item.id == id) {
+							item.show();
+						} else {
+							item.hide();
+						}
+					});
+				};
+
+
+				for (var i = 0, len = subViews.length; i < len; i++) {
+					if (!plus.webview.getWebviewById(subViews[i].id)) {
+						var sub = plus.webview.create(subViews[i].url, subViews[i].id, subpage_style);
+						sub.hide();
+
+						curView.append(sub);
+					}
+				}
+				setTimeout(function () {
+					$scope.active("mine-fault");
+					mui("#segmentedControl").on("tap", ".mui-control-item", function () {
+						$scope.active(this.id);
+					})
+				}, 200);
+			}
+		]);
+
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+		});
+	</script>
+</body>
+
+</html>

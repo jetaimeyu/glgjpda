@@ -1,0 +1,198 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../css/common.css" rel="stylesheet" />
+		<link href="../../icon-font/iconfont.css" rel="stylesheet" />
+		<style>
+			.pl10 {
+				padding-left: 10px;
+			}
+			
+			.userLogo {
+				height: 50px;
+				width: 50px;
+				border-radius: 50%;
+			}
+			
+			.compLogo {
+				width: 48px;
+				height: 48px;
+			}
+			
+			.bkCover {
+				background-size: cover;
+			}
+			
+			.prodLogo {
+				width: 80px;
+				height: 80px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="filterCtl">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">filter</h1>
+		</header>
+
+		<div class="mui-content">
+			<ul class="data-group">
+				<p class="data-group-tip">人员头像</p>
+				<li class="data-row">
+					<label>结合判断</label>
+					<div class="body">
+						<md-user-logo ng-model="filterData.user" data-width="50" data-height="50"></md-user-logo>
+					</div>
+				</li>
+			</ul>
+
+			<ul class="data-group">
+				<p class="data-group-tip">企业Logo</p>
+				<li class="data-row ">
+					<label>Logo</label>
+					<div class="body">
+						<md-comp-logo data-compid="filterData.CompID" data-width="48" data-height="48"></md-comp-logo>
+					</div>
+				</li>
+			</ul>
+
+			<ul class="data-group">
+				<p class="data-group-tip">产品Logo</p>
+				<li class="data-row ">
+					<label>Logo</label>
+					<div class="body">
+						<md-prod-logo ng-model="filterData.prod" data-width="80" data-height="80"></md-prod-logo>
+					</div>
+				</li> 
+			</ul>
+
+			<ul class="data-group">
+				<p class="data-group-tip">设备Logo</p>
+
+				<li class="data-row ">
+					<label>有Logo</label>
+					<div class="body">
+						<md-equ-logo data-path="filterData.AttachFilePath" data-width="80" data-height="80"></md-equ-logo>
+					</div>
+				</li>
+				<li class="data-row ">
+					<label>没有Logo</label>
+					<div class="body">
+						<md-equ-logo data-path="filterData.AttachFilePath2" data-width="80" data-height="80"></md-equ-logo>
+					</div>
+				</li>
+			</ul>
+
+			<ul class="data-group">
+				<p class="data-group-tip">权限判断</p>
+
+				<li class="data-row ">
+					<label>过滤器模式</label>
+					<div class="body">
+						<span ng-if="['Q0'] | hasAuth">有</span>
+						<span ng-if="!(['Q0'] | hasAuth)">无</span>
+					</div>
+				</li>
+				<li class="data-row ">
+					<label>filter模式</label>
+					<div class="body">
+						<span ng-if="filterData.isAuth">有</span>
+						<span ng-if="!filterData.isAuth">无</span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<p class="data-group-tip">地址过滤</p>
+				<li class="data-row ">
+					<label>地址</label>
+					<div class="body" ng-bind="filterData.addr.Province | locationfilter:filterData.addr.City:filterData.addr.District:filterData.addr.Address:filterData.addr.Street">
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<p class="data-group-tip">设备地址</p>
+				<li class="data-row ">
+					<label>地址</label>
+					<div class="body" ng-bind="filterData.equAddr | getEquAddress">
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<p class="data-group-tip">显示名称</p>
+				<li class="data-row ">
+					<label>过滤器模式</label>
+					<div class="body" ng-bind="filterData.userInfo.UserName | getViewName:filterData.userInfo.RealName:filterData.userInfo.Mdt">
+					</div>
+				</li>
+				<li class="data-row ">
+					<label>filter模式</label>
+					<div class="body" ng-bind="filterData.ShowName">
+					</div>
+				</li>
+			</ul>
+		</div>
+
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/angular.min.js"></script>
+		<script src="../../js/common.js"></script>
+		<script type="text/javascript">
+			mui.init();
+
+			app.controller("filterCtl", ["$scope", "$filter", function($scope, $filter) {
+				console.log("filter................")
+				$scope.filterData = {
+					user: {
+						UserID: 561,
+						ViewName: "宋洪刚",
+						ULogoIsExist: false,
+					},
+					userInfo:{
+						
+						UserName:"songhonggang",
+						RealName:"宋洪刚",
+						Mdt:"shg@10000"
+					},
+					ShowName:"",
+					CompID: 11,
+					prod: {
+						ProdID: "160814000006",
+						LogoIsExist: true,
+						IsNew: 1
+					},
+					AttachFilePath:"Bill\\2018\\4\\20\\12e0ed0b4bee4f65a480b7b7dad27a0e.jpg",
+					equAddr:{
+						Province: "山东省",
+						City: "济南市",
+						District: "历下区",
+						Address: "万科金域中心",
+						Street: "8楼",
+						Station: "32号工位"
+					},
+					isAuth: false,
+					addr: {
+						Province: "山东省",
+						City: "济南市",
+						District: "历下区",
+						Address: "万科金域中心",
+						Street: "8楼"
+					}
+				};
+
+
+				$scope.filterData.isAuth = $filter("hasAuth")(['Q0']);
+				$scope.filterData.ShowName = $filter("getViewName")($scope.filterData.userInfo.UserName,$scope.filterData.userInfo.RealName,$scope.filterData.userInfo.Mdt);
+
+			}]);
+
+			//初始化angular
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+		</script>
+	</body>
+
+</html>

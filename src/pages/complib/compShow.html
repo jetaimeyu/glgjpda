@@ -1,0 +1,211 @@
+<!--企业秀 scz-->
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>企业秀</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link href="../../css/common.css" rel="stylesheet" />
+		<style type="text/css">
+			.mui-content {
+				background-color: #FFFFFF;
+				word-break: break-all;
+			}
+			
+			.img-container {
+				min-height: 170px;
+				overflow: hidden;
+				background-size: cover;
+			}
+			
+			.info-comp {
+				background-color: #fff;
+				margin: 16px;
+				position: relative;
+				margin-top: -40px;
+				padding-top: 10px;
+				border-radius: 5px;
+				width: calc(100% - 32px);
+			}
+			
+			.info-intro {
+				position: relative;
+				text-indent: 2rem;
+				color: #929292;
+				font-size: 1.2rem;
+				text-align: left;
+				padding: 33px 32px 52px 35px;
+				display: block;
+			}
+			
+			.info-intro:after {
+				position: absolute;
+				left: 0;
+				right: 0;
+				top: 0;
+				height: 1px;
+				content: '';
+				-webkit-transform: scaleY(0.5);
+				transform: scaleY(0.5);
+				background-color: #ECECEC;
+			}
+			
+			.info-mdt {
+				color: #777777;
+				line-height: 1.3rem;
+				margin-bottom: 28px;
+				margin-top: 15px;
+			}
+			
+			.info-logo {
+				text-align: center;
+				width: 65px;
+				height: 65px;
+				border-radius: 100%;
+				margin: 20px auto;
+				overflow: hidden;
+			}
+			
+			.info-title span {
+				color: #323232;
+				line-height: 1.5rem;
+			}
+			
+			.avatar {
+				border: #3296FA solid 1px;
+				margin: 0 auto;
+				height: 65px;
+				width: 65px;
+				border-radius: 100%;
+				float: left;
+				background-size: cover;
+			}
+			
+			.mui-scroll-wrapper {
+				top: 0px;
+				bottom: 0px;
+				padding-bottom: 15px;
+				background: #EFEFEF;
+				z-index: 200;
+				position: absolute;
+				overflow: hidden;
+				-webkit-overflow-scrolling: touch;
+				overflow: hidden;
+			}
+			
+			.mui-scroll-wrapper .mui-scroll {
+				word-break: break-all;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="compIntr">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">企业秀</a>
+		</header>
+		<div class="mui-scroll-wrapper" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<div class="mui-scroll">
+				<div class="img-container" ng-style="{'background-image':'url('+ Bannersrc +')','background-position':PicExists?0:'34%'}"></div>
+				<div class="info-comp mui-text-center">
+					<div class="info-logo">
+						<div class="avatar" ng-style="{'background-image':'url('+ (CompID|getCompLogo:100:100) +')'}"></div>
+					</div>
+					<div class="info-title">
+						<span class="font-15" ng-bind="CompName"></span>
+						<p class="font-13 info-mdt" ng-bind="'迈迪通号：'+Mdt"></p>
+					</div>
+
+					<span class="info-intro">
+				<div style="position: absolute;right: 16px;top: -18px;z-index: 99;">
+				<img ng-click="tap('res')" src="../../images/add-friend.png" width="40" style="margin-right: 10px;float: left;"/ ng-if="!ResId">
+				<img ng-click="tap('msg')" src="../../images/send-msg.png" width="40" style="float: left;"/>
+				</div><span ng-bind="BriefOrMainProduct"></span></span>
+					<div style="padding-bottom: 30px;color: #cecece;" ng-click="tap('back')">
+						<span class="icon-up"></span>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller('compIntr', ["$scope", "ApiService", "DataService", "UtilsService", "Loading", function($scope, ApiService, DataService, UtilsService, Loading) {
+				if(query('compid')) {
+					Loading.show();
+					init();
+				} else {
+					var ws = plus.webview.currentWebview();
+					$scope.CompName = ws.CompName;
+					$scope.Mdt = ws.Mdt;
+					$scope.BriefOrMainProduct = ws.BriefOrMainProduct;
+					$scope.CompID = ws.CompID;
+					$scope.ResId = ws.ResId;
+					$scope.PicExists = false;
+				}
+
+				$scope.tap = function(key) {
+					var url = {
+						back: 'index.html?compid=' + $scope.CompID,
+						//加为资源
+						res: 'addRes.html?compid=' + $scope.CompID,
+						//咨询
+						msg: 'index.html?compid=' + $scope.CompID + '&tabidx=3'
+					};
+					UtilsService.openWindow({
+						needLogin: true,
+						id: url[key].substring(url[key].lastIndexOf('/') + 1),
+						url: url[key]
+					});
+				};
+
+				document.querySelector(".mui-scroll-wrapper").addEventListener("drag", function() {
+					var _scroll = mui(".mui-scroll-wrapper").scroll();
+
+					if(_scroll.y <= _scroll.maxScrollY && event.detail.deltaY < -180) {
+						$scope.tap('back');
+					}
+				});
+
+				//初始化，获取企业秀
+				function init() {
+					var url = ApiService.Api50 + "/api/v1/Comp/GetCompShow?compId=" + query('compId');
+					DataService.get(url).then(function(res) {
+						$scope.isLoad = true;
+						$scope.CompID = res.ID;
+						$scope.ColorSetting = res.ColorSetting;
+						$scope.Bannersrc = $scope.ColorSetting == 0 ? ApiService.Api50 + "/api/v1/Comp/GetCoShowConfigPic?compId=" + $scope.CompID + "&w=0&h=200" : ApiService.Img + "/Templet/Comp/Default/" + $scope.CompID + "/index_banner_0x170.jpg";
+						$scope.CompName = res.CompName;
+						$scope.Mdt = res.Mdt;
+						$scope.BriefOrMainProduct = res.BriefOrMainProduct;
+						$scope.ResId = res.ResId;
+						$scope.PicExists = res.PicExists;
+						Loading.hide();
+					})
+				}
+				RpcServer.expose("RPC_CompShowReload", function() {
+					init();
+				})
+			}]);
+
+			mui.init();
+
+			mui('.mui-scroll-wrapper').scroll({
+				deceleration: 0.0005, //flick 减速系数，系数越大，滚动速度越慢，滚动距离越小，默认值0.0006
+				bounce: true //是否启用回弹
+			});
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

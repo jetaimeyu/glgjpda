@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	</head>
+
+	<body ng-controller="uListCtrl">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">切换账号</a>
+		</header>
+		<div class="mui-content" style="position: fixed;top: -8px;left: 0;right: 0;bottom: 0;overflow: auto;">
+			<md-switch-user userid={{user.UserID}} users="userList" callback="switchSuccess"></md-switch-user>
+		</div>
+		<script src="../../js/angular.js"></script>
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/common.js"></script>
+		<script src="../../js/rpc.js"></script>
+		<script src="../../js/utils.js"></script>
+		<script>
+			app.controller("uListCtrl", ["$scope", "Loading", "CacheService", "AuthService", "$Modal",
+				function($scope, Loading, CacheService, AuthService, $Modal) {
+					//Loading.show();
+					AuthService.getAuth().then(function(user) {
+						//当前登录人信息
+						$scope.user = user;
+						$scope.userList = CacheService.get("userList");
+						//Loading.hide();
+					});
+					RpcServer.expose("RPC_LoginSuccess", function() {
+						AuthService.getAuth().then(function(user) {
+							//当前登录人信息
+							$scope.user = user;
+							$scope.userList = CacheService.get("userList");
+							$scope.$broadcast("getCurUserID", $scope.user.UserID);
+						});
+					})
+
+					$scope.switchSuccess = function(user) {
+						CacheService.remove("user");
+						AuthService.getAuth(user).then(function(user) {
+							//当前登录人信息
+							$scope.user = user;
+							$scope.userList = CacheService.get("userList");
+						}, function() {
+							CacheService.set("user", $scope.user, true);
+							$scope.$broadcast("getCurUserID", $scope.user.UserID);
+						});
+
+						//						Loading.show();
+						//						CacheService.set("user", user, true);
+						//						AuthService.updateLoginDate().then(function(res) {
+						//							//重新注册信鸽推送
+						//							//plus.Push.registerPush(user.UserID, user.UserName);
+						//							RpcClient.invoke("message.html", "RPC_Login", user);
+						//							mui.toast("切换账号成功！");
+						//							Loading.hide();
+						//						}, function(error) {
+						//							mui.toast("切换账号失败：" + error);
+						//							Loading.hide();
+						//						});
+					}
+
+					var mui_back = mui.back;
+					mui.back = function() {
+						if($Modal.modals().length > 0) {
+							$Modal.close();
+							CacheService.set("user", $scope.user, true);
+							$scope.$broadcast("getCurUserID", $scope.user.UserID);
+							return;
+						}
+						mui_back()
+					}
+				}
+			])
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+				plus.webview.currentWebview().setStyle({
+					'popGesture': 'none'
+				});
+			});
+		</script>
+	</body>
+
+</html>

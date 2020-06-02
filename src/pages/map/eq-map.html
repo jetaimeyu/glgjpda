@@ -1,0 +1,90 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="../../css/mui.loading.css" />
+		<style type="text/css">
+			#slider {
+				padding-top: 0px!important;
+				margin-top: 44px;
+				background: #ffffff;
+				height: 35px;
+			}
+			
+			#slider2 {
+				padding-top: 0px!important;
+				margin-top: 80px;
+				background: #ffffff;
+				height: 35px;
+			}
+			
+			.mui-slider .mui-scroll-wrapper {
+				padding-right: 15px!important;
+			}
+			
+			.mui-slider .mui-segmented-control.mui-scroll-wrapper .mui-scroll {
+				height: 35px;
+				line-height: 35px;
+			}
+			
+			.mui-slider .mui-segmented-control.mui-scroll-wrapper .mui-scroll a {
+				margin-left: 15px;
+				font-size: 12px;
+				height: 35px;
+				display: table-cell;
+				line-height: 35px;
+				padding: 0px 0px 0px 15px;
+			}
+			
+			.mui-slider .mui-segmented-control.mui-scroll-wrapper .mui-scroll a i.icon-down {
+				font-size: 8px;
+				margin-left: 3px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="bodyCtl">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">装备地图</a>
+			<a class="right-menu-words dev-list"  ng-click="event.chooseView()" ng-bind="domData.activeMap?'列表':'地图'"></a>
+		</header>
+		<div id="slider" class="mui-slider mui-content mui-fullscreen" ng-show="isLoad">
+			<div id="sliderSegmentedControl" class="mui-scroll-wrapper  mui-slider-indicator mui-segmented-control mui-segmented-control-inverted" style="background: #fff; ">
+				<div class="mui-scroll " top="84">
+					<a ng-click="event.chooseLocation()"><span ng-bind="domData.menu.location"></span><i class="icon icon-down"></i></a>
+					<a ng-click="event.chooseClass()"><span ng-bind="domData.selectType?domData.selectType.name:'选择分类'"></span><i class="icon icon-down"></i></a>
+				</div>
+				<div class="md-tab-block-line"></div>
+			</div>
+		</div>
+		<div id="slider2" class="mui-slider  mui-content mui-fullscreen" ng-show="isLoad">
+			<div id="sliderSegmentedControl" class="mui-scroll-wrapper  mui-slider-indicator mui-segmented-control mui-segmented-control-inverted" style="background: #fff; ">
+				<div class="mui-scroll " top="84">
+					<a ng-click="event.chooseType(item.value)" ng-repeat="item in domData.states"> <i ng-style="{color:'#'+domData.stateColor[item.value]}" class="icon-roundcheckfill  left-10 ng-scope font-15" ng-if="domData.active== item.value"></i>
+						<i class="icon-round color-gray font-15 ng-hide" ng-show="domData.active != item.value"></i><span ng-bind="item.label"></span>
+						<span ng-bind="domData.data['state'+item.value]?'('+domData.data['state'+item.value].length+')':''" ng-if="domData.data['state'+item.value].length>0"></span>
+					</a>
+				</div>
+				<div class="md-tab-block-line"></div>
+			</div>
+		</div>
+
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/json.js"></script>
+		<script type="text/javascript" src="../../js/jquery.min.js"></script>
+		<script type="text/javascript" src="../../js/mPicker.min.js"></script>
+		<script type="text/javascript" src="../../js/mui.loading.js"></script>
+		<script type="text/javascript" src="eq-map.js"></script>
+
+	</body>
+
+</html>

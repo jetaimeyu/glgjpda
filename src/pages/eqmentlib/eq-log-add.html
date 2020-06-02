@@ -1,0 +1,139 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link href="../../css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	<link rel="stylesheet" href="../../css/mui.pullrefresh.css" />
+	<link rel="stylesheet" href="../../css/mui.loading.css" />
+	<style>
+		.mui-switch {
+				width: 35px;
+				height: 20px;
+			}
+			
+			.mui-switch .mui-switch-handle {
+				width: 18px;
+				height: 18px;
+			}
+			
+			.mui-switch-blue.mui-active {
+				border: 2px solid #3296fa;
+				background-color: #3296fa;
+			}
+		</style>
+</head>
+
+<body ng-controller="bodyCtl">
+
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left">新增操作日志</a>
+	</header>
+	<div class="mui-content" style='display:none;' ng-class="{'mui-block':isLoad}">
+		<ul class="data-group" ng-show="info.State!=1">
+			<li class="data-row" ng-click="chooseDemand()">
+				<label>外协任务</label>
+				<p class="opt color-blue">选择</p>
+				<div class="body" ng-class="{'placeholder':!demand.DemandName}" ng-bind="demand.DemandName?demand.DemandName:'请选择外协任务'">
+				</div>
+			</li>
+			<li class="data-row" ng-show="OverCount>0">
+				<label>外协进度</label>
+				<div class="body" ng-bind="ProcessProgress">
+				</div>
+			</li>
+			<li class="data-row" ng-show="OverCount>0">
+				<label>剩余数量</label>
+				<div class="body" ng-bind="OverCount">
+				</div>
+			</li>
+			<li class="data-row" ng-show="OverCount>0">
+				<label>已完成</label>
+				<div class="body">
+					<input type="text" id="finish_count"  onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" 
+					onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'0')}else{this.value=this.value.replace(/\D/g,'')}"  ng-model="FinishQuantity" />
+				</div>
+			</li>
+		</ul>
+		<ul class="data-group">
+
+			<li class="data-row">
+				<label>状态</label>
+				<div class="body" ng-bind="domData.title">
+				</div>
+			</li>
+			<li class="data-row" ng-show="info.State!=1">
+				<label>是否结束</label>
+				<div class="body">
+
+					<p style="display:inline-block;float:left;margin-right:15px;font-size:16px;padding-right:10px;" ng-click="event.choose(2)">
+						<i class="icon-roundcheckfill color-blue" ng-if="info.State==2"></i>
+						<i class="icon-round color-gray" ng-if="info.State!=2"></i>
+						<span class="name">否</span>
+					</p>
+
+					<p style="display:inline-block;float:left;font-size:16px;padding-right:10px;" ng-click="event.choose(3)">
+						<i class="icon-roundcheckfill color-blue" ng-if="info.State==3"></i>
+						<i class="icon-round color-gray" ng-if="info.State!=3"></i>
+						<span class="name">是</span>
+					</p>
+
+				</div>
+			</li>
+			<li class="data-row" ng-if="audio.FileSize&&audio.FileSize!=0">
+				<label>语音描述</label>
+				<div class="body">
+					<md-audio audio="audio"></md-audio>
+				</div>
+			</li>
+			<li class="data-row">
+				<label>文字描述</label>
+				<div class="body">
+					<div class="edit">
+						<div ng-model-div-text="info.Description" class="needsclick" placeholder="请输入文字描述" lenlimit="100" style="min-height:100px;"></div>
+					</div>
+				</div>
+			</li>
+
+			<li class="data-row" ng-if="imageList.length!=0">
+				<label>现场照片</label>
+				<div class="body media-body attach">
+					<md-image style="display: inline;float: left;" images="imageList" readonly="false"></md-image>
+				</div>
+			</li>
+			<li class="data-row" ng-if="videoList.length!=0">
+				<label>现场视频</label>
+				<div class="body media-body attach">
+					<md-video style="display: inline;float: left;" videos="videoList" readonly="false"></md-video>
+				</div>
+			</li>
+			<li class="data-row must">
+				<label>设备地址</label>
+				<div class="body prod-address">
+					<span ng-bind="info.Province | locationfilter:info.City:info.District:info.Address:info.Street"></span>
+					<span ng-if="!info.Province" class="mui-icon mui-icon-spinner"> 正在定位...</span>
+				</div>
+			</li>
+		</ul>
+		<div class="mui-content-padded">
+			<span class="mui-btn mui-btn-block" ng-click="save()">提交</span>
+		</div>
+	</div>
+	<footer class="footBtn">
+		<md-record-media videos="videoList" audio="audio" images="imageList" callback="getMediaRes"></md-record-media>
+	</footer>
+	<script src="../../js/mui.min.js"></script>
+	<script src="../../js/rpc.js"></script>
+	<script type="text/javascript" src="../../js/angular.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/mui.pullToRefresh.js"></script>
+	<script type="text/javascript" src="../../js/mui.loading.js"></script>
+	<script type="text/javascript" src="eq-log-add.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,251 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<link rel="stylesheet" href="../../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../../css/common.css" />
+		<link rel="stylesheet" href="../../../icon-font/iconfont.css" />
+		<style type="text/css">
+			#addMdCode i,
+			#addMdCodeCont i {
+				font-size: 1.8rem;
+				margin-right: 10px;
+			}
+			
+			.del_dispatch {
+				position: absolute;
+				right: 0;
+				top: 0;
+				background: url(../../../images/del-bg.png) no-repeat;
+				width: 36px;
+				height: 41px;
+			}
+			
+			.del_dispatch i {
+				font-size: 17px;
+				color: #fff;
+				position: absolute;
+				right: 0;
+				top: 5px;
+			}
+			
+			footer {
+				height: 44px;
+				position: fixed;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				background: #fff;
+				z-index: 20;
+			}
+			
+			.data-group .data-row .body {
+				padding: 8px 16px;
+			}
+			
+			.imgslist {
+				float: left;
+				width: 70px;
+				height: 70px;
+				margin-right: 10px;
+				background-size: cover !important;
+			}
+			
+			.body .icon-topright-corner-delete {
+				color: red!important;
+				float: right;
+				margin-right: -16px!important;
+				;
+				margin-top: -4px!important;
+				;
+				font-size: 2.6rem!important;
+				;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="BackTrackingController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">物联码报废</a>
+		</header>
+		<div class="mui-scroll-wrapper md-info-page" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<ul class="data-group dispatchList" ng-repeat="($index, prod) in ProdList" ng-if="ProdList.length>0">
+				<li class="data-row click-gray">
+					<div class="body">
+						<span class="icon-topright-corner-delete" ng-dispatchIndex="{{$index}}"></span>
+						<img src="../../../images/imgPre.png" ng-src="{{prod | getProdLogo:70:70}}" class="imgslist" ng-style="{'object-fit':pictureStyle==2?'cover':'contain','min-height':pictureStyle==2?'110%':'100%'}" />
+						<div style="margin-right: 20px;">
+							<span class="font-15 mui-ellipsis-2" ng-bind="'产品名称：'+prod.ProdName"></span>
+						</div>
+						<p class="color-gray-deep" style="margin-left: 80px;" ng-bind="'型号：'+prod.SkuName"></p>
+						<p class="color-gray-deep" style="margin-left: 80px;" ng-bind="'物联码：'+prod.MdCode"></p>
+						<p class="color-gray-deep" style="margin-left: 80px;" ng-bind="InnerCodeName+'：'+prod.InnerCode"></p>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<li class="btn-group">
+					<a id="addMdCode" class="btn-col" ng-click="scan(0)"><i class="icon-saomiao"></i><span>单个扫码</span></a>
+					<a id="addMdCodeCont" class="btn-col" ng-click="scan(1)"><i class="icon-saomiao"></i><span>连续扫码</span></a>
+				</li>
+			</ul>
+		</div>
+		<footer>
+			<button id="confirm" ng-click="cofirmVilCode()" class="mui-btn mui-btn-primary mui-btn-block btn-save" style="border-radius: 0;height: 44px;margin-bottom: 0;">确认作废</button>
+		</footer>
+
+		<script type="text/javascript" src="../../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../../js/common.js"></script>
+		<script type="text/javascript" src="../../../js/utils.js"></script>
+		<script type="text/javascript">
+			app.controller("BackTrackingController", ["$scope", "$filter", "AuthService", "ApiService", "DataService",
+				"UtilsService", "Loading", "RPCObserver", "CacheService",
+				function($scope, $filter, AuthService, ApiService, DataService, UtilsService, Loading,
+					RPCObserver, CacheService) {
+					var curUser = CacheService.get("user");
+					AuthService.getAuth().then(function(res) {
+						$scope.InnerCodeName = res.InnerCodeName || '出厂编号';
+					});
+					$scope.isLoad = true;
+					$scope.ImgUrl = ApiService.Img;
+					$scope.IsContinuity = false; //连续扫码
+
+					$scope.ProdList = [];
+					$scope.Maplat = ""; //纬度
+					$scope.Maplng = ""; //经度
+					$scope.address = ""; //详细地址
+					$scope.province = ""; //省
+					$scope.city = ""; //市
+					$scope.district = ""; //区
+					$scope.street = ""; //街道
+
+					//位置定位
+					UtilsService.getLocation(true).then(function(location) {
+						$scope.Maplat = location.lat; //纬度
+						$scope.Maplng = location.lng; //经度
+						$scope.address = location.address; //详细地址
+						$scope.province = location.province; //省
+						$scope.city = location.city; //市
+						$scope.district = location.district; //区
+						$scope.street = location.street; //街道
+					});
+
+					//加载数据
+					function loadProdInfo(mdcode) {
+						var url = ApiService.Api45 + "/api/v1.0/MdCode/GetProdInfoByMdCode?code=" + mdcode + "&compid=" + curUser.CompID;
+						getAjaxData(url, function(res) {
+							if(res.Data.CompID != curUser.CompID) {
+								mui.toast("请扫描本企业迈迪物联码");
+								return;
+							}
+							var tempObj = {
+								ProdID: res.Data.ProdID,
+								ProdName: res.Data.ProdName,
+								SkuID: res.Data.SkuID,
+								SkuName: res.Data.SkuName,
+								CompID: res.Data.CompID,
+								CompName: res.Data.CompName,
+								InnerCode: res.Data.InnerCode,
+								MdCode: mdcode
+							}
+							$scope.ProdList.push(tempObj);
+							$scope.$apply();
+							if($scope.IsContinuity) {
+								openWindow("../../scan/scan.html", {
+									callback: "scanCB"
+								});
+							}
+						});
+					};
+					mui("body").on("tap", ".icon-topright-corner-delete", function() {
+						var index = this.getAttribute("dispatchIndex")
+						$scope.ProdList.splice(index, 1);
+						$scope.$apply();
+					});
+
+					$scope.cofirmVilCode = function() {
+						if($scope.ProdList.length == 0) {
+							mui.toast("请扫描迈迪物联码添加产品");
+							return;
+						}
+						var url = ApiService.Api45 + "/api/v1/MdCode/InvalidMdCode?compId=" + curUser.CompID + "&userId=" + curUser.UserID;
+						var postdata = {
+							MdCodes: []
+						};
+						postdata.Province = $scope.province;
+						postdata.City = $scope.city;
+						postdata.District = $scope.district;
+						postdata.Address = $scope.address;
+						postdata.Street = $scope.street;
+						postdata.MapLng = $scope.Maplng;
+						postdata.MapLat = $scope.Maplat;
+						$scope.ProdList.forEach(function(item) {
+							var obj = {
+								"ProdID": item.ProdID,
+								"SkuID": item.SkuID,
+								"MdCode": item.MdCode,
+								"InnerCode": item.InnerCode
+							}
+							postdata.MdCodes.push(obj);
+						});
+						DataService.post(url, postdata).then(function(res) {
+							if(res) {
+								mui.toast("迈迪物联码已作废");
+								mui.confirm("迈迪物联码已作废,是否继续？", "", ["继续", "取消"], function(e) {
+									if(e.index === 0) {
+										$scope.ProdList = [];
+										$scope.$apply();
+									} else {
+										mui.back();
+									}
+								});
+							}
+						})
+					}
+
+					$scope.scan = function(Continuity) {
+						$scope.IsContinuity = Continuity == 1;
+						UtilsService.openWindow({
+							needLogin: true,
+							id: 'scan.html',
+							url: '../../scan/scan.html',
+							extras: {
+								callback: "scanCB"
+							}
+						});
+					}
+
+					window.scanCB = function(obj) {
+						obj = JSON.parse(obj);
+						if(obj.isEmpty) {
+							mui.toast("该码为空码，请确认后再试")
+							return;
+						}
+						if(obj.resInfo.CompID != curUser.CompID) {
+							mui.toast("请扫本企业产品码");
+							return;
+						}
+						if($scope.ProdList.some(function(item) {
+								return item.MdCode == obj.codeValue;
+							})) {
+							mui.toast("该迈迪物联码已存在列表中");
+							return;
+						}
+						setTimeout(function() {
+							loadProdInfo(obj.codeValue);
+						}, 200);
+					}
+				}
+			]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

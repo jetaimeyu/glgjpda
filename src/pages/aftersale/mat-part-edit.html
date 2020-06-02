@@ -1,0 +1,581 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style>
+			.data-group:first-child {
+				margin-top: 0;
+			}
+			/*新增配件列表样式*/
+			
+			div.remarkscontent {
+				color: #323232;
+				font-size: 1.4rem;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+			/*删除按钮*/
+			
+			.partDomList .icon-right,
+			.partDomList .icon-delete {
+				color: #AEAEAE!important;
+				padding-left: 10px;
+				margin-right: 12px!important;
+			}
+			
+			.close {
+				padding: 0px!important;
+			}
+			/*配件列表栅格样式*/
+			
+			.mui-grid-view.mui-grid-9 {
+				border: 0;
+				background: #fff;
+			}
+			
+			.mui-grid-view.mui-grid-9 .mui-table-view-cell {
+				border: 0;
+			}
+			
+			.mui-grid-view.mui-grid-9 .mui-media {
+				color: #323223;
+			}
+			
+			.partDomUl .mui-table-view-cell:after {
+				height: 0px;
+			}
+			
+			.mui-grid-view.mui-grid-9 .mui-table-view-cell {
+				padding-left: 15px!important;
+			}
+			
+			.mui-grid-view.mui-grid-9 .mui-table-view-cell {
+				padding: 0px;
+			}
+			
+			.mui-table-view-cell {
+				padding: 0px;
+			}
+			
+			.mui-table-view-cell.mui-active {
+				/*	background-color: transparent;*/
+			}
+			
+			.data-group .data-row:after {
+				left: 0!important;
+				right: 0!important;
+			}
+			
+			.width30 {
+				width: 30%;
+			}
+			
+			.width40 {
+				width: 40%;
+			}
+			
+			.number span {
+				display: inline-block;
+				width: 30px;
+				height: 30px !important;
+				line-height: 30px;
+				border: 1px solid #CCCCCC !important;
+				text-align: center;
+				font-size: 1.3rem !important;
+				float: left;
+			}
+			
+			.number .icon-add {
+				border-right: none !important;
+				border-top-left-radius: 5px;
+				border-bottom-left-radius: 5px;
+			}
+			
+			.number .icon-remove {
+				border-left: none !important;
+				border-top-right-radius: 5px;
+				border-bottom-right-radius: 5px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="PartEditController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">更换配件</a>
+		</header>
+		<div class="mui-content" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<ul class="data-group">
+				<li class="mui-table-view-cell data-row must" ng-click="selectProdSkuPage()" ng-show="comId>0&&comId!=JJCompID">
+					<label>零配件</label>
+					<p class="opt md-icon font-15">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body">
+						<span class="placeholder" ng-if="!ProdName">请选择零配件</span>
+						<span ng-bind="ProdName" ng-if="ProdName"></span>
+					</div>
+				</li>
+				<li class="data-row must" ng-show="comId==0||comId==JJCompID">
+					<label>零配件</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="ProdName" class="needsclick" placeholder="请输入零配件" lenlimit="100"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row must">
+					<label>型号</label>
+					<div class="body" ng-show="comId>0&&comId!=JJCompID">
+						<span class="placeholder" ng-if="!SkuName">请选择型号</span>
+						<span ng-bind="SkuName"></span>
+					</div>
+					<div class="body" ng-show="comId==0||comId==JJCompID">
+						<div class="edit">
+							<div ng-model-div-text="SkuName" class="needsclick" placeholder="请输入型号" lenlimit="100"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row must">
+					<label>数量</label>
+					<div class="body number">
+						<span class="icon-add" ng-click="changeNum(1)"></span>
+						<span style="font-size: 1.5rem !important;" ng-bind="Nums"></span>
+						<span class="icon-remove" ng-click="changeNum(0)" ng-style="{'color':Nums==1?'#CCCCCC':'#666666'}"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>配件厂家</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="PartsCompName" class="needsclick" placeholder="请输入配件厂家名称" lenlimit="50"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>是否旧件回收</label>
+					<div class="body">
+						<div class="md-switch-group">
+							<span style="padding: 1px 9px;" dataId="1" class="md-switch-button" ng-click="switchClik('IsRecycle',1)" ng-class="{'md-active':IsRecycle==1}" style="border-right:none;">是</span>
+							<span style="padding: 1px 9px;margin-left: -5px;margin-right: -4px;" dataId="0" class="md-switch-button" ng-click="switchClik('IsRecycle',0)" ng-class="{'md-active':IsRecycle==0}">否</span>
+						</div>
+					</div>
+				</li>
+				<li class="data-row" ng-show="IsRecycle==1">
+					<label>旧件回收方式</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="RecycleType" class="needsclick" placeholder="请输入旧件回收方式" lenlimit="50"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>是否是外协件</label>
+					<div class="body">
+						<div class="md-switch-group">
+							<span style="padding: 1px 9px;" dataId="1" class="md-switch-button" ng-click="switchClik('IsOutParts',1)" ng-class="{'md-active':IsOutParts==1}" style="border-right:none;">是</span>
+							<span style="padding: 1px 9px;margin-left: -5px;margin-right: -4px;" dataId="0" class="md-switch-button" ng-click="switchClik('IsOutParts',0)" ng-class="{'md-active':IsOutParts==0}">否</span>
+						</div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>是否质保期</label>
+					<div class="body">
+						<div class="md-switch-group">
+							<span style="padding: 1px 9px;" dataId="1" class="md-switch-button" ng-click="switchClik('IsQualityed',1)" ng-class="{'md-active':IsQualityed==1}" style="border-right:none;">是</span>
+							<span style="padding: 1px 9px;margin-left: -5px;margin-right: -4px;" dataId="0" class="md-switch-button" ng-click="switchClik('IsQualityed',0)" ng-class="{'md-active':IsQualityed==0}">否</span>
+						</div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>备注</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="Remark" class="needsclick" placeholder="请输入备注内容" lenlimit="400"></div>
+						</div>
+					</div>
+				</li>
+			</ul>
+			<md-mat-part-repl-list ng-model="RepairPartsDetail" ng-if="comId!=JJCompID"></md-mat-part-repl-list>
+			<div class="mui-content-padded" ng-click="saveChange()">
+				<span class="mui-btn mui-btn-block">确认</span>
+			</div>
+		</div>
+
+		<!--无网络或请求失败重试-->
+		<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script>
+			app.controller("PartEditController", ["$scope", "ApiService", "DataService", "AuthService", "UtilsService", "Loading", "RPCObserver", "CacheService", function($scope, ApiService, DataService, AuthService, UtilsService, Loading, RPCObserver, CacheService) {
+				$scope.oneSave = true; //保存一次
+				$scope.ProdID = "";
+				$scope.ProdName = "";
+				$scope.SkuID = "";
+				$scope.SkuName = "";
+				$scope.Nums = 1;
+				$scope.Remark = "";
+				$scope.PartsCompName = ""; //配件厂家名称
+				$scope.IsRecycle = 0; //是否旧件回收
+				$scope.RecycleType = ""; //旧件回收方式
+				$scope.IsOutParts = 0; //是否是外协件
+				$scope.IsQualityed = 0; //是否质保期
+
+				$scope.RepairPartsDetail = [{
+					"ID": 0,
+					"NewPartsNum": "",
+					"OldPartsNum": "",
+					"OldPartsSpec": "",
+					"IsDelete": 0
+				}]; //新旧配件 规格
+				//无网络或请求失败重试
+				$scope.retryModal = {
+					msg: "更换配件",
+					retry: getPartEdit,
+					state: ''
+				}
+				var user = CacheService.get('user');
+				$scope.comId = user.CompID;
+				//景津266
+				$scope.JJCompID = 266;
+				getPartEdit();
+
+				//初始化数据
+				function getPartEdit() {
+					if(query("id") == 0) {
+						$scope.isLoad = true;
+						var mainPartData = plus.webview.currentWebview().newPart;
+						if(mainPartData) {
+							$scope.Nums = mainPartData.Nums;
+							$scope.Remark = mainPartData.Remark;
+							$scope.ProdID = mainPartData.ProdID;
+							$scope.ProdName = mainPartData.ProdName;
+							$scope.SkuID = mainPartData.SkuID;
+							$scope.SkuName = mainPartData.SkuName;
+							$scope.PartsCompName = mainPartData.PartsCompName;
+							$scope.IsRecycle = mainPartData.IsRecycle || 0;
+							$scope.RecycleType = mainPartData.RecycleType;
+							$scope.IsOutParts = mainPartData.IsOutParts || 0;
+							$scope.IsQualityed = mainPartData.IsQualityed || 0;
+							$scope.RepairPartsDetail = mainPartData.RepairPartsDetail;
+						}
+					}
+					if(query("id") > 0) {
+						Loading.show();
+						var url = ApiService.Api50 + "/api/v1/MatWorkOrder/GetMatRepairPartsInfo?repairPartsId=" + query("id");
+						DataService.get(url).then(function(res) {
+							Loading.hide();
+							$scope.isLoad = true;
+							$scope.retryModal.state = '';
+							if(res) {
+								$scope.Nums = res.Nums;
+								$scope.Remark = res.Remark;
+								$scope.ProdID = res.ProdID;
+								$scope.ProdName = res.ProdName;
+								$scope.SkuID = res.SkuID;
+								$scope.SkuName = res.SkuName;
+								$scope.PartsCompName = res.PartsCompName;
+								$scope.IsRecycle = res.IsRecycle || 0;
+								$scope.RecycleType = res.RecycleType;
+								$scope.IsOutParts = res.IsOutParts || 0;
+								$scope.IsQualityed = res.IsQualityed || 0;
+								$scope.RepairPartsDetail = res.RepairPartsDetail;
+							}
+						}, function(error) {
+							$scope.retryModal.state = error.State;
+						});
+					}
+				};
+
+				$scope.selectProdSkuPage = function() {
+					//if($scope.comId>0){
+					UtilsService.openWindow({
+						id: "problib-index.html",
+						url: "../problib/index.html?state=selsku",
+						extras: {
+							selectObj: {
+								ProdID: $scope.ProdID,
+								SkuID: $scope.SkuID
+							},
+							callback: 'sltProdSku'
+						}
+					})
+					//	}
+
+				};
+
+				$scope.changeNum = function(isAdd) {
+					if(isAdd == 1) {
+						$scope.Nums++;
+						$scope.RepairPartsDetail.push({
+							"ID": 0,
+							"NewPartsNum": "",
+							"OldPartsNum": "",
+							"OldPartsSpec": "",
+							"IsDelete": 0
+						});
+					} else {
+						if($scope.Nums == 1)
+							return;
+
+						$scope.Nums--;
+						if($scope.RepairPartsDetail[$scope.Nums].ID == 0) {
+							$scope.RepairPartsDetail.splice($scope.Nums, 1);
+						} else {
+							$scope.RepairPartsDetail[$scope.Nums].IsDelete = 1;
+						}
+					}
+				}
+
+				$scope.switchClik = function(key, value) {
+					switch(key) {
+						case "IsRecycle":
+							$scope.IsRecycle = value;
+							break;
+						case "IsOutParts":
+							$scope.IsOutParts = value;
+							break;
+						case "IsQualityed":
+							$scope.IsQualityed = value;
+							break;
+						default:
+							break;
+					}
+				}
+
+				//获取编号列表数据
+				function RepaPartsList() {
+					//遍历每个换件的信息
+					var RepaPartList = document.getElementsByClassName("partDomList");
+					var RepaPartDataArr = [];
+					for(var a = 0; a < RepaPartList.length; a++) {
+						var RepaPartData = RepaPartList[a].getElementsByClassName("partDomInp");
+						var RepaPartItem = {
+							"ID": $scope.RepairPartsDetail[a].ID || 0,
+							"NewPartsNum": "",
+							"OldPartsNum": "",
+							"OldPartsSpec": "",
+							"IsDelete": $scope.RepairPartsDetail[a].IsDelete || 0
+						};
+						RepaPartItem.NewPartsNum = RepaPartData[0].value;
+						RepaPartItem.OldPartsNum = RepaPartData[1].value;
+						RepaPartItem.OldPartsSpec = RepaPartData[2].value;
+						RepaPartDataArr.push(RepaPartItem);
+					}
+					$scope.RepairPartsDetail = RepaPartDataArr;
+				}
+				//保存事件
+				$scope.saveChange = function() {
+					if($scope.oneSave) {
+						$scope.oneSave = false;
+						//判断必填
+						if($scope.comId > 0 && $scope.comId != $scope.JJCompID) {
+							if(!$scope.ProdID) {
+								mui.toast("请选择零配件！", {
+									duration: 1300,
+									type: 'div'
+								});
+								$scope.oneSave = true;
+								return false;
+							} else if(!$scope.SkuName) {
+								mui.toast("请选择配件型号！", {
+									duration: 1300,
+									type: 'div'
+								});
+								$scope.oneSave = true;
+								return false;
+							}
+						} else if($scope.comId == 0 || $scope.comId == $scope.JJCompID) {
+							if(!$scope.ProdName) {
+								mui.toast("请输入零配件！", {
+									duration: 1300,
+									type: 'div'
+								});
+								$scope.oneSave = true;
+								return false;
+							} else if(!$scope.SkuName) {
+								mui.toast("请输入型号！", {
+									duration: 1300,
+									type: 'div'
+								});
+								$scope.oneSave = true;
+								return false;
+							}
+						}
+						if(!/^[0-9]+$/.test($scope.Nums) || $scope.Nums <= 0) {
+							mui.toast("配件数量为正整数！", {
+								duration: 1300,
+								type: 'div'
+							});
+							$scope.oneSave = true;
+							return false;
+						}
+						$scope.Nums = parseInt($scope.Nums);
+						//验证新建编号必填
+						//						var newNum = document.getElementsByName("partnewnum");
+						//						for(var i = 0; i < newNum.length; i++) {
+						//							if(newNum[i].value == "") {
+						//								mui.toast("请输入新件编号！", {
+						//									duration: 1300,
+						//									type: 'div'
+						//								});
+						//								$scope.oneSave = true;
+						//								return false;
+						//							}
+						//						};
+						//						var partoldbum = document.getElementsByName("partoldbum");
+						//						for(var i = 0; i < partoldbum.length; i++) {
+						//							if(partoldbum[i].value == "") {
+						//								mui.toast("请输入旧件编号！", {
+						//									duration: 1300,
+						//									type: 'div'
+						//								});
+						//								$scope.oneSave = true;
+						//								return false;
+						//							}
+						//						};
+						//验证填字符长度
+						if(!checkLengthUtil.check()) {
+							$scope.oneSave = true;
+							return false;
+						}
+						RepaPartsList();
+
+						var url = ApiService.Api50 + "/api/v1/MatWorkOrder/SaveMatRepairParts";
+						var partMainData = plus.webview.currentWebview().mainData;
+						var objData = {};
+						if(partMainData) {
+							objData = {
+								"MatRepairID": partMainData.MatRepairID,
+								"MatWordOrderFailureID": partMainData.MatWordOrderFailureID,
+								"RepairParts": [{
+									"ID": query("id"),
+									"Nums": $scope.Nums,
+									"Remark": $scope.Remark,
+									"ProdID": $scope.ProdID,
+									"ProdName": $scope.ProdName,
+									"SkuName": $scope.SkuName,
+									"SkuID": $scope.SkuID,
+									"PartsCompName": $scope.PartsCompName,
+									"IsRecycle": $scope.IsRecycle,
+									"RecycleType": $scope.RecycleType,
+									"IsOutParts": $scope.IsOutParts,
+									"IsQualityed": $scope.IsQualityed,
+									"IsDelete": 0,
+									"RepairPartsDetail": $scope.RepairPartsDetail
+								}]
+							}
+							DataService.post(url, objData).then(function(res) {
+								if(res) {
+									UtilsService.saveModal(function() {
+										RpcClient.invoke("mat-part-info.html", "RPC_FaultMaintenancePactInfo", {
+											state: "main",
+											id: query("id")
+										});
+										//刷新 配件更换列表
+										RPCObserver.broadcast('refresh_mat_part_list');
+										RpcClient.invoke("mat-repairView.html", "RPC_FaultMaintenancePactInfo", {
+											state: "main",
+											id: query("id")
+										});
+										RpcClient.invoke("mat-fault-info.html", "RPC_FaultInfoListRefresh");
+										RpcClient.invoke("parts-change.html", "RefreshPage");
+										RpcClient.invoke("mat-part-infolist.html", "RPC_MatMaintenancePactInfo", {
+											SkuID: $scope.SkuID,
+											ProdID: $scope.ProdID
+										});
+										//刷新零配件列表
+										RPCObserver.broadcast('refresh_parts_list_sub');
+										// 客户信息刷新
+										RpcClient.invoke("customer-info.html", "RPC_BillViewRefresh", "customer");
+										//刷新客户详情-合计 列表
+										RPCObserver.broadcast("refresh_my_sxun");
+										// 刷新配件更换详情数据
+										RPCObserver.broadcast('RPC_MatPartInfoRefresh');
+										// 刷新配件详情页
+										RPCObserver.broadcast('RPC_RepairViewRefresh');
+										mui.back();
+									});
+								}
+							}, function(error) {
+								error.State == -1 && mui.toast("网络异常", {
+									duration: 1300,
+									type: 'div'
+								});
+
+							})
+						} else {
+							if(query("id") == 0) {
+								var RepairPartItem = {
+									"Nums": $scope.Nums,
+									"Remark": $scope.Remark,
+									"ProdID": $scope.ProdID,
+									"ProdName": $scope.ProdName,
+									"SkuName": $scope.SkuName,
+									"SkuID": $scope.SkuID,
+									"PartsCompName": $scope.PartsCompName,
+									"IsRecycle": $scope.IsRecycle,
+									"RecycleType": $scope.RecycleType,
+									"IsOutParts": $scope.IsOutParts,
+									"IsQualityed": $scope.IsQualityed,
+									"IsDelete": 0,
+									"RepairPartsDetail": $scope.RepairPartsDetail
+								}
+								var mainPartData = plus.webview.currentWebview().newPart;
+								if(mainPartData) {
+									RepairPartItem["ID"] = mainPartData.ID;
+								} else {
+									RepairPartItem["ID"] = query("id");
+								}
+								RpcClient.invoke("mat-part-replacement.html", "RPC_FaultMaintenancePactInfo", {
+									state: "main",
+									id: query("id"),
+									partData: RepairPartItem,
+									index: plus.webview.currentWebview().newPartIndex === undefined ? '' : plus.webview.currentWebview().newPartIndex
+								});
+								RpcClient.invoke("mat-repair.html", "RPC_FaultMaintenancePactInfo", {
+									state: "main",
+									id: query("id"),
+									partData: RepairPartItem,
+									index: plus.webview.currentWebview().newPartIndex === undefined ? '' : plus.webview.currentWebview().newPartIndex
+								});
+								RpcClient.invoke("mat-repair.html", "RPC_PartNumRefresh");
+								mui.back();
+							}
+						}
+					}
+				}
+				//数量的rpc
+				RpcServer.expose("RPC_partChangeNums", function(params) {
+					$scope.Nums = params || 0;
+					$scope.$apply();
+					return;
+				})
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+
+			function sltProdSku(obj) {
+				var appElement = document.querySelector('[ng-controller=PartEditController]');
+				var $scope = angular.element(appElement).scope();
+				$scope.ProdID = obj.ProdID;
+				$scope.ProdName = obj.ProdName;
+				$scope.SkuID = obj.SkuID;
+				$scope.SkuName = obj.SkuName;
+				$scope.$apply();
+			}
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,303 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link href="../../css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	<link rel="stylesheet" href="personal-edit.css" />
+</head>
+
+<body ng-controller="PersEditController">
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left">修改员工信息</a>
+		<a class="right-menu-words" id="save">保存</a>
+	</header>
+	<div class="mui-content" style="display: none;" ng-class="{'mui-block':Loaded}">
+		<ul class="data-group">
+			<li class="data-row must">
+				<label>姓名</label>
+				<div class="body">
+					<input type="text" lenlimit="20" maxlength="20" ng-model="UserInfo.RealName" placeholder="请输入姓名" />
+				</div>
+			</li>
+			<li class="data-row" id="sex">
+				<label>性别</label>
+				<div class="body">
+					<span ng-if="UserInfo.Sex==0" class="placeholder">请选择性别</span>
+					<span ng-bind="UserInfo.Sex|getUserSex"></span>
+					<p class="opt md-icon font-15">
+						<span class="icon-right"></span>
+					</p>
+				</div>
+			</li>
+			<li class="data-row must">
+				<label>手机</label>
+				<div class="body">
+					<input type="text" lenlimit="13" maxlength="13" ng-model="UserInfo.Phone" placeholder="请输入手机号" />
+				</div>
+			</li>
+			<li class="data-row">
+				<label>邮箱</label>
+				<div class="body">
+					<input type="text" lenlimit="32" maxlength="32" id="email" ng-model="UserInfo.Email" placeholder="输入邮箱" />
+				</div>
+			</li>
+		</ul>
+		<ul class="data-group">
+			<li class="data-row">
+				<label>部门</label>
+				<p class="opt md-icon font-15" ng-click="selectOrgs()">
+					<span class="icon-right"></span>
+				</p>
+				<div class="body" ng-click="selectOrgs()">
+					<span ng-if="UserInfo.OrgList&&UserInfo.OrgList.length==0" class="placeholder">请选择部门</span>
+					<span ng-repeat="user in UserInfo.OrgList" ng-bind="$index==0?user.OrgName:' > '+user.OrgName"></span>
+				</div>
+			</li>
+			<li class="data-row">
+				<label>职务</label>
+				<div class="body">
+					<input type="text" lenlimit="30" maxlength="30" ng-model="UserInfo.Duty" placeholder="请输入职务" />
+				</div>
+			</li>
+		</ul>
+		<div class="btn-submit" ng-click="deleteUser()" id="popover">
+			<span class="mui-btn mui-btn-block">删除员工</span>
+		</div>
+	</div>
+	<script type="text/javascript" src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/rpc.js"></script>
+	<script>
+		app.controller("PersEditController", ["$scope", "ApiService", "DataService", "UtilsService", "CacheService", "Loading","AuthService",function ($scope, ApiService, DataService, UtilsService, CacheService, Loading,AuthService) {
+			var user = CacheService.get('user');
+			$scope.userid = query("userid"); //用户id
+			$scope.UserInfo = ""; //个人用户详情
+			$scope.UserID = user.UserID;
+			//获取基本信息
+			Loading.show();
+			setTimeout(function () {
+				var url = ApiService.Api50 + "/api/v1/User/GetAuthUserInfo?userId=" + $scope.userid;
+				DataService.get(url).then(function (res) {
+					if (res) {
+						$scope.UserInfo = res;
+						if (res.Sex == "未设置") {
+							$scope.UserInfo.Sex = 0;
+						} else if (res.Sex == "男") {
+							$scope.UserInfo.Sex = 1;
+						} else if (res.Sex == "女") {
+							$scope.UserInfo.Sex = 2;
+						}
+						$scope.Loaded = true;
+					}
+					Loading.hide();
+				})
+			}, 300);
+
+			init();
+			//初始化
+			function init() {
+				//选择性别
+				document.getElementById("sex").addEventListener('tap', function () {
+					var btnArray = [{
+						title: "男"
+					}, {
+						title: "女"
+					}];
+					plus.nativeUI.actionSheet({
+						title: "选择性别",
+						cancel: "取消",
+						buttons: btnArray
+					}, function (e) {
+						var index = e.index;
+						switch (index) {
+							case 0:
+								//"取消"
+								break;
+							case 1:
+								//男
+								$scope.UserInfo.Sex = 1;
+								$scope.$apply();
+								break;
+							case 2:
+								//女
+								$scope.UserInfo.Sex = 2;
+								$scope.$apply();
+								break;
+						}
+					});
+				});
+				document.getElementById("save").addEventListener("tap", function () {
+					Loading.show();
+					saveUserInfo();
+				})
+
+			};
+
+			//修改部门
+			$scope.selectOrgs = function () {
+				UtilsService.openWindow({
+					id: "mdSelectOrgPage.html",
+					url: "../common/mdSelectOrgPage.html",
+					extras: {
+						callback: 'getOrg',
+						selectedOrgID: $scope.UserInfo.OrgID
+					}
+				});
+			}
+			//验证手机号
+			$scope.isMobile = function (value) {
+				var validateReg = /^((\+?86)|(\(\+86\)))?1\d{10}$/;
+				return validateReg.test(value);
+			};
+			//验证邮箱
+			$scope.isEmail = function (value) {
+				//					var validateReg = /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/;
+				var validateReg = /^[a-zA-Z0-9_-]+@([a-zA-Z0-9]+\.)+(com|cn|net|org)$/;
+				return validateReg.test(value);
+			};
+			//保存更改
+			function saveUserInfo(guid) {
+				if (!$scope.UserInfo.RealName) {
+					mui.toast("请输入员工姓名");
+					Loading.hide();
+					return;
+				}
+//				if ($scope.UserInfo.Sex == 0) {
+//					mui.toast("请选择性别");
+//					Loading.hide();
+//					return;
+//				}
+				if (!$scope.UserInfo.Phone) {
+					mui.toast("请输入手机号");
+					Loading.hide();
+					return;
+				}
+				if (!$scope.isMobile($scope.UserInfo.Phone)) {
+					mui.toast("请输入正确的手机号码");
+					Loading.hide();
+					return;
+				}
+
+//				 if (!$scope.UserInfo.Email.trim()) {
+//				 	mui.toast("请输入邮箱");
+//				 	Loading.hide();
+//				 	return;
+//				 }
+//				 if (!$scope.isEmail($scope.UserInfo.Email)) {
+//				 	mui.toast("请输入正确的邮箱地址");
+//				 	Loading.hide();
+//				 	return;
+//				 }
+				//验证所填字符长度
+				if (!checkLengthUtil.check()) {
+					Loading.hide();
+					return false;
+				}
+				var url = ApiService.Api50 + "/api/v1/User/ModifyUserInfo";
+				var postdata = {
+					"UserID": 0 || $scope.UserInfo.UserID,
+					"RealName": $scope.UserInfo.RealName,
+					"Sex": $scope.UserInfo.Sex,
+					"Phone": $scope.UserInfo.Phone,
+					"EMail": document.getElementById("email").value.trim(),
+					"Duty": $scope.UserInfo.Duty,
+					"Guid": guid || "",
+					"OrgID": 0 || $scope.UserInfo.OrgID
+				};
+				DataService.post(url, postdata).then(function (res) {
+					Loading.hide();
+					if (res) {
+						mui.toast("已保存");
+						//此处应该更新下登录人信息缓存
+						// var userList = CacheService.get("userList");
+						// var index = userList.findIndex(function(_user) {
+						// 	return _user.UserID == user.UserID;
+						// });
+						// if(index>=0){
+						// 	userList[index].Sex = postdata.Sex;
+						// 	userList[index].EMail = postdata.EMail;
+						// 	userList[index].OrgID = postdata.OrgID;
+						// 	userList[index].RealName = postdata.RealName;
+						// 	userList[index].Phone = $scope.UserInfo.Phone;
+						// 	userList[index].Duty = postdata.Duty;
+						// 	userList[index].OrgName =$scope.UserInfo.OrgList.length>=1?$scope.UserInfo.OrgList[$scope.UserInfo.OrgList.length - 1].OrgName:"";
+						// 	userList[index].OrgList = $scope.UserInfo.OrgList;
+						// 	CacheService.set("userList", userList, true);
+						// }
+						if (user.UserID == $scope.UserInfo.UserID) {
+							user.Sex = postdata.Sex;
+							user.EMail = postdata.EMail;
+							user.OrgID = postdata.OrgID;
+							user.RealName = postdata.RealName;
+							user.Phone = $scope.UserInfo.Phone;
+							user.Duty = postdata.Duty;
+							user.OrgName = $scope.UserInfo.OrgList.length >= 1 ? $scope.UserInfo.OrgList[$scope.UserInfo.OrgList.length - 1].OrgName : "";
+							user.OrgList = $scope.UserInfo.OrgList;
+							CacheService.set("user", user, true);
+
+							AuthService.getUserSwitchList().then(function (list) {
+								CacheService.remove("userList");
+
+								//此处应该更新下登录人信息缓存
+								CacheService.set("userList", list, true);
+
+								mui.back();
+							});
+						}
+						RpcClient.invoke("org.html", "RPC_RefreshUserInfo");
+						RpcClient.invoke("personal-info.html", "RPC_PersonInfoRefresh");
+						RpcClient.invoke("contactWind", "RPC_ContactOrgRefresh");
+						mui.back();
+					}
+				}, function (error) {
+					isSubmitting = false;
+					error.State == -1 && mui.toast("网络异常", {
+						duration: 1300,
+						type: 'div'
+					});
+				});
+			};
+			//删除
+			$scope.deleteUser = function () {
+				mui.confirm("确认删除吗？", function (e) {
+					if (e.index == 0) {
+						var url = ApiService.Api50 + "/api/v1/User/DelUser?userId=" + query("userid");
+						DataService.get(url).then(function (res) {
+							RpcClient.invoke("org.html", "RPC_OrgDelectInfo", {
+								"state": "del",
+								"id": query("userid")
+							});
+							mui.back();
+						});
+					}
+				});
+			}
+		}]);
+		//选择部门回调
+		function getOrg(obj) {
+			var appElement = document.querySelector('[ng-controller=PersEditController]');
+			var $scope = angular.element(appElement).scope();
+			$scope.UserInfo.OrgList = obj;
+			if (obj.length == 0) {
+				$scope.UserInfo.OrgID = 0;
+				$scope.UserInfo.OrgName = "";
+			}
+			for (var i = 0; i < obj.length; i++) {
+				$scope.UserInfo.OrgID = obj[obj.length - 1].ID
+			}
+			$scope.$apply();
+		};
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+		});
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,90 @@
+header .mui-pull-right {
+	line-height: 44px;
+}
+
+.mui-input-row {
+	background: #fff!important;
+}
+
+.mui-input-row textarea {
+	height: 80px;
+	margin: 0px;
+	border-radius: 0px;
+	border: none;
+	font-size: 15px;
+	padding: 0px;
+	height: 85px;
+	background: #f7f7f7;
+	padding: 5px;
+}
+
+.mui-input-row textarea::-webkit-input-placeholder {
+	color: #999999!important;
+}
+
+.data-group .data-row label {
+	color: #666666;
+}
+
+.data-group .data-row input {
+	background: #f7f7f7;
+	height: 30px!important;
+	margin: -10px -5px!important;
+}
+
+.data-group .data-row:after {
+	right: 0px;
+	left: 0px;
+}
+
+.data-group .data-row:last-child:after {
+	height: 0px;
+}
+
+.data-group:after,
+.data-group:before {
+	height: 0px;
+}
+
+.delete-addr .body {
+	height: 45px;
+	line-height: 45px;
+	padding: 0px!important;
+}
+
+.data-group .data-row .select_body {
+	margin-right: 35px!important;
+}
+
+.data-group .data-row .select_body .content {
+	background: #f7f7f7;
+	margin: -5px;
+	padding: 5px;
+	min-height: 29px;
+}
+
+.data-group .data-row .mui-input-row {
+	padding: 6px 10px 0px 10px;
+}
+
+mt0 {
+	margin-top: 0px;
+}
+
+.right-save {
+	font-size: 1.5rem;
+	line-height: 40px;
+	padding: 3px 2px;
+	float: right;
+}
+
+.data-group .data-row .body input,
+.data-group .data-row .body>span,
+.data-group .data-row .body select {
+	padding: 0px 10px;
+	margin: 0;
+	border: none;
+	color: #666666;
+	height: auto;
+	font-size: 1.4rem;
+}

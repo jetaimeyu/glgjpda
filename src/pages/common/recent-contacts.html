@@ -1,0 +1,67 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<link rel="stylesheet" href="contact-common.css" />
+	</head>
+
+	<body ng-controller="ContactOrgController">
+		<div id="slider" class="mui-scroll-wrapper" style="display:none;" ng-class="{'mui-block':isLoad}">
+			<md-user-list ng-model="data" action="action" selected-users="selectedUsers" multi-select="multiSelect"></md-user-list>
+			<md-no-data ng-show="data&&data.length==0">暂无数据</md-no-data>
+		</div>
+		<script src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("ContactOrgController", ["$scope", "ApiService", "DataService", "UtilsService", "Loading", function($scope, ApiService, DataService, UtilsService, Loading) {
+				//是否用于选择人员
+				$scope.action = query("action");
+				$scope.multiSelect = query("multiselect");
+				//接受已选择的人员
+				$scope.selectedUsers = plus.webview.currentWebview().selectObj;
+				//页面数据
+				$scope.data = {};
+
+				loadData();
+
+				function loadData() {
+					var url = ApiService.Api50 + "/api/v1/Message/MsgCurList_Person?clientType=2&pageSize=100";
+					DataService.get(url).then(function(res) {
+						if(res) {
+							$scope.isLoad = true;
+							Loading.hide();
+							$scope.data = res.Result.map(function(user) {
+								return {
+									UserID: user.OppoID,
+									CompID: user.OppoCompID,
+									CompName:user.CompName,
+									OrgName:user.OrgName,
+									Phone:user.Phone,
+									ViewName: user.OppoName,
+									ULogoIsExist: user.ULogoIsExist
+								}
+							});
+						}
+					})
+				}
+
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

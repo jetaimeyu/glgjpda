@@ -1,0 +1,193 @@
+.mui-bar-nav {
+	background-color: #1975CF;
+	box-shadow: none;
+	-webkit-box-shadow: none;
+}
+
+.mui-content,
+body {
+	background: #fff;
+}
+
+.mui-bar-nav~.mui-content {
+	padding-top: 0px;
+}
+
+.mui-content {
+	position: fixed;
+	top: 0px;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+}
+
+.mui-bar-nav .comp-kefu {
+	width: 40px;
+	height: 44px;
+	line-height: 51px;
+	text-align: center;
+	position: absolute;
+	right: 0px;
+}
+
+.mui-bar-nav .comp-kefu img {
+	width: 16px;
+	position:relative;
+	top:1px;
+}
+
+.comp-info {
+	margin-top: -1px;
+	width: 100%;
+	padding-top: 25px;
+	background: url("../../images/industry/co-info-bgx2.png") no-repeat 100% 100%;
+	background-size: cover;
+}
+
+.comp-info .info-logo {
+	text-align: center;
+}
+
+.comp-info .info-logo img {
+	text-align: center;
+	background: #fff;
+	border-radius: 50%;
+}
+
+.comp-info .info-title {
+	text-align: center;
+	font-size: 16px;
+	margin-top: 10px;
+	padding: 0px 20px;
+	color: #fff;
+	max-height: 50px;
+	display: -webkit-box;
+	overflow: hidden;
+	white-space: normal !important;
+	text-overflow: ellipsis;
+	word-wrap: break-word;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+}
+
+.comp-info .info-mdt {
+	margin-top: 10px;
+	width: 100%;
+	text-align: center;
+	/*	padding-bottom: 30px;*/
+}
+
+.comp-info .info-mdt .info-mdt-content {
+	display: inline-block;
+	margin: 0 auto;
+	color: #fff;
+	/*border: 1px solid #76B2E9;*/
+	/*background: #1063B4;
+	border-radius: 15px;*/
+	font-size: 12px;
+	/*padding: 0px 10px;*/
+	line-height: 22px;
+}
+
+.comp-info .info-btns {
+	margin-top: 10px;
+	padding-bottom: 15px;
+	text-align: center;
+}
+
+.comp-info .info-btns .btn-item {
+	border: 1px solid #76B2E9;
+	border-radius: 15px;
+	color: #fff;
+	font-size: 11px;
+	padding: 4px 10px 4px 10px;
+}
+
+.comp-info .info-btns .btn-item img {
+	margin-right: 2px;
+	position:relative;
+	top:1px;
+}
+
+.comp-info .info-btns .btn_add img {
+	width: 10px;
+	height: 10px;
+}
+
+.comp-info .info-btns .btn_delete img {
+	width: 10px;
+	height: 10px;
+}
+
+.comp-info .info-btns .btn_call img {
+	width: 10px;
+	position: relative;
+	top: 1px;
+}
+
+.comp-info .info-btns .btn_send img {
+	width: 10px;
+	height: 10px;
+}
+
+.comp-info .info-btns .btn_call {
+	margin: 0px 7px;
+}
+
+.comp-mainproduct .main-title {
+	height: 40px;
+	line-height: 40px;
+	position: relative;
+	border-bottom: 1px solid #EFEFEF;
+}
+
+.comp-mainproduct .main-title img {
+	width: 13px;
+	margin-left: 10px;
+	position: relative;
+	top: 1px;
+}
+
+.comp-mainproduct .main-title span {
+	color: #000;
+	font-size: 15px;
+	margin-left: 4.5px;
+}
+
+.comp-mainproduct .main-content {
+	font-size: 14px;
+	padding: 15px 10px;
+	color: #999999;
+	word-break: break-all;
+}
+
+.info-line {
+	background: #ECECEC;
+	height: 10px;
+}
+
+.mui-table-view:after {
+	height: 0px;
+}
+
+.mui-table-view:before {
+	height: 0px;
+}
+
+.mui-table-view.mui-grid-view .mui-table-view-cell {
+	margin-bottom: 10px;
+	min-height: 200px;
+}
+
+.mui-table-view.mui-grid-view .mui-table-view-cell .mui-media-body {
+	margin-top: 3px;
+}
+
+.mui-table-view.mui-grid-view .mui-table-view-cell .mui-media-body p {
+	color: #555555;
+	text-align: left;
+}
+
+.mui-bar-nav {
+     border-bottom: none; 
+}

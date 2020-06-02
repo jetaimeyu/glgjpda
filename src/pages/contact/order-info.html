@@ -1,0 +1,114 @@
+<!--设备故障维护 scz-->
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>客户回访详情</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="order-info.css" />
+		<style type="text/css">
+			.icon-kefu:before,.icon-tel:before  {
+				margin-right: 5px;
+				color: #0095F3;
+				font-size: 1.6rem;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="EvalInfoController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">订单详情</a>
+			<!--<a class="menu-more icon-more right-menu-icon-detail" href="#popover" id="openPopover"></a>-->
+		</header>
+		<div class="mui-content" ng-class="{'mui-block':Loaded}" style="display: none;">
+			<div class="box1">
+				<!--<div class="box2">
+					<div class="box3" view-name="DLinearLayout">
+						<div class="or_name font-16" ng-bind="data.CommodityInfo.Name"></div>
+					</div>
+				</div>-->
+				<div style="display: flex;">
+					<img ng-src="{{imgurl+'/'+data.Files[0].FilePath}}" style="width: 60px;height: 60px;float: left;" />
+					<p class="mui-ellipsis-2 order-info" ng-bind="data.CommodityInfo.Name" style="margin-left: 10px;color: black;font-size: 1.4rem;"></p>
+				</div>
+				<div>
+					<div class="or_price color-gray-deep" ng-bind="'单价：￥'+data.CommodityInfo.Price">
+						</span>
+					</div>
+					<div><span class="or_num color-gray-deep" ng-bind="'数量 ×'+data.PayNum"></span></div>
+					<div class="or_price_all font-14" ng-bind="'实付款：￥'+data.TotalSum">
+						</span>
+					</div>
+
+				</div>
+			</div>
+			<div class="box4">
+				<p>订单编号：<span ng-bind="data.OrderNumber"></span></p>
+				<p>创建时间：<span ng-bind="data.CommodityInfo.CreateDate"></span></p>
+				<p>成交时间：<span ng-bind="data.PayTime"></span></p>
+				<p>付款方式：<span ng-bind="payway[data.PayMethod]"></span></p>
+				<p>收件地址：<span ng-bind="data.Address"></span></p>
+			</div>
+			<div style="background-color: #fff;display: flex;margin-top: 1px;padding:10px 5px;">
+				<span ng-click="Chat()" class="icon-kefu color-gray-dark" style="width: 50%;float: left;text-align: center;font-size: 1.3rem;border-right: 1px solid #f0f0f0;">迈迪官方客服</span>
+				<span ng-click="Call()" class="icon-tel color-gray-dark" style="width: 50%;float: left;text-align: center;font-size: 1.3rem;">拨打电话</span>
+			</div>
+		</div>
+		</div>
+		<!--无网络或请求失败重试-->
+		<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("EvalInfoController", ["$scope", "AuthService", "ApiService", "DataService", "UtilsService", "ChatUserService", "Loading", "RPCObserver", "CacheService", function($scope, AuthService, ApiService, DataService, UtilsService, ChatUserService, Loading, RPCObserver, CacheService) {
+				$scope.data = "";
+				Loading.show();
+				$scope.imgurl = ApiService.Api50 + "/api/v1/File/DownLoadPic?filePath=";
+				//发消息给迈迪人员
+				$scope.Chat = function() {
+					var url = "../complib/index.html?compid=11&tabidx=3";
+					UtilsService.openWindow({
+							needLogin: true,
+							id: url,
+							url: url
+						});
+				};
+				//打电话400-600-2378
+				$scope.Call = function() {
+					plus.device.dial('400-600-2378', false);
+				};
+				var curUser = CacheService.get("user");
+				$scope.CurUserID = curUser.UserID;
+
+				getServiceEvalInfo();
+				$scope.payway = {
+					alipay: '支付宝快捷支付'
+				}
+				//获取评价页面初始化信息
+				function getServiceEvalInfo() {
+					var url = ApiService.Api50 + "/api/v1/MdtMicroMart/GetCommodityOrderInfo/" + query('id');
+					DataService.get(url).then(function(res) {
+						Loading.hide();
+						$scope.Loaded = true;
+						if(res) {
+							$scope.data = res;
+						}
+					}, function(error) {
+						$scope.isLoad = false;
+					})
+				}
+			}]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

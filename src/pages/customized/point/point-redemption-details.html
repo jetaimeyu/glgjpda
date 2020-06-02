@@ -1,0 +1,183 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../../css/common.css" />
+		<link rel="stylesheet" href="../../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.icon {
+				width: 16px;
+			}
+			
+			#point-detail .mui-popover {
+				width: 18vw;
+				min-width: 70px;
+			}
+			
+			#point-detail .mui-popover-arrow {
+				left: auto!important;
+			}
+			
+			#point-detail .mui-popover .mui-icon {
+				font-size: 17px;
+			}
+			
+			.md-point-detail.data-group .data-row::after {
+				right: 10px;
+				left: 10px;
+			}
+			
+			.md-point-detail.data-group .data-row .body {
+				padding: 0px;
+			}
+			
+			.md-point-detail.data-group .data-row {
+				padding: 10px 16px 10px 16px;
+			}
+			
+			.md-point-detail.data-group:first-child {
+				margin-top: 0px;
+			}
+			
+			.md-point-detail .infos {
+				height: 43px;
+				line-height: 1;
+			}
+			
+			.md-point-detail .names {
+				font-size: 1.5rem;
+				color: #000;
+				padding-top: 6px;
+				margin-bottom: 6px;
+				max-width: 45%;
+			}
+			
+			.md-point-detail .CreateDate {
+				font-size: 1.2rem;
+				color: #AAAAAA;
+			}
+			
+			.md-point-detail .log-type {
+				position: absolute;
+				top: 16px;
+				right: 16px;
+				color: #f5cd13!important;
+				display: inline-block;
+				max-width: 35%;
+			}
+			
+			.md-point-detail .margin-left-15 {
+				margin-left: 15px!important;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="pointRedemptionDetailController" id="point-detail">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">积分收支明细</a>
+
+			<a class="mui-pull-right menu-add font-16" href="#popover" id="openPopover">
+				<span class="font-14" ng-bind="typeContent"></span>
+				<i class='icon-down font-12'></i>
+			</a>
+
+		</header>
+
+		<div id="pullrefresh" ng-controller="pullrefreshController" class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<div class="mui-content">
+				<ul class="data-group md-point-detail">
+					<!--mui-table-view-cell-->
+					<li class=" data-row mui-block" ng-repeat="item in data">
+						<div class="body">
+							<div class="infos">
+								<div class="names mui-ellipsis" ng-bind="item.SourceName"></div>
+								<div class="CreateDate" ng-bind="item.UseDate"></div>
+								<span class="log-type font-14 mui-ellipsis" ng-if="item.IntegralType==1" ng-bind="'+'+item.Integral"></span>
+								<span class="log-type font-14 mui-ellipsis" ng-if="item.IntegralType==2" ng-bind="'-'+item.Integral"></span>
+							</div>
+						</div>
+
+					</li>
+					
+				</ul>
+				<md-no-data ng-show="data && data.length==0">暂无数据</md-no-data>
+			</div>
+		</div>
+		<div id="popover" class="mui-popover menuDivModel">
+			<div class="mui-popover-arrow" style="left: auto!important;"></div>
+			<ul class="mui-table-view" style="right: 0;">
+				<li class="mui-table-view-cell " style="text-align: left;" ng-click="tap('0')">
+					<a class="mui-icon">
+						<font>全部</font>
+					</a>
+				</li>
+				<li class="mui-table-view-cell" style="text-align: left;" ng-click="tap('1')">
+					<a class="mui-icon">
+						<font>获取</font>
+					</a>
+				</li>
+				<li class="mui-table-view-cell" style="text-align: left;" ng-click="tap('2')">
+					<a class="mui-icon">
+						<font>使用</font>
+					</a>
+				</li>
+			</ul>
+		</div>
+		<script type="text/javascript" src="../../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../../js/common.js"></script>
+		<script type="text/javascript" src="../../../js/utils.js"></script>
+		
+		<script>
+			app.controller("pointRedemptionDetailController", ["$scope", "ApiService", "Loading", function($scope, ApiService, Loading) {
+				$scope.pageIndex = 0;
+				$scope.pageSize = 10;
+				$scope.type = 0; //积分类型 1新增 (获取)2消费（使用） 默认传0 全部
+				$scope.typeContent = "全部"
+				var comId = query("compid");
+				//comId = 11;
+
+				function init() {
+					var url = ApiService.Api52 + "/api/v1/Reg/GetIntegralDetail?page=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize + "&compId=" + comId + "&integralType=" + $scope.type;
+					$scope.url = url;
+				};
+
+				$scope.$on('refresh_pageindex', init);
+				//				RPCObserver.on('refresh_point_detail_list', 'refresh_point_detail_list');
+				//				window.refresh_point_detail_list = function() {
+				//					$scope.$broadcast('md_pullrefresh');
+				//				};
+				$scope.tap = function(key) {
+					mui(".mui-popover").popover("hide"); //隐藏弹出菜单
+					$scope.type = key;
+					switch(key) {
+						case "0":
+							$scope.typeContent = "全部";
+							break;
+						case "1":
+							$scope.typeContent = "获取";
+							break;
+						case "2":
+							$scope.typeContent = "使用";
+							break;
+					}
+					$scope.isLoad = false;
+					Loading.show();
+					$scope.$broadcast('md_pullrefresh');
+				}
+			}]);
+
+			mui.plusReady(function() {
+				plus.webview.currentWebview().setStyle({
+					scrollIndicator: 'none'
+				});
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

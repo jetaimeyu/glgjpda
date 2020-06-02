@@ -1,0 +1,73 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/common.css">
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<link rel="stylesheet" href="pick-list.css" />
+		<style type="text/css">
+			.data-row {
+				margin-left: 15px;
+				margin-right: 15px;
+			}
+			
+			.statistics-row~.mui-content .mui-pull-top-pocket {
+				top: 84px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="PartInfolistController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">配件更换</a>
+		</header>
+		<div class="statistics-row" style="margin-top: 44px; display: none;" ng-if="year"  ng-class="{'mui-block':domShow}">
+			<div class="content">
+				<div>
+					<span ng-bind="year + '年'"></span>
+					<span ng-bind="quarter + '季度'" ng-if="quarter"></span>
+					<span ng-bind="month + '月'" ng-if="month"></span>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("PartInfolistController", ["$scope", "UtilsService", "$timeout",function($scope, UtilsService,$timeout) {
+				$timeout(function(){
+					$scope.domShow = true;
+				},100)
+				$scope.year = query("year") || "";
+				$scope.quarter = query("quarter") || "";
+				$scope.month = query("month") || "";
+				$scope.prodid = query("prodid") || "";
+				$scope.skuid = query("skuid") || "";
+				$scope.prodCompId = query("prodCompId") || "";
+				$scope.perUserId = query("perUserId") || "";
+				//创建子页面的下拉刷新
+				mui.init({
+					subpages: [{
+						id: "mat-part-infolist.html", //内容页面标志
+						url: 'mat-part-infolist.html?type=all&year=' + $scope.year + "&quarter=" + $scope.quarter + "&month=" + $scope.month + "&prodid=" + $scope.prodid+ "&skuid=" + $scope.skuid+ "&prodCompId=" + $scope.prodCompId+ "&perUserId=" + $scope.perUserId,
+						styles: {
+							top: $scope.year? '96px' : '44px',
+							bottom: '0px',
+						}
+					}]
+				});
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

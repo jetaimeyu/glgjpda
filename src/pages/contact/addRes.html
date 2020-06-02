@@ -1,0 +1,215 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport"
+		content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link rel="stylesheet" href="../../css/mui.min.css">
+	<link rel="stylesheet" href="../../css/common.css">
+	<link rel="stylesheet" href="../../icon-font/iconfont.css">
+</head>
+
+<body ng-controller="addResCtrl">
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left">添加资源</a>
+	</header>
+	<div class="mui-content" style="height: 100%;">
+		<ul class="data-group">
+			<li class="data-row must" ng-click="selectGroup()">
+				<label>分组</label>
+				<i class="opt md-icon icon-right"></i>
+				<div class="body">
+					<span class="placeholder" ng-show="!GroupName">请选择分组</span>
+					<span ng-bind="GroupName" ng-show="GroupName"></span>
+				</div>
+			</li>
+			<li class="data-row">
+				<label>备注</label>
+				<div class="body" style="padding-right: 15px;">
+					<textarea ng-model="RemarkName" class="font-14" style="margin-bottom: 0px;padding: 5px;"></textarea>
+				</div>
+			</li>
+		</ul>
+		<ul class="data-group">
+			<li class="data-row">
+				<label>TA的照片</label>
+				<div class="body attach" style="padding-bottom: 5px;">
+					<md-image images="Attach" readonly="false" canadd="true"></md-image>
+				</div>
+			</li>
+		</ul>
+		<div style="padding: 10px;">
+			<a type="button" class="font-15 mui-btn mui-btn-block" ng-click="doAddFriend()">确认</a>
+		</div>
+	</div>
+	<script src="../../js/mui.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/rpc.js"></script>
+	<script>
+		app.controller("addResCtrl", ["$scope", "ApiService", "DataService", "Loading", "UtilsService", "RPCObserver","$q","$timeout",
+			function ($scope, ApiService, DataService, Loading, UtilsService, RPCObserver,$q,$timeout) {
+				$scope.RemarkName = query('RealName');
+				$scope.GroupID = 0;
+				$scope.GroupName = "";
+				$scope.Attach = [];
+
+				//上传进度
+				$scope.process = {
+					SaveState: 0, //0未保存 1保存成功 2保存中 3保存失败
+					ProcessList: [{
+						Text: "上传图片",
+						State: 0,
+						RetryMethod: uploadPics
+					}, {
+						Text: "保存信息",
+						State: 0,
+						RetryMethod: saveInfo
+					}]
+				}
+
+				$scope.selectGroup = function () {
+					UtilsService.openWindow({
+						id: 'select-resPacket.html',
+						url: 'select-resPacket.html?ismust=1&type=2',
+						extras: {
+							selectObj: {
+								id: $scope.GroupID || 0,
+								name: $scope.GroupName || ""
+							},
+							callback: 'getGroup'
+						}
+					});
+				};
+
+				//上传图片
+				function uploadPics() {
+					$scope.process.ProcessList[0].State = 1;
+					var imgs = $scope.Attach ? $scope.Attach.filter(function (img, idx) {
+						img.idx = idx; //记录图片在数组中的位置
+						return img.State == 0;
+					}) : [];
+					if (imgs.length > 0) {
+						var promises = imgs.map(function (img) {
+							return UtilsService.uploadFileBill(img.FilePath, 1);
+						});
+						$q.all(promises).then(function (res) {
+							var flag = true;
+							res.forEach(function (img, index) {
+								if (img == null) {
+									flag = false;
+								} else {
+									$scope.Attach[imgs[index].idx] = {
+										FileGuid: img.FileGuid,
+										FileName: img.FileName,
+										FileExt: img.FileExt,
+										FilePath: img.FilePath,
+										FileSize: imgs[index].FileSize,
+										FileType: 1,
+										State: 1
+									};
+								}
+							});
+							$scope.process.ProcessList[0].State = flag ? 2 : 3;
+							//上传详情内容
+							flag && saveInfo();
+						});
+					} else {
+						$scope.process.ProcessList[0].State = 2;
+						//上传详情内容
+						saveInfo();
+					}
+				}
+
+				function saveInfo() {
+					if ($scope.process.ProcessList[0].State != 2) {
+						return;
+					}
+
+					$scope.process.ProcessList[1].State = 1;
+
+					var url = ApiService.Api50 + "/api/v1/Resource/ResourceAddUserModel" ;
+					DataService.post(url, {
+						resUserId:query('userid'),
+						groupId:$scope.GroupID,
+						remark: $scope.RemarkName,
+						attach: $scope.Attach
+					}).then(function (res) {
+						RPCObserver.broadcast("refresh_add_resources_list");
+						var view = plus.webview.currentWebview();
+						var opener = view.opener();
+						if (view.callback) {
+							res.GroupID = $scope.GroupID;
+							res.GroupName = $scope.GroupName;
+							res.RemarkName = $scope.RemarkName;
+							opener.evalJS(view.callback + "(" + JSON.stringify(res) + ")");
+						}
+						RpcClient.invoke("sourceWind", "RPC_RefreshResource", $scope.GroupID);
+						RpcClient.invoke("compWind", "RPC_RefreshResource", "-1");
+						RpcClient.invoke("friendWind", "RPC_RefreshResource", "-1");
+						RPCObserver.broadcast('refresh_chat_viewName', {
+							UserID: query('userid'),
+							RemarkName: $scope.RemarkName
+						});
+						$scope.process.ProcessList[1].State = 2;
+						$timeout(function () {
+							$scope.process.SaveState = 1;
+						}, 800);
+					}, function () {
+						$scope.process.ProcessList[1].State = 3;
+					})
+				}
+				var isSubmitting = false;
+				$scope.doAddFriend = function () {
+					if (!$scope.GroupID) {
+						mui.toast("请选择分组！");
+						return;
+					}
+
+					if (isSubmitting) return;
+					//开始上传
+					isSubmitting = true;
+					UtilsService.submitModal($scope.process, function () {
+						isSubmitting = false;
+						mui.back();
+					}, function () {
+						isSubmitting = false;
+						$scope.process.SaveState = 0;
+						$scope.process.ProcessList.forEach(function (item) {
+							item.State = 0;
+						})
+					}, function () {
+						isSubmitting = false;
+						$scope.process.ProcessList.forEach(function (item) {
+							item.State = 0;
+						})
+					});
+
+					uploadPics();
+				}
+			}
+		]);
+
+		function getGroup(res) {
+			if (res) {
+				var appElement = document.querySelector('[ng-controller=addResCtrl]');
+				var $scope = angular.element(appElement).scope();
+				$scope.GroupID = res.id;
+				$scope.GroupName = res.groupname;
+				$scope.$apply();
+			}
+		}
+
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			plus.webview.currentWebview().setStyle({
+				softinputMode: "adjustResize"
+			});
+		})
+	</script>
+</body>
+
+</html>

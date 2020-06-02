@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="../../css/common.css">
+		<style>
+			.mui-table-view:before {
+				background-color: #FFFFFF;
+			}
+			
+			.mui-table-view:after {
+				background-color: #FFFFFF;
+			}
+			
+			.mui-table-view-cell:after {
+				background-color: #EAEAEA;
+			}
+			
+			.mui-input-row input {
+				font-size: 1.4rem;
+			}
+			
+			.mui-bar-nav.mui-bar .mui-icon {
+				margin-left: -12px;
+				color: #323232;
+				font-weight: 500;
+			}
+			
+			.mui-bar-nav {
+				box-shadow: none;
+				border-bottom: 0px solid #ccc;
+				background-color: #ffffff;
+			}
+			
+			.mui-bar .mui-title {
+				right: 40px;
+				left: 32px;
+				font-size: 1.7rem;
+				color: #323232;
+				text-align: left;
+				line-height: 45px;
+			}
+			
+			.mui-table-view:after {
+				background-color: #ffffff !important;
+			}
+			
+			.mui-table-view-cell:after {
+				position: absolute;
+				right: 0;
+				bottom: 0;
+				left: 0px;
+				height: 1px;
+				content: '';
+				-webkit-transform: scaleY(.5);
+				transform: scaleY(.5);
+				background-color: #c8c7cc;
+			}
+			
+			.mui-table-view-cell {
+				position: relative;
+				overflow: hidden;
+				padding: 0px;
+				-webkit-touch-callout: none;
+			}
+			
+			.mui-input-row label {
+				font-size: 1.4rem;
+				font-weight: 500;
+			}
+			
+			#btnArea {
+				text-align: center;
+				padding: 40px 16px 0px 16px
+			}
+			
+			.mui-input-row {
+				display: flex;
+			}
+			
+			.mui-input-row label {
+				width: 110px;
+				flex: none;
+			}
+			
+			.mui-input-row label~input {
+				/*width: 70%;*/
+				width: auto;
+				flex: auto;
+			}
+			
+			.must label:after {
+				content: '*';
+				color: #DC0000;
+			}
+		</style>
+	</head>
+
+	<body ms-controller="createCtrl">
+		<!--头部-->
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">创建生产小组</h1>
+		</header>
+
+		<div class="mui-content main-content">
+
+			<ul id="ul-menu" class="mui-table-view" style="margin-top: 8px;">
+
+				<li class="mui-table-view-cell must">
+					<div class="mui-input-row">
+						<label>小组名称</label>
+						<input type="text" class="mui-input-clear" ms-duplex="@teamName" maxlength="20" placeholder="输入小组名字">
+					</div>
+
+				</li>
+
+			</ul>
+		</div>
+		<div style="margin-top: 8px;">
+			<ul class="mui-table-view" style="margin-bottom: 15px;">
+				<li class="mui-table-view-cell must">
+					<div class="mui-input-row">
+						<label>车间</label>
+						<input type="text" class="mui-input-clear" ms-duplex="@workShop" maxlength="20" placeholder="输入车间名字">
+					</div>
+
+				</li>
+				<li class="mui-table-view-cell">
+					<div class="mui-input-row">
+						<label>口令</label>
+						<input type="password" class="mui-input-password" ms-duplex="@passwd" maxlength="20" placeholder="设置一个口令">
+					</div>
+
+				</li>
+			</ul>
+		</div>
+
+		<div class="mui-row" id="btnArea">
+			<button type="button" class="mui-btn mui-btn-primary" style="display: block;width: 100%; font-size: 1.6rem;" ms-click="@postTeam()">立即创建小组</button>
+		</div>
+
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/avalon.js"></script>
+		<script src="../../js/utils.js"></script>
+		<script>
+			mui.plusReady(function() {
+				user.ready(function() {
+
+				})
+
+				mui('.line-input').input()
+			});
+
+			var app = avalon.define({
+				$id: "createCtrl",
+				teamName: "",
+				workShop: "",
+				passwd: "",
+				clickNum: 0, //点击次数
+				postTeam: function() {
+					if(app.clickNum != 0) return;
+					app.teamName = trim(app.teamName);
+					if(app.teamName == '') {
+						mui.toast("请输入小组名称");
+						return false;
+					}
+					if(!/^[a-zA-Z0-9\u4e00-\u9fa5]+$/.test(app.teamName)) {
+						mui.toast("小组名称只能输入数字、字母或汉字");
+						return false;
+					}
+
+					app.workShop = trim(app.workShop);
+					if(app.workShop == '') {
+						mui.toast("请输入车间名称");
+						return false;
+					}
+					if(!/^[a-zA-Z0-9\u4e00-\u9fa5]+$/.test(app.workShop)) {
+						mui.toast("车间名称只能输入数字、字母或汉字");
+						return false;
+					}
+					app.passwd = trim(app.passwd);
+					if(app.passwd != '' && !/^[a-zA-Z0-9]+$/.test(app.passwd)) {
+						mui.toast("口令只能输入数字或字母");
+						return false;
+					}
+					document.activeElement.blur();
+					app.clickNum = 1
+					var url = MdAppUrl.Api50 + "/api/v1/Assemble/SaveAssGroup";
+					var data = {
+						ID: 0,
+						GroupName: app.teamName,
+						WorkShopName: app.workShop,
+						SecretSignal: app.passwd
+					}
+
+					postAjaxData(url, data, function(res) {
+						app.clickNum = 0
+
+						if(res && res.State == 1) {
+							//						var opener = plus.webview.currentWebview().opener();
+							//						mui.alert("创建成功！", "", "返回", function(){
+							//							mui.fire(opener, "createTeamSuccess")
+							//							mui.back();
+							//						});
+
+//							mui.toast('创建成功！', {
+//								duration: 'short',
+//								type: 'div'
+//							})
+							//var opener = plus.webview.currentWebview().opener();
+							var opener = plus.webview.getWebviewById('index-sub.html');
+							mui.fire(opener, "createTeamSuccess")
+							mui.back();
+						} else {
+							mui.toast(res.ErrorMessage)
+						}
+					}, true)
+
+				}
+
+			});
+		</script>
+	</body>
+
+</html>

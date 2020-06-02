@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+	</head>
+
+	<body ng-controller="searchCtrl">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">地址选择</a>
+		</header>
+		<div id="map">
+		</div>
+		<footer>
+			<div class="addr">
+				<span>门牌号：</span>
+				<input type="text" placeholder="请输入门牌号" class="color-gray-dark" maxlength="50" ng-model="location.street" />
+			</div>
+			<div class="ok" ng-click="confirm()">
+				确认
+			</div>
+		</footer>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/utils.js"></script>
+		<script type="text/javascript" src="mdMap.js"></script>
+		<style>
+			body,
+			.mui-content {
+				background-color: #ffffff;
+			}
+			
+			#map {
+				position: absolute;
+				top: 45px;
+				left: 0;
+				right: 0;
+				bottom: 40px;
+			}
+			
+			footer {
+				position: fixed;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				font-size: 1.5rem;
+				border-top: 1px solid #EEEEEE;
+				line-height: 40px;
+				height: 40px;
+			}
+			
+			footer .addr {
+				width: 80%;
+				display: inline-block;
+				float: left;
+			}
+			
+			footer .addr span {
+				display: inline-block;
+				text-align: center;
+				padding: 0 0 0 10px;
+			}
+			
+			footer .addr input {
+				display: inline-block;
+				width: calc(100% - 100px);
+				line-height: 30px;
+				height: 30px;
+				font-size: 1.5rem;
+				padding: 5px;
+				border: none;
+			}
+			
+			footer .ok {
+				display: inline-block;
+				text-align: center;
+				background-color: #3296FA;
+				height: 100%;
+				color: #FFFFFF;
+				float: right;
+				width: 18%;
+			}
+		</style>
+	</body>
+
+</html>

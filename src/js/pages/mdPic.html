@@ -1,0 +1,28 @@
+<!--
+<div class="photo file" ng-repeat="img in images track by $index">
+	<div class="img-body">
+		<img class="img" ng-style="{'background-image':'url(' + getPreSrc(img) +')'}" ng-click="preview($index)" ng-src="{{localUrl+'/images/imgPre.png'}}" />
+	</div>
+	<img ng-if="!readonly" class="media-del" src="{{localUrl}}/images/delete.png" ng-click="delete($index)">
+</div>-->
+<img class="img" style="background-color: rgba(153, 153, 153, 0.12);background-repeat: no-repeat;background-size:cover;" ng-src="{{localUrl+'/images/imgPre.png'}}" ng-style="{'background-image':'url(' + getPreSrc(url) +')'}"  ng-repeat="url in images" ng-if="url.FileType==2&&images.length!=1" ng-click="preview($index)" />
+<div class="oneimg"  data-preview-group='{{$index}}'
+	 ng-click="preview($index)" 
+	 ng-repeat="url in images" 
+	 ng-if="url.FileType==2&&images.length==1"
+	 ng-style="{'background-image':'url(' + getPreSrc(url) +')'}"
+	 style="
+	 min-height: 150px;
+	 max-height: 220px;
+	 width:120px;
+	 background-position: 100%;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-color: rgba(153, 153, 153, 0.12);"></div>
+<!--<img class="oneimg" src="{{url.FilePath}}" data-preview-group='{{$index}}' ng-click="preview($index)" ng-repeat="url in images" ng-if="url.FileType==2&&images.length==1" />-->
+<style type="text/css">
+	.oneimg.ng-scope {
+    width: 50%;
+    height: 120px;
+}
+</style>

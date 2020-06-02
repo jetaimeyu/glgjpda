@@ -1,0 +1,101 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="../../css/mui.loading.css" />
+		<link rel="stylesheet" href="../../css/selecttime.css" />
+		<link rel="stylesheet" href="../common/share-log.css" />
+		<style>
+			.mui-fullscreen {
+				top: 85px;
+			}
+			
+			.tab-item {
+				position: absolute;
+				top: 40px;
+				left: 0px;
+				right: 0px;
+				bottom: 0px;
+				overflow: scroll;
+			}
+			
+			.md-tab-block-line {
+				z-index: 3000;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="bodyCtl">
+
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">历史日志</a>
+			<div class="menu-work-date mui-pull-right" style="line-height: 40px;">
+				<span class="color-black font-12" id="a_date_view" ng-click="chooseDate()" ng-bind="domData.curDate.view"></span>
+				<i class="icon-down font-12" ng-click="chooseDate()"></i>
+			</div>
+		</header>
+		<div class="mui-content" ng-if="domData.isLoad && domData.title.DataRow.length>0">
+			<ul class="data-group" style="margin-top:0px;">
+				<li class="data-row">
+					<label>总工时:</label>
+					<div class="body" ng-bind="domData.title.WorkHour+'小时'">
+					</div>
+				</li>
+			</ul>
+		</div>
+		<div class="mui-slider mui-fullscreen" ng-if="domData.isLoad && domData.title.DataRow.length>0">
+			<div id="slider" class="mui-slider">
+				<div id="sliderSegmentedControl" class="mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted" style="background: #fff;">
+					<div class="mui-scroll md-tab md-tab-block">
+						<a class="md-tab-item" ng-class="{'md-active':index==0}" data-value="{{item.GroupDate}}"  href="{{'#tab_'+index}}" ng-repeat="(index,item) in domData.title.DataRow" ng-bind="item.GroupDate"></a>
+					</div>
+				</div>
+				<div class="md-tab-block-line">
+				</div>
+			</div>
+			<div ng-repeat="(index,item) in domData.title.DataRow" id="{{'tab_'+index}}" class="tab-item">
+				<div class="log" ng-repeat="item in domData.data[item.GroupDate]">
+					<div class="date color-gray-dark">
+						<span ng-bind="item.CreateDate"></span>
+						<span class="mui-pull-right" ng-bind="'工时:'+item.WorkHour+'小时'"></span>
+					</div>
+					<div class="list">
+						<div class="line"></div>
+						<div class="row" ng-repeat="row in item.DataRow" ng-click="event.openLogInfo(row.ID)">
+
+							<div class="time">
+								<span ng-bind="row.CreateTime"></span>
+								<span ng-bind="row.CreateUserName || curUser.RealName"></span>
+							</div>
+							<div class="round {{roundColor[row.State]}}">
+							</div>
+							<div class="event">
+								<span class="title" ng-bind="States[row.State]"></span>
+								<span class="desc" ng-bind="row.Description"></span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<md-no-data ng-show="domData.isLoad && domData.title.DataRow.length==0">暂无数据</md-no-data>
+
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../../js/mui.loading.js"></script>
+		<script type="text/javascript" src="eq-log-history.js"></script>
+	</body>
+
+</html>

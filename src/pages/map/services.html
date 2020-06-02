@@ -1,0 +1,103 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <link href="../../css/mui.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../../css/common.css" />
+    <link rel="stylesheet" href="../../icon-font/iconfont.css" />
+    <link rel="stylesheet" href="../../css/selecttime.css" />
+    <link rel="stylesheet" href="../../css/mui.loading.css" />
+    <link rel="stylesheet" href="../../css/mpicker.css" />
+    <link rel="stylesheet" href="services.css" />
+</head>
+
+<body ng-controller="scanProdsCtl">
+    <div class="mui-content">
+        <div id="map_container">
+
+            <div class="map_tools">
+                <ul class="data-group">
+                    <li class="data-row">
+                        <div class="body">
+                            <i class=" icon-zuo" ng-click="event.datePlus()"></i>
+                            <p class="color-black font-12" id="a_date_view" ng-click="event.chooseDate()" ng-bind="domData.curDate.view">
+                            </p>
+                            <i class="  icon-you" ng-click="event.dateAdd()"></i>
+                        </div>
+                    </li>
+                    <li class="data-row" id="showCityPickBody">
+                        <p class="opt md-icon">
+                            <i class="icon-right"></i>
+                        </p>
+                        <div class="body quanguo mui-ellipsis text-left" id="showCityPicker" style="margin-right: 0px;" ng-bind="domData.city || domData.province">
+                            全国
+                        </div>
+                    </li>
+                    <li class="data-row prod" ng-click="event.selectProd()">
+                        <p class="opt md-icon">
+                            <span id="delPro" style="display:none" class="mui-icon mui-icon-closeempty" ng-class="{'mui-block':domData.prodInfo.ProdName}" ng-click="event.delProd($event)"></span>
+                            <i class="icon-right"></i>
+                        </p>
+                        <div class="body mui-ellipsis-2 text-left" id="prodname" ng-bind="domData.prodInfo.ProdName || '所有产品'">
+                            所有产品
+                        </div>
+                    </li>
+
+                    <li class="data-row" ng-class="{'mui-block':domData.prodInfo.SkuID}" style="display:none">
+                        <div class="body mui-ellipsis text-left" ng-bind="'型号：'+domData.prodInfo.SkuName">
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <div style="display:none;" class="map_types" ng-class="{'mui-block':domData.isLoadData}">
+                <ul class="data-group">
+                    <li class="data-row">
+                        <div class="body" ng-click="event.chooseType('P')">
+                            <i style="color:#F27800" class="icon-roundcheckfill left-10 ng-scope font-15" ng-if="domData.active.indexOf('P')<0"></i>
+                            <i class="icon-round color-gray font-15 ng-hide" ng-show="domData.active.indexOf('P')>=0"></i>安装调试
+                            <span ng-bind="domData.data?domData.data['P'].length:0"></span>
+                        </div>
+                    </li>
+                    <li class="data-row">
+                        <div class="body" ng-click="event.chooseType('M')">
+                            <i style="color:#E60303;" class="icon-roundcheckfill  left-10 ng-scope font-15" ng-if="domData.active.indexOf('M')<0"></i>
+                            <i class="icon-round color-gray font-15 ng-hide" ng-show="domData.active.indexOf('M')>=0"></i>产品故障
+                            <span ng-bind="domData.data?domData.data['M'].length:0"></span>
+                        </div>
+                    </li>
+                    <li class="data-row">
+                        <div class="body" ng-click="event.chooseType('C')">
+                            <i style="color:#0BC07E;" class="icon-roundcheckfill  left-10 ng-scope font-15" ng-if="domData.active.indexOf('C')<0"></i>
+                            <i class="icon-round color-gray font-15 ng-hide" ng-show="domData.active.indexOf('C')>=0"></i>其他服务
+                            <span ng-bind="domData.data?domData.data['C'].length:0"></span>
+                        </div>
+                    </li>
+
+
+                </ul>
+            </div>
+            <div id="map" class="map">
+
+            </div>
+        </div>
+    </div>
+    <script src="../../js/mui.min.js"></script>
+    <script type="text/javascript" src="../../js/angular.js"></script>
+    <script type="text/javascript" src="../../js/common.js"></script>
+    <script type="text/javascript" src="../../js/utils.js"></script>
+    <script type="text/javascript" src="../../js/json.js"></script>
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../js/mPicker.min.js"></script>
+    <!--<script type="text/javascript" src="https://api.map.baidu.com/api?ak=W6WIQmkWMM7fHZ1bQzONDGwimUikfaPU&type=lite&v=1.0"></script>-->
+    <script type="text/javascript" src="https://api.map.baidu.com/api?v=3.0&ak=W6WIQmkWMM7fHZ1bQzONDGwimUikfaPU"></script>
+    <script type="text/javascript" src="http://lbsyun.baidu.com/jsdemo/data/points-sample-data.js"></script>
+    <script type="text/javascript" src="../../js/mui.loading.js"></script>
+    <script type="text/javascript" src="services.js"></script>
+</body>
+
+</html>

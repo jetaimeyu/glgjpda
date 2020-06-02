@@ -1,0 +1,268 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.data-group-tip {
+				margin-top: 10px;
+			}
+			
+			footer {
+				width: 100%;
+				height: 40px;
+				position: fixed;
+				bottom: 0;
+				left: 0;
+				line-height: 40px;
+				text-align: center;
+				background-color: #FFFFFF;
+			}
+			
+			.Check {
+                  background: rgba(153, 204, 255, 0.2);
+            }
+			
+			.inventory-content .data-group .data-row:after {
+				left: 0;
+				right: 0;
+			}
+			
+			.inventory-content div.edit>div[contenteditable] {
+				-webkit-user-modify: read-write-plaintext-only;
+				-webkit-user-select: auto;
+				line-height: 20px;
+				min-height: 40px;
+				z-index: 100;
+			}
+			
+			.inventory-content {
+				border-bottom: 1px solid #EAEAEA;
+			}
+			
+			.inventory-table {
+				border-left: 1px solid #EAEAEA;
+			}
+			
+			.inventory-table-cell {
+				text-align: center;
+				border: none;
+				min-height: 40px;
+				line-height: 40px;
+			}
+			
+			.inventory-table-span {
+				text-align: center;
+				border: none;
+				/*min-height: 40px;*/
+			}
+			
+			.mui-checkbox.mui-left input[type=checkbox],
+			.mui-radio.mui-left input[type=radio] {
+				left: 32%;
+			}
+			
+			.mui-checkbox input[type=checkbox],
+			.mui-radio input[type=radio] {
+				top: 9px;
+			}
+			
+			.mui-checkbox input[type=checkbox]:before,
+			.mui-radio input[type=radio]:before {
+				font-size: 22px;
+			}
+			
+			.mui-checkbox input[type=checkbox][disabled]:before,
+			.mui-radio input[type=radio][disabled]:before {
+				opacity: 1.3;
+			}
+			
+			.inventory-table .inventory-table-cell input[type=text] {
+				border: none;
+				background: #F7F7F7;
+				margin-bottom: 0;
+				padding: 3px;
+				height: 26px;
+				font-size: 1.3rem;
+			}
+			
+			.exception-red {
+				color: red;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="equInventoryEditController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">盘点内容</a>
+		</header>
+		<div class="mui-scroll-wrapper equInventoryEdit " ng-class="{'mui-block':isLoad}" style="display: none;">
+			<p class="data-group-tip">基本信息</p>
+			<ul class="data-group">
+				<li class="data-row">
+					<label>设备名称</label>
+					<div class="body">
+						<span ng-bind="data.EqInfo.EqName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>设备型号</label>
+					<div class="body">
+						<span ng-bind="data.EqInfo.SkuName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>设备编号</label>
+					<div class="body">
+						<span ng-bind="data.EqInfo.EqIdentifier"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>执行人</label>
+					<div class="body">
+						<span ng-repeat="user in data.EqInfo.OperatorList" ng-bind="$index==0?user.Name:'，'+user.Name"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>抄送给</label>
+					<div class="body">
+						<span ng-repeat="user in data.EqInfo.SendUserList" ng-bind="$index==0?user.Name:'，'+user.Name"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="data.EqInfo.LastModifyDate&&data.EqInfo.State==1">
+					<label>盘点时间</label>
+					<div class="body">
+						<span ng-bind="data.EqInfo.LastModifyDate"></span>
+					</div>
+				</li>
+			</ul>
+			<p class="data-group-tip">盘点内容</p>
+			<div class="inventory-content">
+				<ul class="data-group mt0">
+					<li class="data-row inventory-table">
+						<div class="inventory-table-cell mui-col-sm-3 mui-col-xs-3">内容</div>
+						<div class="inventory-table-cell mui-col-sm-5 mui-col-xs-5">值</div>
+						<div class="inventory-table-cell mui-col-sm-2 mui-col-xs-2">确认</div>
+						<div class="inventory-table-cell mui-col-sm-2 mui-col-xs-2">是否异常</div>
+					</li>
+					<li class="data-row inventory-table" ng-class="{'Check':item.isCheckSure}" ng-repeat="item in data.Content">
+						<div class="inventory-table-cell mui-col-sm-3 mui-col-xs-3" style="line-height: 17px; padding: 13px 2px;" ng-class="{'exception-red':item.Exception}">
+							<span style="word-wrap:break-word" ng-bind="item.Content"></span>
+						</div>
+						<div class="inventory-table-span mui-col-sm-5 mui-col-xs-5" ng-if="item.isCheckSure">
+							<span style="word-wrap:break-word" ng-bind="item.Value"></span>
+						</div>
+						<div class="inventory-table-cell mui-col-sm-2 mui-col-xs-2 mui-checkbox mui-input-row mui-left">
+							<input name="checkbox" type="checkbox" ng-model="item.isCheckSure" disabled="true" />
+						</div>
+						<div class="inventory-table-cell mui-col-sm-2 mui-col-xs-2 mui-checkbox mui-input-row mui-left">
+							<input name="checkbox" type="checkbox" ng-model="item.Exception" disabled="true" />
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<!--<script type="text/javascript" src="../message/transMessage.js"></script>-->
+		<script>
+			app.controller("equInventoryEditController", ["$scope", "ApiService", "DataService", "UtilsService", "CacheService", "$filter", "AuthService", "Loading", "$timeout", "RPCObserver",
+				function($scope, ApiService, DataService, UtilsService, CacheService, $filter, AuthService, Loading, $timeout, RPCObserver) {
+					$scope.curUser = CacheService.get("user");
+					$scope.planId = query("planId") || 0;
+					$scope.ID = query("id") || 0;
+					$scope.eqId = query("eqId") || 0;
+
+					$scope.Operator = []; //执行人
+					$scope.sendUsers = []; //抄送人
+
+					Loading.show();
+					$scope.isLoad = false;
+					getInventoryEqContent();
+
+					//获取盘点计划信息
+					function getInventoryEqContent() {
+						var url = ApiService.Api52 + "/api/v1/EqApply/GetInventoryEqContent?detailsId=" + $scope.ID + "&planId=" + $scope.planId + "&eqId=" + $scope.eqId;
+						DataService.get(url).then(function(res) {
+							Loading.hide();
+							$scope.isLoad = true;
+							if((res.EqState == 9 || res.EqState == 2) && res.State == 2) {
+								//mui.toast("该设备已报废或被删除");
+								RPCObserver.broadcast("inventory-equ-refresh");
+								RPCObserver.broadcast("refresh_msg_all_list");
+								RPCObserver.broadcast("equ-check-list-refresh");
+								return;
+							} else {
+								if(res.EqState == 9 || res.EqState == 2){
+									 //mui.toast("该设备已删除或报废");
+								}
+								
+								res && ($scope.data = res);
+								res.Content.map(function(one) {
+									if(one.FieldName === 'EqState') {
+										if(one.Value === 1) {
+											one.Value = '在用';
+										} else if(one.Value === 2) {
+											one.Value = '保养';
+										} else if(one.Value === 3) {
+											one.Value = '待售';
+										} else if(one.Value === 4) {
+											one.Value = '空闲';
+										} else if(one.Value === 7) {
+											one.Value = '维修';
+										} else if(one.Value === 8) {
+											one.Value = '停用';
+										} else if(one.Value === 9) {
+											one.Value = '报废';
+										} else if(one.Value === 11) {
+											one.Value = '租赁';
+										}
+									}
+								});
+								$scope.data.Content = res.Content.map(function(one) {
+									one.isCheckSure = query("isEdit") == "true" ? true : false;
+									if(one.Exception == 1) {
+										one.Exception = true;
+									}
+									return one;
+								});
+								res.EqInfo.SendUserList.forEach(function(user) {
+									$scope.sendUsers.push({
+										"UserID": user.ID,
+										"ViewName": user.Name,
+										"CompID": user.CompID
+									})
+								})
+								res.EqInfo.OperatorList.forEach(function(user) {
+									$scope.Operator.push({
+										"UserID": user.ID,
+										"ViewName": user.Name,
+										"CompID": user.CompID
+									})
+								})
+							}
+
+						}, function(error) {
+							$scope.isLoad = true;
+
+						})
+					};
+
+				}
+			]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

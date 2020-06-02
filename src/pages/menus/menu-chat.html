@@ -1,0 +1,265 @@
+<!DOCTYPE HTML>
+<html id="MdTong">
+
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title></title>
+		<link rel="stylesheet" href="../../css/mui.min.css" type="text/css" charset="utf-8" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			html {
+				width: 100%;
+				height: 100%;
+			}
+			
+			body {
+				height: 100%;
+				background-color: transparent;
+			}
+			
+			.mui-popover .mui-popover-arrow {
+				left: auto;
+				right: -6px !important
+			}
+			
+			.mui-table-view-cell:after {
+				position: absolute;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				height: 1px;
+				content: '';
+				-webkit-transform: scaleY(.5);
+				transform: scaleY(.5);
+				background-color: #ccc;
+			}
+			
+			.mui-popover .mui-popover-arrow:after {
+				top: 22px;
+				left: 0;
+				width: 15px;
+				height: 15px;
+			}
+			
+			.mui-popover .mui-table-view {
+				max-height: 315px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="MenuchatController">
+		<a style="display: block;height: 100%; background:url(../../images/mask.png);"></a>
+		<div id="topPopover" class="mui-popover pop-menu" style="position:fixed ;top: 43px;right:9px;">
+			<div class="mui-popover-arrow" style="top: -25px;"></div>
+			<ul class="mui-table-view" style="color: #fff;right: 0;">
+				<li class="mui-table-view-cell popover" style="text-align: left;" data-type="1">
+					<a class="mui-icon icon-personal">
+						<font>个人信息</font>
+					</a>
+				</li>
+				<li class="mui-table-view-cell popover" style="text-align: left;" data-type="6" ng-if="domData.chatCompId>0&&ResID==0">
+					<a class="mui-icon icon-addperson">
+						<font>加为好友</font>
+					</a>
+				</li>
+				<li class="mui-table-view-cell popover" style="text-align: left;" id="btn-trip" data-type="9">
+					<a class="mui-icon icon-location">
+						<font>行程记录</font>
+					</a>
+				</li>
+				<li class="mui-table-view-cell popover" style="text-align: left;" data-type="2">
+					<a class="mui-icon icon-clock">
+						<font>聊天内容</font>
+					</a>
+				</li>
+				<li class="mui-table-view-cell popover" style="text-align: left;" data-type="3" ng-if="domData.chatCompId>0">
+					<a class="mui-icon icon-building">
+						<font>企业库</font>
+					</a>
+				</li>
+				<li class="mui-table-view-cell popover" style="text-align: left;" data-type="4">
+					<a class="mui-icon icon-concerned">
+						<font>关怀TA一下</font>
+					</a>
+				</li>
+			</ul>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script src="../../js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/rpc.js"></script>
+	<!--<script type="text/javascript" src="../message/transMessage.js"></script>-->
+	<script type="text/javascript">
+		app.controller("MenuchatController", ["$scope", "UtilsService", "ApiService", "DataService", "RPCObserver", "CacheService",function(
+			$scope, UtilsService, ApiService, DataService, RPCObserver,CacheService) {
+			$scope.ResID = 0;
+			$scope.domData = {
+
+			};
+			var ws = plus.webview.currentWebview();
+			var oldBack = mui.back;
+			mui.back = function() {
+				ws.hide();
+			};
+
+			var user = CacheService.get("user");
+			var dom = {
+				properties: {
+					charId: "",
+					chatCompId: "",
+					chatLogo: "",
+					chatName: ""
+				},
+				init: function() {
+					this.webView.init();
+					this.content.init();
+				},
+				webView: {
+					cur: "",
+					init: function() {
+						this.cur = plus.webview.currentWebview();
+						var url = ApiService.Api50 + "/api/v1/User/GetUserInfo?userId=" + this.cur.chatId;
+						DataService.get(url).then(function(res) {
+							if(res) {
+								$scope.user = res;
+								$scope.ResID = res.ResID;
+
+								dom.properties.RealName = res.RealName
+							}
+
+						})
+
+						dom.properties.chatId = this.cur.chatId;
+						dom.properties.chatCompId = this.cur.chatCompId;
+						dom.properties.chatLogo = this.cur.chatLogo;
+						dom.properties.chatName = this.cur.chatName;
+
+						DataService.get(ApiService.Api50 + "/api/v1/Customer/IsViewTrip?userId=" + dom.properties.chatId).then(function(isView) {
+							document.querySelector("#btn-trip").style.display = (isView ? "block" : "none");
+						})
+
+						$scope.domData = dom.properties;
+						this.event();
+					},
+					event: function() {
+						window.addEventListener("tap", function() {
+							dom.webView.cur.hide();
+						})
+						window.addEventListener("dragstart", function() {
+							dom.webView.cur.hide();
+						})
+					}
+				},
+				content: {
+					init: function() {
+						this.event();
+					},
+					event: function() {
+						mui(".mui-table-view").on("tap", "li", function() {
+							UtilsService.clearWindow();
+							var type = this.getAttribute("data-type");
+							switch(type) {
+								case "1":
+									var url = "../contact/personal-info.html?userid=" + dom.properties.chatId;
+									dom.event.openWindow(url, url);
+									break;
+								case "2":
+									var url = "../message/chat-record.html";
+									dom.event.openWindow(url, url, {
+										chatId: dom.properties.chatId,
+										chatCompId: dom.properties.chatCompId,
+										chatName: dom.properties.chatName,
+										hasLogo: dom.properties.chatLogo
+									});
+									break;
+								case "3":
+									var url = "../complib/index.html?compid=" + dom.properties.chatCompId + "&tabidx=0";
+									dom.event.openWindow(url, url);
+									break;
+								case "4":
+									var userID = new Array();
+									userID[0] =  dom.properties.chatId;
+									var url = ApiService.Mall+"/Mobile/LoginApi/login?oauth=maidiyun&maidiyunToken=" + user.Token + "&userID=" + userID;
+									openUrl(url, "关怀一下");
+									break;
+								case "5":
+									var url = "../complib/index.html?compid=" + dom.properties.chatCompId + "&tabidx=3";
+									dom.event.openWindow(url, url);
+									break;
+								case "6":
+									UtilsService.openWindow({
+										id: 'addRes.html',
+										url: '../contact/addRes.html?userid=' + dom.properties.chatId + "&RealName=" + encodeURI(dom.properties
+											.RealName),
+										extras: {
+											callback: 'saveResourceCB'
+										}
+									});
+									break;
+								case "9":
+									UtilsService.openWindow({
+										id: "template.html?key=tripMap",
+										url: "../map/template.html?key=tripMap&userId=" + dom.properties.chatId
+									});
+									break;
+							}
+						});
+					}
+				},
+				event: {
+					openWindow: function(url, id, data) {
+						UtilsService.openWindow({
+							needLogin: true,
+							id: id,
+							url: url,
+							extras: data
+						});
+					}
+				}
+
+			};
+
+			dom.init();
+			RPCObserver.on('refresh_chat_viewName', 'refresh_chat_viewName')
+			window.refresh_chat_viewName = function() {
+				dom.init();
+			}
+
+		}]);
+
+		function saveResourceCB(res) {
+			var appElement = document.querySelector('[ng-controller=UserInfoController]');
+			var $scope = angular.element(appElement).scope();
+			//	$scope.user.ResID = res.ResID;
+			//	$scope.user.GroupID = res.GroupID;
+			//	$scope.user.GroupName = res.GroupName;
+			//	if (res.RemarkName != '') {
+			//		$scope.user.RemarkName = res.RemarkName;
+			//		$scope.user.ViewName = res.RemarkName;
+			//	}
+			//	$scope.$apply();
+			mui.toast("添加资源成功！");
+			RpcClient.invoke("org.html", "RPC_RefreshUserInfo");
+			RpcClient.invoke("sourceWind", "RPC_RefreshResource", $scope.user.GroupID);
+			RpcClient.invoke("compWind", "RPC_RefreshResource", $scope.user.GroupID);
+			RpcClient.invoke("friendWind", "RPC_RefreshResource", $scope.user.GroupID);
+			RpcClient.invoke("contactWind", "RPC_ContactOrgRefresh");
+			//刷新搜索页面
+			RpcClient.invoke("search-user.html", "RPC_SearchUserListRefresh");
+			RpcClient.invoke("search-resource.html", "RPC_SearchUserListRefresh");
+
+			RpcClient.invoke("search.html", "RPC_SearchListRefresh");
+			//刷新联系人搜索页面
+			RpcClient.invoke("contact-search.html", "RPC_SearchUserListRefresh");
+		}
+
+		mui.plusReady(function() {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+		});
+	</script>
+
+</html>

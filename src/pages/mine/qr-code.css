@@ -1,0 +1,77 @@
+.mui-bar-nav {
+	-webkit-box-shadow: none;
+	box-shadow: none;
+}
+
+.mui-title {
+	color: #fff;
+}
+
+.info-label {
+	float: left;
+	color: #000;
+	font-size: 16px;
+}
+
+.info-content {
+	float: right;
+	color: #000;
+	font-size: 16px;
+}
+
+.info-detail {
+	margin-top: 3px;
+	float: left;
+	color: #000;
+	font-size: 13px;
+}
+
+.my-remark {
+	margin-top: 30px;
+	color: #777777;
+	font-size: 16px;
+}
+
+.mui-table-view:before,
+.mui-table-view:after {
+	background-color: #FFFFFF;
+	border: none;
+	height: 0px;
+}
+
+.mui-table-view-cell:after {
+	border: 1px solid #e0e0e0;
+	-webkit-transform-origin: 0 0;
+	transform-origin: 0 0;
+	-webkit-transform: scaleY(0.1);
+	transform: scaleY(0.1);
+	content: "";
+	position: absolute;
+	left: 10px;
+	right: 0;
+	bottom: -2px;
+}
+
+.mui-table-view-cell:last-child:after {
+	border: none;
+}
+
+.mui-media-body {
+	margin-top: -5px;
+}
+
+.mui-table-view .mui-media-object {
+	border: 0!important;
+}
+
+.avatar {
+	height: 48px!important;
+	width: 48px!important;
+	line-height: normal;
+	border-radius: 48px;
+	background-size: cover;
+	float: left
+}
+.mui-table-view .mui-media-object{
+	max-width:48px!important;
+}

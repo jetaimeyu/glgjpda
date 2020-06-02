@@ -1,0 +1,146 @@
+<!--故障维护 scz-->
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.data-group {
+				margin-top: 8px !important;
+			}
+			
+			.data-group .data-row {
+				min-height: 30px;
+			}
+			
+			.icon-dustbin:before {
+				margin-right: 10px;
+			}
+			
+			.data-group .data-row:after {
+				height: 0;
+			}
+			
+			.data-group .data-row .body {
+				padding: 9px 10px 5px 0px;
+			}
+			
+			.data-group .data-row .body.datetime {
+				padding-bottom: 0;
+			}
+			
+			.spare-item {
+				padding-left: 16px !important;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="CompIntroController">
+		<div class="mui-scroll-wrapper md-info-page" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<div class="mui-content">
+				<md-no-data ng-show="data && data.length==0">暂无数据</md-no-data>
+
+				<ul class="data-group" ng-repeat="item in data" ng-if="data.length>0" ng-click="tap('fault',item.id,$event)">
+					<li class="data-row spare-item" ng-if="item.content.repairDesc.Name||item.content.audio.FileSize>0">
+						<div class="body">
+							<span ng-if="item.content.repairDesc" class="mui-ellipsis-2" ng-bind="item.content.repairDesc.Name"></span>
+							<p ng-if="item.content.audio.FileSize>0" style="margin-top: 5px;">
+								<md-audio audio="item.content.audio" readonly="true" ng-click="tap('','',$event)"></md-audio>
+							</p>
+						</div>
+					</li>
+					<li class="data-row" ng-if="item.content.imageList.length!=0||item.content.videoList.length!=0">
+						<div class="body attach" style="padding-left: 16px;">
+							<md-image ng-if="item.content.imageList.length!=0" images="item.content.imageList" readonly="true" ng-click="tap('','',$event)"></md-image>
+							<md-video ng-if="item.content.videoList.length!=0" videos="item.content.videoList" readonly="true" ng-click="tap('','',$event)"></md-video>
+						</div>
+					</li>
+					<li class="data-row spare-item" ng-if="item.content.customer.Province">
+						<div class="body" ng-bind="item.content.customer.Province|locationfilter:item.content.customer.City:item.content.customer.District:item.content.customer.Address:item.content.customer.Street">
+						</div>
+					</li>
+					<li class="data-row spare-item">
+						<span class="color-gray-deep" ng-bind="item.createdate"></span>
+						<p class="opt md-icon font-15 color-red-md" ng-click="tap('delete',item.id,$event)">
+							<span class="icon-dustbin">删除</span>
+						</p>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("CompIntroController", ["$scope", "$filter", "AuthService", "ApiService", "DataService",
+				"UtilsService", "ChatUserService", "Loading", "RPCObserver", "ShareLogService", "CacheService",
+				function($scope, $filter, AuthService, ApiService, DataService, UtilsService, ChatUserService, Loading,
+					RPCObserver, ShareLogService, CacheService) {
+
+					var curUser = CacheService.get("user");
+					getData();
+
+					function getData(callback) {
+						var cache = CacheService.get(curUser.UserID + "_mat_repair_submit") || {};
+						$scope.data = Object.keys(cache).map(function(e) {
+							return cache[e]
+						});
+						//$scope.data = Object.values(cache);
+						if(callback) {
+							callback();
+						}
+					};
+					$scope.isLoad = true;
+					$scope.tap = function(key, id, event) {
+						event && event.stopPropagation();
+						switch(key) {
+							case "fault":
+								UtilsService.openWindow({
+									needLogin: true,
+									id: 'mat-repair.html',
+									url: '../aftersale/mat-repair.html?draftId=' + id,
+								});
+								break;
+							case "delete":
+								mui.confirm("确认删除吗？", function(e) {
+									if(e.index == 0) {
+										var cache = CacheService.get(curUser.UserID + "_mat_repair_submit") || {};
+										delete cache[id];
+										CacheService.set(curUser.UserID + "_mat_repair_submit", cache, true);
+
+										getData(function() {
+											$scope.$apply();
+										});
+									}
+								});
+								break;
+							default:
+								break;
+						}
+					};
+					//刷新
+					RpcServer.expose("Rpc_refDrafts", function(params) {
+						setTimeout(function() {
+							getData(function() {
+								$scope.$apply();
+							});
+						}, 100);
+					});
+				}
+			]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

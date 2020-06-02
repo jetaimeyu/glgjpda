@@ -1,0 +1,229 @@
+<!--型号选择-->
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.mui-scroll-wrapper {
+				padding-bottom: 40px;
+			}
+			
+			.mui-table-view {
+				margin-top: 0px!important;
+			}
+			
+			.prodLibUl {
+				position: fixed;
+				top: 0px;
+				left: 0px;
+				right: 0px;
+				z-index: 99;
+			}
+			
+			.prodLibUl.mui-table-view:after {
+				height: 0px!important;
+			}
+			
+			.imgslist {
+				float: left;
+				width: 56px;
+				height: 56px;
+				background-size: cover!important;
+			}
+			
+			.prodLibUl .mui-table-view-cell {
+				padding: 8px 16px!important;
+			}
+			
+			.prodLibUl .mui-media-body {
+				padding-left: 10px;
+				margin-right: 25px!important;
+			}
+			
+			.prodLibUl .productName {
+				height: 34px;
+				font-size: 1.5rem;
+				line-height: 17px;
+				color: #000;
+				margin-top: 2px;
+				margin-bottom: 5px;
+			}
+			
+			.prodLibUl .productType {
+				font-size: 1.2rem;
+				color: #AAA;
+			}
+			
+			.mui-table-view-cell:after {
+				left: 0px;
+			}
+			
+			.prodTypeChoose {
+				margin-top: 80px!important;
+			}
+			
+			.prodTypeChoose .opt {
+				width: 18px;
+				height: 18px;
+				position: absolute;
+				top: 50%;
+				left: 16px;
+				-webkit-transform: translateY(-50%);
+				transform: translateY(-50%);
+				overflow: hidden;
+				margin: 0px;
+			}
+			
+			.prodTypeChoose .icon-check:before {
+				position: relative;
+				top: -3px;
+				left: -1px;
+			}
+			
+			.prodTypeChoose .news-title {
+				font-size: 1.5rem;
+				line-height: 23px;
+				color: #000;
+				margin-left: 32px;
+			}
+			
+			.prodTypeChoose.mui-table-view:before,
+			.prodTypeChoose.mui-table-view:after {
+				height: 0px;
+			}
+			/*.empty-list{
+				margin-top: 50vw!important;
+			}*/
+		</style>
+	</head>
+
+	<body ng-controller="productLibraryList">
+		<div id="pullrefresh" class="mui-content" ng-class="{'mui-block':domShow}" style="display: none;margin-bottom: 48px;">
+			<ul class="mui-table-view prodLibUl">
+				<li class="mui-table-view-cell mui-media">
+					<div>
+						<img src="../../images/imgPre.png" ng-if="prodHead!=null" ng-style="{'background-image':'url('+ (prodHead | getProdLogo:56:56) +')'}" class="imgslist" />
+						<div class="mui-media-body">
+							<p class='productName mui-ellipsis-2' ng-bind="prodHead.ProdName"></p>
+							<p class='productType mui-ellipsis' ng-bind="prodHead.ProdBrief"></p>
+						</div>
+					</div>
+				</li>
+			</ul>
+			<ul class="mui-table-view prodTypeChoose">
+				<li class="mui-table-view-cell mui-media" ng-repeat="item in prodList" ng-click="tap(item.SkuID,item)">
+					<div class="mui-ellipsis news-title" ng-bind="item.SkuName"></div>
+					<span class="opt md-icon font-18" ng-class="Skuid==item.SkuID?'icon-roundcheckfill color-blue':'icon-round color-gray'"></span>
+				</li>
+			</ul>
+			<md-no-data ng-show="prodList && prodList.length==0">暂无型号</md-no-data>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script>
+			app.controller("productLibraryList", ["$scope", "ApiService", "DataService", "Loading", function($scope, ApiService, DataService, Loading) {
+				$scope.prodId = query("prodId") || 0;
+				$scope.prodName = query("prodName") || '';
+				$scope.prodHead = null;
+				$scope.prodList = null; //接口返回的所有型号
+				$scope.domShow = false;
+				$scope.selProdID = query("selprodid") || 0;
+				$scope.Skuid = $scope.selProdID == $scope.prodId ? query("skuid") : -1;
+				$scope.SkuItem = '';
+				$scope.isall = query("isall");
+
+				Loading.show();
+
+				function getProdLibrary() {
+					var url = ApiService.Api50 + "/api/v1/Prod/ProdInfoSimple?prodId=" + $scope.prodId;
+					DataService.get(url).then(function(res) {
+						$scope.prodHead = res;
+						Loading.hide();
+						$scope.domShow = true;
+					});
+				};
+
+				function getProdLibraryList(type) {
+					var url = ApiService.Api50 + "/api/v1/Prod/GetMdtPkgSkuList?prodId=" + $scope.prodId;
+					DataService.get(url).then(function(res) {
+						Loading.hide();
+						$scope.domShow = true;
+						$scope.prodList == null && ($scope.prodList = []);
+						$scope.prodList = $scope.prodList.concat(res.DataRows);
+						if($scope.prodList.length > 0 && $scope.isall == 'true') {
+							var allProd = {
+								"SkuID": "",
+								"SkuName": "全部",
+								"SkuType": 1,
+								"Price": 0,
+								"StockCount": 0,
+								"WarnCount": 0,
+								"WarrantyUnit": 0,
+								"Warranty": 0,
+								"State": 1,
+								"HasMX": 0,
+								"MatCoding": "",
+								"IsEnabled": 0,
+								"EntityState": 0
+							}
+							$scope.prodList.unshift(allProd);
+						}
+//						if($scop'e.prodList.length > 0 && $scope.Skuid == 0) {
+//							$scope.Skuid = $scope.prodList[0].SkuID;
+//							$scope.SkuItem = $scope.prodList[0] || '';
+//						} else 
+						if($scope.prodList.length > 0 && $scope.Skuid > 0) {
+							$scope.prodList.forEach(function(prod) {
+								if(prod.SkuID == $scope.Skuid) {
+									$scope.SkuItem = prod;
+								}
+							})
+						}
+					});
+				};
+				setTimeout(function() {
+					getProdLibrary();
+					getProdLibraryList();
+				})
+				//选择
+				$scope.tap = function(SkuID, item) {
+					$scope.Skuid = SkuID;
+					$scope.SkuItem = item;
+					var skuType = plus.webview.currentWebview();
+					var opener = skuType.opener().opener().opener().opener();
+					if(skuType.opener().opener().opener().callback) {
+						var temp = {
+							ProdID: $scope.prodId,
+							ProdName: $scope.prodName,
+							SkuID: $scope.SkuItem.SkuID,
+							SkuName: $scope.SkuItem.SkuName,
+							MatCode: $scope.SkuItem.MatCode
+						};
+						opener.evalJS(skuType.opener().opener().opener().callback + "(" + JSON.stringify(temp) + ")");
+					}
+
+					skuType.opener().opener().opener().close('none');
+					skuType.opener().opener() && skuType.opener().opener().close("none");
+					mui.back();
+				}
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+				plus.webview.currentWebview().setStyle({
+					scrollIndicator: 'none'
+				});
+			});
+		</script>
+	</body>
+
+</html>

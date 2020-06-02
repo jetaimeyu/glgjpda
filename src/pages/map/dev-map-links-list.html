@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link href="../../css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	<style type="text/css">
+		.icon {
+			width: 16px;
+		}
+
+		/*.li_bottom-box span {
+				display: inline-block;
+				width: 36%;
+			}*/
+
+		.imgslist {
+			float: left;
+			width: 80px;
+			height: 80px;
+			margin-right: 10px;
+			background-size: cover !important;
+		}
+
+		.crm_title {
+			font-size: 15px !important;
+			padding-bottom: 3px;
+		}
+
+		.crm_info {
+			margin-top: 5px;
+			background: #fafafa;
+			padding: 0px 5px;
+		}
+
+		.crm_info div {
+			color: #8f8f94;
+			font-size: 13px;
+		}
+
+		.data-group .data-row .opt~.body {
+			padding-left: 15px;
+		}
+	</style>
+</head>
+
+<body ng-controller="devListCtl">
+	<div class="mui-content">
+		<ul class="data-group" ng-show="data && data.length>0">
+			<li class="data-row mui-table-view-cell" ng-repeat="item in data" ng-click="openInfo(item)">
+				<p class="opt md-icon icon-right"></p>
+				<div class="body">
+					<p class="crm_title mui-ellipsis" ng-bind="item.name"></p>
+					<div class="crm_info">
+						<div>
+							<span style="float:left">设备编号:</span>
+							<div style="margin-left: 56px" ng-bind="item.code"></div>
+						</div>
+						<div><span style="float:left">所在城市:</span>
+							<div style="margin-left:56px" ng-bind="item.province | locationfilter:item.city:item.district:item.address:item.street"></div>
+						</div>
+						<div><span style="float:left">设备状态:</span>
+							<div style="margin-left:56px;color:red;"  ng-if="item.onlineState==1">下线</div>
+							<div style="margin-left:56px;color:greenyellow"  ng-if="item.onlineState==0">在线</div>
+						</div>
+						<div><span style="float:left">运行时间:</span>
+							<div style="margin-left:56px" ng-bind='item.showWorkingTime.split("-")[0]+"天"+item.showWorkingTime.split("-")[1]+"时"+item.showWorkingTime.split("-")[2]+"分"+item.showWorkingTime.split("-")[3]+"秒"'></div>
+						</div>
+						<div><span style="float:left">设备类型:</span>
+							<div style="margin-left:56px" ng-bind='item.typename'></div>
+						</div>
+					</div>
+				</div>
+			</li>
+
+		</ul>
+	</div>
+	<script type="text/javascript" src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript">
+		app.controller("devListCtl", ["$scope", "UtilsService", function ($scope, UtilsService) {
+			var view = plus.webview.currentWebview();
+			$scope.data = view.data;
+
+			$scope.openInfo=function(data){
+				UtilsService.openWindow({
+					id:"dev-map-links-info.html",
+					url:"dev-map-links-info.html",
+					extras:{
+						data:data
+					}
+				})
+			}
+		}]);
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+		});
+	</script>
+</body>
+
+</html>

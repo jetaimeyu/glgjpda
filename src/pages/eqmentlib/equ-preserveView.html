@@ -1,0 +1,283 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="equ-maintenance.css" />
+	</head>
+
+	<body ng-controller="PersModController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">设备保养</a>
+			<a class="menu-more icon-more right-menu-icon-detail" href="#popover" id="openPopover" style="display: none;" ng-class="{'mui-block':isLoad}" ng-if="'Q10' | hasAuth:equiMain.CreateUserID:equiMain.CompID">
+			</a>
+			<i class="mui-pull-right menu-more-share icon-share" ng-click="goMainteShare()" style="display: none;" ng-class="{'mui-block':isLoad}"></i>
+		</header>
+		<div class="mui-scroll-wrapper md-info-page" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<ul class="data-group">
+				<li class="data-row mui-table-view-cell" ng-click="tap('equDetails')">
+					<label>保养设备</label>
+					<p class="opt md-icon font-15">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body">
+						<span ng-bind="'' | formatEquInfo:equiMain.EqName:equiMain.SkuName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>设备编号</label>
+					<div class="body">
+						<span ng-bind="equiMain.EqIdentifier"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<li class="data-row">
+					<label>保养内容</label>
+					<div class="body">
+						<span ng-bind="equiMain.Content"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>是否停机</label>
+					<div class="body">
+						<span ng-bind="equiMain.IsHalt==0?'否':'是'"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="equiMain.IsHalt==1">
+					<label>停机时长</label>
+					<div class="body">
+						<span ng-bind="equiMain.HaltTime+'小时'"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="equiMain.MaintainTime>0">
+					<label>保养用时</label>
+					<div class="body">
+						<span ng-bind="equiMain.MaintainTime+'小时'"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<li class="data-row">
+					<label>保养日期</label>
+					<div class="body">
+						<span ng-bind="equiMain.CreateDate"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>保养人</label>
+					<p class="vertical-right float-right" ng-if="equiMain.MaintainUserID && equiMain.MaintainUserID!=equUserData.UserID"></p>
+					<p class="opt md-icon font-15" ng-if="equiMain.MaintainUserID && equiMain.MaintainUserID!=equUserData.UserID" ng-click="chat()">
+						<span class="icon-chat-single"></span>
+					</p>
+					<div class="body">
+						<span ng-bind="equiMain.MaintainUserName"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="equiMain.CheckTypeID">
+					<label>保养类型</label>
+					<div class="body">
+						<span ng-bind="equiMain.CheckTypeName"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group" ng-if="equiMain.NextMaintainDate">
+				<li class="data-row">
+					<label>下次保养日期</label>
+					<div class="body">
+						<span ng-bind="equiMain.NextMaintainDate"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<li class="data-row" ng-if="users.length>0">
+					<label>抄送给</label>
+					<div class="body">
+						<md-chat-user-list ng-model="users"></md-chat-user-list>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<!--无网络或请求失败重试-->
+		<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+		<div id="popover" class="mui-popover menuDivModel">
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell" ng-click="tap('edit')">
+					<a class="mui-icon icon-edit">
+						<font>修改</font>
+					</a>
+				</li>
+				<li class="mui-table-view-cell" ng-click="del()">
+					<a class="mui-icon icon-dustbin">
+						<font>删除</font>
+					</a>
+				</li>
+			</ul>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../message/transMessage.js"></script>
+		<script>
+			app.controller("PersModController", ["$scope", "AuthService", "ApiService", "DataService", "UtilsService", "Loading", "ChatUserService", "RPCObserver", "ShareLogService", "CacheService", function($scope, AuthService, ApiService, DataService, UtilsService, Loading, ChatUserService, RPCObserver, ShareLogService, CacheService) {
+				$scope.equiMain = {
+					ID: query("id"),
+					EqIdentifier: '',
+					EqName: '',
+					SkuName: ''
+				};
+				$scope.users = ""; //抄送人员
+				//无网络或请求失败重试,或已删除
+				$scope.retryModal = {
+					msg: "设备保养",
+					retry: GetEqMaintainInfoById,
+					state: ''
+				}
+				var curUser = CacheService.get("user");
+				var logid = query("logid") || 0;
+				Loading.show();
+				//获取保养数据
+				function GetEqMaintainInfoById() {
+					var url = ApiService.Api50 + "/api/v1/Equipment/GetEqMaintainInfoById/" + query("id");
+					DataService.get(url).then(function(res) {
+						$scope.retryModal.state = '';
+						if(res) {
+							$scope.equiMain = res;
+							$scope.users = res.Users; //抄送人员
+							Loading.hide();
+						}
+						$scope.isLoad = true;
+					}, function(error) {
+						$scope.retryModal.state = error.State;
+					});
+				};
+				//获取设备信息
+				AuthService.getAuth().then(function(res) {
+					$scope.equUserData = res;
+					GetEqMaintainInfoById();
+					logid && ShareLogService.add(logid, 3);
+				});
+
+				//跳转
+				$scope.tap = function(key) {
+					mui('#popover').popover('hide');
+					var url = {
+						equDetails: 'equ-details.html?equid=' + $scope.equiMain.EquipmentID,
+						edit: '../eqmentlib/equ-preserve.html?id=' + query("id")
+					};
+					UtilsService.openWindow({
+						needLogin: true,
+						id: url[key].substring(url[key].lastIndexOf('/') + 1, url[key].indexOf('?')),
+						url: url[key]
+					});
+				};
+
+				//聊天
+				$scope.chat = function() {
+					ChatUserService.tap({
+						chatId: $scope.equiMain.MaintainUserID,
+						chatName: $scope.equiMain.MaintainUserName,
+						hasLogo: $scope.equiMain.ULogoIsExist,
+						chatCompId: $scope.equiMain.MaintainUserCompID
+					});
+				};
+
+				//删除
+				$scope.del = function() {
+					mui('#popover').popover('hide');
+					mui.confirm("确认删除吗？", function(e) {
+						if(e.index == 0) {
+							var url = ApiService.Api50 + "/api/v1/Equipment/DeleteEqMaintainInfoById/" + query("id");
+							DataService.get(url).then(function() {
+								RpcClient.invoke("equ-preserveView.html", "RPC_EqPreserveViewRefresh");
+								RpcClient.invoke("equ-preserveList.html", "RPC_EqPreserveListRefresh");
+								//刷新设备详情 保养
+								RPCObserver.broadcast('refresh_equ_info_preserve');
+								//刷新保养列表
+								RPCObserver.broadcast('refresh_equ_preserve_list');
+								mui('#popover').popover('hide');
+								mui.back();
+							}, function(re) {
+								console.log(JSON.stringify(re));
+							});
+						} else {
+							mui('#popover').popover('hide');
+						}
+					});
+				};
+				RpcServer.expose("RPC_EqPreserveViewRefresh", function() {
+					GetEqMaintainInfoById();
+				});
+				//刷新关闭popover
+				RPCObserver.on('close_popover', 'close_popover');
+				window.close_popover = function() {
+					mui('#popover').popover('hide');
+				};
+				//详情分享
+				$scope.goMainteShare = function() {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: "contact-select.html",
+						url: "../common/contact-select.html?action=select&must=true&multiselect=true&hideself=true&type=org",
+						extras: {
+							selectObj: [],
+							callback: 'shareEqu'
+						}
+					});
+				};
+
+				$scope.doMainteShare = function(sltUsers) {
+					var obj = {
+						id: $scope.equiMain.ID,
+						img: ApiService.Down + "/chat/jr-equ-maintain.png",
+						title: "设备保养",
+						desc: $scope.equiMain.Content,
+					}
+					UtilsService.shareMsg(obj, sltUsers).then(function() {
+						var userNames = [];
+						sltUsers.forEach(function(user) {
+
+							userNames.push(user.ViewName);
+
+							ChatUserService.send({
+								chatId: user.UserID,
+								chatName: user.ViewName,
+								chatCompId: user.EquipmentID,
+								hasLogo: curUser.ULogoIsExist,
+								chatLogo: user.ULogoIsExist,
+								type: 7,
+								content: {
+									eventName: "equ-preserve",
+									logo: ApiService.Down + "/chat/jr-equ-maintain.png",
+									title: "设备保养",
+									desc: $scope.equiMain.Content,
+									params: [$scope.equiMain.ID]
+								}
+							});
+						})
+
+						mui.toast("成功分享给：" + userNames.join("，"));
+
+					});
+				}
+			}]);
+
+			function shareEqu(sltObjs) {
+				var appElement = document.querySelector('[ng-controller=PersModController]');
+				var $scope = angular.element(appElement).scope();
+				$scope.doMainteShare(angular.copy(sltObjs));
+			}
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

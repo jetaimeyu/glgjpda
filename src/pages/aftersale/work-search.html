@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<style type="text/css">
+			#pullrefresh {
+				margin-top: 4px!important;
+			}
+			
+			* {
+				line-height: 18px;
+			}
+			
+			.work-search .search_group_f {
+				padding: 5px 10px;
+			}
+			
+			.work-search .search_group_f .title {
+				color: #3296FA;
+				font-size: 1.3rem;
+			}
+			
+			.work-search .search_group_f .content {
+				overflow: hidden;
+			}
+			
+			.work-search .search_group_f .content span {
+				display: inline-block;
+				width: calc(32% - 1px);
+				text-align: center;
+				background-color: #fff;
+				margin-top: 5px;
+				margin-right: 5px;
+				line-height: 30px;
+				border-radius: 5px;
+				font-size: 1.5rem;
+				overflow: hidden;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				-o-text-overflow: ellipsis;
+			}
+			
+			.work-search .search_group_f .content span:last-child {
+				margin-right: 0px;
+			}
+			
+			.work-search .data-group {
+				margin-top: 5px;
+			}
+			
+			.work-search ul.search-line li:after {
+				position: absolute;
+				left: 10px;
+				right: 0px;
+				top: 0;
+				height: 1px!important;
+				content: '';
+				-webkit-transform: scaleY(0.5);
+				transform: scaleY(0.5);
+				background-color: #ccc;
+			}
+			
+			.work-search .search-title {
+				color: #888888!important;
+				font-size: 1.4rem!important;
+				left: 15px!important;
+			}
+			
+			.work-search .moreserch {
+				height: 45px;
+			}
+			
+			.work-search .moreserch label,.work-search .moreserch span {
+				color: #3296FA!important;
+				font-size: 1.3rem;
+			}
+			
+			.work-search .moreserch label.icon-search-thin {
+				width: auto;
+			}
+			
+			.work-search .moreserch-list {
+				margin-top: 0px!important;
+			}
+			
+			.work-search .moreserch-list:before {
+				position: absolute;
+				left: 10px;
+				right: 0px;
+				top: 0;
+				height: 1px;
+				content: '';
+				-webkit-transform: scaleY(0.5);
+				transform: scaleY(0.5);
+				background-color: #ccc;
+			}
+			
+			.work-search .moreserch-list .moreserch span.moreserch-customer {
+				margin-left: 10px;
+			}
+			
+			.work-search .data-group .data-row label {
+				margin-left: 16px;
+			}
+			
+			.work-search .data-group .data-row.data-title-list:after {
+				top: 39px;
+			}
+		
+		</style>
+	</head>
+
+	<body ng-controller="searchCtrl" class="work-search">
+		<div ng-class="{'mui-block':domShowX}" style="display: none;" ng-style="{'padding-top':'search.history.length>0'?'45px':'0px'}">
+			<div class="search_input">
+				<form ng-submit="search.doSearch(0)">
+					<a class="mui-action-back mui-icon icon-back mui-pull-left"></a>
+					<input type="search" placeholder="请输入搜索内容" ng-model="search.text" maxlength="50">
+					<i class="icon-search-thin color-gray-dark"></i>
+					<i class="icon-delete color-gray" ng-show='search.text' ng-click="search.deleteSearch()"></i>
+					<span ng-click="search.doSearch(0)">搜索</span>
+				</form>
+			</div>
+			<div class="search_group_f" ng-if="!domShow&&search.history.length>0">
+				<div class="title">搜索历史</div>
+				<div class="content">
+					<span ng-repeat="h in search.history" ng-click="search.searchlist(h,0)">{{h}}</span>
+				</div>
+			</div>
+			<div class="search_group_f" ng-if="!domShow">
+				<div class="title" ng-if="LogTypeList.length>0">日志归类</div>
+				<div class="content">
+					<span ng-repeat="f in LogTypeList" ng-click="search.searchlist(f.title,2)">{{f.title}}</span>
+				</div>
+			</div>
+			<!--ng-style="{'top':(!ios)?'45px':'0px'}"-->
+			<div class="mui-scroll-wrapper" id="pullrefresh" ng-class="{'mui-block':domShow}" style="display: none;top:45px;">
+				<div class="mui-scroll">
+					<div class="mui-content" ng-if="data">
+						<!--搜索结果-人员-->
+						<ul class="data-group search-line" ng-if="data.Users.TotalCount>0">
+							<li class="data-row data-title-list">
+								<label class="search-title">人员</label>
+							</li>
+						</ul>
+						<md-search-work-user ng-model="data.Users.DataRows"></md-search-work-user>
+						<ul class="data-group moreserch-list" ng-if="data.Users.TotalCount>2">
+							<li class="data-row mui-table-view-cell moreserch" ng-click="tap('1')">
+								<label class="icon-search-thin color-gray-dark"></label>
+								<span class="moreserch-customer">更多人员</span>
+							</li>
+						</ul>
+						<!--搜索结果日志内容-->
+						<ul class="data-group search-line" ng-if="data.Logs.TotalCount>0">
+							<li class="data-row data-title-list">
+								<label class="search-title">日志</label>
+							</li>
+						</ul>
+						<md-work-record ng-model="data.Logs.DataRows"></md-work-record>
+						<ul class="data-group moreserch-list" ng-if="data.Logs.TotalCount>2">
+							<li class="data-row mui-table-view-cell moreserch" ng-click="tap('2')">
+								<label class="icon-search-thin color-gray-dark"></label>
+								<span class="moreserch-customer">更多日志</span>
+							</li>
+						</ul>
+						
+					</div>
+					<!--点击日志分类查询结果-->
+
+					<div class="mui-content" ng-if="dataByType!=null">
+						<md-work-record ng-model="dataByType" ng-if="dataByType!=null&&dataByType.length>0"></md-work-record>
+					</div>
+				</div>
+				<md-no-data ng-show="((data.Logs.TotalCount==0)&&(data.Users.TotalCount==0))||(dataByType!=null&&dataByType.length==0)">暂无数据</md-no-data>
+				
+			</div>
+		</div>
+		<script src="../../js/angular.min.js"></script>
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script src="work-search.js"></script>
+
+	</body>
+
+</html>

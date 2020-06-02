@@ -1,0 +1,99 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/common.css">
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<style type="text/css">
+			.icon {
+				width: 16px;
+			}
+			
+			.mui-bar-nav~.mui-content .mui-pull-top-pocket {
+				top: 44px!important;
+			}
+			
+			.mui-bar-nav~.has-tab .mui-pull-top-pocket {
+				top: 84px!important;
+			}
+			
+			.mui-table {
+				display: table!important;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="PartInfolistController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">零配件更换记录</a>
+			<!--<a class="mui-pull-right menu-add" id="add" ng-click="add()" ng-if="'Q25' | hasAuth">
+				<img class="icon" src="../../images/add.png" />
+			</a>-->
+			<a class="mui-pull-right menu-search" id="search" ng-click="search()">
+				<img class="icon" src="../../images/search.png" />
+			</a>
+		</header>
+		<div class="mui-content" ng-class="{'has-tab':isLoad}" >
+			<div id="slider" class="mui-slider mui-fullscreen" ng-show="comId>0">
+				<div id="sliderSegmentedControl"  class="mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted" style="background: #fff;display: none;" ng-class="{'mui-table':isLoad}">
+					<ul class="md-tab" top="84" >
+						<li class="md-tab-item md-active" href="mat-part-infolist.html?type=my&equid={{equid}}" winid="mat-part-infolist-my.html">我提交的</li>
+						<li class="md-tab-item" href="mat-part-infolist.html?type=dept&equid={{equId}}" winid="mat-part-dept.html" ng-if="(['Q22','Q23','Q24','Q26'] | hasAuth)&&comId>0">本部门的</li>
+						<li class="md-tab-item" href="mat-part-infolist.html?type=depts&equid={{equId}}" winid="mat-part-depts.html" ng-if="(['Q23','Q24','Q26'] | hasAuth)&&comId>0">下级部门</li>
+						<li class="md-tab-item" href="mat-part-infolist.html?type=all&equid={{equid}}" winid="mat-part-infolist.html" ng-if="(['Q24','Q26'] | hasAuth)&&comId>0">所有更换</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("PartInfolistController", ["$scope", "UtilsService", "CacheService","$timeout", "$filter", function($scope, UtilsService,CacheService,$timeout, $filter) {
+				$timeout(function() {
+					$scope.isLoad = $filter("hasAuth")(['Q22', 'Q23', 'Q24', 'Q26']);
+					!$scope.isLoad && document.querySelector(".md-tab").setAttribute("top", "44");
+				}, 100);
+				$scope.equid = query("equid") || 0;
+				//导航
+				setTimeout(function() {
+					MdConfig.StartUsingTab();
+				}, 200);
+				var user = CacheService.get('user');
+				$scope.comId=user.CompID;
+				$scope.comId==0 && document.querySelector(".md-tab").setAttribute("top", "44");
+				
+				//新增
+				$scope.add = function() {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'mat-part-replacement.html',
+						url: 'mat-part-replacement.html?equid=' + $scope.equid,
+						extras: {
+							addMatRecord: plus.webview.currentWebview().addEquRecord || ''
+						}
+					});
+				};
+				//跳转搜索页
+				$scope.search = function() {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'mat-part-search.html',
+						url: 'mat-part-search.html'
+					});
+				};
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

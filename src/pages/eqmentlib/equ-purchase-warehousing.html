@@ -1,0 +1,191 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="equ-maintenance.css" />
+	</head>
+
+	<body ng-controller="EquPreserveController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">设备入库</a>
+		</header>
+		<div class="mui-content">
+			<ul class="data-group">
+				<li class="mui-table-view-cell data-row">
+					<label>设备名称</label>
+					<div class="body">
+						<span ng-bind="eqinfo.EqName"></span>
+					</div>
+			</li>
+				<li class="data-row">
+					<label>设备型号</label>
+					<div class="body">
+						<span ng-bind="eqinfo.SkuName"></span>
+					</div>
+				</li>
+				
+				<li class="data-row must">
+					<label>入库数量</label>
+					<div class="body" style="margin-right: 15vw;display: inline;">
+						
+						<div class="edit" style="max-width: 100%;margin-right: 0;">
+							<div ng-model-div-text="Num" class="needsclick" placeholder="请输入入库数量" lenlimit="9"></div>
+						</div>
+					</div>
+				</li>
+				<li class="mui-table-view-cell data-row">
+					<label>购入日期</label>
+					<p class="opt md-icon font-15" ng-click="chooseDate()">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" data-options='{}' ng-click="chooseDate()">
+						<span ng-if="!BuyDate" class="placeholder">请选择入库日期</span>
+						<span ng-if="BuyDate" ng-bind="BuyDate"></span>
+					</div>
+				</li>
+			</ul>
+			
+			
+			
+			<div class="mui-content-padded" ng-click="save()">
+				<span class="mui-btn mui-btn-block">保存</span>
+			</div>
+		</div>
+		<!--无网络或请求失败重试-->
+		<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../message/transMessage.js"></script>
+
+		<script>
+			app.controller("EquPreserveController", ["$scope", "ApiService", "DataService", "UtilsService", "CacheService", "DatePickerService", "AuthService", "Loading", "$timeout", "ChatUserService", "$filter", "RPCObserver", function($scope, ApiService, DataService, UtilsService, CacheService, DatePickerService, AuthService, Loading, $timeout, ChatUserService, $filter, RPCObserver) {
+				
+				$scope.eqinfo = "";
+				$scope.Num=""//入库数量
+				$scope.BuyDate=""//入库日期
+				var curUser = CacheService.get("user");
+				$scope.eqinfo = plus.webview.currentWebview().selectObj;
+				
+				$scope.NotIntoNum=parseInt($scope.eqinfo.NotIntoNum);
+				
+				var saving = false;
+				//原接口数据
+				//保存更改
+				$scope.save = function() {
+					if(saving) {
+						return;
+					}
+					document.activeElement.blur();
+					if(!$scope.Num) {
+						mui.toast("请输入入库数量");
+						return;
+					}
+					if($scope.Num.trim()==''){
+						mui.toast("请输入入库数量");
+						return;
+					}
+					
+					if(parseInt($scope.Num) <= 0){
+						
+						mui.toast("入库数量需大于0");
+						return;
+					}
+					if($scope.Num>$scope.NotIntoNum){
+						mui.toast("入库数量大于未入库数量");
+						return;
+					}
+					
+					if(!checkLengthUtil.check()) {
+						return false;
+					}
+					saving = true;
+					Loading.show();
+					$scope.IsHalt == 0 && ($scope.HaltTime = "");
+					submitData()
+					
+				}
+                  function init(){
+                  	var url = ApiService.Api50 + "/api/v1/Common/GetSystemDate";
+					DataService.get(url).then(function(res) {
+						$scope.BuyDate=res;
+						$scope.Today = res;
+						$scope.isLoad = true;
+					});
+                  }
+                  init();
+				function submitData() {
+					var url = ApiService.Api52 + "/api/v1/EqApply/SaveOutGoing";
+					var postdata = {
+						"ID": 0,
+						"EPID": $scope.eqinfo.EPID,
+						"Num": $scope.Num,
+						"EAID":$scope.eqinfo.AID,
+						"EAInfoID":$scope.eqinfo.ID,
+						"Type":1,
+						"CompID":$scope.eqinfo.CompID,
+						"SupplierName":$scope.eqinfo.SupplierName,
+						"BuyDate": $scope.NextPreserveDate ? $scope.BuyDate + " 00:00:00" : $scope.BuyDate,
+						
+					};
+					
+					DataService.post(url, postdata).then(function(res) {
+						
+						saving = false;
+						Loading.hide();
+						if(res) {
+							RPCObserver.broadcast('refresh_equ_applylist_info');
+							UtilsService.saveModal(function() {
+									saving = false;
+									isModal = false;
+									mui.back();
+								});
+						}
+					}, function() {
+						saving = false;
+					});
+				}
+				
+				//选择日期
+				$scope.chooseDate = function() {
+					DatePickerService.pickDate({
+						selected: $scope.BuyDate,
+						
+					}).then(function(res) {
+						$scope.BuyDate = res;
+					});
+				};
+
+				
+				// 刷新
+				RPCObserver.on("refresh_equ_preserve", "refresh_equ_preserve");
+				window.refresh_equ_preserve = function(NextPreserveDate) {
+					$scope.NextPreserveDate = NextPreserveDate;
+					$scope.$apply();
+				};
+				//刷新设备信息
+				RPCObserver.on("refresh_maintenance_equ_info", "refresh_maintenance_equ_info");
+				window.refresh_maintenance_equ_info = function(equInfo) {
+					$scope.EqName = equInfo.EqName;
+					$scope.EqID = equInfo.EqID;
+					$scope.EqCode = equInfo.EqCode;
+					$scope.EqSkuName = equInfo.EqSkuName;
+					$scope.$apply();
+				};
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

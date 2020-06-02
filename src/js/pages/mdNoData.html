@@ -1,0 +1,30 @@
+<div class="empty-list">
+	<img src="{{localUrl}}/images/complib/empty-list.png" style="width: 40vw;" ng-if="options.type=='list'||!options.type" />
+	<img src="{{localUrl}}/images/complib/empty-search.png" style="width: 40vw;" ng-if="options.type=='search'" />
+	<div class="empty-list-tips mt10">
+		<p class="color-gray-deep font-16" ng-transclude></p>
+	</div>
+</div>
+<style>
+	.empty-list {
+		/*margin: 22vh 0 0;
+		text-align: center;*/
+		position: absolute;
+		left: 50%;
+		margin-left: -20vw;
+		margin-top: 20vh;
+		text-align: center;
+	}
+	
+	.color-gray-deep {
+		color: #999999 !important;
+	}
+	
+	.mt10 {
+		margin-top: 10px;
+	}
+	
+	.font-16 {
+		font-size: 1.6rem;
+	}
+</style>

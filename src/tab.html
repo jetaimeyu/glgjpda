@@ -1,0 +1,830 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="css/common.css" />
+		<style>
+			html,
+			body,
+			.mui-content {
+				/* background-color: #fff; */
+			}
+			
+			.mui-active span:not(.mui-badge) {
+				color: #3296FA !important;
+			}
+			
+			.mui-bar-nav {
+				background-color: #ffffff;
+				height: 45px;
+			}
+			
+			.mui-bar-nav .mui-title {
+				color: #323232;
+				overflow: hidden;
+				left: 16px;
+				text-align: left;
+				right: 80px;
+			}
+			
+			.mui-bar-tab {
+				height: 50px;
+				background-color: #fff;
+			}
+			
+			.mui-bar-tab .icon-msg {
+				background-image: url(images/msg.png);
+			}
+			
+			.mui-bar-tab .icon-find {
+				background-image: url(images/find.png);
+			}
+			
+			.mui-bar-tab .icon-work {
+				background-image: url(images/work.png);
+			}
+			
+			.mui-bar-tab .icon-cont {
+				background-image: url(images/cont.png);
+			}
+			
+			.mui-bar-tab .icon-mine {
+				background-image: url(images/mine.png);
+			}
+			
+			.mui-bar-tab .mui-active .icon-msg {
+				background-image: url(images/msg-ck.png);
+			}
+			
+			.mui-bar-tab .mui-active .icon-find {
+				background-image: url(images/find-ck.png);
+			}
+			
+			.mui-bar-tab .mui-active .icon-work {
+				background-image: url(images/work-ck.png);
+			}
+			
+			.mui-bar-tab .mui-active .icon-cont {
+				background-image: url(images/cont-ck.png);
+			}
+			
+			.mui-bar-tab .mui-active .icon-mine {
+				background-image: url(images/mine-ck.png);
+			}
+			
+			.mui-bar-tab .mui-tab-item {
+				color: #585858;
+			}
+			
+			.mui-bar-tab .mui-tab-item.mui-active {
+				color: #03a9f4;
+			}
+			
+			.mui-bar-tab .mui-tab-item .icon-font~.mui-tab-label {
+				font-size: 1.2rem;
+				height: 18px;
+				line-height: 16px;
+				color: #BFBFBF;
+				display: block;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+			
+			.mui-bar-tab .mui-tab-item .icon-font:active {
+				background-origin: content;
+				background-position: 50% 50%;
+				background-size: contain;
+				background-repeat: no-repeat;
+			}
+			
+			.mui-bar.mui-bar-nav {
+				border-bottom: 1px solid #ccc;
+				box-shadow: none;
+			}
+			
+			.mui-bar.mui-bar-tab {
+				border-top: 1px solid #ccc;
+				box-shadow: none;
+			}
+			
+			.scan-one-more {
+				width: 16px;
+			}
+			
+			.icon-font {
+				width: 24px;
+				height: 24px;
+				top: 4px;
+				padding-top: 0;
+				padding-bottom: 0;
+				font-size: 2.4rem;
+				position: relative;
+				z-index: 20;
+				font-weight: normal;
+				font-style: normal;
+				line-height: 1;
+				display: inline-block;
+				text-decoration: none;
+				-webkit-font-smoothing: antialiased;
+				background-repeat: no-repeat;
+				background-size: 100%;
+			}
+			
+			.mui-badge {
+				background-color: #E01717;
+				color: #fff;
+				position: absolute;
+				top: -3px;
+				right: -12px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="TabController">
+		<header class="mui-bar mui-bar-nav">
+			<h1 class="mui-title" ng-bind="title"></h1>
+			<a class="mui-pull-right menu-add" id="add">
+				<img class="scan-one-more" src="images/add.png" />
+			</a>
+			<a class="mui-pull-right menu-search" id="search" ng-click="search()">
+				<img class="scan-one-more" src="images/search.png" />
+			</a>
+		</header>
+		<nav class="mui-bar mui-bar-tab">
+			<a id="nav_msg" class="mui-tab-item" winid="message/message.html">
+				<span class="icon-font icon-msg">
+				<span class="mui-badge" style="display:none;" id="span_noreadcount"> </span>
+				</span>
+				<span class="mui-tab-label">消息</span>
+			</a>
+			<a id="nav_find" class="mui-tab-item" winid="ing/index.html">
+				<span class="icon-font icon-find"></span>
+				<span class="mui-tab-label">发现</span>
+			</a>
+			<a id="nav_work" class="mui-tab-item" winid="work.html">
+				<span class="icon-font icon-work">
+				<span class="mui-badge" style="display:none;" id="span_noreadworkcount"></span>
+				</span>
+				<span class="mui-tab-label">工作</span>
+			</a>
+			<a id="nav_cont" class="mui-tab-item" winid="contact.html">
+				<span class="icon-font icon-cont"></span>
+				<span class="mui-tab-label" style="margin-left: 3px;">资源</span>
+			</a>
+			<a id="nav_my" class="mui-tab-item" winid="my.html">
+				<span class="icon-font icon-mine"></span>
+				<span class="mui-tab-label">我的</span>
+			</a>
+		</nav>
+		<script type="text/javascript" src="js/mui.min.js"></script>
+		<script type="text/javascript" src="js/angular.min.js"></script>
+		<script type="text/javascript" src="js/common.js"></script>
+		<script type="text/javascript" src="js/utils.js"></script>
+		<script type="text/javascript" src="js/rpc.js"></script>
+		<script type="text/javascript">
+			var _mask;
+			app.controller("TabController", ["$scope", "CacheService", "UtilsService", "DataService", "ApiService", "$filter",
+				"RPCObserver", "AuthService", "$q",
+				function($scope, CacheService, UtilsService, DataService, ApiService, $filter, RPCObserver, AuthService, $q) {
+					$scope.title = '未登录';
+					$scope.NoReadCount = 0;
+					//角标未读总数量
+					$scope.UnReadMsgCount = 0;
+					$scope.UnReadWorkCount = 0;
+					$scope.UnReadLogCount = 0;
+					var user, heart, heartToken, userId, userRealName;
+
+					getUser(true);
+					//注册信鸽推送
+					//user && plus.Push.registerPush(user.UserID, user.UserName);
+					//刷新登陆
+					RpcServer.expose("RPC_RefreshLogin", function(params) {
+						if(params) {
+							document.querySelector('.mui-title').innerText = params.CompID == 0 ? $filter("getViewName")(params.UserName,
+								params.RealName, params.Mdt) : params.CompName;
+						} else {
+							document.querySelector('.mui-title').innerText = '未登录';
+							refNoreadCount(0);
+						}
+						refreshContact();
+
+						var active = document.body.querySelector(".mui-tab-item.mui-active");
+						if(active && active.getAttribute("winid") == "contact.html") {
+							active.classList.remove("mui-active");
+						}
+						getUser();
+
+						var menu = plus.webview.getWebviewById("menu");
+						menu && menu.reload();
+					});
+
+					//停止心跳
+					RpcServer.expose("RPC_StopHeart", function() {
+						clearHeart();
+						unregisterPush();
+					});
+
+					//开始心跳
+					RpcServer.expose("RPC_StartHeart", function() {
+
+						if(user) {
+							clearHeart();
+							setTimeout(function() {
+								registerPush();
+							}, 100);
+						} else {
+							clearHeart();
+							unregisterPush();
+						}
+					});
+
+					//注册信鸽推送
+					function registerPush() {
+						plus.Push.registerPush(function(token) {
+							if(token == 0) {
+								registerPush();
+							} else {
+								heartToken = token;
+								heartBeat();
+								heart = setInterval(heartBeat, 1000 * 20);
+							}
+						}, user.UserID, user.RealName);
+					}
+
+					//反注册信鸽推送
+					function unregisterPush() {
+						try {
+							plus.Push.unregisterPush(function(token) {
+								if(token == 0) {
+									unregisterPush();
+								}
+							}, user ? user.UserID || userId : userId, user ? user.RealName || userRealName : userRealName);
+						} catch(e) {
+							//TODO handle the exception
+						}
+					}
+
+					//切换账号刷新联系人页面,兼容ios
+					function refreshContact() {
+						if(plus.webview.getWebviewById("contact.html")) {
+							plus.webview.getWebviewById("contact.html").close();
+						}
+					};
+
+					function getUser(isGetAuth, isInfo) {
+						user = CacheService.get('user');
+
+						if(user) {
+							$scope.title = user.CompID == 0 ? $filter("getViewName")(user.UserName, user.RealName, user.Mdt) : user.CompName;
+							userId = user.UserID;
+							userRealName = user.RealName;
+							if(isNetWorkCanUse()) {
+								if(isInfo) {
+									var url = ApiService.Api50 + "/api/v1/User/GetUserInfoByToken";
+
+									DataService.get(url).then(function(res) {
+										var newToken = res.Token;
+										var oldToken = user.Token;
+
+										delete res.Token;
+										delete user.Token;
+
+										if(JSON.stringify(res) != JSON.stringify(user)) {
+											res.Token = newToken;
+											user.Token = oldToken;
+
+											CacheService.remove("user");
+											CacheService.remove("userList");
+											CacheService.set("user", res, true);
+
+											RpcClient.invoke("message.html", "RPC_Login", res);
+
+											getSwichListAndAuth();
+										} else {
+											res.Token = newToken;
+											user.Token = oldToken;
+											getUserAuth();
+										}
+									}, function(res) {
+										if(res.ErrorMessage == "账号已删除") {
+											AuthService.logout().then(function() {});
+										}
+									});
+
+								} else {
+									//获取用户权限
+									if(isGetAuth) {
+										getUserAuth();
+									}
+								}
+
+								//初始化设计圈的用户数据
+								DataService.post(ApiService.Api50 + "/api/v1/QA/UserInfoInit").then(function() {});
+							}
+
+							var active = document.body.querySelector(".mui-tab-item.mui-active");
+							//重新设置角标
+							getMsgList(!active);
+
+						} else {
+							setIconBadger(0);
+						}
+
+						if(user) {
+							clearHeart();
+							setTimeout(function() {
+								registerPush();
+							}, 100);
+						} else {
+							clearHeart();
+							unregisterPush();
+						}
+					}
+
+					function getUserAuth() {
+						var promises = [AuthService.getUserAuth(), DataService.get(ApiService.Api50 + '/api/v1/Org/OrgEditAuth'), AuthService.getMenuAuth(), AuthService.getYunModuleAuthority()];
+						$q.all(promises).then(function(res) {
+							res[1] && res[0].push('Q0');
+							CacheService.set("userAuth", res[0], true);
+							CacheService.set("menuAuth", res[2], true);
+							CacheService.set("moduleAuth", res[3], true);
+							RpcClient.invoke("work.html", "RPC_RefreshLogin");
+							plus.webview.getWebviewById("equ-index.html") && RpcClient.invoke("equ-index.html", "RPC_RefEquIndex");
+						});
+					};
+
+					function getSwichListAndAuth() {
+						var promises = [AuthService.getUserSwitchList(), AuthService.getUserAuth(), DataService.get(ApiService.Api50 +
+							'/api/v1/Org/OrgEditAuth'), AuthService.getMenuAuth()];
+						$q.all(promises).then(function(resp) {
+							CacheService.set("userList", resp[0], true);
+							resp[2] && resp[1].push('Q0');
+							CacheService.set("userAuth", resp[1], true);
+							CacheService.set("menuAuth", resp[3], true);
+							RpcClient.invoke("work.html", "RPC_RefreshLogin");
+							plus.webview.getWebviewById("equ-index.html") && RpcClient.invoke("equ-index.html", "RPC_RefEquIndex");
+						});
+					};
+
+					function clearHeart() {
+						if(heart) {
+							clearInterval(heart);
+						}
+					}
+
+					function heartBeat() {
+						try {
+							var url = "";
+
+							if(mui.os.android) {
+								url = "https://api50.maidiyun.com/api/v1/HeartBeat/HeartBeatInsert_Android?clientToken=" + heartToken;
+							} else {
+								url = "https://api50.maidiyun.com/api/v1/HeartBeat/HeartBeatInsert_IOS?clientToken=" + heartToken;
+							}
+
+							DataService.get(url).then(function(data) {
+								//alert("心跳成功...")
+							}, function(data) {
+								//alert("心跳失败...")
+							})
+						} catch(e) {
+
+						}
+					}
+
+					//更新角标未读消息总数
+					RpcServer.expose("RPC_RefreshUnreadMsgcount", function(params) {
+						$scope.UnReadMsgCount += params;
+						if($scope.UnReadMsgCount >= 0) {
+							plus.Push.setCutBadger($scope.UnReadMsgCount);
+						}
+					});
+					RpcServer.expose("RPC_NoreadCount", function(params) {
+						refNoreadCount(params);
+					});
+					//更新工作的角标
+					RpcServer.expose("RPC_RefToDo", function(params) {
+						// alert("更新工作角标:"+params)
+						if(!isNaN(parseInt(params))) {
+							$scope.UnReadTaskCount = parseInt(params);
+						} else {
+							$scope.UnReadTaskCount += 1;
+						}
+						// alert("更新工作角标:"+$scope.UnReadTaskCount)
+
+						$scope.UnReadWorkCount = $scope.UnReadTaskCount + $scope.UnReadLogCount;
+						refWorkCount();
+					});
+
+					//更改工作日志
+					RpcServer.expose("RPC_RefToDoWorkLog", function(_count) {
+						// alert("更新日志角标:"+_count)
+						if(!isNaN(parseInt(_count))) {
+							$scope.UnReadLogCount = parseInt(_count);
+						} else {
+							$scope.UnReadLogCount += 1;
+						}
+						// alert("更新日志角标:"+$scope.UnReadLogCount)
+						$scope.UnReadWorkCount = $scope.UnReadTaskCount + $scope.UnReadLogCount;
+						refWorkCount();
+					});
+					//刷新工作的角标
+					RpcServer.expose("RPC_RefMsgList", function() {
+						getMsgList(false);
+					});
+
+					//设置应用桌面的角标
+					function setIconBadger(value) {
+						setTimeout(function() {
+							if(mui.os.android) {
+								plus.Push.setCutBadger(value);
+							} else {
+								plus.Push.setBadgeNumber(value);
+							}
+						})
+					};
+
+					RPCObserver.on('close_popover', 'close_popover');
+					window.close_popover = function() {
+						floatw.hide();
+					}
+
+					//获取位置
+					RpcServer.expose("RPC_GetLocation", function(params, callback) {
+						return UtilsService.getLocation().then(callback, callback);
+					});
+
+					function refNoreadCount(params) {
+						$scope.NoReadCount = params;
+						var _dom = document.getElementById("span_noreadcount");
+						_dom.innerText = $scope.NoReadCount > 99 ? '99+' : $scope.NoReadCount;
+						var display = "";
+						if($scope.NoReadCount > 0) {
+							display = "block";
+						} else {
+							display = "none";
+						}
+						_dom.innerText.length == 1 && (_dom.style.right = "-12px");
+						_dom.innerText.length == 2 && (_dom.style.right = "-15px");
+						_dom.innerText.length == 3 && (_dom.style.right = "-20px");
+						_dom.style.display = display;
+
+						//设置角标
+						setIconBadger(parseInt($scope.NoReadCount) + parseInt($scope.UnReadWorkCount));
+					}
+
+					//杀心工作的角标
+					function refWorkCount() {
+						// alert("带我处理："+$scope.UnReadTaskCount+"---工作日志:"+$scope.UnReadLogCount);
+						var _dom = document.getElementById("span_noreadworkcount");
+						_dom.innerText = ($scope.UnReadWorkCount) > 99 ? '99+' : $scope.UnReadWorkCount;
+
+						var display = $scope.UnReadWorkCount > 0 ? "block" : "none";
+
+						_dom.innerText.length == 1 && (_dom.style.right = "-12px");
+						_dom.innerText.length == 2 && (_dom.style.right = "-15px");
+						_dom.innerText.length == 3 && (_dom.style.right = "-20px");
+						_dom.style.display = display;
+
+						setIconBadger(parseInt($scope.NoReadCount) + parseInt($scope.UnReadWorkCount));
+					}
+
+					//获取最近联系人是否为空、
+
+					function getMsgList(isChangeTab) {
+						var url = ApiService.Api50 + "/api/v1/Common/MDTModuleCount";
+						DataService.get(url).then(function(reData) {
+							$scope.UnReadTaskCount = reData.TaskCount;
+							$filter("hasMenuAuth")("tygn", "rcgz") && $filter("hasModuleAuth")("comp") && ($scope.UnReadLogCount = reData.WorkLogCount);
+							$scope.UnReadWorkCount = $scope.UnReadTaskCount + $scope.UnReadLogCount;
+							// alert("工作："+$scope.UnReadTaskCount+"日志："+$scope.UnReadLogCount)
+							refWorkCount();
+
+							if(isChangeTab) {
+								var _dom = document.querySelector("#nav_msg");
+								if(!reData.MsgHasCur) {
+									_dom = document.querySelector("#nav_work");
+								}
+								mui.trigger(_dom, "tap");
+							}
+						}, function() {
+							if(isChangeTab) {
+								mui.trigger(document.querySelector("#nav_work"), "tap");
+							}
+						});
+					};
+
+					//搜索跳转
+					$scope.search = function() {
+						if(mui.os.android && plus.webview.getDisplayWebview().indexOf(plus.webview.getWebviewById("message.html")) > 0 ||
+							mui.os.ios && plus.webview.getDisplayWebview().indexOf(plus.webview.getWebviewById("message.html")) > -1) {
+							UtilsService.openWindow({
+								id: "search-resource.html",
+								url: "pages/contact/search-resource.html",
+								extras: {
+									resType: 2
+								}
+							});
+						} else {
+							UtilsService.openWindow({
+								needLogin: true,
+								id: "search.html",
+								url: "pages/search/search.html"
+							});
+						}
+
+					};
+					/**************************手持终端扫码相关 start*******************************/
+					//前往服务器获取是否是正确的迈迪国标通用物联码
+					$scope.checkMdCodeToServer = function(codeValue, codeType) {
+						var view = plus.webview.getTopWebview();
+						var obj = {
+							codeType: codeType, //二维码类型
+							codeValue: codeValue, //码值
+							resType: 1, //设备2、产品1
+							isEmpty: false, //是否空码
+							resInfo: "" //设备或产品详情
+						}
+						//获取产品详情
+						var url = ApiService.Api50 + "/api/v1/MdCode/GetProdInfoByMdCode?code=" + codeValue + "&CompID=" + user.CompID;
+						DataService.get(url).then(function(reData) {
+							if(user.CompID == reData.CompID) {
+								//替换单引号,双引号
+								reData.SkuName = encodeURIComponent(reData.SkuName.replace(/\'/g, "@squotes@").replace(/\"/g, "@dquotes@"));
+								reData.ProdName = encodeURIComponent(reData.ProdName.replace(/\'/g, "@squotes@").replace(/\"/g, "@dquotes@"));
+								obj.resInfo = reData;
+								var param = JSON.stringify(obj);
+								if(view.id.indexOf("debug-edit.html") > -1) {
+									view.evalJS("handleCallBack('" + param + "')");
+								}
+							} else {
+								mui.toast('非本企业产品');
+							}
+						});
+					}
+
+					var btnAdd = document.querySelector("#add");
+					var btnSearch = document.querySelector("#search");
+					//切换标签页
+					mui("body").on("tap", "a.mui-tab-item", function(e) {
+						//RpcClient.invoke("index.html", "RPC_RefreshLogin");//刷新发现页资源圈动态更新提示
+						RPCObserver.broadcast('refresh_read_lista')
+						RPCObserver.broadcast('refresh_readList')
+						RpcClient.invoke("org.html", "RPC_RefreshUserInfo");
+
+						RpcClient.invoke("contactWind", "RPC_ContactOrgRefresh"); //刷新资源页页资源圈动态更新提示
+						if(this.classList.contains("mui-active")) {
+							return;
+						}
+
+						if(this.getAttribute("winid") == "my.html") {
+							btnAdd.style.display = "none";
+							btnSearch.style.display = "none";
+						} else {
+							btnAdd.style.display = "block";
+							btnSearch.style.display = "block";
+						}
+
+						var old = document.body.querySelector("a.mui-active");
+						old && (old.classList.remove("mui-active"));
+						this.classList.add("mui-active");
+
+						createSubPages(this.getAttribute("winid"));
+						var winId;
+						old && (winId = old.getAttribute("winid")) && (plus.webview.hide(winId.substring(winId.lastIndexOf('/') + 1)));
+
+						var _this = this;
+						setTimeout(function() {
+
+							document.body.querySelector("a.mui-active").classList.remove("mui-active");
+							_this.classList.add("mui-active");
+						}, 100);
+
+					});
+					//创建或显示标签页的内容
+					function createSubPages(path, winid) {
+						!winid && (winid = path);
+						winid = winid.substring(winid.lastIndexOf('/') + 1);
+						//alert(winid)
+						var win = plus.webview.getWebviewById(winid);
+						var _active = document.body.querySelector("a.mui-active");
+						if(!win) {
+							var styles = {
+								popGesture: "none",
+								top: "45px",
+								bottom: "51px"
+							};
+							if(mui.os.android && ["5.0", "5.1"].indexOf(mui.os.version) >= 0 && winid != "message.html") {
+								styles.hardwareAccelerated = false;
+							}
+							win = plus.webview.create("pages/" + path, winid, styles);
+							win.hide();
+							plus.webview.currentWebview().append(win);
+
+						}
+						if(plus.webview.currentWebview().children().indexOf(win) < 0) {
+							plus.webview.currentWebview().append(win);
+						}
+						if(_active) {
+							win.show();
+							//刷新弹窗菜单
+							if(winid != "my.html") {
+								RPCObserver.broadcast('refresh_menu_type', _active.getAttribute("id"));
+							}
+						}
+						_mask && (_mask.close());
+					}
+
+					getMsgList(true);
+
+					createSubPages("message/message.html", "message.html");
+
+					//预加载其他几个窗口
+					// setTimeout(function() {
+					// 	var styles = {
+					// 		popGesture: "none",
+					// 		top: "45px",
+					// 		bottom: "51px"
+					// 	};
+					// 	if(mui.os.android && ["5.0", "5.1"].indexOf(mui.os.version) >= 0 && winid != "message.html") {
+					// 		styles.hardwareAccelerated = false;
+					// 	}
+
+					// 	plus.webview.create("pages/ing/index.html", "index.html", styles);
+					// 	plus.webview.create("pages/my.html", "my.html", styles);
+					// 	plus.webview.create("pages/work.html", "work.html", styles);
+					// 	plus.webview.create("pages/contact.html", "contact.html", styles);
+					// }, 1000)
+
+					//菜单
+					ws = plus.webview.currentWebview();
+					if(plus.webview.getWebviewById("menu")) {
+						floatw = plus.webview.getWebviewById("menu");
+					} else {
+						plus.webview.create("pages/menus/menu-index.html", "menu", {
+							background: 'transparent',
+							zindex: 10,
+						});
+					}
+					//手持设备扫描广播接收
+					var receiveScan = function(event) {
+						if(plus.os.name == 'Android') {
+							getcontent(event.arguments, 0);
+						}
+					};
+					document.addEventListener("push.receiveScan", receiveScan, false);
+
+					var isResume = true;
+
+					//接收切换到前台的事件
+					var receiveSwitch = function(event) {
+						//event.arguments 0：后台，1：前台
+						if(plus.os.name == 'Android') {
+							if(event.arguments == 1) {
+								RpcClient.invoke("message.html", "RPC_Resume");
+								getUser(true, true);
+
+								//刷新work页面
+								RpcClient.invoke("work.html", "RefTodoCount");
+								RpcClient.invoke("work.html", "RPC_RefToDoWorkLog", true);
+
+							} else {
+								RpcClient.invoke("message.html", "RPC_Pause");
+							}
+
+						}
+					};
+					document.addEventListener("push.receiveSwitch", receiveSwitch, false);
+
+					if(mui.os.ios) {
+						//切换到前台的事件
+						document.addEventListener("resume", function() {
+							if(isResume) {
+								RpcClient.invoke("message.html", "RPC_Resume");
+								//更新用户权限
+								getUser(true, true);
+
+								//刷新work页面
+								RpcClient.invoke("work.html", "RefTodoCount");
+								RpcClient.invoke("work.html", "RPC_RefToDoWorkLog", true);
+
+								isResume = false;
+								setTimeout(function() {
+									isResume = true;
+								}, 2000);
+							}
+						}, false);
+						document.addEventListener("pause", function() {
+							isResume = true;
+							RpcClient.invoke("message.html", "RPC_Pause");
+						});
+					}
+				}
+			]);
+
+			var floatw = null;
+			mui.init({
+				keyEventBind: {
+					backbutton: false //关闭back按键监听
+				}
+			});
+			//首页返回键处理
+			//处理逻辑：1秒内，连续两次按返回键，则退出应用；
+			var first = null;
+			mui.back = function() {
+				//首次按键，提示‘再按一次退出应用’
+				if(!first) {
+					//				first = new Date().getTime();
+					//				mui.toast('再按一次退出应用');
+					if(mui.os.android) {
+						var main = plus.android.runtimeMainActivity();
+						main.moveTaskToBack(false);
+					}
+
+					setTimeout(function() {
+						first = null;
+					}, 1000);
+				} else {
+					if(new Date().getTime() - first < 1000) {
+						plus.runtime.quit();
+					}
+				}
+			};
+
+			mui.plusReady(function() {
+				// _mask = mui.createMask();
+				// _mask[0].classList.add("mui-backdrop-transparency");
+
+				// _mask.show();
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+				//固定为竖屏显示
+				plus.screen.lockOrientation("portrait-primary");
+
+			});
+
+			// 创建悬浮窗口
+			function floatWebview() {
+
+				if(floatw) { // 避免快速多次点击创建多个窗口
+					floatw.show("fade-in");
+				} else {
+					var styles = {
+						background: 'transparent',
+						zindex: 10
+					};
+					if(mui.os.android && ["5.0", "5.1"].indexOf(mui.os.version) >= 0) {
+						styles.hardwareAccelerated = false;
+					}
+					floatw = plus.webview.create("pages/menus/menu-index.html", "menu");
+					floatw.show("fade-in");
+				}
+			};
+
+			//弹出菜单
+			document.getElementById("add").addEventListener("tap", function() {
+				floatWebview();
+			});
+			//获取扫码枪扫描内容
+			//验证扫码规则
+			var m_url = 'http://m.maidiyun.com';
+			var my_url = 'http://m.my3dparts.com';
+			var m_url_2 = "http://md9.vc";
+
+			function getcontent(codeValue, type) {
+				if(codeValue && type == 0) {
+					if(codeValue.match(/^http(|s):\/\//g)) {
+						//如果是带有m.maidiyun.com或m.my3dparts.com标识的网址，说明是迈迪的专有码
+						if(codeValue.indexOf(m_url) >= 0 || codeValue.indexOf(my_url) >= 0 || codeValue.indexOf(m_url_2) >= 0) {
+							var params = codeValue.split('?');
+							if(params.length > 1) {
+								codeValue = params[1];
+							}
+						}
+					}
+					var view = plus.webview.getTopWebview();
+					if(view.id.indexOf("assembly.html") > -1) {
+						view.evalJS("scancallbackFun('" + codeValue + "')");
+						return;
+					}
+					if(view.id.indexOf("free-assembly.html") > -1) {
+						view.evalJS("scancallbackFun('" + codeValue + "')");
+						return;
+					}
+					if(view.id.indexOf("debug-edit.html") < 0) {
+						return;
+					}
+					var appElement = document.querySelector('[ng-controller=TabController]');
+					var $scope = angular.element(appElement).scope();
+					$scope.checkMdCodeToServer(codeValue, type);
+				} else {
+					mui.toast("请扫描正确的迈迪国标通用物联码");
+				}
+			};
+		</script>
+	</body>
+
+</html>

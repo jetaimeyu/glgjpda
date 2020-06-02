@@ -1,0 +1,97 @@
+<ul class="partDomUl data-group" ng-repeat="list in model">
+	<li class="data-row partDomHead ">
+		<!--<img class="comp-logo" ng-src="{{list.CompID|getCompLogo:30:30}}" ng-show="list.CompID!=0">-->
+		<div class="mui-media-object mui-pull-left" ng-style="{'background-image':'url('+ (list.CompID | getCompLogo:50:0) +')'}" ng-show="list.CompID!=0"></div>
+		<span class="mui-ellipsis-2 compName" ng-bind="list.CompName" ng-show="list.CompID!=0"></span>
+		<!--<p class="comp-name mui-ellipsis" ng-bind="list.CompName"></p>-->
+		<div class="li_wraper">
+			<p class="opt md-icon font-15 close">
+				<!--<span class="icon-delete partDomIcon" ng-click="delpartListItem(index)"></span>-->
+			</p>
+			<div class="body mui-grid-view mui-row" style="color: #666!important">
+				<div class="mui-media mui-col-xs-4 mui-col-sm-4 text-center">总积分</div>
+				<div class=" mui-media mui-col-xs-4 mui-col-sm-4 text-center">可用积分</div>
+				<div class="mui-media mui-col-xs-4 mui-col-sm-4 text-center">已用积分</div>
+			</div>
+		</div>
+	</li>
+	<li class="data-row mui-table-view-cell partDomList" ng-click="gotoinfo(list.CompID)">
+		<p class="opt md-icon font-15 close" style="right: 3px">
+			<span class="icon-right partDomIcon"></span>
+		</p>
+		<div class="body mui-grid-view mui-row">
+			<div class=" mui-media mui-col-xs-4 mui-col-sm-4 mui-ellipsis remarkscontent text-center">
+				<span class="total-count font-16" ng-bind="list.TotalIntegral"></span>
+			</div>
+			<div class=" mui-media mui-col-xs-4 mui-col-sm-4 text-center font-16" ng-bind="list.TotalIntegral-list.UseIntegral"></div>
+			<div class=" mui-media mui-col-xs-4 mui-col-sm-4 text-left mui-ellipsis remarkscontent text-center font-16" ng-bind="list.UseIntegral"></div>
+		</div>
+	</li>
+</ul>
+<style>
+	.icon {
+		width: 16px;
+	}
+	
+	.data-group .partDomHead.data-row{
+		display: block;
+	}
+	.partDomUl .mui-media-object {
+		line-height: 48px;
+		max-width: 48px;
+		border-radius: 50%;
+		background-color: transparent;
+		/*margin: 0 auto;*/
+		width: 48px;
+		height: 48px;
+		background-size: cover;
+		display: inline-block;
+		border: none;
+		margin-right: 10px;
+	}
+	
+	.comp-logo {
+		border: 1px solid #ECECEC;
+		border-radius: 50%;
+		margin-right: 8px;
+	}
+	
+	.compName {
+		display: inline-block;
+		width: 65%;
+		line-height: 48px;
+	}
+	
+	.mui-bar-nav~.mui-content .mui-pull-top-pocket {
+		top: 44px!important;
+	}
+	
+	.mui-bar-nav~.has-tab .mui-pull-top-pocket {
+		top: 84px!important;
+	}
+	
+	.partDomHead {
+		padding: 10px 15px;
+		padding-bottom: 0;
+		flex-direction: column;
+		justify-content: flex-start!important;
+		align-items: flex-start!important;
+	}
+	
+	.li_wraper {
+		display: flex;
+		width: 100%;
+	}
+	
+	.partDomList {
+		padding: 0 15px!important;
+	}
+	
+	.text-center {
+		text-align: center!important;
+	}
+	
+	.total-count {
+		color: #369bfa;
+	}
+</style>

@@ -1,0 +1,240 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.equ-approve-list.data-group .data-row::after {
+				right: 10px;
+				left: 10px;
+			}
+			.icon {
+			width: 16px;
+		}
+			
+			.equ-approve-list.data-group .data-row .body {
+				padding: 0px;
+			}
+			
+			.equ-approve-list.data-group .data-row {
+				padding: 10px 16px 10px 16px;
+			}
+			
+			.equ-approve-list.data-group:first-child {
+				margin-top: 0px;
+			}
+			
+			
+			.equ-approve-list .names {
+				font-size: 1.5rem;
+				color: #000;
+				padding-top: 6px;
+				width: calc(100% - 100px);
+			
+			}
+			
+			.equ-approve-list .work-content {
+				color: #000;
+				margin-top: 7px;
+				word-break: break-all;
+			}
+			
+			.equ-approve-list .worklocation {
+				margin-top: 6px;
+				color: #AAAAAA!important;
+				font-size: 1.2rem;
+				line-height: 1.4rem;
+				word-break: break-all;
+			}
+			
+			
+			.equ-approve-list .log-type {
+				position: absolute;
+				top: 16px;
+				right: 16px;
+				/*color: red!important;*/
+				display: inline-block;
+				max-width: 35%;
+				font-size: 1.5rem;
+			}
+			
+			.equ-approve-list .margin-left-15 {
+				margin-left: 15px!important;
+			}
+			.equ-approve-body .drop-down-box{
+				width: -moz-calc(50% - 3px);
+				width: -webkit-calc(50% - 3px);
+				width: calc(50% - 3px);
+				background: #fff;
+				padding: 15px 0 5px 0;
+				text-align: center;
+				display: inline-block;
+				line-height: 100%;
+				font-size: 1.5rem;
+				color: #000!important;
+				margin-bottom: 6px;
+			}
+			.equ-approve-body .drop-down-box p{
+				
+				color: #000!important;
+			}
+			.equ-approve-body .drop-down-box .md-icon{
+				margin-left: 5px;	
+				color: #AEAEAE!important;
+			}
+			.equ-approve-body .drop-down-box .data-group{
+				width: -moz-calc(50% - 3px);
+				width: -webkit-calc(50% - 3px);
+				width: calc(50% - 3px);
+				position: absolute;
+				z-index: 5;
+				margin-top:0;
+				
+			}
+			.equ-approve-body .drop-down-box li{
+				
+				padding-left: 9px;
+			}
+			.equ-approve-body .color_orange {
+			color: #FFA500!important;
+		}
+		
+		.equ-approve-body .color_red {
+			color: #FF0000!important;
+		}
+		
+		.equ-approve-body .color_green {
+			color: #008000!important;
+		}
+			
+		</style>
+	</head>
+	<body ng-controller="equApproveController" class="equ-approve-body">
+		<!--<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">审核列表</a>
+			<a class="mui-pull-right menu-search" id="search" ng-click="search()">
+				<img class="icon" src="../../images/search.png" />
+			</a>
+		</header>-->
+		<div id="pullrefresh" ng-controller="pullrefreshController" class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<div class="mui-content">
+				<ul class="data-group equ-approve-list">
+					<li class="mui-table-view-cell data-row mui-block" ng-repeat="item in data" ng-click="tap(item)">
+						<!--<p class="opt md-icon font-15">
+							<span class="icon-right"></span>
+						</p>-->
+						<div class="body">
+							<div class="names mui-ellipsis" ng-bind="item.ApplicantName+'的'+changeType(item.Type)"></div>
+							<span class="log-type  mui-ellipsis" ng-class="{'color_orange':item.State==2,'color_red':item.State==3,'color_green':item.State==4}" ng-bind="changeState(item.State)"></span>
+						</div>
+						<div class="worklocation">
+							<span  ng-bind="(item.Type==1?'申请原因：':'报废原因：')+item.Reason"></span>
+						</div>
+						<div class="worklocation">
+							<span ng-bind="'申请时间：'+item.ApplicationDate"></span>
+						</div>
+					</li>
+				</ul>
+				<md-no-data ng-show="data && data.length==0">暂无数据</md-no-data>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script>
+			app.controller("equApproveController", ["$scope", "CacheService","ApiService", "RPCObserver","UtilsService", function($scope, CacheService,ApiService, RPCObserver,UtilsService) {
+				$scope.pageIndex = 0;
+				$scope.pageSize = 10;
+				var curUser = CacheService.get('user');
+//				console.log(JSON.stringify(curUser))
+				var curUserId=curUser.UserID;
+				$scope.dataList={
+					type:0,//1采购，2报废
+					state:0//1新建、2待审核、3已驳回、4已同意
+				}
+				function init() {
+					var url = ApiService.Api52 + "/api/v1/EqApply/GetPagedEqApplyExamineList?type="+$scope.dataList.type+"&state="+$scope.dataList.state+"&auditor="+curUserId+"&pageIndex=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize;
+					$scope.url = url;
+				};
+				
+				$scope.$on('refresh_pageindex', init);
+				//流程类型转换
+				$scope.changeType=function(key){
+					if(key=='1'){
+						return "设备购置申请"
+					}else if(key=='2'){
+						return "设备报废申请"
+					}
+				}
+				//状态转换
+				$scope.changeState=function(key){
+					if(key=='2'){
+						return "待审核"
+					}else if(key=='3'){
+						return "已驳回"
+					}else if(key=='4'){
+						return "已同意"
+					}
+				}
+				//页面跳转
+				$scope.tap=function(obj){
+					$scope.showDropProcess=false;
+					$scope.showDropStatus=false;
+					UtilsService.openWindow({
+						needLogin: true,
+						id: "equ-approve-info.html",
+						url: "equ-approve-info.html?applyId="+obj.ID+"&applyType="+obj.Type+"&applyState="+obj.State
+					});
+				}
+//				$scope.search=function(){
+//					UtilsService.openWindow({
+//						needLogin: true,
+//						id: "equ-approve-search.html",
+//						url: "equ-approve-search.html",
+//						extras:{
+//							callback:"selectType",
+//							selectObj:{
+//								type:$scope.dataList.type,//1采购，2报废
+//								state:$scope.dataList.state//1新建、2待审核、3已驳回、4已同意
+//							}
+//						}
+//					});
+//				}
+				RpcServer.expose("RPC_equ_approve", function(params) {
+					if(params) {
+						$scope.dataList.type=params.type;
+						$scope.dataList.state=params.state;
+						$scope.$broadcast("md_pullrefresh");
+						$scope.$apply();
+					}
+				})
+				RPCObserver.on('refresh_equ_approve_list', 'refresh_equ_approve_list');
+				window.refresh_equ_approve_list = function() {			
+					$scope.$broadcast('md_pullrefresh');
+				};
+
+			}]);
+//			function selectType(obj) {
+//				var appElement = document.querySelector('[ng-controller=equApproveController]');
+//				var $scope = angular.element(appElement).scope();
+////				console.log(JSON.stringify(obj))
+//				$scope.dataList.type=obj.type;
+//				$scope.dataList.state=obj.state;
+//				$scope.$broadcast('md_pullrefresh');
+//				$scope.$apply();	
+//			}
+			mui.plusReady(function() {
+				plus.webview.currentWebview().setStyle({scrollIndicator:'none'})
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

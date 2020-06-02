@@ -1,0 +1,221 @@
+.redpointer {
+	display: block;
+	background: #EA3535;
+	border-radius: 50%;
+	width: 8px;
+	height: 8px;
+	top: 15px;
+	right: 26px;
+	position: absolute;
+}
+
+#delPro {
+	position: absolute;
+	right: 50px;
+	top: 5px;
+	height: 40px;
+	line-height: 31px;
+	color: rgb(50, 150, 250);
+}
+
+#a_date_view {
+	font-size: 1.4rem!important;
+	margin-bottom: 0;
+	padding: 0 20px;
+}
+
+.map_tools {
+	background: rgba(255, 255, 255, 0.8);
+	display: inline-block;
+	width: 100%;
+	box-shadow: none;
+	font-size: 1.4rem!important;
+	line-height: 40px;
+	text-align: center;
+}
+
+.map_tools .data-group {
+	margin-top: 0px;
+	background-color: transparent;
+}
+
+.map_tools .data-group .data-row {
+	min-height: 30px;
+	justify-content: center;
+}
+
+.map_tools .data-group a {
+	font-size: 12px!important;
+}
+
+.map_tools .data-group .data-row .body-prod {
+	padding: 11px 15px;
+	line-height: 15px;
+}
+
+.map_tools .data-group .data-row .opt {
+	font-size: 16px;
+	right: 12px;
+}
+
+.map_tools .data-group .data-row .opt .icon-right {
+	font-size: 14px;
+	color: #bbb;
+}
+
+.map_tools .data-group .data-row .icon-zuo {
+	padding: 0px 5px;
+}
+
+.map_tools .data-group .data-row .icon-you {
+	padding: 0px 5px;
+}
+
+.map_tools .data-group .data-row:after {
+	right: 0px;
+	left: 0px;
+}
+
+.map_tools .data-group .data-row .opt {
+	padding: 0px 5px 0px 62px;
+}
+
+.map_tools .data-group .data-row .opt~.body-prod {
+	margin-right: 91px;
+}
+
+.data-group .data-row .body-prod>p {
+	line-height: inherit;
+}
+
+.text-left {
+	text-align: left;
+}
+
+.md-modal {
+	z-index: 9999!important;
+}
+
+.md-tab-group .md-active {
+	color: #007aff;
+	border-bottom: 1px solid #007aff;
+}
+
+.mui-control-content {
+	background-color: white;
+}
+
+.mui-bar-nav~.mui-content .mui-slider.mui-fullscreen {
+	top: 140px;
+}
+
+.mui-table-view-chevron .mui-table-view-cell {
+	padding-right: 10px;
+}
+
+
+/*app.css*/
+
+#sliderSegmentedControl {
+	background: #FFFFFF;
+}
+
+.mui-slider-progress-bar {
+	background-color: #3296FA !important;
+}
+
+.mui-table-view-chevron .mui-table-view-cell>a:not(.mui-btn) {
+	margin-right: 0;
+}
+
+.mui-table-cell {
+	color: #323232
+}
+
+.right {
+	text-align: right;
+	vertical-align: middle;
+}
+
+.left {
+	text-align: left;
+	vertical-align: middle;
+}
+
+.rank1 {
+	background-color: #FF541B;
+	color: #FFFFFF
+}
+
+.rank2 {
+	background-color: #FB7C16;
+	color: #FFFFFF
+}
+
+.rank3 {
+	background-color: #FFC001;
+	color: #FFFFFF
+}
+
+.rank-n {
+	background-color: #88B2F6;
+	color: #FFFFFF
+}
+
+.icon-you {
+	padding: 5px 8px
+}
+
+.icon-zuo {
+	padding: 5px 8px
+}
+
+.bujian {
+	font-size: 1.3rem;
+	margin-left: 10px;
+	color: #555555;
+}
+
+.bujian_qty {
+	font-size: 1.4rem;
+}
+
+.bujian_block {
+	width: 10px;
+	height: 10px;
+	display: block;
+	margin-left: 15px;
+}
+
+.sku-name {
+	color: rgb(102, 102, 102);
+	/*font-size: 1.5rem; 
+	 width: 90%; 
+	 overflow: hidden; 
+	 text-overflow: ellipsis; 
+	 white-space: nowrap;*/
+	/*height: 43px;*/
+	margin-right: 91px;
+}
+
+.prod div.body-prod {
+	font-size: 1.5rem;
+	width: calc(100% - 81px);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.data-group .data-row.prod:after {
+	height: 0px;
+}
+
+.break {
+	word-break: break-word;
+	word-wrap: break-word
+}
+
+.mui-badge {
+	position: relative;
+	left: -5px
+}

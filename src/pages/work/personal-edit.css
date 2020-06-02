@@ -1,0 +1,59 @@
+/*第一个data-row高度，行高 左 上内边距 */
+
+.data-avatar .data-row .body {
+	padding: 8px 16px;
+}
+
+/*.data-group:first-child .data-row {
+	height: 64px;
+}*/
+
+
+/*更改头像span样式 */
+
+.data-group:first-child label.modified {
+	position: absolute;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+    padding-left: 60px;
+    width: auto;
+    color: #3296FA;
+    font-size: 1.4rem;
+}
+
+.data-group.data-avatar {
+	margin-top: 0;
+}
+
+.avatar {
+	width: 48px;
+	height: 48px;
+	border-radius: 48px;
+	float: left;
+	background-size: cover;
+}
+
+img[src=""] {
+	opacity: 0;
+}
+
+.data-group .data-row .body>span,
+.data-group .data-row .body input {
+	color: #323223;
+}
+
+
+/*按钮*/
+
+.btn-submit {
+	margin: 40px 16px 0 16px;
+}
+
+.btn-submit span {
+	background-color: #fff;
+	border-color: #ccc;
+	color: #323232;
+	font-size: 1.6rem;
+	background: rgba(255, 255, 255, 0.5);
+}

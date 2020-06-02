@@ -1,0 +1,67 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+	</head>
+
+	<body ng-controller="ParentPageController">
+		<div id="pullrefresh" ng-controller="pullrefreshController" class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<div class="mui-content">
+				<md-ing-list ng-show="data.length>0" ng-model="data"></md-ing-list>
+				<md-no-data ng-show="data && data.length==0">暂无数据</md-no-data>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script>
+			app.controller("ParentPageController", ["$scope", "ApiService", "DataService", "RPCObserver",function($scope, ApiService, DataService,RPCObserver) {
+				$scope.type = query("type");
+				$scope.pageIndex = 0;
+				$scope.pageSize = 10;
+				function init() {
+					switch($scope.type){
+						case "follow":
+						$scope.url = ApiService.Api50 + "/api/v1/QA/QusListMyFollow?pageIndex=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize+ "&classId="+ query("id")||"";
+						break;
+						case "reply":
+						$scope.url = ApiService.Api50 + "/api/v1/QA/QusListMyAnswer?pageIndex=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize+ "&classId="+ query("id")||"";
+						break;
+						case "my":
+						$scope.url = ApiService.Api50 + "/api/v1/QA/QusListMyQus?pageIndex=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize+ "&classId="+ query("id")||"";
+						break;
+
+					}
+				}
+
+				$scope.$on("refresh_pageindex", init);
+				if($scope.type == "follow") {
+					
+					RPCObserver.on('refresh_my_follow_ing', 'refresh_my_follow_ing');
+					window.refresh_my_follow_ing = function() {
+						$scope.$broadcast('md_pullrefresh');
+					};
+				}
+				if($scope.type == "reply") {
+					
+					RPCObserver.on('refresh_my_reply_ing', 'refresh_my_reply_ing');
+					window.refresh_my_reply_ing = function() {
+						$scope.$broadcast('md_pullrefresh');
+					};
+				}
+			}])
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

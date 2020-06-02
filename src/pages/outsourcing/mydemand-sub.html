@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="myoffer.css">
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style>
+			.empty2 {
+				margin-top: 30vh;
+				width: 100%;
+				text-align: center;
+				word-break: break-all;
+				color: #666666;
+				font-size: 1.4rem;
+				padding: 0 15px;
+			}
+		</style>
+	</head>
+
+	<body ms-controller="demandVm" class="ms-controller">
+		<div class="mui-content mui-scroll-wrapper" id="pullrefresh">
+			<!--主体-->
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell demand-detail" 
+					ms-for="item in @DemandList" 
+					ms-attr="{'data-did':item.ID,'data-state': item.State}">
+					<div class="mui-slider-cell">
+						<div class="oa-contact-cell mui-table">
+							<div class="oa-contact-avatar mui-table-cell">
+								<img ms-attr="{'src':getDemandImages(item,'100x0'), 'data-preview-src':'', 'data-preview-group':'1'}" />
+							</div>
+							<div class="oa-contact-content mui-table-cell" :css="{'padding-left':@paddingLeft}">
+								<div class="mui-clearfix oa-contact-text">
+									<p class="">{{item.DemandName}}</p>
+								</div>
+								<div class=" mui-clearfix  mdt-demand-company-bg1" style="font-size: 1.2rem;color: 666666;">
+									<span ms-visible="item.CompID != 0">{{item.CompName}}</span>
+									<span ms-visible="item.CompID == 0">{{item.RealName}}(个人)</span>
+								</div>								
+								<div class="mui-clearfix oa-contact-offer">
+									<span></span>
+									<span>我的报价</span>
+									<span>{{item.QuoteMoney|showPrice}}</span>
+									<span :class="@item.className">{{item.State}}</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</li>
+
+				<div class="empty2" ms-visible="@DemandList.length==0">{{@noDemand}}</div>
+				<div class="more_img" ms-visible="@DemandList.length>=5">
+					<img class="more_img" src="../../images/myoffer/uparrow.png" />
+					<p>我是有底线的</p>
+				</div>
+			</ul>
+
+		</div>
+
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<!--<script type="text/javascript" src="../../js/common.js"></script>-->
+		<script type="text/javascript" src="../../js/avalon.js"></script>
+		<script type="text/javascript" src="../../js/mescroll/mescroll.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="mydemand-sub.js"></script>
+	</body>
+
+</html>

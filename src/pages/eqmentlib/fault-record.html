@@ -1,0 +1,95 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>设备故障记录</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.icon {
+				width: 16px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="FaultRecordController">
+		<div id="pullrefresh" class="mui-scroll-wrapper" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<div class="mui-content">
+				<md-equ-fault-list ng-show="data&&data.length>0" ng-model="data"></md-equ-fault-list>
+				<md-no-data ng-show="data&&data.length==0">暂无数据</md-no-data>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("FaultRecordController", ["$scope", "ApiService", "DataService", "UtilsService", "Loading", "RPCObserver", function($scope, ApiService, DataService, UtilsService, Loading, RPCObserver) {
+				$scope.data = null;
+				pageIndex = 1;
+				pageSize = 9999;
+
+				//设备id
+				$scope.equipmentId = query("equid");
+				setTimeout(function() {
+					mui.init({
+						pullRefresh: {
+							container: '#pullrefresh',
+							down: {
+								callback: pulldownRefresh
+							}
+						}
+					});
+				})
+
+				init();
+
+				function init() {
+					Loading.show();
+					getPagedEqWorkOrderFailureList();
+				}
+
+				function pulldownRefresh() {
+					pageIndex = 1;
+					getPagedEqWorkOrderFailureList();
+				}
+
+				//根据设备ID分页获取设备故障工单
+				function getPagedEqWorkOrderFailureList() {
+					var url = ApiService.Api50 + "/api/v2/MatWorkOrder/GetPagedEqWorkOrderFailureList?pageIndex=" + pageIndex + "&pageSize=" + pageSize + "&equipmentId=" + $scope.equipmentId;
+					DataService.get(url).then(function(res) {
+						Loading.hide();
+						$scope.isLoad = true;
+						if(res) {
+							$scope.data = res.DataRows;
+							console.log(JSON.stringify($scope.data))
+							mui("#pullrefresh").pullRefresh() && mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
+						}
+					})
+				}
+				//跳转
+				$scope.add = function() {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'fault-edit.html',
+						url: 'fault-edit.html',
+						extras: {
+							addEquRecord: plus.webview.currentWebview().addEquRecord || ''
+						}
+					});
+				};
+
+				RPCObserver.on('refresh_equ_fault_list', 'refresh_equ_fault_list');
+				window.refresh_equ_fault_list = pulldownRefresh;
+			}]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

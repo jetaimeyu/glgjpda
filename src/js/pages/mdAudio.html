@@ -1,0 +1,23 @@
+<div class="voice voice-box" ng-click="play()">
+	<img id="img_{{audio.FileName}}" src="{{localUrl}}/images/voice.png">
+	<span>{{audio.FileSize}}"</span>
+	<img ng-if="!readonly" class="media-del" src="{{localUrl}}/images/delete.png" ng-click="delete()">
+</div>
+<style type="text/css">
+	.voice span {}
+
+	.voice-box {
+		position: relative;
+
+
+		background-color: #eaf6fe;
+	}
+
+	.voice-box .media-del {
+		position: absolute;
+		right: -5px;
+		top: -8px;
+		width: 15px;
+		height: 15px;
+	}
+</style>

@@ -1,0 +1,311 @@
+<!DOCTYPE HTML>
+<html id="MdTong">
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+	<title></title>
+	<link rel="stylesheet" href="../../css/mui.min.css" type="text/css" charset="utf-8" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	<style type="text/css">
+		html {
+			width: 100%;
+			height: 100%;
+		}
+
+		body {
+			height: 100%;
+			background-color: transparent;
+		}
+
+		.mui-table-view-cell:after {
+			position: absolute;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			height: 1px;
+			content: '';
+			-webkit-transform: scaleY(.5);
+			transform: scaleY(.5);
+			background-color: #ccc;
+		}
+
+		.mui-popover .mui-table-view {
+			max-height: 315px;
+		}
+	</style>
+</head>
+
+<body ng-controller="MenuController">
+	<a style="display: block;height: 100%; background:url(../../images/mask.png);"></a>
+	<div id="topPopover" class="mui-popover pop-menu" style="position:fixed ;top: 46px;right:5px;">
+		<div class="mui-popover-arrow" style="top: -26px;"></div>
+		<ul class="mui-table-view" style="color: #fff;right: 0;" ng-if="winid!='nav_find'&&winid!='nav_cont'">
+			<li class="mui-table-view-cell popover" id="group" ng-if="winid == 'nav_msg'" style="text-align: left;" ng-click="tap('group')">
+				<a class="mui-icon icon-chat">
+					<font>发起群聊</font>
+				</a>
+			</li>
+			<li class="mui-table-view-cell popover" id="worklog" style="text-align: left;" ng-click="tap('worklog')" ng-if="('Q42' | hasAuth) && winid=='nav_msg'">
+				<a class="mui-icon icon-goumaijilu">
+					<font>工作日志</font>
+				</a>
+			</li>
+			<li class="mui-table-view-cell popover" style="text-align: left;" ng-click="tap('scan')">
+				<a class="mui-icon icon-saoyisao">
+					<font>扫一扫</font>
+				</a>
+			</li>
+			<!--<li class="mui-table-view-cell popover" style="text-align: left;">
+					<a class="mui-icon icon-zhangdan" href="" nl="1" open-type="common" winid="">
+						<font>记账</font>
+					</a>
+				</li>-->
+
+			<!-- <li class="mui-table-view-cell popover" style="text-align: left;" ng-click="tap('debugging')" ng-if="('Q30' | hasAuth)">
+				<a class="mui-icon icon-debugging">
+					<font>安装调试</font>
+				</a>
+			</li>
+			<li class="mui-table-view-cell popover" style="text-align: left;" ng-click="tap('callrepair')" ng-if="('Q25' | hasAuth)">
+				<a class="mui-icon icon-call-repair">
+					<font>来电报修</font>
+				</a>
+			</li>
+			<li class="mui-table-view-cell popover" style="text-align: left;" ng-click="tap('repairing')" ng-if="('Q25' | hasAuth)">
+				<a class="mui-icon icon-field-repairing">
+					<font>现场维修</font>
+				</a>
+			</li> -->
+			<li class="mui-table-view-cell popover" style="text-align: left;" ng-click="tap('share')">
+				<a class="mui-icon icon-fenxiang">
+					<font>分享</font>
+				</a>
+			</li>
+		</ul>
+		<ul class="mui-table-view" style="color: #fff;right: 0;" ng-if="winid=='nav_find'">
+			<li class="mui-table-view-cell popover" style="text-align: left;" ng-click="tap('questions','2')">
+				<a class="mui-icon icon-questions">
+					<font>我要提问</font>
+				</a>
+			</li>
+			<li class="mui-table-view-cell popover" style="text-align: left;" ng-click="tap('questions','7')">
+				<a class="mui-icon icon-model">
+					<font>我要求助</font>
+				</a>
+			</li>
+			<!-- <li class="mui-table-view-cell popover" style="text-align: left;" ng-click="tap('questions','8')">
+				<a class="mui-icon icon-advise">
+					<font>我要悬赏</font>
+				</a>
+			</li> -->
+			<li class="mui-table-view-cell popover" style="text-align: left;" ng-click="tap('questions','4')">
+				<a class="mui-icon icon-subcontract">
+					<font>我要外协</font>
+				</a>
+			</li>
+
+			
+		</ul>
+		<ul class="mui-table-view" style="color: #fff;right: 0;" ng-if="winid=='nav_cont'">
+			<li class="mui-table-view-cell popover nav_cont" style="text-align: left;" ng-click="tap('addscan')">
+				<a class="mui-icon icon-scan-add">
+					<font>扫码添加</font>
+				</a>
+			</li>
+			<li class="mui-table-view-cell popover" style="text-align: left;" ng-click="tap('addsearch')">
+				<a class="mui-icon icon-search-add">
+					<font>搜索添加</font>
+				</a>
+			</li>
+		</ul>
+	</div>
+</body>
+<script type="text/javascript" src="../../js/angular.min.js"></script>
+<script src="../../js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" src="../../js/common.js"></script>
+<script type="text/javascript" src="../../js/utils.js"></script>
+<script type="text/javascript" src="../../js/rpc.js"></script>
+<script type="text/javascript">
+	app.controller("MenuController", ["$scope", "UtilsService", "CustomModalService", "$Modal", "RPCObserver", function (
+		$scope, UtilsService, CustomModalService, $Modal, RPCObserver) {
+		//获取分享服务列表
+		var shares = {};
+		plus.share.getServices(function (s) {
+			if (s && s.length > 0) {
+				for (var i = 0; i < s.length; i++) {
+					var t = s[i];
+					shares[t.id] = t;
+				}
+			}
+		}, function () {
+			//console.log("获取分享服务列表失败");
+		});
+		//跳转
+		$scope.tap = function (key, type) {
+			if (key == 'share') {
+				var ids = [{
+						id: "weixin",
+						ex: "WXSceneSession"
+					}, {
+						id: "weixin",
+						ex: "WXSceneTimeline"
+					}, {
+						id: "qq"
+					}],
+					bts = [{
+						title: "发送给微信好友"
+					}, {
+						title: "分享到微信朋友圈"
+					}, {
+						title: "分享到QQ"
+					}];
+				plus.nativeUI.actionSheet({
+					cancel: "取消",
+					buttons: bts
+				}, function (e) {
+					var i = e.index;
+					if (i > 0) {
+						var s_id = ids[i - 1].id;
+						var share = shares[s_id];
+						if (share) {
+							if (share.authenticated) {
+								shareMessage(share, ids[i - 1].ex);
+							} else {
+								share.authorize(function () {
+									shareMessage(share, ids[i - 1].ex);
+								}, function (e) {
+									switch (e.code) {
+										case -6:
+											mui.toast("无法连接到网络");
+										case -8:
+											mui.toast("客户端未安装");
+											break;
+										default:
+											break;
+									}
+									//console.log("认证授权失败：" + e.code + " - " + e.message);
+								});
+							}
+						} else {
+							mui.toast("无法获取分享服务")
+						}
+					}
+				});
+				return;
+			}
+			var url = {
+				group: "../message/group-edit.html",
+				scan: "../scan/scan.html",
+				addsearch: "../search/comp-search.html",
+				worklog: "../aftersale/work-edit.html",
+				callrepair: "../aftersale/mat-fault-edit.html",
+				repairing: "../aftersale/mat-repair.html",
+				questions: "../find/find-questions.html?type=" + type
+			};
+			switch (key) {
+				case "debugging":
+					//floatWebview();
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'debug-edit.html',
+						url: '../aftersale/debug-edit.html'
+					});
+					break;
+				case "addscan":
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'scan.html',
+						url: '../scan/scan.html',
+						extras: {
+
+							type: 'addscan'
+						}
+					});
+					break;
+				default:
+					UtilsService.openWindow({
+						needLogin: true,
+						id: url[key].substring(url[key].lastIndexOf('/') + 1),
+						url: url[key]
+					});
+					break;
+			}
+		};
+		$scope.winid = "";
+		init();
+		
+		function init() {
+			var ws = plus.webview.currentWebview();
+			ws.setStyle({
+				mask: "none"
+			});
+			window.addEventListener("tap", function () {
+				ws.hide();
+			})
+			window.addEventListener("dragstart", function () {
+				ws.hide();
+			});
+			var oldBack = mui.back;
+			mui.back = function () {
+				$Modal.close();
+				ws.hide();
+			}
+		};
+
+		RPCObserver.on('refresh_menu_type', 'refresh_menu_type');
+		window.refresh_menu_type = function (id) {
+			//				alert(id) 
+			//console.log(JSON.stringify(id))
+			$scope.winid = id;
+			//				alert($scope.winid)  
+			$scope.$apply()
+			//init();
+		}
+		// 创建悬浮窗口
+		var floatw = null;
+
+		function floatWebview() {
+			if (floatw) {
+				RPCObserver.broadcast('refresh_debug_type');
+				// 避免快速多次点击创建多个窗口
+				floatw.show("fade-in");
+
+			} else {
+				var styles = {
+					background: 'transparent',
+					zindex: 100
+				};
+				if (mui.os.android && ["5.0", "5.1"].indexOf(mui.os.version) >= 0) {
+					styles.hardwareAccelerated = false;
+				}
+				floatw = plus.webview.create("/src/pages/menus/eq-type.html", "modal", styles);
+				floatw.show("fade-in");
+			}
+		};
+		//发送分享
+		function shareMessage(share, ex) {
+			var msg = {
+				extra: {
+					scene: ex
+				}
+			};
+			msg.href = "https://m.maidiyun.com/down/";
+			msg.title = "万企链";
+			msg.content = "一款企业产品信息检索、工业服务信息对接、设计制造业务沟通、通用产品扫码识别的移动端app软件。";
+			msg.thumbs = ["_www/src/images/code-download.png"];
+			share.send(msg, function () {
+				console.log("分享到\"" + share.description + "\"成功！ ");
+			}, function (e) {
+				console.log("分享到\"" + share.description + "\"失败: " + e.code + " - " + e.message);
+			});
+		}
+	}]);
+
+	mui.plusReady(function () {
+		angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+	});
+</script>
+
+</html>

@@ -1,0 +1,98 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left" id="title"></a>
+			<a class="right-menu-words dev-list" style="display:none;">列表</a>
+		</header>
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript">
+			mui.init();
+
+			var _key = query("key");
+
+			var data = {
+				scanprods: {
+					id: "scanProds.html",
+					title: "扫码地图"
+				},
+				services: {
+					id: "services.html",
+					title: "服务地图"
+				},
+				prodDis: {
+					id: "prodDis.html",
+					title: "产品分布"
+				},
+				prodTrack: {
+					id: "prodTrack.html",
+					title: "扫码轨迹",
+					url: "prodTrack.html?mdcode=" + query("mdcode") + "&prodid=" + query("prodid") + "&skuid=" + query("skuid")
+				},
+				dev: {
+					id: "devMap.html",
+					title: "装备地图",
+					url: "devMap.html"
+				},
+				produce: {
+					id: "produce-map.html",
+					title: "投产地图",
+					url: "produce-map.html"
+				},
+				tripMap:{
+					id:"trip-map.html",
+					title:"行程详情",
+					url:"trip-map.html"+window.location.search,
+				},
+				tripMapTotal:{
+					id:"trip-map-total.html",
+					title:"行程详情",
+					url:"trip-map-total.html"+window.location.search,
+				}
+			};
+
+			var titleDom = document.querySelector("#title");
+			titleDom.innerText = data[_key].title;
+
+			if(_key == "dev" || _key == "produce") {
+				document.querySelector(".dev-list").style.display = "block";
+			}
+
+			mui.plusReady(function() {
+				createSubPage();
+
+				document.querySelector(".dev-list").addEventListener("tap", function() {
+					var children = plus.webview.currentWebview().children();
+					
+					children[children.length-1].evalJS("OpenList()")
+				});
+			});
+
+			//创建子webView
+			function createSubPage() {
+				var styles = {
+					popGesture: "none",
+					top: "45px",
+					bottom: "0px"
+				};
+				if(mui.os.android && ["5.0", "5.1"].indexOf(mui.os.version) >= 0) {
+					styles.hardwareAccelerated = false;
+				}
+				win = plus.webview.create(data[_key].url || data[_key].id, data[_key].id, styles);
+				plus.webview.currentWebview().append(win);
+			};
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,125 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <link rel="stylesheet" href="../../css/mui.min.css" />
+    <link rel="stylesheet" href="../../css/common.css" />
+    <link rel="stylesheet" href="../../icon-font/iconfont.css" />
+</head>
+
+<body ng-controller="CustomerController">
+    <header class="mui-bar mui-bar-nav">
+        <a class="mui-action-back mui-icon icon-back mui-pull-left">行业选择</a>
+    </header>
+    <div class="mui-content">
+        <ul class="data-group ">
+            <li class="data-row mui-table-view-cell searchlist" ng-repeat="item in list" ng-click="selectPhrase(item)">
+                <div class="body">
+                    <i ng-class="(item.id==selectId)?'icon-roundcheckfill color-theme':'icon-round color-gray'"></i>
+                    <!--<i ng-class="(item.Content==selectContent)?'icon-roundcheckfill color-theme':'icon-round color-gray'"></i>-->
+                    <span ng-bind="item.title" class="phrase-content">
+                    </span>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <script type="text/javascript" src="../../js/mui.min.js"></script>
+    <script type="text/javascript" src="../../js/angular.min.js"></script>
+    <script type="text/javascript" src="../../js/common.js"></script>
+    <script type="text/javascript" src="../../js/utils.js"></script>
+    <script>
+        app.controller("CustomerController", ["$scope", "ApiService", "DataService", "UtilsService", "RPCObserver", function ($scope, ApiService, DataService, UtilsService, RPCObserver) {
+            //一级行业
+            $scope.key = query("id");
+
+            if ($scope.key == "firstLevel") {
+                $scope.list = [{
+                    id: 100,
+                    title: 'IT/通信/电子/互联网',
+                },
+                {
+                    id: 101,
+                    title: '金融业'
+                },
+                {
+                    id: 102,
+                    title: '房地产/建筑业'
+                },
+                {
+                    id: 103,
+                    title: '商业服务'
+                },
+                {
+                    id: 104,
+                    title: '贸易/批发/零售/租赁业'
+                },
+                {
+                    id: 105,
+                    title: '生产/加工/制造'
+                },
+                {
+                    id: 106,
+                    title: '交通/运输/物流/仓储'
+                },
+                {
+                    id: 107,
+                    title: '服务业'
+                },
+                {
+                    id: 108,
+                    title: '文化/传媒/娱乐/体育'
+                },
+                {
+                    id: 109,
+                    title: '能源/矿产/环保'
+                },
+                {
+                    id: 110,
+                    title: '政府/非盈利机构'
+                },
+                {
+                    id: 111,
+                    title: '农/林/牧/渔/其他'
+                },
+                {
+                    id: 112,
+                    title: '跨领域经营'
+                }]
+
+            } else {
+
+            }
+            //选中事件
+            $scope.selectPhrase = function (phraseObj) {
+                //反选
+                //phraseObj = phraseObj.Content == $scope.selectContent ? {} : phraseObj;					
+                phraseObj = phraseObj.ID == $scope.selectId ? {} : phraseObj;
+                //选择
+                //$scope.selectContent = phraseObj.Content;
+                $scope.selectId = phraseObj.ID;
+                var view = plus.webview.currentWebview();
+                var opener = view.opener();
+                if (view.callback) {
+                    opener.evalJS(view.callback + "(" + JSON.stringify(phraseObj) + ")");
+                }
+                mui.back();
+            };
+
+
+
+
+
+        }])
+
+
+        mui.plusReady(function () {
+            angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+        });
+    </script>
+
+</body>
+
+</html>

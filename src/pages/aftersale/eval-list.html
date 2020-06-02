@@ -1,0 +1,30 @@
+<!doctype html>
+<html ng-app="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/common.css">
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">客户回访记录</a>
+		</header>
+		<ul class="md-tab" top="84">
+			<li class="md-tab-item md-active" href="eval-datas.html?iseval=0" winid="eval-wait.html">待回访</li>
+			<li class="md-tab-item" href="eval-datas.html?iseval=1" winid="eval-has.html">已回访</li>
+		</ul>
+		<script type="text/javascript" src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript">
+			mui.plusReady(function() {
+				MdConfig.StartUsingTab();
+			});
+		</script>
+	</body>
+
+</html>

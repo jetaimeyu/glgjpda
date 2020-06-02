@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+	</head>
+
+	<body ng-controller="selectSku">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">选择产品型号</a>
+			<i class="mui-pull-right mui-icon icon-search-thin color-gray-dark font-18" style="line-height: 25px;padding-right: 20px;" ng-click="search()"></i>
+		</header>
+		<md-prod-sku callback='sltSku'></md-prod-sku>
+
+		<script src="../../js/angular.min.js"></script>
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/common.js"></script>
+		<script src="../../js/utils.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			app.controller("selectSku", ["$scope", "UtilsService",
+				function($scope, UtilsService) {
+					var ws = plus.webview.currentWebview();
+					$scope.sltSku = function(prodSku) {
+						if(!prodSku) {
+							mui.toast("请选择型号！");
+							return false;
+						}
+						ws.opener().evalJS(ws.callback + "(" + JSON.stringify(prodSku) + ")")
+						mui.back();
+					};
+
+					$scope.search = function() {
+						UtilsService.openWindow({
+							id: "search-prod.html",
+							url: "search-prod.html",
+						});
+					}
+				}
+			]);
+			
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,274 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style>
+			.data-group:first-child {
+				margin-top: 0;
+			}
+			/*li边线离左右距离、边线颜色*/
+			
+			.data-group:not(:first-child) .data-row:after {
+				width: 100%;
+				left: 0px!important;
+				right: 0px!important;
+				background-color: #EAEAEA;
+			}
+			/*新增配件更换样式*/
+			
+			.newadd {
+				width: 84px;
+				margin: 0 auto;
+				color: #3296FA;
+			}
+			/*除了第一列表外的内边距设置为0*/
+			
+			.data-group:not(:first-child) .data-row .body {
+				padding: 0px;
+			}
+			/*除了第一列表外行高*/
+			
+			.data-group:not(:first-child) .data-row {
+				line-height: 40px!important;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="ReplaceMentParts">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">更换新配件</a>
+		</header>
+		<div class="mui-content" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<ul class="data-group">
+				<li class="mui-table-view-cell data-row must">
+					<label>维修工作</label>
+					<p class="opt md-icon font-15" ng-click="tap('selectRepair')">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="tap('selectRepair')">
+						<span class="placeholder" ng-if="!repairContent.ID">请选择维修工作</span>
+						<span ng-bind="repairContent.IsHasAudio | formatDeviceRepairInfo:repairContent.AudioLength:repairContent.RepairDescription" ng-if="repairContent.ID"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="repairContent.ID">
+					<label>维修时间</label>
+					<div class="body">
+						<span ng-bind="repairContent.Date"></span>
+					</div>
+				</li>
+				<li class="mui-table-view-cell data-row must" ng-if="repairContent.FaultID">
+					<label>故障内容</label>
+					<p class="opt md-icon font-15" ng-click="tap('faultInfo')">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="tap('faultInfo')">
+						<span ng-bind="repairContent.FaultIsHasAudio | formatFaultInfo:repairContent.FaultAudioLength:repairContent.Description"></span>
+					</div>
+				</li>
+				<li class="mui-table-view-cell data-row must" ng-if="repairContent.ProdID">
+					<label>故障设备</label>
+					<div class="body">
+						<span ng-bind="repairContent.ProdName | formatProdInfo:repairContent.SkuName"></span>
+					</div>
+				</li>
+			</ul>
+			<md-mat-part-replce-list ng-model="partListData" optant="'write'"></md-mat-part-replce-list>
+			<ul class="data-group" ng-style="{'margin-top':partListData.length==0?'8px':'1px'}">
+				<li class="mui-table-view-cell data-row" ng-click="tap('partEdit')">
+					<div class="newadd">新增更换配件</div>
+				</li>
+			</ul>
+			<div class="mui-content-padded">
+				<span class="mui-btn mui-btn-block" ng-click="save()">保存</span>
+			</div>
+		</div>
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script>
+			app.controller("ReplaceMentParts", ["$scope", "ApiService", "DataService", "CacheService", "UtilsService", "RPCObserver", function($scope, ApiService, DataService, CacheService, UtilsService, RPCObserver) {
+				$scope.partListData = [];
+				$scope.oneSave = true; //保存一次
+				$scope.repairContent = {
+					ID: '',
+					ProdID: '',
+					EqIdentifier: '',
+					EqName: '',
+					SkuName: '',
+					FaultID: '', //故障id
+					IsHasAudio: '',
+					AudioLength: '',
+					Description: '',
+					RepairDescription: '',
+					FaultIsHasAudio: '',
+					FaultAudioLength: ''
+				}
+				//设备id
+				$scope.matid = query("matid") || "";
+				//故障id
+				$scope.faultId = query("faultid") || "";
+				//维修id
+				$scope.repairId = query("repairid");
+				//选择维修内容
+				var matRecord = plus.webview.currentWebview().addMatRecord; //接收设备信息
+				if(matRecord != undefined) {
+					$scope.repairContent = {
+						ProdID: matRecord.ProdID,
+						ProdInnerCode: matRecord.ProdInnerCode,
+						ProdName: matRecord.ProdName,
+						SkuName: matRecord.SkuName,
+						FaultID: matRecord.ID, //故障id
+						FaultIsHasAudio: matRecord.IsHasAudio,
+						FaultAudioLength: matRecord.AudioLength,
+						Description: matRecord.Description,
+						ID: $scope.repairId || '', //维修id
+						RepairDescription: matRecord.RepairDescription || "",
+						IsHasAudio: matRecord.RepairIsHasAudio || 0,
+						AudioLength: matRecord.RepairAudioLength || 0,
+						Date: matRecord.RepairCreateDate || ''
+					}
+				}
+				//接收产品信息
+				var prodInfo = plus.webview.currentWebview().prodInfo;
+				if(prodInfo != undefined) {
+					//ProdID ProdName SkuID SkuName ProdInnerCode MDCode
+					$scope.repairContent = {
+						ProdID: prodInfo.ProdID,
+						ProdName: prodInfo.ProdName,
+						SkuID: prodInfo.SkuID,
+						SkuName: prodInfo.SkuName,
+						ProdInnerCode: prodInfo.ProdInnerCode,
+						MDCode: prodInfo.MDCode,
+					}
+				}
+				$scope.isLoad = true;
+				$scope.tap = function(key) {
+					switch(key) {
+						//选择维修内容
+						case 'selectRepair':
+							UtilsService.openWindow({
+								needLogin: true,
+								id: "mat-repairView.html",
+								url: "mat-repairView.html?id=" + $scope.repairId
+							});
+							break;
+						case 'faultInfo':
+							UtilsService.openWindow({
+								needLogin: true,
+								id: "mat-fault-info.html",
+								url: "mat-fault-info.html?id=" + $scope.repairContent.FaultID
+							});
+							break;
+						case 'equDetails':
+							UtilsService.openWindow({
+								needLogin: true,
+								id: "equ-details.html",
+								url: "equ-details.html?equid=" + $scope.repairContent.ProdID
+							});
+							break;
+						case 'partEdit':
+							UtilsService.openWindow({
+								needLogin: true,
+								id: "mat-part-edit.html",
+								url: "mat-part-edit.html?id=0"
+							});
+							break;
+						default:
+							break;
+					}
+				}
+				//保存
+				$scope.save = function() {
+					var url = ApiService.Api50 + "/api/v1/MatWorkOrder/SaveMatRepairParts";
+					var objData = {
+						"MatRepairID": $scope.repairContent.ID,
+						"MatWordOrderFailureID": $scope.repairContent.FaultID,
+						"RepairParts": $scope.partListData
+					}
+					if(!objData.MatRepairID) {
+						mui.toast("请选择维修工作！", {
+							duration: 1300,
+							type: 'div'
+						});
+						return false;
+					} else if(!objData.MatWordOrderFailureID) {
+						mui.toast("请选择故障内容！", {
+							duration: 1300,
+							type: 'div'
+						});
+						return false;
+					} else if(objData.RepairParts.length == 0) {
+						mui.toast("请新增更换配件！", {
+							duration: 1300,
+							type: 'div'
+						});
+						return false;
+					}
+
+					if($scope.oneSave) {
+						$scope.oneSave = false;
+						DataService.post(url, objData).then(function(res) {
+							if(res) {
+								//刷新 配件更换列表
+								RPCObserver.broadcast('refresh_mat_part_list');
+								//刷新故障详情配件更换列表
+								RpcClient.invoke("mat-fault-info.html", "RPC_FaultInfoListRefresh");
+								//刷新设备详情
+								RpcClient.invoke("equ-details.html", "RPC_FaultDelectPactInfo");
+								//刷新 维修详情
+								RPCObserver.broadcast('RPC_RepairViewRefresh');
+								UtilsService.saveModal(function() {
+									mui.back();
+								});
+							}
+						})
+					}
+				};
+				//修改 的rpc
+				RpcServer.expose("RPC_FaultMaintenancePactInfo", function(params) {
+					if(params.state == "main" && params.id == 0) {
+						if(params.index === '') {
+							$scope.partListData.push(params.partData);
+						} else {
+							$scope.partListData.splice(params.index, 1, params.partData);
+						}
+						$scope.$apply();
+					}
+				});
+				//刷新数据RPC
+				RPCObserver.on("matPartReplacementRef", "matPartReplacementRef");
+				window.matPartReplacementRef = function(params) {
+					if(params.type == "fault") {
+						$scope.repairContent.ProdID = params.ProdID;
+						$scope.repairContent.ProdInnerCode = params.ProdInnerCode;
+						$scope.repairContent.ProdName = params.ProdName;
+						$scope.repairContent.SkuName = params.SkuName;
+						$scope.repairContent.FaultID = params.ID; //故障id
+						$scope.repairContent.FaultIsHasAudio = params.IsHasAudio;
+						$scope.repairContent.FaultAudioLength = params.AudioLength;
+						$scope.repairContent.Description = params.Description;
+						$scope.$apply();
+					} else {
+						$scope.repairContent.RepairDescription = params.RepairDescription;
+						$scope.repairContent.IsHasAudio = params.IsHasAudio;
+						$scope.repairContent.AudioLength = params.AudioLength;
+					}
+					$scope.$apply();
+
+				}
+			}]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

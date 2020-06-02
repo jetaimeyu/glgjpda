@@ -1,0 +1,984 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>设备状态</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/common.css">
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<style type="text/css">
+			.mui-content .mui-table-view,
+			.mui-content .data-group {
+				margin-top: 8px;
+			}
+			
+			.mui-table-view .mui-table-view-cell,
+			.mui-table-view .data-row {
+				height: 60px;
+				padding: 8px 15px;
+			}
+			
+			.mui-content .mui-table-view .mui-clearfix {
+				margin-left: 15px;
+			}
+			
+			.mui-content .mui-table-view .mui-ellipsis {
+				line-height: 22px;
+			}
+			
+			.mui-content .mui-table-view .equ-status {
+				color: #323232;
+				font-size: 1.6rem;
+			}
+			
+			.mui-content .mui-table-view .equ-status-desc {
+				color: #999999;
+				font-size: 1.4rem;
+				width: 64vw;
+				line-height: 16px;
+			}
+			
+			.mui-content .mui-table-view .icon-check {
+				color: #00CC00;
+				font-size: 2.6rem;
+				font-weight: bold;
+				margin-right: 8px;
+			}
+			
+			.data-row .body label {
+				color: #B5B5B5;
+				float: right;
+				width: 40px;
+				font-size: 1.2rem;
+			}
+			
+			.data-group .character-label-row:after {
+				height: 0;
+			}
+			
+			.data-group .character-row {
+				min-height: 85px;
+			}
+			
+			.data-group .character-row .character-box {
+				display: flex;
+				flex-direction: row;
+				-webkit-box-align: center;
+				align-items: center;
+				padding-left: 16px;
+				padding-bottom: 10px;
+			}
+			
+			.data-group .character-row .character-desc {
+				font-size: 1.2rem;
+				line-height: 32px;
+				max-width: 30vw;
+				display: block;
+				margin-left: -68px;
+			}
+			
+			.icon-label-2 {
+				font-size: 3.1rem;
+				color: #C8C7CC;
+			}
+			
+			.icon-label-select {
+				color: #FF541B;
+			}
+			
+			.addelment {
+				margin: 16px 20px 12px 20px;
+			}
+			
+			.addelment a {
+				background-color: #3296FA;
+				color: #fff;
+				padding: 5px 0;
+				border: 1px solid #3296FA;
+			}
+			
+			.status-body {
+				margin-bottom: 40px;
+			}
+			
+			.status-body .icon-opt {
+				position: absolute;
+				bottom: -19px;
+				height: 20px;
+				width: 50px;
+				left: 50%;
+				transform: translateX(-50%);
+				background: #fff;
+				text-align: center;
+			}
+			
+			.auditorUL {
+				text-align: center;
+				margin-top: 0;
+			}
+			
+			.auditorUL li {
+				line-height: 20px;
+				padding: 15px;
+				padding-right: 36px;
+				min-height: 50px !important;
+			}
+			
+			.add-auditor {
+				color: #3296FA;
+				box-shadow: 0px -1px 3px 0px rgba(180, 180, 180, 0.5)
+			}
+		</style>
+	</head>
+
+	<body ng-controller="EquStatusController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">设备状态</a>
+		</header>
+		<div class="mui-content" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<div style="position:relative;" class="status-body">
+				<ul class="mui-table-view data-group" ng-show="!showState" ng-click="showState=!showState;">
+					<li class="mui-table-view-cell data-row">
+						<span class="md-icon icon-state-free" ng-class="[SelectedStatus.icon]" ng-style="{color:SelectedStatus.color}" style="font-size: 3.2rem;"></span>
+						<div class="mui-clearfix">
+							<div class="mui-ellipsis equ-status" ng-bind="SelectedStatus.Label"></div>
+							<p class="mui-ellipsis-2 equ-status-desc" ng-bind="SelectedStatus.Info"></p>
+						</div>
+						<p class="opt md-icon font-15">
+							<span class="icon-check"></span>
+						</p>
+					</li>
+				</ul>
+				<ul class="mui-table-view data-group" ng-show="showState">
+					<li class="mui-table-view-cell data-row" ng-click="selectStatus(item)" ng-repeat="item in eqStates">
+						<span class="md-icon icon-state-free" ng-class="[item.icon]" ng-style="{color:item.color}" style="font-size: 3.2rem;"></span>
+						<div class="mui-clearfix">
+							<div class="mui-ellipsis equ-status" ng-bind="item.Label"></div>
+							<p class="mui-ellipsis-2 equ-status-desc" ng-bind="item.Info"></p>
+						</div>
+						<p class="opt md-icon font-15" ng-if="status==item.Value">
+							<span class="icon-check"></span>
+						</p>
+					</li>
+				</ul>
+				<div class="icon icon-down icon-opt" ng-class="{'icon-down':!showState,'icon-up':showState}" ng-click="showState=!showState;">
+
+				</div>
+			</div>
+
+			<ul class="data-group" ng-show="status==1">
+				<li class="data-row">
+					<label>使用人</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="UseMan" class="needsclick" placeholder="请输入使用人姓名" lenlimit="10"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>联系电话</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="UseLinkPhone" class="needsclick" placeholder="请输入联系电话" lenlimit="15"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>维修人</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="RepairMan" class="needsclick" placeholder="请输入维修人姓名" lenlimit="10"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>联系电话</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="RepairLinkPhone" class="needsclick" placeholder="请输入联系电话" lenlimit="15"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>保养人</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="MaintainMan" class="needsclick" placeholder="请输入保养人姓名" lenlimit="10"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>联系电话</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="MaintainLinkPhone" class="needsclick" placeholder="请输入联系电话" lenlimit="15"></div>
+						</div>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group content" ng-show="status==3">
+				<li class="data-row">
+					<label>设备说明</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="Remark" class="needsclick" placeholder="请输入设备说明" lenlimit="100"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>使用寿命</label>
+					<div class="body" style="margin-right: 35vw;display: inline;">
+						<div style="float: right;">年</div>
+						<div class="edit" style="max-width: 100%;margin-right: 0;">
+							<div ng-model-div-text="ServiceLife" id="serviceLife" class="needsclick" placeholder="请输入" lenlimit="9"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>联系人</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="Linkman" class="needsclick" placeholder="请输入联系人" lenlimit="10"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>联系电话</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="LinkPhone" class="needsclick" placeholder="请输入联系电话" lenlimit="15"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>购入价格</label>
+					<div class="body" style="margin-right: 35vw;display: inline;">
+						<div style="float: right;">元</div>
+						<div class="edit" style="max-width: 100%;margin-right: 0;">
+							<div ng-model-div-text="PurchasePrice" class="needsclick" placeholder="请输入" lenlimit="7"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>出售价格</label>
+					<div class="body" style="margin-right: 35vw;display: inline;">
+						<div style="float: right;">元</div>
+						<div class="edit" style="max-width: 100%;margin-right: 0;">
+							<div ng-model-div-text="SellingPrice" class="needsclick" placeholder="请输入" lenlimit="7"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row character-label-row">
+					<label style="color: #B5B5B5;">特征标签</label>
+					<div class="body">
+						<label ng-click="showhide()" ng-bind="showChar?'收起':'展开'"></label>
+					</div>
+				</li>
+				<li class="character-row" ng-if="showChar">
+					<div class="character-box mui-media mui-col-xs-4 mui-col-sm-4 mui-pull-left" ng-repeat="item in charactersArr" ng-click="selectChar(item)">
+						<span class="md-icon icon-label-2" ng-class="{'icon-label-select':selectedChar.indexOf(item.character)>-1}" } "></span>
+						<span class=" character-desc " ng-bind=" item.character " ng-class=" { 'icon-label-select' :selectedChar.indexOf(item.character)>-1}"}"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group" ng-show="status==4|| status==9 || status==8 || status==2  ||status==11">
+				<li class="data-row">
+					<label>设备说明</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="FreeRemark" class="needsclick" placeholder="请输入设备说明" lenlimit="100"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row" ng-show="status==4 ||status==11">
+					<label>加工工时</label>
+					<div class="body" style="margin-right: 40vw;display: inline;">
+						<div style="float: right;">元</div>
+						<div class="edit" style="max-width: 100%;margin-right: 0;">
+							<div ng-model-div-text="FreeQuotation" class="needsclick" placeholder="请输入" lenlimit="7"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row" ng-show="status==9">
+					<label>出售价格</label>
+					<div class="body" style="margin-right: 35vw;display: inline;">
+						<div style="float: right;">元</div>
+						<div class="edit" style="max-width: 100%;margin-right: 0;">
+							<div ng-model-div-text="SellingPrice" class="needsclick" placeholder="请输入" lenlimit="7"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>联系人</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="FreeLinkMan" class="needsclick" placeholder="请输入联系人" lenlimit="10"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>联系电话</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="FreeLinkPhone" class="needsclick" placeholder="请输入联系电话" lenlimit="15"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row must" ng-show="status==9">
+					<label>审核人</label>
+					<p class="opt md-icon font-15" ng-click="addApprovePerson()">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="addApprovePerson()">
+						<span id="stateDescription" ng-bind="approvePerson.id==''?'请选择审核人':approvePerson.name" ng-style="{'color':approvePerson.id==0?'#dddddd':'#666666'}"></span>
+					</div>
+				</li>
+				<li class="data-row must" ng-show="status==9">
+					<label>报废原因</label>
+					<div class="body" style="display: inline;">
+						<div class="edit" style="max-width: 100%;margin-right: 0;">
+							<div ng-model-div-text="uselessReason" class="needsclick" placeholder="请输入报废原因" lenlimit="300"></div>
+						</div>
+					</div>
+				</li>
+			</ul>
+			<div class="addelment" ng-show="status!=7">
+				<a type="button" class="font-15 mui-btn mui-btn-block saveauditor" ng-click="save()">保存</a>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../message/transMessage.js"></script>
+		<script type="text/javascript">
+			app.controller("EquStatusController", ["$scope", "ChatUserService", "ApiService", "UtilsService", "DataService", "Loading", "$Modal",
+				"RPCObserver", "$filter", "DatePickerService", "CacheService",
+				function($scope, ChatUserService, ApiService, UtilsService, DataService, Loading, $Modal, RPCObserver, $filter, DatePickerService,
+					CacheService) {
+					//设备状态 1正常（忙碌）2保养3代售4空闲7维修8停用9报废10二手
+					var prodInfo = plus.webview.currentWebview().prodInfo;
+					var user = CacheService.get("user");
+					$scope.ViewName = user ? $filter("getViewName")(user.UserName, user.RealName,user.Mdt) : "";
+					$scope.status = 1;
+					$scope.eqId = query("equid");
+					var epId = query("epId");
+					//存放设备的审核数据
+					var approveData = null;
+					/////////正常////////
+					$scope.UseMan = "";
+					$scope.UseLinkPhone = "";
+					$scope.RepairMan = "";
+					$scope.RepairLinkPhone = "";
+					$scope.MaintainMan = "";
+					$scope.MaintainLinkPhone = "";
+					$scope.approvePerson = {
+						"id": 0,
+						"name": "",
+						"fId": 0
+					}
+					$scope.uselessReason = "";
+					$scope.showState = true;
+					//设备信息列表
+					$scope.ApplyInfoList = [];
+					$scope.eqStates = [{
+							Label: "空闲",
+							Value: 4,
+							Info: "设备处于闲置状态，可对外提供服务",
+							color: "#3399FF",
+							icon: "icon-state-free"
+						},
+						{
+							Label: "在用",
+							Value: 1,
+							Info: "设备处于忙碌状态，屏蔽对外服务",
+							color: "#00CC00",
+							icon: "icon-state-normal"
+						},
+						{
+							Label: "维修",
+							Value: 7,
+							Info: "设备出现故障,需要维修",
+							color: "#E60303",
+							icon: "icon-eq-repire"
+						},
+						{
+							Label: "待售",
+							Value: 3,
+							Info: "设备可以随时进行二手交易",
+							color: "#FFCC00",
+							icon: "icon-state-second-hand"
+						},
+						{
+							Label: "租赁",
+							Value: 11,
+							Info: "该设备可对外出租",
+							color: "#6699CC",
+							icon: "icon-eq-zulin"
+						},
+						{
+							Label: "保养",
+							Value: 2,
+							Info: "设备停止工作，正在进行维护保养",
+							color: "#0066CC",
+							icon: "icon-eq-maintain"
+						},
+						{
+							Label: "停用",
+							Value: 8,
+							Info: "设备停止使用,等待被处理",
+							color: "#666666",
+							icon: "icon-eq-stop"
+						},
+						{
+							Label: "报废",
+							Value: 9,
+							Info: "设备已经报废，可回收",
+							color: "#999966",
+							icon: "icon-eq-useless"
+						}
+					];
+
+					$scope.SelectedStatus = $scope.eqStates[1];
+
+					/////////////二手/////////
+					//备注
+					$scope.Remark = "";
+					//使用寿命
+					$scope.ServiceLife = "";
+					//联系人
+					$scope.Linkman = "";
+					//联系电话
+					$scope.LinkPhone = "";
+					//购入价格
+					$scope.PurchasePrice = "";
+					//出售价格
+					$scope.SellingPrice = "";
+					//是否展开标签
+					$scope.showChar = true;
+					//已选择的标签
+					$scope.selectedChar = [];
+					//标签
+					$scope.charactersArr = [{
+						id: 1,
+						character: "全新未用"
+					}, {
+						id: 2,
+						character: "快递包邮"
+					}, {
+						id: 3,
+						character: "送货上门"
+					}, {
+						id: 4,
+						character: "无拆无修"
+					}, {
+						id: 5,
+						character: "有发票"
+					}]
+					/////////////空闲/////////
+					$scope.FreeRemark = "";
+					$scope.FreeQuotation = "";
+					$scope.FreeLinkMan = "";
+					$scope.FreeLinkPhone = "";
+
+					function getStateDefault() {
+						switch($scope.status) {
+							case 1: //在用
+								if(!$scope.UseLinkPhone) {
+									$scope.UseLinkPhone = user.Phone;
+								}
+								if(!$scope.UseMan) {
+									$scope.UseMan = user.RealName || user.UserName;
+								}
+								break;
+							case 2: //保养
+							case 3: //待售
+							case 8: //停用
+							case 9: //报废
+							case 11: //租赁
+								if(!$scope.LinkPhone) {
+									$scope.LinkPhone = user.Phone;
+								}
+								if(!$scope.Linkman) {
+									$scope.Linkman = user.RealName || user.UserName;
+								}
+								break;
+							case 4: //空闲
+								if(!$scope.FreeLinkPhone) {
+									$scope.FreeLinkPhone = user.Phone;
+								}
+								if(!$scope.FreeLinkMan) {
+									$scope.FreeLinkMan = user.RealName || user.UserName;
+								}
+								break;
+							case 7: //维修
+								break;
+							default:
+								break;
+						}
+					};
+					getApplyState();
+					//根据投产设备序号获取是否有设备待审核数据
+					function getApplyState() {
+						var url = ApiService.Api52 + "/api/v1/EqApply/GetScrapApplyByEqId?eqId=" + $scope.eqId;
+
+						//						var url = ApiService.Api50 + "/api/v1/EqApply/GetApplyStateByEqId?eqId=" + $scope.eqId;
+						DataService.get(url).then(function(res) {
+							//							console.log(JSON.stringify(res))
+							if(res) {
+								//判断是不是在审核中
+								$scope.scrapApply = res.State;
+								if(res.EqApply) {
+									approveData = res.EqApply;
+								}
+							}
+						})
+					}
+
+					getEqInfoForModifyState();
+					//获取设备状态信息
+					function getEqInfoForModifyState() {
+						var url = ApiService.Api50 + "/api/v1/Equipment/GetEqInfoForModifyState?eqId=" + $scope.eqId;
+						DataService.get(url).then(function(res) {
+							$scope.status = res.State;
+							$scope.SelectedStatus = $scope.eqStates.find(function(item) {
+								return item.Value == res.State;
+							});
+							$scope.isLoad = true;
+							switch($scope.status) {
+								case 1: //在用
+									$scope.UseMan = res.UseMan;
+									$scope.UseLinkPhone = res.UseLinkPhone;
+									$scope.MaintainMan = res.MaintainMan;
+									$scope.MaintainLinkPhone = res.MaintainLinkPhone;
+									$scope.RepairMan = res.RepairMan;
+									$scope.RepairMan = res.RepairMan;
+									$scope.RepairLinkPhone = res.RepairLinkPhone;
+									break;
+								case 4: //空闲
+								case 9:
+								case 8:
+								case 2:
+								case 11:
+									$scope.SellingPrice = res.SellingPrice == "0.00" ? "" : res.SellingPrice;
+									$scope.FreeRemark = res.Remark;
+									$scope.FreeQuotation = (res.HoursPrice == "0.00" || res.HoursPrice == "0.-1") ? "" : res.HoursPrice;
+									$scope.FreeLinkMan = res.LinkMan;
+									$scope.FreeLinkPhone = res.LinkPhone;
+									$scope.Linkman = res.LinkMan;
+									$scope.LinkPhone = res.LinkPhone;
+
+									break;
+								case 3:
+									$scope.Remark = res.Remark;
+									$scope.ServiceLife = res.ServiceLife > 0 ? String(res.ServiceLife) : "";
+									$scope.Linkman = res.LinkMan;
+									$scope.LinkPhone = res.LinkPhone;
+									$scope.FreeLinkMan = res.LinkMan;
+									$scope.FreeLinkPhone = res.LinkPhone;
+									$scope.PurchasePrice = res.PurchasePrice == "0.00" ? "" : res.PurchasePrice;
+									$scope.SellingPrice = res.SellingPrice == "0.00" ? "" : res.SellingPrice;
+									$scope.selectedChar = res.TraitLable ? res.TraitLable.split(",") : [];
+									break;
+								default:
+									break;
+							}
+
+							getStateDefault();
+
+						})
+					};
+
+					//更改设备状态
+					$scope.selectStatus = function(item) {
+						$scope.SelectedStatus = item;
+						$scope.showState = false;
+						$scope.status = item.Value;
+						getStateDefault();
+						if($scope.status == 7) {
+							UtilsService.openWindow({
+								url: "../aftersale/mat-fault-submit.html?jobfrom=3&nochoosed=1",
+								id: "mat-fault-submit.html",
+								extras: {
+									prodInfo: prodInfo
+								}
+							});
+						}
+					}
+					//展开收起标签
+					$scope.showhide = function() {
+						$scope.showChar = !$scope.showChar;
+					}
+					// 选择/取消标签
+					$scope.selectChar = function(item) {
+						var idx = $scope.selectedChar.indexOf(item.character);
+						if(idx > -1) {
+							$scope.selectedChar.splice(idx, 1);
+						} else {
+							$scope.selectedChar.push(item.character);
+						}
+					}
+					//选择审核人列表
+					$scope.addApprovePerson = function() {
+						$Modal.modal({
+							size: "small",
+							footer: false,
+							autoClose: true,
+							template: "<div style='max-height:55vh;overflow:auto;margin: -20px -10px -20px -10px;'><ul class='data-group auditorUL'><li class='data-row add-auditor' style='justify-content: center;'><span class='font-15'> 审核人列表</span></li><li class='data-row mui-ellipsis-2' ng-click='selauditor(auditor)' ng-repeat='auditor in params.auditorList' style='justify-content: center;'><p class='opt md-icon font-18 icon-check' style='padding-right: 10px;font-weight: bold;' ng-if='SelectedAuditorID==auditor.ID'></p><div style='overflow: hidden;'><span ng-bind='auditor.RealName'></span></div></ul></div>",
+							params: {
+								auditorList: []
+							},
+							controller: ['$scope', "ApiService", "DataService", "$filter", function($scope, ApiService, DataService, $filter) {
+								var appElement = document.querySelector('[ng-controller=EquStatusController]');
+								var $s = angular.element(appElement).scope();
+								$scope.SelectedAuditorID = $s.approvePerson.id;
+								isModal = true;
+								getWorkLogTypeList();
+								$scope.$on("modal_close", function() {
+									isModal = false;
+									mui("#adpopover").off("tap", ".saveauditor");
+								});
+
+								function getWorkLogTypeList() {
+									var url = ApiService.Api52 + "/api/v1/EqApply/GetEqAuditorList?type=2";
+									DataService.get(url).then(function(res) {
+										$scope.params.auditorList = res;
+									}, function(error) {
+										$scope.retryModal.state = error.State;
+									})
+								};
+								//选择审核人
+								$scope.selauditor = function(auditor) {
+									$s.approvePerson.id = auditor.ID;
+									$s.approvePerson.name = auditor.RealName;
+									$s.approvePerson.fId = auditor.FID;
+									$scope.$modal.close();
+								}
+
+							}]
+						}).show();
+					};
+					var saving = false; //保存
+					$scope.save = function() {
+						getApplyState();
+						//数据校验
+						if(!dataCheck()) {
+							return false;
+						}
+						if(saving) {
+							return;
+						}
+						if($scope.status == 9 && $scope.scrapApply) {
+							mui.toast("该设备已申请报废，请等候审核")
+							return;
+						}
+						//开始提交
+						saving = true;
+						var postData = {};
+						postData.ID = $scope.eqId;
+						postData.State = $scope.status;
+						switch($scope.status) {
+							case 1:
+								postData.UseMan = $scope.UseMan.trim();
+								postData.UseLinkPhone = $scope.UseLinkPhone.trim();
+								postData.MaintainMan = $scope.MaintainMan.trim();
+								postData.MaintainLinkPhone = $scope.MaintainLinkPhone.trim();
+								postData.RepairMan = $scope.RepairMan.trim();
+								postData.RepairMan = $scope.RepairMan.trim();
+								postData.RepairLinkPhone = $scope.RepairLinkPhone.trim();
+								break;
+							case 4:
+							case 8:
+							case 2:
+							case 11:
+								postData.Remark = $scope.FreeRemark.trim();
+								postData.SellingPrice = $scope.SellingPrice.trim();
+								postData.HoursPrice = $scope.FreeQuotation.trim();
+								postData.Linkman = $scope.FreeLinkMan.trim();
+								postData.LinkPhone = $scope.FreeLinkPhone.trim();
+								break;
+							case 3:
+								postData.Remark = $scope.Remark.trim();
+								postData.ServiceLife = $scope.ServiceLife.trim() ? $scope.ServiceLife.trim() : 0;
+								postData.Linkman = $scope.Linkman.trim();
+								postData.LinkPhone = $scope.LinkPhone.trim();
+								postData.PurchasePrice = $scope.PurchasePrice.trim();
+								postData.SellingPrice = $scope.SellingPrice.trim();
+								postData.TraitLable = $scope.selectedChar.map(function(item) {
+									return item;
+								}).join(',');
+								break;
+							case 9:
+
+								if(approveData) {
+									approveData.Reason = $scope.uselessReason;
+									approveData.Remarks = $scope.FreeRemark;
+									approveData.SellingPrice =$scope.SellingPrice===""?"":$scope.SellingPrice * 100; //精确到分
+									approveData.LinkMan = $scope.FreeLinkMan,
+										approveData.LinkPhone = $scope.FreeLinkPhone,
+										approveData.Auditor = $scope.approvePerson.id,
+										approveData.Remarks = $scope.Remarks;
+									approveData.State = 2;
+									postData = approveData;
+								} else {
+									postData = {
+										"ID": 0,
+										"OddNumbers": "string",
+										"CompID": 0,
+										"Type": 2, //type:1  购置  type:2  报废
+										"State": 2,
+										"Applicant": user.UserID,
+										"ApplicantName": user.UserName,
+										"Auditor": $scope.approvePerson.id,
+										"AuditorName": $scope.approvePerson.name,
+										"Reason": $scope.uselessReason,
+										"ArrivalDate": "",
+										"Remarks": $scope.FreeRemark,
+										"SellingPrice": $scope.SellingPrice===""?"":$scope.SellingPrice * 100, //精确到分
+										"LinkMan": $scope.FreeLinkMan,
+										"LinkPhone": $scope.FreeLinkPhone,
+										"ApplyInfoList": [{
+											"ID": 0,
+											"CompID": 0,
+											"AID": 0,
+											"EPID": epId,
+											"EQID": $scope.eqId,
+											"IsDel": 0
+										}]
+									}
+								}
+
+								break;
+							default:
+								break;
+						}
+						//						var url = ApiService.Api50 + "/api/v1/Equipment/ModifyEqState";
+						var url = ApiService.Api52 + "/api/v1/Equipment/ModifyEqState";
+						$scope.status == 9 && (url = ApiService.Api52 + "/api/v1/EqApply/SaveEqApply");
+						DataService.post(url, postData).then(function(res) {
+							if(res) {
+								RPCObserver.broadcast("refresh_equ_state");
+								RPCObserver.broadcast("refresh_equ_operationLog");
+								//刷新设备搜索页面
+								RPCObserver.broadcast("refresh_equ_list");
+								UtilsService.saveModal(function() {
+									mui.back();
+								});
+								if(plus.webview.getWebviewById("produce-list-sub.html")) {
+									RpcClient.invoke("produce-list-sub.html", "RPC_refresh");
+								}
+
+								if(plus.webview.getWebviewById("produce-map.html")) {
+									RpcClient.invoke("produce-map.html", "RPC_refresh");
+								}
+								setTimeout(function() {
+									saving = false;
+								}, 600)
+								//发消息
+								$scope.status == 9 && sendMsg(res);
+							}
+
+						}, function() {
+							saving = false;
+						})
+					}
+					//给审核人发送消息
+					function sendMsg(id) {
+						console.log($scope.approvePerson.id);
+						console.log($scope.approvePerson.name);
+						console.log($scope.approvePerson.fId);
+						console.log(JSON.stringify($scope.approvePerson));
+						ChatUserService.send({
+							chatId: $scope.approvePerson.id,
+							chatName: $scope.approvePerson.name,
+							chatCompId: $scope.approvePerson.fId,
+							hasLogo: user.ULogoIsExist,
+							chatLogo: false,
+							type: 7,
+							content: {
+								eventName: "equ-scraping",
+								logo: ApiService.Down + "/chat/equ-scrap-application.png",
+								title: $scope.ViewName + "的设备报废申请",
+								desc: "申请原因：" + $scope.uselessReason,
+								params: [id, $scope.approvePerson.id]
+							}
+						});
+					}
+
+					function dataCheck() {
+						var verify = true;
+						switch($scope.status) {
+							case 1:
+								if($scope.UseMan.length > 10) {
+									mui.toast("使用人姓名最长10个字");
+									verify = false;
+									return;
+								}
+								if($scope.UseLinkPhone.length > 15) {
+									mui.toast("使用人联系电话不得超过15位");
+									verify = false;
+									return;
+								}
+								if($scope.RepairMan.length > 10) {
+									mui.toast("维修人姓名最长10个字");
+									verify = false;
+									return;
+								}
+								if($scope.RepairLinkPhone.length > 15) {
+									mui.toast("维修人联系电话不得超过15位");
+									verify = false;
+									return;
+								}
+								if($scope.MaintainMan.length > 10) {
+									mui.toast("保养人姓名最长10个字");
+									verify = false;
+									return;
+								}
+								if($scope.MaintainLinkPhone.length > 15) {
+									mui.toast("保养人联系电话不得超过15位");
+									verify = false;
+									return;
+								}
+								break;
+							case 9:
+								var reg2 = /^(([1-9][0-9]*)|(([0]\.\d{1,2}|[1-9][0-9]*\.\d{1,2})))$/;
+								if($scope.SellingPrice.trim() && !reg2.test($scope.SellingPrice.trim())) {
+									mui.toast("请输入正确的出售价格格式");
+									verify = false;
+									return;
+								}
+								if($scope.SellingPrice.trim() && $scope.SellingPrice > 999999999.99) {
+									mui.toast("出售价格不超过10亿");
+									verify = false;
+									return;
+								}
+								if($scope.approvePerson.id == 0 || $scope.approvePerson.id == "") {
+									mui.toast("请选择审核人");
+									verify = false;
+									return;
+								}
+								if($scope.uselessReason == "") {
+									mui.toast("请输入报废原因");
+									verify = false;
+									return;
+								}
+
+								if($scope.uselessReason.length > 300) {
+									mui.toast("报废原因最长300字");
+									verify = false;
+									return;
+								}
+							case 4:
+							case 8:
+							case 2:
+							case 11:
+								if($scope.FreeRemark.length > 100) {
+									mui.toast("设备说明最长100个字");
+									verify = false;
+									return;
+								}
+								var reg = /^(([1-9][0-9]*)|(([0]\.\d{1,2}|[1-9][0-9]*\.\d{1,2})))$/;
+								if(($scope.status == 2 || $scope.status == 11) && $scope.FreeQuotation.trim() && !reg.test($scope.FreeQuotation
+										.trim())) {
+									if($scope.FreeQuotation.trim() === 0)
+										mui.toast("加工工时不能为0");
+									else
+										mui.toast("请输入正确的加工工时格式");
+									return;
+								}
+
+								if($scope.status == 3 && $scope.SellingPrice > 10000000) {
+									mui.toast("出售价格不超过一千万");
+									verify = false;
+									return;
+								}
+								if($scope.FreeQuotation > 10000000) {
+									mui.toast("加工工时不得超过一千万");
+									verify = false;
+									return;
+								}
+								if($scope.FreeLinkMan.length > 10) {
+									mui.toast("联系人姓名最长10个字");
+									verify = false;
+									return;
+								}
+								if($scope.FreeLinkPhone.length > 15) {
+									mui.toast("联系电话不得超过15位");
+									verify = false;
+									return;
+								}
+								break;
+							case 3:
+								var reg = /^[+]{0,1}(\d+)$/;
+								if(parseInt($scope.ServiceLife) === 0) {
+									mui.toast("使用寿命不能为0");
+									return;
+								}
+								if($scope.ServiceLife.trim() && !reg.test($scope.ServiceLife.trim())) {
+									document.getElementById("serviceLife").focus();
+									mui.toast("使用寿命只能为正整数");
+									return;
+								}
+								var reg2 = /^(([1-9][0-9]*)|(([0]\.\d{1,2}|[1-9][0-9]*\.\d{1,2})))$/;
+								if($scope.PurchasePrice.trim() && !reg2.test($scope.PurchasePrice.trim())) {
+									mui.toast("请输入正确的购入价格格式");
+									return;
+								}
+								if($scope.SellingPrice.trim() && !reg2.test($scope.SellingPrice.trim())) {
+									mui.toast("请输入正确的出售价格格式");
+									return;
+								}
+								if($scope.Remark.length > 100) {
+									mui.toast("设备说明最长不超过100个字");
+									verify = false;
+									return;
+								}
+								if($scope.ServiceLife.length > 9) {
+									mui.toast("使用寿命不得超过9位");
+									verify = false;
+									return;
+								}
+								if($scope.Linkman.length > 10) {
+									mui.toast("联系人姓名不得超过10位");
+									verify = false;
+									return;
+								}
+								if($scope.LinkPhone.length > 15) {
+									mui.toast("联系人联系电话不得超过15位");
+									verify = false;
+									return;
+								}
+								if($scope.PurchasePrice > 10000000) {
+									mui.toast("购入价格不超过一千万");
+									verify = false;
+									return;
+								}
+								if($scope.SellingPrice > 10000000) {
+									mui.toast("出售价格不超过一千万");
+									verify = false;
+									return;
+								}
+								if($scope.SellingPrice && $scope.PurchasePrice && ($scope.SellingPrice - 0 > $scope.PurchasePrice - 0)) {
+									mui.toast("出售价格不能高于购入价格");
+									verify = false;
+									return;
+								}
+								break;
+							default:
+								break;
+						}
+						return verify;
+					}
+				}
+			]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

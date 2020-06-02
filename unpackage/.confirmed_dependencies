@@ -1,0 +1,20 @@
+{
+	"src/launch.html": {
+		"refer": [
+			"src/tab.html",
+			"src/webView.html",
+			"src/pages/login/login.html",
+			"src/pages/menus/menu-index.html",
+			"src/guide.html"
+		]
+	},
+	"src/tab.html": {
+		"resources": [
+			"src/pages/message/message.html"
+		],
+		"refer": [
+			"src/pages/work.html",
+			"src/pages/message/message.html"
+		]
+	}
+}

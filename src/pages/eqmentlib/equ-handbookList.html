@@ -1,0 +1,71 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.mui-content .data-group .data-row {
+				padding: 8px 16px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="HandBookListController">
+		<div id="pullrefresh" ng-controller="pullrefreshController" class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<div class="mui-content">
+				<ul class="data-group">
+					<li class="data-row" ng-click="tap(item.ID)" ng-repeat="item in data">
+						<p class="opt md-icon font-15">
+							<span class="icon-right"></span>
+						</p>
+						<span class="mui-ellipsis-2" style="margin-right: 16px;" ng-bind="item.Subject"></span>
+					</li>
+				</ul>
+				<md-no-data ng-show="data && data.length==0">暂无数据</md-no-data>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script>
+			app.controller("HandBookListController", ["$scope", "$rootScope", "ApiService", "RPCObserver", "UtilsService", function($scope, $rootScope, ApiService, RPCObserver, UtilsService) {
+				$scope.pageIndex = 0;
+				$scope.pageSize = 20;
+				$scope.cId = query("cid");
+				$scope.ProdCompID = query("compid");
+				$scope.ProdID = query("prodid");
+
+				function init() {
+					var url = ApiService.Api50 + "/api/v1/Prod/MdtGetPagedPkgQuestionDictionaryList?cId=" + $scope.cId + "&compId=" + $scope.ProdCompID + "&prodId=" + $scope.ProdID + "&pageIndex=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize;
+					$scope.url = url;
+				}
+
+				$scope.tap = function(id) {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'equ-handbook-details.html',
+						url: 'equ-handbook-details.html?id=' + id + '&from=listview'
+					});
+				}
+
+				$scope.$on('refresh_pageindex', init);
+
+				RPCObserver.on('refresh_equ_handbook_list', 'refresh_equ_handbook_list');
+				window.refresh_equ_handbook_list = function() {
+					$scope.$broadcast('md_pullrefresh');
+				};
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

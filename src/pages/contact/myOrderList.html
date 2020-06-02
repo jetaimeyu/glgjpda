@@ -1,0 +1,132 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<style type="text/css">
+			.mui-table-view-chevron .mui-table-view-cell {
+				padding: 8px 16px;
+			}
+			
+			.order-time {
+				float: right;
+				font-size: 1.2rem;
+				color: #8f8f94;
+			}
+			
+			.order-num {
+				font-size: 1.4rem;
+				color: #8f8f94;
+				width: 44vw;
+			}
+			
+			.order-info {
+				color: #000000;
+				font-size: 1.4rem;
+				line-height: 24px;
+			}
+			
+			.order-pay-info {
+				float: right;
+				margin-top: 10px;
+			}
+			
+			.order-price {
+				font-size: 1.5rem;
+				color: #333;
+				padding-left: 3px;
+			}
+			
+			.pay-state {
+				margin-top: 10px;
+				float: right;
+			}
+			
+			.pay-suc {
+				color: #04BE02;
+			}
+			
+			.pay-fail {
+				color: red;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="EquWarehouseRecordController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">我的订单</a>
+		</header>
+		<div id="pullrefresh" ng-controller="pullrefreshController" class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<div class="mui-content">
+				<ul class="mui-table-view mui-table-view-chevron" style="margin-top: 8px;" ng-show="data&&data.length>0">
+					<li class="mui-table-view-cell mui-media" ng-repeat="item in data" ng-click="orderDeatils(item.ID)">
+						<span class="order-time" ng-bind="item.OrderTime"></span>
+						<div class="mui-clearfix">
+							<div class="font-12 mui-ellipsis order-num" ng-bind="'订单编号：'+item.OrderNumber"></div>
+							<div style="margin-top: 10px;display: flex;">
+								<img ng-src="{{imgurl+'/'+item.Files[0].FilePath}}" style="width: 60px;height: 60px;float: left;" />
+								<p class="mui-ellipsis-2 order-info" ng-bind="item.CommodityInfo.Name" style="margin-left: 10px;"></p>
+							</div>
+							<div style="display: block;">
+							<p class="mui-ellipsis order-pay-info">
+								<span class="font-12" ng-bind="'共'+item.PayNum+'件商品 实付款：'"></span>
+								<span class="font-11">￥<span class="order-price" ng-bind="item.TotalSum"></span></span>
+							</p>
+								
+							</div>
+						</div>
+						<p class="pay-state pay-suc" ng-if="item.OrderState==1">已付款</p>
+						<p class="pay-state pay-fail" ng-if="item.OrderState==0">付款失败</p>
+					</li>
+				</ul>
+			</div>
+			<md-no-data ng-show="data&&data.length==0">目前没有订单</md-no-data>
+		</div>
+		<script type="text/javascript" src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("EquWarehouseRecordController", ["$scope", "ApiService", "DataService", "Loading", "RPCObserver", "CacheService", "UtilsService",
+				function($scope, ApiService, DataService, Loading, RPCObserver, CacheService, UtilsService) {
+					$scope.pageIndex = 0;
+					$scope.pageSize = 10;
+					$scope.curUser = CacheService.get("user");
+					$scope.imgurl = ApiService.Api50 + "/api/v1/File/DownLoadPic?filePath=";
+
+					function init() {
+						$scope.url = ApiService.Api50 + "/api/v1/MdtMicroMart/GetCommodityOrderList??userId=" + $scope.curUser.UserID + "&compId=" + $scope.curUser.CompID + "&pageIndex=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize;
+					};
+
+					$scope.$on('refresh_pageindex', init);
+
+					RPCObserver.on('refresh_equ_fault_list', 'refresh_equ_fault_list');
+					window.refresh_equ_fault_list = function() {
+						$scope.$broadcast('md_pullrefresh');
+					};
+
+					$scope.orderDeatils = function(id) {
+						UtilsService.openWindow({
+							needLogin: true,
+							id: 'order-info.html',
+							url: 'order-info.html?id=' + id
+						});
+					}
+				}
+			]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

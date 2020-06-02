@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<link rel="stylesheet" href="share-log.css">
+	</head>
+
+	<body ng-controller="shareLogCtrl">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">流转日志</a>
+		</header>
+		<div class="content" ng-if="list&&list.length>0" ng-class="{'mui-block':list.length}" style="display: none;">
+			<div class="log" ng-repeat="item in list">
+				<div class="date color-gray-dark" ng-bind="item.CreateDate"></div>
+				<div class="list">
+					<div class="line"></div>
+					<div class="row" ng-repeat="row in item.DataRows" ng-if="row.Users.length==0&&row.Content=='创建工单'||!row.Users.length==0">
+						
+						<div class="time">
+							<span ng-bind="row.CreateDate"></span>
+							<span ng-bind="row.CreateUserName"></span>
+						</div>
+						<div class="round {{roundColor[row.Operate]}}">
+
+						</div>
+						<div class="event">
+							<span class="title" ng-bind="row.Content||'-'"></span>
+							<span class="desc" ng-bind="getName(row.Operate,row.Users)"></span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<md-no-data ng-show="list&&list.length==0">暂无数据</md-no-data>
+		<script src="../../js/angular.min.js"></script>
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/common.js"></script>
+		<script src="../../js/utils.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			app.controller("shareLogCtrl", ["$scope", "UtilsService", "ApiService", "DataService", "Loading",
+				function($scope, UtilsService, ApiService, DataService, Loading) {
+					var ws = plus.webview.currentWebview();
+					
+					$scope.list = null;
+					init();
+
+					function init() {
+						Loading.show();
+						setTimeout(function() {
+							var url = ApiService.Api50 + "/api/v1/Common/GetSendLogList?dataFrom=" + shareLog[query('key')] + "&dataId=" + query('dataid');
+							DataService.get(url).then(function(res) {
+								$scope.list = res;
+								if(ws.CreateDate && ws.DataRows[0]) {
+									if($scope.list.length > 0 && ws.CreateDate == $scope.list[0].CreateDate) {
+										$scope.list[0].DataRows.unshift(ws.DataRows[0])
+									} else {
+										$scope.list.unshift({
+											'CreateDate': ws.CreateDate,
+											'DataRows': ws.DataRows
+										});
+									}
+								}
+								Loading.hide();
+							}, function(e) {
+								if(ws.CreateDate && ws.DataRows[0]) {
+									$scope.list = [].concat([{
+										'CreateDate': ws.CreateDate,
+										'DataRows': ws.DataRows
+									}]);
+								}
+								Loading.hide();
+							})
+						}, 300);
+					}
+
+					$scope.roundColor = {
+						"创建工单": 'color_orange',
+						"报告给": 'color_blue',
+						"抄送给": 'color_gray',
+						"分享给": 'color_violet',
+						"派工给": 'color_green',
+						"故障维修":'color_new'
+					}
+
+					$scope.getName = function(operate, users) {
+						
+						return(["创建工单",'故障维修'].indexOf(operate)>=0 ? '' : (operate + "：")) + users.map(function(i) {
+						
+							return i.Name
+						}).join('，');
+					}
+				}
+			]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

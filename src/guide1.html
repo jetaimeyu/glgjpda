@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>引导页</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="css/mui.min.css">
+		<link rel="stylesheet" href="css/common.css" />
+		<style>
+			.mui-slider-item {
+				background-repeat: no-repeat;
+				background-size: cover;
+				background-position: center center;
+			}
+			
+			.mui-checkbox input[type=checkbox]:checked:before,
+			.mui-radio input[type=radio]:checked:before {
+				color: #03a9f4;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="slider" class="mui-slider mui-fullscreen" style="background-color: black;">
+			<div class="mui-slider-group">
+				<div class="mui-slider-item" style="background-color:#e94657;background-image: url(images/splash/01.jpg);"></div>
+				<div class="mui-slider-item" style="background-color:#f8b42b;background-image: url(images/splash/02.jpg);"></div>
+				<div class="mui-slider-item" style="background-color:#01aeb4;background-image: url(images/splash/03.jpg);"></div>
+				<div class="mui-slider-item" style="background-color:#fff;background-image: url(images/splash/04.jpg);">
+					<div id="close" style="position: absolute;bottom: 80px;left: 50%;margin-left: -100px;height:200px;width:200px;"></div>
+					<div class="mui-input-row mui-checkbox mui-left" style="position: absolute;bottom: 40px;left: 50%;width:220px;margin-left:-100px">
+						<div id="agreement" style="background: white;padding: 7px 15px;padding-left: 50px;color: #999;font-size: 1.3rem;"><span style="text-decoration: underline;">已阅读并同意相关协议</span></div><input id="agreement_checkbox" name="checkbox" type="checkbox" checked></div>
+				</div>
+			</div>
+			<div class="mui-slider-indicator">
+				<div class="mui-indicator mui-active"></div>
+				<div class="mui-indicator"></div>
+				<div class="mui-indicator"></div>
+				<div class="mui-indicator"></div>
+			</div>
+		</div>
+		<script src="js/mui.min.js"></script>
+		<script>
+			var slideNumber = 0;
+			mui.back = function() {
+				plus.storage.setItem('slideNumber', slideNumber + "");
+				plus.runtime.quit();
+			};
+			mui.ready(function() {
+				mui.plusReady(function() {
+					if(mui.os.ios) {
+						plus.navigator.setFullscreen(true);
+					}
+					slideNumber = plus.storage.getItem('slideNumber');
+					if(slideNumber) {
+						mui('#slider').slider().gotoItem(parseInt(slideNumber), 0);
+					}
+					setTimeout(function() {
+						plus.navigator.closeSplashscreen();
+					}, 150);
+				});
+			});
+			document.getElementById("slider").addEventListener('slide', function(e) {
+				slideNumber = e.detail.slideNumber;
+			});
+			//立即体验按钮点击事件
+			document.getElementById("close").addEventListener('tap', function(event) {
+				var input = document.querySelector("#agreement_checkbox");
+				if(!input.checked) {
+					mui.toast('请阅读并同意相关协议');
+					return false;
+				}
+				plus.storage.setItem("lauchFlag", "true");
+				plus.navigator.setFullscreen(false);
+				plus.webview.currentWebview().close();
+			}, false);
+			document.getElementById("agreement").addEventListener('tap', function(e) {
+				//暂时不添加
+				return;
+				plus.nativeUI.showWaiting();
+				var webview = plus.webview.create('', 'agreement', {
+					popGesture: 'close'
+				});
+				webview.addEventListener('loaded', function() {
+					plus.nativeUI.closeWaiting();
+					webview.show('pop-in', 300);
+				});
+				e.preventDefault();
+			});
+		</script>
+	</body>
+
+</html>

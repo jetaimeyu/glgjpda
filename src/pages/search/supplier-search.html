@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+	</head>
+
+	<body ng-controller="searchCtrl">
+		<div ng-class="{'mui-block':domShowX}" style="display: none;">
+			<div class="search_input">
+				<form ng-submit="search.doSearch()">
+					<a class="mui-action-back mui-icon icon-back mui-pull-left"></a>
+					<input type="search" placeholder="请输入供应商名称" ng-model="search.text" maxlength="50">
+					<i class="icon-search-thin color-gray-dark"></i>
+					<i class="icon-delete color-gray" ng-click="search.deleteSearch()" ng-show='search.text'></i>
+					<span ng-click="search.doSearch()">搜索</span>
+				</form>
+			</div>
+			<div class="search_group" ng-if="domShow===false">
+				<div class="content">
+					<span ng-repeat="h in search.history" ng-bind="h" ng-click="search.searchSpan(h)"></span>
+				</div>
+			</div>
+			<div id="pullrefresh" class="mui-scroll-wrapper" ng-class="{'mui-block':domShow}" style="display: none;" class="search_res">
+				<div class="mui-content" style="padding-top: 40px;">
+					<md-search-supplier ng-model="allMain"></md-search-supplier>
+					<md-no-data ng-show="allMain && allMain.length==0" data-options="{type:'search'}">暂无数据</md-no-data>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("searchCtrl", ["$scope", "ApiService", "DataService", "UtilsService", "Loading", "CacheService", "AuthService", "$timeout", function($scope, ApiService, DataService, UtilsService, Loading, CacheService, AuthService, $timeout) {
+				$scope.domShow = null; //控制列表显示
+				$scope.domShowX = false; //控制x显示
+				$scope.allMain = null; //接口返回的所有维修
+
+				$scope.pageIndex = 1; //页数
+				$scope.pageSize = 20; //每页数量
+				var networkCanUse = true;
+				var kw = plus.webview.currentWebview();
+				var keywords = kw.keywords;
+				var userId = "";
+				AuthService.getAuth().then(function(res) {
+					userId = res.UserID;
+					if(keywords != undefined && keywords != '') {
+						$scope.search.text = keywords;
+						setTimeout($scope.search.doSearch, 200);
+					} else {
+						//弹出键盘
+						showInput();
+						$scope.domShow = false;
+					}
+					$scope.search.getHistory();
+				});
+
+				$scope.search = {
+					text: "",
+					history: [],
+					getHistory: function() {
+						var temp = CacheService.get(userId + "all_supplier_search");
+						if(temp)
+							$scope.search.history = CacheService.get(userId + "all_supplier_search");
+						$scope.domShowX = true;
+					},
+					doSearch: function() {
+						$scope.search.text = document.querySelector("input").value.trim();
+						if(!$scope.search.text) {
+							mui.toast("请输入供应商名称！");
+							return;
+						}
+						$scope.allMain = null; //清空原数据
+						$scope.domShow = null;
+						Loading.show();
+						//关闭键盘
+						document.activeElement.blur();
+						var idx = $scope.search.history.indexOf($scope.search.text);
+						if(idx >= 0) {
+							$scope.search.history.splice(idx, 1);
+						}
+						//存储本地cach
+						if($scope.search.history.length == 10) {
+							$scope.search.history.splice(9, 1);
+						}
+
+						$scope.search.history = [$scope.search.text].concat($scope.search.history);
+
+						CacheService.set(userId + "all_supplier_search", $scope.search.history, true);
+						//开启上拉事件
+						mui('#pullrefresh').pullRefresh().enablePullupToRefresh();
+
+						$scope.pageIndex = 0;
+						mui('#pullrefresh').pullRefresh().refresh(true);
+						mui("#pullrefresh").pullRefresh().pullupLoading();
+					},
+					//点击历史span搜索
+					searchSpan: function(keyWords) {
+						$scope.search.text = keyWords;
+						$timeout(function() {
+							$scope.search.doSearch();
+						}, 100)
+					},
+					//点击搜索x
+					deleteSearch: function() {
+						$scope.search.text = '';
+						$scope.domShow = false; //控制列表显示
+						mui("#pullrefresh").pullRefresh().endPullupToRefresh(true);
+					}
+				};
+
+				function MoreSupplier() {
+					var url = ApiService.Api50 + "/api/v1/Search/MoreSupplier?page=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize + "&keywords=" + encodeURIComponent($scope.search.text);
+					DataService.get(url).then(function(res) {
+						Loading.hide();
+						$scope.domShow = true;
+						networkCanUse = true;
+						($scope.allMain == null) && ($scope.allMain = []);
+						$scope.allMain = $scope.allMain.concat(res.DataRows);
+
+						var isEnd = $scope.allMain.length >= res.TotalCount;
+						if(mui("#pullrefresh").pullRefresh()) {
+							mui("#pullrefresh").pullRefresh().endPullupToRefresh(isEnd);
+						}
+
+						var tip = document.querySelector('.mui-pull-bottom-pocket');
+						if(tip) {
+							if($scope.allMain.length == 0) {
+								tip.classList.contains('mui-visibility') && tip.classList.remove('mui-visibility');
+								tip.classList.contains('mui-block') && tip.classList.remove('mui-block');
+							} else {
+								!tip.classList.contains('mui-visibility') && tip.classList.add('mui-visibility');
+								!tip.classList.contains('mui-block') && tip.classList.add('mui-block');
+							}
+						}
+					}, function() {
+						$scope.domShow = true;
+						networkCanUse = false;
+						if(mui("#pullrefresh").pullRefresh()) {
+							setTimeout(function() {
+								mui("#pullrefresh").pullRefresh().endPullupToRefresh();
+							}, 800)
+						}
+					})
+				}
+
+				//上拉加载
+				function uppullRefresh() {
+					if(networkCanUse) {
+						$scope.pageIndex++; //页数
+					}
+					MoreSupplier();
+				};
+
+				//下拉刷新,上拉加载
+				setTimeout(function() {
+					mui.init({
+						pullRefresh: {
+							container: '#pullrefresh',
+							up: {
+								callback: uppullRefresh
+							},
+						}
+					});
+					setTimeout(function() {
+						//没有搜索的时候禁用上拉事件
+						mui('#pullrefresh').pullRefresh().disablePullupToRefresh();
+					}, 50);
+				});
+
+				RpcServer.expose("RPC_SupplierSearchListRefresh", function(params) {
+					$scope.allMain = null; //清空原数据
+					//开启上拉事件
+					mui('#pullrefresh').pullRefresh().enablePullupToRefresh();
+					$scope.pageIndex = 1;
+					mui('#pullrefresh').pullRefresh().refresh(true);
+					MoreSupplier();
+				})
+
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+				var style = {
+					scrollIndicator: 'none'
+				};
+				mui.os.android && (style.softinputMode = 'adjustResize');
+				plus.webview.currentWebview().setStyle(style);
+			});
+		</script>
+	</body>
+
+</html>

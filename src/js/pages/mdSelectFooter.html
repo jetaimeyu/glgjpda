@@ -1,0 +1,56 @@
+<footer class="font-15">
+	<img class="footer-arrow" src="../../images/footer-arrow-up.png" ng-if="!isShow" ng-click="openList()" />
+	<img class="footer-arrow" src="../../images/footer-arrow-down.png" ng-if="isShow" ng-click="openList()" />
+	<a class="ship-result" ng-click="openList()">已选：<span ng-bind="model.length"></span></a>
+	<span type="button" class="mui-btn submit" ng-click="submit()" ng-bind="btnText?btnText:'确定'">确定</span>
+	<span type="button" ng-if="btnText2" class="mui-btn btnText2" ng-click="btnEvent2()" ng-bind="btnText2"></span>
+</footer>
+
+<style type="text/css">
+	footer {
+		width: 100%;
+		position: fixed;
+		bottom: 0px;
+		line-height: 44px;
+		text-align: center;
+		color: #000;
+		z-index: 10;
+		background-color: #fff;
+		border-top: 1px solid #f1f1f1;
+		box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3)
+	}
+	
+	.ship-result {
+		float: left;
+		color: #333333;
+	}
+	.btnText2 {
+		float: right;
+		background-color: #669933;
+		color: #FFFFFF;
+		font-family: PingFang-SC-Medium;
+		border: none;
+		line-height: 45px;
+		padding: 0;
+		width: 80px;
+		border-radius: 0;
+	}
+	.submit {
+		float: right;
+		background-color: #3296FA;
+		color: #FFFFFF;
+		font-family: PingFang-SC-Medium;
+		border: none;
+		line-height: 45px;
+		padding: 0;
+		width: 80px;
+		border-radius: 0;
+	}
+	
+	.footer-arrow {
+		width: 16px;
+		height: 15px;
+		float: left;
+		margin: 12.5px 15px;
+	}
+</style>

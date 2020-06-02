@@ -1,0 +1,417 @@
+<!--注册 scz-->
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>忘记密码</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			/*输入验证码框离右边宽度*/
+			
+			.forgetPass .data-group .data-row .opt~.body {
+				margin-right: 96px;
+			}
+			
+			.stepHtml01 .opt {
+				max-width: 97px !important;
+				padding: 17px 16px !important;
+			}
+			
+			.countdownColor {
+				color: #888888;
+			}
+			
+			.edit {
+				margin: 0 !important;
+			}
+			
+			.stepHtml02,
+			.stepHtml03 {
+				display: none;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="CompIntroController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">找回密码</a>
+		</header>
+		<div class="mui-content forgetPass">
+			<!--第1步-->
+			<div class="stepHtml01" ng-show="userComp.showHtml.shHtml01">
+				<ul class="data-group">
+					<li class="data-row lastLiClass">
+						<label>账号</label>
+						<div class="body">
+							<input type="text" maxlength="20" placeholder="手机号/迈迪通号" ng-model="userComp.accountNum" />
+						</div>
+					</li>
+				</ul>
+				<div class="mui-content-padded">
+					<span class="mui-btn mui-btn-block" ng-click="userComp.stepLog01()">下一步</span>
+				</div>
+			</div>
+			<!--第2步-->
+			<div class="stepHtml02" ng-class="{'mui-block':userComp.showHtml.shHtml02}">
+				<ul class="data-group">
+					<li class="data-row">
+						<label>手机号码</label>
+						<div class="body">
+							<div class="edit">
+								<span ng-show="!userComp.userPhone" class="placeholder">请输入手机号</span>
+								<div ng-bind="userComp.userPhone|telFiltStar" id="signature"></div>
+							</div>
+						</div>
+					</li>
+					<li class="data-row ">
+						<label>验证码</label>
+						<p class="opt" style="max-width:150px!important;">
+							<img ng-src="{{userComp.ImgCode}}" style="width:100px;margin-top:5px;height:30px;" ng-click="userComp.getImgCode()" />
+						</p>
+						<div class="body" style="margin-right:150px;">
+							<input type="text" placeholder="请输入验证码" ng-model="userComp.inputImgCode" />
+						</div>
+					</li>
+					<li class="data-row lastLiClass">
+						<label>验证码</label>
+						<p id="faultcommon" class="opt">
+							<span class="font-13 color-blue" ng-show="userComp.veriTime==60||userComp.veriTime==0" ng-click="userComp.getVeriCode()">获取验证码</span>
+							<span class="font-13 countdownColor" ng-show="userComp.veriTime!=60&&userComp.veriTime!=0" ng-bind="'倒计'+userComp.veriTime+'秒'"></span>
+						</p>
+						<div class="body">
+							<input type="text" placeholder="请输入验证码" ng-model="userComp.inputVCode" />
+						</div>
+					</li>
+				</ul>
+				<div class="mui-content-padded">
+					<span class="mui-btn mui-btn-block" ng-click="userComp.stepLog02()">下一步</span>
+				</div>
+			</div>
+			<!--第3步-->
+			<div class="stepHtml03" ng-class="{'mui-block':userComp.showHtml.shHtml03}">
+				<ul class="data-group">
+					<li class="data-row">
+						<label>新密码</label>
+						<div class="body">
+							<input type="password" placeholder="6~20位字母与数字结合" ng-model="userComp.userPW" />
+						</div>
+					</li>
+					<li class="data-row lastLiClass">
+						<label>确认密码</label>
+						<div class="body">
+							<input type="password" placeholder="请再次输入密码" ng-model="userComp.againPW" />
+						</div>
+					</li>
+				</ul>
+				<div class="mui-content-padded">
+					<span class="mui-btn mui-btn-block" ng-click="userComp.saveComp()">确定</span>
+				</div>
+			</div>
+		</div>
+
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript">
+			app.controller("CompIntroController", ["$scope", "AuthService", "ApiService", "DataService", "Loading", "$Modal",
+				"$filter",
+				function($scope, AuthService, ApiService, DataService, Loading, $Modal, $filter) {
+					var saving = false; //保存状态
+					$scope.userComp = {
+						accountNum: '', //账号
+						userID: '', //选中账号的id
+						verifyUserID: '', //获取验证码
+						userPhone: '', //手机号
+						veriCode: '', //返回验证码
+						inputVCode: '', //输入的验证码
+						veriTime: 60, //验证码倒计时
+						userPW: '', //新密码
+						againPW: '', //确认密码
+						showHtml: {
+							//是否显示
+							shHtml01: true,
+							shHtml02: false,
+							shHtml03: false,
+						},
+						inputImgCode: "",
+						ImgCode: ApiService.Api50 + "/api/checkcode/forget.jpg?v=" + new Date().getTime(),
+						getImgCode: function() {
+							$scope.userComp.ImgCode = ApiService.Api50 + "/api/checkcode/forget.jpg?v=" + new Date().getTime();
+						},
+						//获取验证码
+						getVeriCode: function() {
+							if($scope.userComp.veriTime != 60 && $scope.userComp.veriTime != 0) {
+								//每隔一分钟获取一次
+								return;
+							}
+							if(!$scope.userComp.userPhone) {
+								mui.toast("请输入手机号！", {
+									duration: 1300,
+									type: 'div'
+								});
+								return;
+							}
+
+							if(!$scope.userComp.inputImgCode) {
+								mui.toast("请输入验证码！", {
+									duration: 1300,
+									type: 'div'
+								});
+								return;
+							}
+
+							var url = ApiService.Api50 + "/api/v1/user/GetPhoneCode";
+
+							var _data = {
+								"Phone": $scope.userComp.userPhone,
+								"Code": $scope.userComp.inputImgCode,
+								"UserType": 2,
+								"CodeType":"forget"
+							};
+
+							DataService.post(url, _data).then(function(res) {
+								$scope.userComp.veriCode = res;
+								//$scope.userComp.inputVCode = res;
+								$scope.userComp.veriTime = 59;
+								$scope.userComp.verifyUserID = $scope.userComp.userID;
+
+								var intl = setInterval(function() {
+									$scope.$apply(function() {
+										$scope.userComp.veriTime--;
+									});
+									if($scope.userComp.veriTime <= 0) {
+										clearInterval(intl);
+									}
+								}, 1000);
+							}, function(res) {
+								$scope.userComp.getImgCode();
+								if(res && res.State != 0){
+									mui.toast(res.Data || res.ErrorMessage);
+								}
+							});
+
+							// var url = ApiService.Api50 + "/api/v1/User/SendCodeToForget?phone=" + $scope.userComp.userPhone;
+							// DataService.get(url).then(function (res) {
+
+							// 	$scope.userComp.veriCode = res;
+							// 	//$scope.userComp.inputVCode = res;
+							// 	$scope.userComp.veriTime = 59;
+							// 	$scope.userComp.verifyUserID = $scope.userComp.userID;
+
+							// 	var intl = setInterval(function () {
+							// 		$scope.$apply(function () {
+							// 			$scope.userComp.veriTime--;
+							// 		});
+							// 		if ($scope.userComp.veriTime <= 0) {
+							// 			clearInterval(intl);
+							// 		}
+							// 	}, 1000);
+							// });
+						},
+						//<1 的下一步>
+						stepLog01: function() {
+							if(saving) {
+								return;
+							};
+							if(!$scope.userComp.accountNum) {
+								mui.toast("请输入手机号/迈迪通号！", {
+									duration: 1300,
+									type: 'div'
+								});
+								return;
+							}
+							//经测试popover关闭需要时间，防止多次点击，所以延迟0.5秒
+							saving = true;
+							setTimeout(function() {
+								saving = false;
+							}, 500)
+							var url = ApiService.Api50 + "/api/v1/User/GetUsertList?userId=" + $scope.userComp.accountNum;
+							DataService.get(url).then(function(res) {
+								if(res.length == 0) {
+									mui.toast("该账号不存在！", {
+										duration: 1300,
+										type: 'div'
+									});
+									return false;
+								} else if(res.length == 1) {
+									if(!res[0].Phone) {
+										mui.toast("请到官网找回密码！", {
+											duration: 1300,
+											type: 'div'
+										});
+										return false;
+									}
+									$scope.userComp.userID = res[0].UserID;
+									$scope.userComp.userPhone = res[0].Phone;
+									$scope.userComp.showHtml.shHtml01 = false;
+									$scope.userComp.showHtml.shHtml02 = true;
+								} else {
+									res.forEach(function(user) {
+										user.ViewName = $filter("getViewName")(user.UserName, user.RealName, user.Mdt);
+									});
+									$Modal.modal({
+											size: "small",
+											region: "middle",
+											autoClose: true,
+											params: {
+												user: {},
+												userlist: res
+											},
+											template: "<md-switch-user userid='' ismodal='1' users='params.userlist' callback='switchSuccess'></md-switch-user>",
+											controller: ['$scope',
+												function($scope) {
+													$scope.switchSuccess = function(user) {
+														$scope.$modal.resolve(user);
+														$scope.$modal.close();
+													};
+												}
+											]
+										}).footer(false).show()
+										.then(function(user) {
+											if(user.Phone) {
+												$scope.userComp.userPhone = user.Phone;
+												$scope.userComp.userID = user.UserID;
+											} else {
+												mui.toast("请到官网找回密码！", {
+													duration: 1300,
+													type: 'div'
+												});
+												return false;
+											}
+											$scope.userComp.showHtml.shHtml01 = false;
+											$scope.userComp.showHtml.shHtml02 = true;
+										});
+								}
+							});
+						},
+						//<2 的下一步>
+						stepLog02: function() {
+							if(!$scope.userComp.userPhone) {
+								mui.toast("请输入手机号！", {
+									duration: 1300,
+									type: 'div'
+								});
+								return;
+							}
+							if($scope.userComp.inputVCode != '') {
+								if($scope.userComp.verifyUserID != $scope.userComp.userID) {
+									mui.toast("您已切换账户，请重新获取验证码", {
+										duration: 1300,
+										type: 'div'
+									});
+									return;
+								}
+								//$scope.userComp.verifyCode(function() {
+									$scope.userComp.showHtml.shHtml02 = false;
+									$scope.userComp.showHtml.shHtml03 = true;
+								//});
+							} else {
+								if(!$scope.userComp.inputVCode) {
+									mui.toast("请输入验证码！", {
+										duration: 1300,
+										type: 'div'
+									});
+								} else {
+									mui.toast("验证码错误！", {
+										duration: 1300,
+										type: 'div'
+									});
+								}
+							}
+						},
+						//验证码是否过期
+						verifyCode: function(callback) {
+							var url = ApiService.Api50 + "/api/v1/User/VerifyCode?phone=" + $scope.userComp.userPhone + "&code=" + $scope
+								.userComp.inputVCode+"&type=forget";
+							DataService.get(url).then(function(res) {
+								if(res) {
+									callback();
+								} else {
+									mui.toast("验证码不正确或者已经过期");
+								}
+							});
+						},
+						//保存密码
+						saveComp: function() {
+							//发送的数据
+							var compDataOby = {
+								"UserId": $scope.userComp.userID,
+								"Phone": $scope.userComp.userPhone,
+								"Code": $scope.userComp.inputVCode,
+								"NewPwd": $scope.userComp.userPW.trim()
+							}
+
+							//校验input
+							if(!/^(?=.*[0-9])(?=.*[a-zA-Z])(.{6,20})$/.test(compDataOby.NewPwd)) {
+								mui.toast("密码由6~20位字母与数字结合！", {
+									duration: 1300,
+									type: 'div'
+								});
+								return false;
+							} else if($scope.userComp.userPW != $scope.userComp.againPW) {
+								mui.toast("输入的两次密码不一致！", {
+									duration: 1300,
+									type: 'div'
+								});
+								return false;
+							}
+							//保存密码接口
+							var url = ApiService.Api50 + "/api/v1/User/UpdatePswToForget";
+							DataService.post(url, compDataOby).then(function(res) {
+								mui.toast("密码修改成功！", {
+									duration: 1300,
+									type: 'div'
+								});
+								setTimeout(function() {
+									old_back();
+								}, 1300);
+							});
+						}
+					};
+					var old_back = mui.back;
+					mui.back = function() {
+						if($scope.userComp.showHtml.shHtml01 == true) {
+							old_back()
+						}
+						if($scope.userComp.showHtml.shHtml02 == true) {
+							$scope.userComp.showHtml.shHtml02 = false;
+							$scope.userComp.showHtml.shHtml03 = false;
+							$scope.userComp.showHtml.shHtml01 = true;
+							$scope.userComp.veriTime != 60 && $scope.userComp.veriTime != 0 && ($scope.userComp.veriTime = 1);
+							$scope.userComp.inputVCode = "";
+							$scope.$apply();
+						} else if($scope.userComp.showHtml.shHtml03 == true) {
+							$scope.userComp.showHtml.shHtml02 = true;
+							$scope.userComp.showHtml.shHtml03 = false;
+							$scope.userComp.showHtml.shHtml01 = false;
+							$scope.userComp.userPW = "";
+							$scope.userComp.againPW = "";
+							$scope.$apply();
+
+						}
+					}
+
+				}
+			]);
+			//过滤手机号****
+			app.filter('telFiltStar', function() {
+				return function(text) {
+					return text.substr(0, 3) + "****" + text.substr(7);
+				}
+			});
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+				plus.webview.currentWebview().setStyle({
+					softinputMode: "adjustResize"
+				});
+			});
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,719 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>设备购置申请</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.right-save {
+				font-size: 1.4rem;
+				line-height: 40px;
+				padding: 3px 2px;
+				float: right;
+				color: #3296FA;
+			}
+			
+			.data-group-tip {
+				margin-top: 10px;
+			}
+			
+			.prod-list-empty {
+				padding: 10px 16px;
+				height: 130px;
+				background: #FFFFFF;
+			}
+			
+			.prod-list-empty .empty-logo {
+				background-image: url("../../images/complib/empty.png");
+				width: 80px;
+				height: 80px;
+				display: block;
+				background-size: cover;
+				/*text-align: center;*/
+			}
+			
+			.prodLibUl.mui-table-view:after {
+				height: 0px!important;
+			}
+			
+			.imgslist {
+				float: left;
+				width: 56px;
+				height: 56px;
+				background-size: cover!important;
+				position: absolute;
+				top: 50%;
+				-webkit-transform: translateY(-50%);
+				transform: translateY(-50%);
+				overflow: hidden;
+				margin: 0;
+			}
+			
+			.prodLibUl .mui-table-view-cell {
+				padding: 8px 16px!important;
+			}
+			
+			.prodLibUl .mui-media-body {
+				position: relative;
+				left: 70px;
+				width: 80%;
+			}
+			
+			.prodLibUl .productName {
+				font-size: 1.5rem;
+				color: #000;
+				margin-top: 2px;
+				margin-bottom: 10px;
+				line-height: initial;
+				max-width: 90%;
+			}
+			
+			.prodLibUl .productType {
+				font-size: 1.2rem;
+				color: #AAA;
+				max-width: 90%;
+			}
+			
+			.prodLibUl .opt {
+				color: #AEAEAE;
+				position: absolute;
+				top: 50%;
+				right: 10px;
+				-webkit-transform: translateY(-50%);
+				transform: translateY(-50%);
+				overflow: hidden;
+				margin: 0px;
+			}
+			
+			.mui-table-view-cell:after {
+				left: 0px;
+			}
+			
+			.number span {
+				display: inline-block;
+				width: 30px;
+				height: 30px !important;
+				line-height: 30px;
+				border: 1px solid #CCCCCC !important;
+				text-align: center;
+				font-size: 1.3rem !important;
+				float: left;
+			}
+			
+			.number .icon-add {
+				border-right: none !important;
+				border-top-left-radius: 5px;
+				border-bottom-left-radius: 5px;
+			}
+			
+			.number .icon-remove {
+				border-left: none !important;
+				border-top-right-radius: 5px;
+				border-bottom-right-radius: 5px;
+			}
+			
+			.icon-topright-corner-delete {
+				color: red;
+				float: right;
+				margin-right: -16px;
+				margin-top: -4px;
+				font-size: 2.6rem;
+			}
+			
+			.body.drop-down-body .icon-roundclose {
+				right: 45px!important;
+				padding: 9px 5px 10px 5px;
+			}
+			
+			footer {
+				width: 100%;
+				height: 40px;
+				position: fixed;
+				bottom: 0;
+				left: 0;
+				line-height: 40px;
+				text-align: center;
+				background-color: #FFFFFF;
+			}
+			
+			.auditorUL {
+				text-align: center;
+				margin-top: 0;
+			}
+			
+			.auditorUL li {
+				line-height: 20px;
+				padding: 15px;
+				padding-right: 36px;
+				min-height: 50px !important;
+			}
+			
+			.add-auditor {
+				color: #3296FA;
+				box-shadow: 0px -1px 3px 0px rgba(180, 180, 180, 0.5)
+			}
+		</style>
+	</head>
+
+	<body ng-controller="EquPurchaseEditController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">购置申请</a>
+			<a class="right-save" ng-click="save(2)">提交</a>
+			<a class="right-save" style="color: #919191;margin-right: 10px;display: none;" ng-class="{'mui-block':isLoad&&State!=3}" ng-click="save(1)">暂存</a>
+		</header>
+		<div class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}" style="display: none;margin-bottom: 41px;">
+			<p class="data-group-tip">申请信息</p>
+			<ul class="data-group">
+				<li class="data-row">
+					<label>申请人</label>
+					<div class="body">
+						<span ng-bind="applicantUser.UserName"></span>
+					</div>
+				</li>
+				<li class="data-row must">
+					<label>审核人</label>
+					<p class="opt md-icon font-15" ng-click="tap('chooseVerifier')">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="tap('chooseVerifier')">
+						<span ng-if="!Auditor.Name" class="placeholder">请选择审核人</span>
+						<span ng-if="Auditor.Name" ng-bind="Auditor.Name"></span>
+					</div>
+				</li>
+				<li class="data-row must">
+					<label>申请原因</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="applicationRreason" class="needsclick" placeholder="请输入申请原因" lenlimit="300"></div>
+						</div>
+					</div>
+				</li>
+				<li class="mui-table-view-cell data-row">
+					<label>申请到货时间</label>
+					<p class="opt md-icon font-15" ng-click="chooseDate()">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="chooseDate()">
+						<span ng-if="!ArrivalDate" class="placeholder">申请到货时间</span>
+						<span ng-if="ArrivalDate" ng-bind="ArrivalDate"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>备注</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="applicationRemark" class="needsclick" placeholder="请输入备注" lenlimit="300"></div>
+						</div>
+					</div>
+				</li>
+			</ul>
+			<p class="data-group-tip">设备信息</p>
+			<ul class="data-group prodLibUl" ng-repeat="equ in ApplyInfoList" ng-if="equ.IsDel!=1">
+				<li class="mui-table-view-cell mui-media">
+					<span class="icon-topright-corner-delete" ng-click="removeProd(equ.EPID,$index)"></span>
+					<img src="../../images/imgPre.png" ng-style="{'background-image':'url('+ (equ.AttachFilePath | getEquLogo:56:0) +')'}" class="imgslist" />
+					<div class="mui-media-body">
+						<p class='productName mui-ellipsis-2' ng-bind="equ.EqName"></p>
+						<p class='productType mui-ellipsis' ng-bind="'型号：'+equ.SkuName"></p>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>设备归类</label>
+					<div class="body">
+						<div style="color: #666666;" ng-bind="equ.CName || '-'"></div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>供应商</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="equ.SupplierName" class="needsclick" placeholder="请输入设备供应商" lenlimit="50"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row must">
+					<label>购买数量</label>
+					<div class="body">
+						<input type="text" id="BuyNums-{{$index}}" style="width:100%;" ng-precision="0" input-decimal-kong ng-keyup="toRowTotalPrice(equ,$index)" lenlimit="4" maxlength="4" ng-model="equ.BuyNums" placeholder="请输入购买数量">
+					</div>
+				</li>
+				<li class="data-row">
+					<label>单价</label>
+					<div class="body">
+						<div style="float: right;margin-right: 25%;">元</div>
+						<input type="text" id="UnitPrice-{{$index}}" style="width: 62%; float: left" ng-precision="2" input-decimal-kong ng-keyup="toRowTotalPrice(equ,$index)" lenlimit="9" maxlength="9" ng-model="equ.UnitPrice" placeholder="请输入单价">
+					</div>
+				</li>
+				<li class="data-row">
+					<label>预计总费用</label>
+					<div class="body">
+						<div style="float: right;margin-right: 25%;">元</div>
+						<input type="text" style=" width: 62%; float: left;" input-decimal ng-precision="2" maxlength="13" ng-model="equ.TotalPrice" placeholder="请输入总费用">
+					</div>
+				</li>
+			</ul>
+			<center ng-if="equNums==0">
+				<div class="prod-list-empty">
+					<span class="empty-logo"></span>
+					<p class="mt10">请点击底部按钮，添加设备</p>
+				</div>
+			</center>
+		</div>
+		<footer>
+			<ul class="mui-table-view mui-row">
+				<li class="mui-media mui-col-sm-6 mui-col-xs-6" style="background: #F0A43C;color: #FFFFFF;" ng-click="tap('chooseEqu')">选择设备</li>
+				<li class="mui-media mui-col-sm-6 mui-col-xs-6" style="background: #E64340;color: #FFFFFF;" ng-click="tap('addEqu')">新增设备</li>
+			</ul>
+		</footer>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../message/transMessage.js"></script>
+		<script>
+			app.controller("EquPurchaseEditController", ["$scope", "ChatUserService", "ApiService", "DataService", "UtilsService", "CacheService", "DatePickerService", "AuthService", "Loading", "$timeout", "$Modal", "$filter", "RPCObserver",
+				function($scope, ChatUserService, ApiService, DataService, UtilsService, CacheService, DatePickerService, AuthService, Loading, $timeout, $Modal, $filter, RPCObserver) {
+					$scope.curUser = CacheService.get("user");
+					$scope.ID = query("id") || 0;
+					$scope.type = query('type');
+					var today = new Date().Format("yyyy-MM-dd");
+					if($scope.ID > 0) {
+						getApplyInfoFlow();
+					} else {
+						$timeout(function() {
+							$scope.isLoad = true;
+						}, 200);
+					}
+					var equList = [];
+					$scope.equNums = 0; //设备数量
+					$scope.State = 1; //申请状态
+					//申请人
+					$scope.applicantUser = {
+						UserID: $scope.curUser.UserID,
+						UserName: $scope.curUser ? $filter("getViewName")($scope.curUser.RealName, $scope.curUser.UserName, $scope.curUser.Mdt) : "",
+						CompID: $scope.curUser.CompID
+					};
+					$scope.OddNumbers = "";
+					//审核人信息
+					$scope.Auditor = {
+						ID: 0,
+						Name: "",
+						FID: 0
+					};
+					//申请原因
+					$scope.applicationRreason = "";
+					//申请到货时间
+					$scope.ArrivalDate = today;
+					//备注
+					$scope.applicationRemark = "";
+					//设备信息列表
+					$scope.ApplyInfoList = [];
+
+					//修改
+					function getApplyInfoFlow() {
+						var url = ApiService.Api52 + "/api/v1/EqApply/GetApplyInfoFlowByAId?aId=" + $scope.ID;
+						DataService.get(url).then(function(res) {
+							$scope.isLoad = true;
+							$scope.State = res.State;
+							$scope.OddNumbers = res.OddNumbers;
+							$scope.applicantUser.UserID = res.Applicant == 0 ? $scope.curUser.UserID : res.Applicant;
+							$scope.applicantUser.UserName = res.ApplicantName == "" ? ($scope.curUser.RealName || $scope.curUser.UserName) : res.ApplicantName;
+							$scope.applicantUser.CompID = res.CompID;
+							$scope.Auditor.ID = res.Auditor;
+							$scope.Auditor.Name = res.AuditorName;
+							$scope.ArrivalDate = res.ArrivalDate;
+							$scope.applicationRemark = res.Remarks;
+							$scope.ApplyInfoList = res.ApplyInfoList;
+							$scope.applicationRreason = res.Reason;
+							res.ApplyInfoList.forEach(function(item) {
+								item.IsDel == 0 && $scope.equNums++;
+								equList.push({
+									"ID": item.EPID,
+									"CompID": item.CompID,
+									"EqName": item.EqName,
+									"SkuName": item.SkuName,
+									"ProduceCompName": item.ProduceCompName,
+									"ProduceCompID": item.ProduceCompID,
+									"SupplierName": item.SupplierName,
+									"SupplierID": item.SupplierID,
+									"CatalogPath": item.CatalogPath,
+									"CatalogID": item.CatalogID,
+									"CatalogName": item.CName
+								})
+							});
+						})
+					}
+
+					//巡检设备选择
+					$scope.tap = function(key) {
+						switch(key) {
+							case "chooseEqu":
+								setTimeout(function() {
+									UtilsService.openWindow({
+										needLogin: true,
+										id: 'equ-purchase-selectEquList.html',
+										url: "equ-purchase-selectEquList.html?must=true&multiselect=true",
+										extras: {
+											selectObj: equList,
+											callback: "ChooseEquCallback"
+										}
+									});
+								})
+								break;
+							case "addEqu":
+								UtilsService.openWindow({
+									needLogin: true,
+									id: 'equ-purchase-newequ.html',
+									url: "equ-purchase-newequ.html",
+									extras: {
+										callback: "AddEquCallback"
+									}
+								});
+								break;
+							case "chooseVerifier":
+								$scope.getEqAuditorList();
+								break;
+						}
+					}
+					var saving = false;
+					//保存更改
+					$scope.save = function(state) {
+						// state 提交为2  暂存为1
+						if(saving) {
+							return;
+						}
+						document.activeElement.blur();
+						if(!checkLengthUtil.check()) {
+							return false;
+						}
+						if(state == 2 && $scope.Auditor.ID == 0) {
+							mui.toast("请选择审核人");
+							return;
+						}
+						if($scope.applicationRreason == "") {
+							mui.toast("请填写申请原因");
+							return;
+						}
+
+						var verfyBuyNums = '';
+						$scope.equNums = 0;
+						for(var i = 0; i < $scope.ApplyInfoList.length; i++) {
+							var item = $scope.ApplyInfoList[i];
+							if(item.IsDel == 0) {
+								item.IsDel == 0 && $scope.equNums++;
+								var eleId = "BuyNums-" + i;
+								item.BuyNums = document.getElementById(eleId).value;
+								if(!item.BuyNums || item.BuyNums == 0) {
+									if(item.BuyNums.trim() === "") {
+										verfyBuyNums = 'empty';
+									} else if(item.BuyNums == 0) {
+										verfyBuyNums = "0";
+									}
+								}
+							}
+
+							if(verfyBuyNums == 'empty' || verfyBuyNums == '0') {
+								break;
+							}
+						}
+						if($scope.equNums == 0) {
+							mui.toast("请添加购置设备");
+							return;
+						}
+						if(verfyBuyNums == 'empty') {
+							mui.toast("请输入购买数量");
+							return;
+						}
+						if(verfyBuyNums == '0') {
+							mui.toast("设备购买数量不能为0");
+							return;
+						}
+						saving = true;
+						verfyBuyNums = '';
+						Loading.show();
+						submitData(state);
+					}
+
+					function submitData(state) {
+						var url = ApiService.Api52 + "/api/v1/EqApply/SaveEqApply";
+						var postdata = {
+							"Type": 1,
+							"ID": $scope.ID,
+							"CompID": $scope.applicantUser.CompID,
+							"Applicant": $scope.applicantUser.UserID,
+							"ApplicantName": $scope.applicantUser.UserName,
+							"Auditor": $scope.Auditor.ID,
+							"AuditorName": $scope.Auditor.Name,
+							"FID": $scope.Auditor.FID,
+							"ArrivalDate": $scope.ArrivalDate + " 00:00:00",
+							"Reason": $scope.applicationRreason,
+							"Remarks": $scope.applicationRemark,
+							"OddNumbers": $scope.OddNumbers,
+							"State": state,
+							"ApplyInfoList": angular.copy($scope.ApplyInfoList)
+						};
+						postdata.ApplyInfoList.map(function(item) {
+							if(item.UnitPrice) {
+								item.UnitPrice = item.UnitPrice * 100;
+							}
+							if(item.TotalPrice) {
+								item.TotalPrice = item.TotalPrice * 100;
+							}
+						});
+						isModal = true;
+						DataService.post(url, postdata).then(function(res) {
+							Loading.hide();
+							if(res) {
+
+								RPCObserver.broadcast('refresh_purchase_list', $scope.type);
+								RPCObserver.broadcast('refresh_purchase_info');
+								$scope.ID = res;
+								if(state == 2 && $scope.Auditor.ID) {
+									sendMsg();
+								}
+								state == 2 ? mui.toast("保存成功！") : mui.toast("暂存成功！");
+								setTimeout(function() {
+									isModal = false;
+									saving = false;
+									mui.back();
+								}, 300);
+
+							}
+						}, function() {
+							saving = false;
+						});
+					}
+					//给审核人发送消息
+					function sendMsg() {
+						ChatUserService.send({
+							chatId: $scope.Auditor.ID,
+							chatName: $scope.Auditor.Name,
+							chatCompId: $scope.Auditor.FID,
+							hasLogo: $scope.curUser.ULogoIsExist,
+							chatLogo: false,
+							type: 7,
+							content: {
+								eventName: "equ-apply",
+								logo: ApiService.Down + "/chat/equ-purchase-application.png",
+								title: $scope.applicantUser.UserName + "的设备购置申请",
+								desc: "申请原因：" + $scope.applicationRreason,
+								params: [$scope.ID, 1, $scope.Auditor.ID]
+							}
+						});
+					}
+					//选择到货日期
+					$scope.chooseDate = function() {
+						DatePickerService.pickDate({
+							selected: $scope.ArrivalDate,
+							minDate: today
+						}).then(function(res) {
+							$scope.ArrivalDate = res;
+						});
+					};
+
+					//移除设备列表中的设备
+					$scope.removeProd = function(id, index) {
+						mui.confirm("确认删除该设备吗？", function(e) {
+							if(e.index == 0) {
+								$scope.ApplyInfoList[index].IsDel = 1;
+								$scope.ApplyInfoList[index].SupplierName = "";
+								$scope.ApplyInfoList[index].BuyNums = "";
+								$scope.ApplyInfoList[index].UnitPrice = "";
+								$scope.ApplyInfoList[index].TotalPrice = "";
+								$scope.equNums -= 1;
+								for(var i = 0; i < equList.length; i++) {
+									if(equList[i].ID == id) {
+										equList.splice(i, 1);
+									}
+								}
+							}
+							$scope.$apply();
+						});
+					}
+
+					$scope.toRowTotalPrice = function(item, index) {
+						var BuyNumsId = "BuyNums-" + index;
+						var UnitPriceId = "UnitPrice-" + index;
+						$scope.ApplyInfoList.map(function(_item) {
+							if(_item.EPID === item.EPID) {
+								item.UnitPrice = document.getElementById(UnitPriceId).value;
+								item.BuyNums = document.getElementById(BuyNumsId).value;
+								item.TotalPrice = item.UnitPrice && item.BuyNums ? parseFloat((Math.floor(item.UnitPrice * 100) / 100 * item.BuyNums).toFixed(2)) : '';
+							}
+						});
+					}
+
+					//选择设备回调
+					window.ChooseEquCallback = function(obj) {
+						equList = angular.copy(obj);
+						var newEquList = [];
+						$scope.equNums = 0;
+						$scope.ApplyInfoList.forEach(function(equ, index) {
+							equ.IsDel = 1;
+						});
+						obj.forEach(function(item, idx) {
+							if($scope.ApplyInfoList.length == 0) {
+								$scope.equNums++;
+								$scope.ApplyInfoList.push({
+									"EqName": item.EqName,
+									"SkuName": item.SkuName,
+									"EPID": item.ID,
+									"AID": 0,
+									"CName": item.CatalogName,
+									"CatalogPath": item.CatalogPath,
+									"CatalogID": item.CatalogID,
+									"IsDel": 0,
+									"UnitPrice": "",
+									"BuyNums": "",
+									"TotalPrice": "",
+									"SupplierName": "",
+									"AttachFilePath": item.AttachFilePath || ""
+								})
+							} else {
+								var hasIdx = false;
+								$scope.ApplyInfoList.forEach(function(equ, index) {
+									if(item.ID == equ.EPID) {
+										hasIdx = true;
+										if(equ.IsDel == 1) {
+											equ.IsDel = 0;
+											$scope.equNums++;
+										};
+										return;
+									} else if(equ.IsAdd && equ.IsAdd == 1) {
+										equ.IsDel = 0;
+										$scope.equNums++;
+									}
+								});
+								if(!hasIdx) {
+									$scope.equNums++;
+									newEquList.push({
+										"EqName": item.EqName,
+										"SkuName": item.SkuName,
+										"EPID": item.ID,
+										"AID": 0,
+										"CName": item.CatalogName,
+										"CatalogPath": item.CatalogPath,
+										"CatalogID": item.CatalogID,
+										"IsDel": 0,
+										"UnitPrice": "",
+										"BuyNums": "",
+										"TotalPrice": "",
+										"SupplierName": "",
+										"AttachFilePath": item.AttachFilePath || ""
+									})
+								}
+							}
+						});
+						$scope.ApplyInfoList = $scope.ApplyInfoList.concat(newEquList);
+						$scope.$apply();
+					};
+
+					//新增设备回调
+					window.AddEquCallback = function(item) {
+						$scope.equNums++;
+						equList.push({
+							"ID": item.EPID,
+							"CompID": null,
+							"EqName": item.EqName,
+							"SkuName": item.SkuName,
+							"IntoNum": 0,
+							"StockNum": 0,
+							"OutNum": 0,
+							"ProduceCompName": "",
+							"ProduceCompID": null,
+							"SupplierName": item.SupplierName,
+							"SupplierID": null,
+							"BriefIntro": "",
+							"Intro": "",
+							"DataVersion": null,
+							"CatalogPath": item.CatalogPath,
+							"CatalogID": item.CatalogID,
+							"CatalogName": item.CatalogName
+						});
+						$scope.ApplyInfoList.push({
+							"EqName": item.EqName,
+							"SkuName": item.SkuName,
+							"EPID": item.EPID,
+							"AID": item.AID,
+							"CName": item.CatalogName,
+							"CatalogPath": item.CatalogPath,
+							"CatalogID": item.CatalogID,
+							"IsDel": 0,
+							"UnitPrice": item.UnitPrice,
+							"BuyNums": item.BuyNums,
+							"TotalPrice": item.TotalPrice,
+							"SupplierName": item.SupplierName,
+							"AttachFilePath": "",
+							"IsAdd": 1
+						});
+						$scope.$apply();
+					}
+
+					var mui_back = mui.back;
+					mui.back = function() {
+						if(isModal) {
+							isModal = false;
+							saving = false;
+							$Modal.close();
+						} else {
+							mui_back();
+						}
+					}
+					var isModal = false;
+					//审核人列表modal
+					$scope.getEqAuditorList = function() {
+						$Modal.modal({
+							size: "small",
+							footer: false,
+							autoClose: true,
+							template: "<div style='max-height:55vh;overflow:auto;margin: -20px -10px -20px -10px;'><ul class='data-group auditorUL'><li class='data-row add-auditor' style='justify-content: center;'><span class='font-15'> 审核人列表</span></li><li class='data-row mui-ellipsis-2' ng-click='selauditor(auditor)' ng-repeat='auditor in params.auditorList' style='justify-content: center;'><p class='opt md-icon font-18 icon-check' style='padding-right: 10px;font-weight: bold;' ng-if='SelectedAuditorID==auditor.ID'></p><div style='overflow: hidden;'><span ng-bind='auditor.RealName'></span></div></li></ul></div>",
+							params: {
+								auditorList: [],
+								doType: $scope.doType
+							},
+							controller: ['$scope', "ApiService", "DataService", function($scope, ApiService, DataService) {
+								var appElement = document.querySelector('[ng-controller=EquPurchaseEditController]');
+								var $s = angular.element(appElement).scope();
+								$scope.SelectedAuditorID = $s.Auditor.ID;
+								isModal = true;
+								getauditorList();
+								$scope.$on("modal_close", function() {
+									isModal = false;
+									mui("#adpopover").off("tap", ".saveauditor");
+								});
+
+								//获取用户审核人列表
+								function getauditorList() {
+									var url = ApiService.Api52 + "/api/v1/EqApply/GetEqAuditorList?type=1";
+									DataService.get(url).then(function(res) {
+										$scope.params.auditorList = res;
+									})
+								}
+
+								//选择审核人
+								$scope.selauditor = function(auditor) {
+									$scope.SelectedAuditorID = auditor.ID;
+									$s.Auditor.ID = auditor.ID;
+									$s.Auditor.Name = auditor.RealName;
+									$s.Auditor.FID = auditor.FID;
+									$scope.$modal.close();
+								}
+
+							}]
+						}).show();
+					}
+				}
+			]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

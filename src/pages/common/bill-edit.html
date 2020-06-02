@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-cn" id="testForm">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="Expires" content="0">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-control" content="no-cache">
+		<meta http-equiv="Cache" content="no-cache">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="format-detection" content="telephone=no" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title ng-bind="title"></title>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../css/common.css" rel="stylesheet" />
+		<link href="../../bill/css/common.min.css?version=0.0.10" rel="stylesheet">
+		<link href="../../bill/css/app.min.css?v=dd3424b5e5b9713b0203" rel="stylesheet">
+		<link href="../../icon-font/iconfont.css" rel="stylesheet" />
+		<style>
+			.md-modal .md-modal-content input[type='text'] {
+				margin-bottom: 0;
+				font-size: 1.3rem;
+			}
+			
+			.mui-bar {
+				z-index: 300
+			}
+			
+			.md-modal:not(.auto-size) {
+				top: 44px;
+			}
+			
+			.md-component .component-placeholder {
+				color: #B5B5B5;
+			}
+			
+			.mui-content {
+				background: #eee;
+			}
+			
+			.md-component .component-placeholder {
+				color: #dddddd;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="TestFormCtl" style="overflow: hidden;margin: 0;">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left" ng-bind="title" ng-click="back()"></a>
+		</header>
+		<div class="mui-content mui-fullscreen">
+			<md-bill-edit data-options="{skinkey:skinkey,dataid:dataid,params:params,aftersave:aftersave,dirid:dirid,dirname:dirname,dirpath:dirpath}"></md-bill-edit>
+		</div>
+		<script type="text/javascript" src="../../bill/script/libs.min.js?version=0.0.10"></script>
+		<script type="text/javascript" src="../../bill/script/common.min.js?version=0.0.10"></script>
+		<script type="text/javascript" src="../../bill/script/app.min.js?v=dd3424b5e5b9713b0203"></script>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script>
+			var TestFormApp = angular.module('TestForm', ["Bill"]);
+			TestFormApp.controller("TestFormCtl", ["$scope", "$Modal", "ApiService", "CacheService", function($scope, $Modal, ApiService, CacheService) {				
+				$scope.skinkey = query("skinkey");
+				$scope.funckey = query("funckey");
+				$scope.dataid = query("dataid");
+				$scope.dirid = query("dirid") || 0;
+				$scope.dirname = query("dirname") || "";
+				$scope.dirpath = query("dirpath") || "";
+				$scope.title = "";
+				$scope.params = {};
+				//是否弹窗
+				$scope.isModal = false;
+
+				//title
+				setViewTitle();
+
+				$scope.$on("router_state_change", function(_event, _ret) {
+					_ret.state != 'bill.list.view' && ($scope.isModal = true);
+					if(_ret.state.indexOf('Map.') >= 0) {
+						$scope.title = "选择详细地址";
+					} else if(_ret.state.indexOf('CustomerName') >= 0) {
+						$scope.title = "选择所属客户";
+					}
+				});
+				$scope.$on("modal_close", function() {
+					setViewTitle();
+				});
+				var mui_back = mui.back;
+				mui.back = function() {
+					if($Modal.modals().length > 0) {
+						$Modal.close();
+						if($Modal.modals().length == 0) setViewTitle();
+						return;
+					}
+					mui_back();
+				};
+
+				$scope.aftersave = function(_ret) {
+					if(_ret.dataId > 0) { //刷新bill-view
+						RpcClient.invoke("bill-view.html", "RPC_BillViewRefresh");
+						//新增数据默认选中
+						var name = "";
+						//刷新表单列表页
+						switch($scope.funckey) {
+							case "mdt-fault-class":
+								RpcClient.invoke("mat-fault-class.html", "RPC_MatFaultClassListRefresh");
+								name = _ret.datas.TypeName;
+								break;
+							case "mdt-equ-fault-class":
+								RpcClient.invoke("fault-class.html", "RPC_FaultClassListRefresh");
+								name = _ret.datas.TypeName;
+								break;
+							case "mdt-equ-pos":
+								RpcClient.invoke("../eqmentlib/pos-list.html", "RPC_PosListRefresh");
+								RpcClient.invoke("pos-select.html", "RPC_PosListRefresh");
+								name = _ret.datas.PosName;
+								break;
+							case "mdt-customer-manage":
+								RpcClient.invoke("customer-manage.html", "RPC_CustomerListRefresh");
+								RpcClient.invoke("customer-search.html", "RPC_CustomerSearchListRefresh");
+								RpcClient.invoke("search.html", "RPC_SearchListRefresh");
+								name = _ret.datas.CustomerName;
+								break;
+							case "mdt-customer-select":
+								RpcClient.invoke("select-cusContact.html", "RPC_CusContactListRefresh");
+								name = _ret.datas.CustomerName;
+								break;
+							case "mdt-supplier-manage":
+								if(query("type") == "manu") {
+
+								} else {
+									RpcClient.invoke("supplier-manage.html", "RPC_SupplierListRefresh");
+									RpcClient.invoke("supplier-search.html", "RPC_SupplierSearchListRefresh");
+									RpcClient.invoke("search.html", "RPC_SearchListRefresh");
+								}
+								name = _ret.datas.SupplierName;
+								break;
+							case "mdt-supplier-select":
+								RpcClient.invoke("comp-select.html", "RPC_CompListRefresh");
+								name = _ret.datas.SupplierName;
+								break;
+							case "mdt-equ-insp-type":
+								RpcClient.invoke("equ-mainType.html", "RPC_MainTypeListRefresh");
+								name = _ret.datas.TypeName;
+								break;
+							case "mdt-cust-linkman":
+								RpcClient.invoke("cusContact-manage.html", "RPC_CusContactListRefresh");
+								break;
+							case "mdt-fault-duty":
+								RpcClient.invoke("select-duty.html", "RPC_DutyListRefresh");
+								name = _ret.datas.ResContent;
+								break;
+							case "mdt-resouce":
+								RpcClient.invoke("sourceWind", "RPC_RefreshResource", _ret.dataId);
+								RpcClient.invoke("compWind", "RPC_RefreshResource", _ret.dataId);
+								RpcClient.invoke("friendWind", "RPC_RefreshResource", _ret.dataId);
+								RpcClient.invoke("select-resPacket.html", "RPC_ResPacketListRefresh");
+								name = _ret.datas.GroupName;
+								break;
+							default:
+								break;
+						}
+
+						var newData = {
+							id: _ret.dataId,
+							name: name
+						};
+						switch($scope.funckey) {
+							case "mdt-customer-select":
+							case "mdt-supplier-select":
+								newData.province = _ret.datas.Province + ' ' + _ret.datas.City;
+								newData.ID = _ret.dataId;
+								newData.CustomerName = name;
+								newData.Province = _ret.datas.Province;
+								newData.City = _ret.datas.City;
+								newData.District = _ret.datas.District;
+								newData.Address = _ret.datas.Address;
+								newData.Street = _ret.datas.Street;
+								newData.MapLat = _ret.datas.MapLat;
+								newData.MapLng = _ret.datas.MapLng;
+								break;
+						}
+						var ws = plus.webview.currentWebview();
+						var opener = ws.opener();
+						if(ws.callback) {
+							opener.evalJS(ws.callback + "(" + JSON.stringify(newData) + ")");
+						}
+						mui_back();
+					}
+				}
+				
+
+				function setViewTitle() {
+					switch($scope.funckey) {
+						case "mdt-fault-class":
+						case "mdt-equ-fault-class":
+							$scope.title = "故障归类维护";
+							break;
+						case "mdt-equ-pos":
+							$scope.title = "投产地维护";
+							break;
+						case "mdt-customer-manage":
+						case "mdt-customer-select":
+							$scope.title = "客户维护";
+							break;
+						case "mdt-supplier-manage":
+						case "mdt-supplier-select":
+							$scope.title = query("type") == "manu" ? "生产厂家维护" : "供应商维护";
+							break;
+						case "mdt-equ-insp-type":
+							$scope.title = "巡检类型";
+							break;
+						case "mdt-cust-linkman":
+							$scope.title = "客户联系人维护";
+							break;
+						case "mdt-fault-duty":
+							$scope.title = "责任判定维护";
+							break;
+						case "mdt-resouce":
+							$scope.title = "资源分组维护";
+							$scope.params.Type = query('type');
+							break;
+						default:
+							break;
+					}
+				}
+			}]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("testForm"), ["TestForm"]);
+				mui.os.ios && angular.element(document.querySelector("head")).append(angular.element("<style type='text/css'>").html("*{ -webkit-user-select:auto !important; }"));
+			});
+		</script>
+	</body>
+
+</html>

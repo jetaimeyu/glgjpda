@@ -1,0 +1,59 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="face.css" />
+	</head>
+
+	<body ng-controller="faceController">
+		<div class="mui-content ng-hide" ng-show="domData.ShowType==1">
+			<div id="face-body" class="mui-slider" >
+				<div class="mui-slider-group">
+					
+				</div>
+				<div class="mui-slider-indicator">
+					
+				</div>
+			</div>
+		</div>
+		<div class="mui-content ng-hide" ng-show="domData.ShowType==2">
+			<ul class="mui-table-view mui-grid-view mui-grid-9">
+				<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3" data-type="photo">
+					<!--<span class="mui-icon mui-icon-home"></span>-->
+					<img src="../../images/chat/zhaopian.png"/>
+					<div class="mui-media-body">照片</div>
+				</li>
+				<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3" data-type="card">
+					<img src="../../images/chat/mingpian.png"/>
+					<div class="mui-media-body">名片</div>
+				</li>
+				<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3" data-type="fault" ng-show="domData.CompID>0">
+					<img src="../../images/chat/kehugongdan.png"/>
+					<div class="mui-media-body">客户工单</div>
+				</li>
+				<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3" data-type="equ-fault" ng-show="domData.CompID>0">
+					<img src="../../images/chat/shebeigongdan.png"/>
+					<div class="mui-media-body">设备工单</div>
+				</li>
+				<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3" data-type="custom" ng-show="domData.CompID>0">
+					<img src="../../images/chat/kehu.png"/>
+					<div class="mui-media-body">客户</div>
+				</li>
+			</ul>
+		</div>
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../images/Emotion/Emotion.js" ></script>
+		
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+
+		<script type="text/javascript" src="../../js/utils.js" ></script>
+		<script type="text/javascript" src="face.js"></script>
+	</body>
+
+</html>

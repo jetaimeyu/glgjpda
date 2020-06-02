@@ -1,0 +1,102 @@
+<!--导航目录部分-->
+<div id="res-slide" class="top-thin-line mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted nav-bar" ng-show="navDirData.length>1">
+	<div class="mui-scroll" style="height: 35px;">
+		<a class="mui-control-item" ng-class="{'mui-active':$index==navDirData.length-1}" ng-repeat="dir in navDirData" ng-click="loadOrgUserList(dir,$index)">
+			<span class="icon iconfont icon-right color-gray-deep" style="margin-left: 2px;" ng-show="$index>0"></span>
+			<span class="group-name" ng-bind="dir.OrgName"></span>
+		</a>
+	</div>
+</div>
+<div id="slider" class="mui-scroll-wrapper" ng-style="{'position': 'initial','margin-top': navDirData.length>1?'25px':'0px'}">
+	<!--目录部分-->
+	<ul class="data-group" ng-if="orgList.length" style="margin-top: 0px;">
+		<li class="data-row dir-row" ng-repeat="org in orgList" ng-click="loadOrgUserList(org)">
+			<div class="body">
+				<i class="icon-bumenguanli"></i>
+				<span>{{org.OrgName}}<span class="color-gray-deep" style="margin-left: 5px;">({{org.OrgPersonNums}})</span></span>
+				<i class="opt md-icon icon-right"></i>
+			</div>
+		</li>
+	</ul>
+	<!--联系人部分-->
+	<ul class="data-group" ng-if="userList.length">
+		<li class="data-row" ng-repeat="user in userList" ng-click="select(user)">
+			<div class="body">
+				<!--<img class="mui-media-object mui-pull-left md-img-round" ng-src="{{user.UserID | getUserLogo:50:50}}" ng-if="user.ULogoIsExist">-->
+				<div class="mui-media-object mui-pull-left md-img-round" ng-style="{'background-image':'url('+ (user.UserID | getUserLogo:50:0) +')'}" ng-if="user.ULogoIsExist"></div>
+
+				<div class="mui-media-object mui-pull-left md-userCustomLogo" ng-if="!user.ULogoIsExist" ng-bind="user.RealName | getUserCustomLogo"></div>
+				<span class="userName">{{user.RealName}}</span>
+				<i class="opt md-icon font-20 {{user.selected?'icon-roundcheckfill color-blue' : 'icon-round color-gray'}}"></i>
+			</div>
+		</li>
+	</ul>
+	<md-no-data ng-show="loaded&&!orgList.length && !userList.length">暂无数据</md-no-data>
+</div>
+
+<style>
+	.md-modal-content {
+		background-color: #EAEAEA !important;
+		padding: 10px 0px !important;
+	}
+	
+	#res-slide {
+		padding: 0 5px;
+		background: #fff;
+		overflow: hidden;
+		height: 35px;
+		position: fixed;
+	}
+	
+	.top-thin-line:before {
+		background-color: #ECECEC;
+	}
+	
+	.mui-segmented-control.mui-segmented-control-inverted .mui-control-item {
+		color: #169BD5;
+	}
+	
+	.mui-segmented-control.mui-segmented-control-inverted .mui-control-item.mui-active {
+		color: #9A9A9C;
+		background: none;
+		border: none;
+	}
+	
+	.mui-segmented-control.mui-scroll-wrapper {
+		height: 43px;
+	}
+	
+	.mui-segmented-control .mui-control-item {
+		line-height: 35px;
+		padding: 0 !important;
+		margin-left: 6px;
+	}
+	
+	.mui-slider .mui-segmented-control.mui-segmented-control-inverted~.mui-slider-group .mui-slider-item {
+		border-top: none;
+	}
+	
+	.mui-slider-indicator {
+		border-bottom: 1px solid #c8c7cc;
+	}
+	
+	.mui-segmented-control .mui-control-item>span {
+		font-size: 14px;
+	}
+	
+	.userName {
+		line-height: 48px;
+		margin-left: 5px !important;
+	}
+	
+	#slider .data-group .data-row .body {
+		padding-left: 10px;
+	}
+	
+	.md-img-round {
+		width: 50px;
+		height: 50px;
+		float: left;
+		background-size: cover;
+	}
+</style>

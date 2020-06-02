@@ -1,0 +1,364 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<link rel="stylesheet" href="../../css/mui.min.css" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	<style type="text/css">
+		.icon {
+			width: 16px;
+		}
+
+		footer {
+			width: 100%;
+			height: 40px;
+			position: fixed;
+			bottom: 0;
+			line-height: 40px;
+			text-align: center;
+			z-index: 800;
+			background-color: #FFFFFF;
+		}
+
+		.btns {
+			position: fixed;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			border-top: 1px solid #EEEEEE;
+			background: #FFFFFF;
+		}
+
+		.btns a {
+			display: block;
+			width: 50%;
+			height: 40px;
+			line-height: 40px;
+			font-size: 1.4rem;
+			text-align: center;
+			float: left;
+		}
+
+		.btns a:first-child {
+			color: #B1B1B1;
+		}
+
+		.btns a:last-child {
+			border-left: 1px solid #EEEEEE;
+			color: #3296FA;
+		}
+
+		.mui-bar-nav~.mui-content .mui-pull-top-pocket {
+			top: 44px !important;
+		}
+
+		.mui-table {
+			display: table !important;
+		}
+
+		.menuDivModel {
+			z-index: 99999;
+		}
+	</style>
+</head>
+
+<body ng-controller="equListController">
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left">资产档案</a>
+		<a class="mui-pull-right menu-add" id="add" ng-click="add()" ng-if="'Q4' | hasAuth" style="display: none;" ng-class="{'mui-block':showadd}">
+			<img class="icon" src="../../images/add.png" />
+		</a>
+
+		<a class="mui-pull-right menu-search" id="search" ng-click="search()">
+			<img class="icon" src="../../images/search.png" />
+		</a>
+	</header>
+	<div class="mui-content" ng-class="{'has-tab':isLoad}">
+	</div>
+
+	<footer class="btns" ng-class="{'mui-block':action=='select'&&(multiselect=='true'||selectCatalog=='true')}" style="display: none;">
+		<a ng-click="cancel()">取消</a>
+		<a ng-click="save()">确定</a>
+	</footer>
+	<script type="text/javascript" src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/rpc.js"></script>
+	<script type="text/javascript">
+		app.controller("equListController", ["$scope", "Loading", "UtilsService", "RPCObserver", "CacheService", "$filter",
+			function ($scope, Loading, UtilsService, RPCObserver, CacheService, $filter) {
+				$scope.action = query("action") || "";
+				var user = CacheService.get('user');
+				$scope.comId = user.CompID;
+
+				
+
+				//$scope.comId=0
+				$scope.winid = Date.now();
+				$scope.selectEquArr = []; //已选择的设备
+				$scope.selectCatArr = []; //已选择的目录
+				$scope.must = query("must");
+				$scope.multiselect = query("multiselect") || "false";
+				$scope.selectCatalog = query("selectCatalog") || "false";
+
+				setTimeout(function () {
+					mui.init({
+						subpages: [{
+							url: 'equ-all.html?type=all&action=' + $scope.action + '&multiselect=' + $scope.multiselect +
+								'&selectcatalog=' + $scope.selectCatalog,
+							id: 'equ-all' + $scope.action + '.html',
+							styles: {
+								top: '44px',
+								bottom: '0px',
+							}
+						}]
+					});
+				});
+
+
+				setTimeout(function() {
+				var subView = plus.webview.getWebviewById('equ-all' + $scope.action + '.html');
+
+				var oldBack = mui.back;
+
+				mui.back = function(){
+					subView.evalJS("canback()")
+				}
+				
+			}, 300);
+
+				setTimeout(function () {
+					$scope.showadd = true;
+					$scope.isLoad = $filter("hasAuth")(['Q1', 'Q2', 'Q3', 'Q5']);
+					!$scope.isLoad && document.querySelector(".md-tab").setAttribute("top", "44");
+					$scope.comId == 0 && document.querySelector(".md-tab").setAttribute("top", "44");
+					$scope.$apply();
+					//选择设备
+					if ($scope.action == "select") {
+						//页面用于选择时空出footer的高度
+						$scope.multiselect == 'true' && document.querySelector(".md-tab").setAttribute("bottom", "40");
+						//接受已选择的参数
+						$scope.selectEquArr = plus.webview.currentWebview().selectObj;
+						if (!($scope.selectEquArr instanceof Array)) {
+							if ($scope.selectEquArr.ID) {
+								$scope.selectEquArr = [$scope.selectEquArr];
+							} else {
+								$scope.selectEquArr = [];
+							}
+						}
+						//已选择的目录
+						$scope.selectCatalog == 'true' && plus.webview.currentWebview().selectCatalog && ($scope.selectCatArr = plus.webview
+							.currentWebview().selectCatalog);
+					}
+				}, 100);
+				setTimeout(function () {
+					StartUsingTab();
+				}, 200)
+				//rpc 选择设备
+				RPCObserver.on("RPC_FaultEquSelectInfo", "faultEquSelectInfo");
+				window.faultEquSelectInfo = function (params) {
+					RPCObserver.broadcast("RPC_FaultEquSelectRefresh", params);
+					$scope.selectEquArr = params;
+					$scope.$apply();
+					if ($scope.multiselect == "false") {
+						$scope.selectEquArr = $scope.selectEquArr[0];
+						var view = plus.webview.currentWebview();
+						var opener = view.opener();
+						if (view.callback) {
+							opener.evalJS(view.callback + "(" + JSON.stringify($scope.selectEquArr) + "," + JSON.stringify($scope.selectCatArr) +
+								")");
+						}
+						view.id == 'select-equ-list.html' && mui.back();
+					}
+					return;
+				}
+				//rpc 选择目录
+				RPCObserver.on("RPC_FaultCatSelectInfo", "faultCatSelectInfo");
+				window.faultCatSelectInfo = function (params) {
+					$scope.selectCatArr = params;
+					$scope.$apply();
+					return;
+				}
+				$scope.add = function () {
+					//					var allItem = document.querySelector('.all-item');
+					//					if(allItem && allItem.classList.contains("md-active") && $scope.action != 'select') {
+					//						RpcClient.invoke("equ-list-menus.html", "RPC_GetCurrentWinid", document.querySelector(".md-active").getAttribute("winid"));
+					//
+					//						floatWebview();
+					//					} else {
+					//						UtilsService.openWindow({
+					//							needLogin: true,
+					//							id: 'equ-edit.html',
+					//							url: 'equ-edit.html'
+					//						});
+					//					}
+					floatWebview();
+
+				};
+
+				$scope.search = function () {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'equ-search.html',
+						url: 'equ-search.html?action=' + $scope.action + "&selectedid=" + $scope.selectEquArr.ID + "&must=" + $scope
+							.must + "&multiselect=" + $scope.multiselect,
+						extras: {
+							selectArr: $scope.selectEquArr
+						}
+					});
+				}
+				//取消
+				$scope.cancel = function () {
+					mui.back();
+				}
+				//确定
+				$scope.save = function () {
+					if ($scope.selectCatalog == 'true' && $scope.must == "true" && $scope.selectEquArr.length == 0 && $scope.selectCatArr
+						.length == 0) {
+						mui.toast("请选择一个目录或资产");
+						return;
+					}
+					//					if($scope.selectEquArr.length == 0 && $scope.must == "true") {
+					//						mui.toast("请选择一个设备");
+					//						return;
+					//					}
+					$scope.multiselect == "false" && ($scope.selectEquArr = $scope.selectEquArr[0]);
+					var view = plus.webview.currentWebview();
+					var opener = view.opener();
+					if (view.callback) {
+						opener.evalJS(view.callback + "(" + JSON.stringify($scope.selectEquArr) + "," + JSON.stringify($scope.selectCatArr) +
+							")");
+					}
+					mui.back();
+				}
+
+				/**
+				 * 启用tab页签
+				 */
+				function StartUsingTab() {
+					//切换tab页签
+					mui('.md-tab').on('tap', '.md-tab-item', function () {
+						if (this.classList.contains("md-active")) {
+							return;
+						}
+						//隐藏当前显示的
+						var tab = this.parentElement.querySelector(".md-active");
+
+						if (tab) {
+							var href = tab.getAttribute("href");
+
+							if (href.substr(0, 1) == "#") {
+								document.body.querySelector(href).style.display = "none";
+							} else {
+								plus.webview.hide(tab.getAttribute("winid") || href)
+							}
+							tab.classList.remove("md-active");
+						}
+						//激活点击的
+						activeSubPage(this);
+					});
+					//显示指定页签
+					function activeSubPage($) {
+						$.classList.add("md-active");
+						var href = $.getAttribute("href");
+
+						if (href.substr(0, 1) == "#") {
+							document.body.querySelector(href).style.display = "";
+						} else {
+							createSubPage({
+								href: href,
+								winid: $.getAttribute("winid"),
+								top: $.parentElement.getAttribute("top"),
+								bottom: $.parentElement.getAttribute("bottom"),
+								extras: {
+									selectArr: $scope.selectEquArr,
+									selectCatArr: $scope.selectCatArr
+								}
+							})
+						}
+					}
+					//创建或显示标签页的内容(href, winid, top, bottom
+					function createSubPage(options) {
+						var win = plus.webview.getWebviewById(options.winid || options.href);
+						if (!win) {
+							var styles = {
+								popGesture: "none",
+								top: (options.top || 0) + "px",
+								bottom: (options.bottom || 0) + "px"
+							};
+							if (mui.os.android && ["5.0", "5.1"].indexOf(mui.os.version) >= 0) {
+								styles.hardwareAccelerated = false;
+							}
+							win = plus.webview.create(options.href, options.winid || options.href, styles, options.extras);
+							plus.webview.currentWebview().append(win);
+						}
+						win.show();
+					}
+
+					//默认激活当前的tab页签
+					var activeTab = document.body.querySelector(".md-tab-item.md-active");
+
+					if (activeTab) {
+						activeSubPage(activeTab);
+
+						var tabList = document.body.querySelectorAll(".md-tab-item:not(.md-active)[href^='#']");
+						var i = tabList.length;
+						while (i--) {
+							document.body.querySelector(tabList[i].getAttribute("href")).style.display = "none";
+						}
+					}
+				}
+
+				//刷新关闭popover
+				RPCObserver.on('close_popover', 'close_popover');
+				window.close_popover = function () {
+					floatw.hide();
+				}
+			}
+		]);
+
+		//弹出悬浮窗
+		var floatw = null;
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			//固定为竖屏显示
+			plus.screen.lockOrientation("portrait-primary");
+			//菜单
+			ws = plus.webview.currentWebview();
+			var styles = {
+				background: 'transparent',
+				zindex: 10,
+			};
+			if (mui.os.android && ["5.0", "5.1"].indexOf(mui.os.version) >= 0) {
+				styles.hardwareAccelerated = false;
+			}
+			floatw = plus.webview.create("../menus/equ-list-menus.html", "equ-list-menus.html", styles);
+		});
+
+		// 创建悬浮窗口
+		function floatWebview() {
+			if (floatw) { // 避免快速多次点击创建多个窗口
+				floatw.show("fade-in");
+			} else {
+				var styles = {
+					background: 'transparent',
+					zindex: 10,
+				};
+				if (mui.os.android && ["5.0", "5.1"].indexOf(mui.os.version) >= 0) {
+					styles.hardwareAccelerated = false;
+				}
+				floatw = plus.webview.create("../menus/equ-list-menus.html", "equ-list-menus.html", styles);
+				floatw.show("fade-in");
+			}
+		}
+	</script>
+</body>
+
+</html>

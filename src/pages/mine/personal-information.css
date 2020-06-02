@@ -1,0 +1,128 @@
+/*第一个列表个人的样式*/
+
+.names {
+	font-size: 1.5rem;
+	color: #323232;
+	position: relative;
+	left: 13px;
+	padding-right: 10px;
+}
+
+.introduction {
+	font-size: 1.3rem;
+	color: #929292;
+	position: relative;
+	left: 13px;
+	top: 2px;
+	padding-right: 10px;
+}
+
+.nointroduction {
+	color: #B5B5B5;
+	font-size: 1.3rem;
+	position: relative;
+	left: 13px;
+	top: 2px;
+}
+
+
+/*图片左浮动*/
+
+.data-group .data-row img {
+	float: left;
+}
+
+
+/*按钮*/
+
+.btn-submit {
+	margin: 40px 16px 0 16px;
+}
+
+.btn-submit span {
+	/*background-color: #fff;
+	border-color: #ccc;
+	color: #323232;
+	font-size: 1.6rem;
+	background: rgba(255, 255, 255, 0.5);*/
+	
+	background-color: #3296FA;
+	color: #ffffff;
+	font-size: 1.6rem;
+	border-color: #3296FA;
+}
+
+.avatar {
+	height: 48px;
+	width: 48px;
+	border-radius: 48px;
+	background-size: cover;
+	float: left
+}
+
+
+/*变更手机号*/
+
+.changephone {
+	color: #3296FA!important;
+	float: right;
+}
+
+img[src=""] {
+	opacity: 0;
+}
+
+
+/*控制个人描述姓名单行省略显示*/
+
+.mui-ellipsis-2 {
+	-webkit-line-clamp: 1;
+}
+
+.data-group:first-child {
+	margin-top: 0;
+}
+
+.spare-item .data-row .body {
+	padding: 8px 16px;
+}
+
+.extend-body .data-group-tip {
+	margin-top: 6px;
+}
+
+.photo.file .icon-add {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.photo.file .img-body {
+	position: relative;
+	overflow: hidden;
+	height: 50px;
+	background-color: #eaf6fe;
+}
+
+.photo {
+	width: 50px;
+	height: 50px;
+	margin-right: 14px;
+	/*display: block;
+	float:left;*/
+}
+
+.photo.file .media-del {
+	position: absolute;
+	left: 35px;
+	top: 5px;
+	width: 25px;
+	height: 25px;
+	padding: 5px;
+}
+
+.photo.file .img {
+	height: 100%;
+	background-size: cover;
+}

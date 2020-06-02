@@ -1,0 +1,153 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport"
+		content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link rel="stylesheet" href="../../css/mui.min.css">
+	<link rel="stylesheet" href="../../css/common.css">
+	<link rel="stylesheet" href="../../icon-font/iconfont.css">
+	<link rel="stylesheet" href="group-info.css">
+</head>
+<style>
+	.mui-switch {
+		width: 35px;
+		height: 20px;
+	}
+
+	.mui-switch .mui-switch-handle {
+		width: 18px;
+		height: 18px;
+	}
+
+	.mui-switch-blue.mui-active {
+		border: 2px solid #3296fa;
+		background-color: #3296fa;
+	}
+</style>
+
+<body ng-controller="GroupInfoController">
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left mui-ellipsis" ng-bind="domData.GroupName"></a>
+	</header>
+	<div class="mui-content" style="display:none;" ng-class="{'mui-block':domData.GroupInfo}">
+		<ul class="data-group mgt-0 group-desc">
+			<li class="data-row no-bt-line members-title" ng-click="event.openGroupMembers()">
+				<div class="body">
+					群描述
+				</div>
+			</li>
+			<li class="data-row desc-content">
+				<span ng-bind="domData.GroupInfo.Declared"></span>
+			</li>
+		</ul>
+		<ul class="data-group">
+				<li class="data-row mui-table-view-cell" ng-click="event.openGroupQrCode()">
+					<p class="opt md-icon icon-right"></p>
+					<div class="body pdl-16">
+							二维码
+					</div>
+				</li>
+			</ul>
+		<ul class="data-group">
+			<li class="data-row no-bt-line members-title" ng-click="event.openGroupMembers()">
+				<div class="body">
+					群聊成员
+				</div>
+			</li>
+			<li class="data-row no-bt-line" style="margin-top: -10px;">
+				<div class="body pd0">
+					<div class="members-body">
+						<div class="members-item mui-table-view-cell no-bt-line"
+							ng-click="event.personInfo(item.UserID)" ng-repeat="item in domData.GroupUsers| limitTo: 9">
+							<md-user-logo ng-model="item" data-width="50" data-height="50"></md-user-logo>
+							<p class="mui-ellipsis" ng-bind="item.MemberName || item.ViewName"></p>
+						</div>
+						<div class="members-item mui-table-view-cell no-bt-line" ng-click="event.selectMember()">
+							<div class="add-btn icon-add"></div>
+							<p class="mui-ellipsis add-txt">邀请</p>
+						</div>
+					</div>
+				</div>
+
+				<p></p>
+			</li>
+			<li class="data-row mui-table-view-cell" ng-click="event.openGroupManage()">
+				<div class="total">合计
+					<span ng-bind="domData.GroupInfo.Members.length" class="ng-binding"></span> 个成员
+				</div>
+			</li>
+			<!-- <li class="data-row no-bt-line" style="margin-top: -10px;">
+				<div class="body pd0 members-more">
+					查看更多群成员
+					<span class="icon-right"></span>
+				</div>
+			</li> -->
+		</ul>
+
+		<!--<ul class="data-group" ng-if="domData.GroupInfo.MyRole<2">
+			<li class="data-row member-name" ng-click="event.openGroupManage()">
+				<p class="opt md-icon icon-right"></p>
+				<div class="body pdl-16">
+					管理群
+				</div>
+			</li>
+		</ul>-->
+
+		<ul class="data-group">
+			<li class="data-row mui-table-view-cell member-name" ng-click="event.openMemberView()">
+				<p class="opt md-icon icon-right"></p>
+				<div class="body pdl-16">
+					我的群名片
+					<span class=" mui-ellipsis mui-pull-right" ng-bind="domData.MemberName"></span>
+				</div>
+			</li>
+		</ul>
+		<!--<ul class="data-group">
+				<li class="data-row mui-table-view-cell member-name" ng-click="event.ShieldMessage()">
+					<p class="opt md-icon icon-right"></p>
+					<div class="body pdl-16">
+						消息免打扰
+						<span class=" mui-ellipsis mui-pull-right" ng-bind="IsSilence"></span>
+					</div>
+				</li>
+			</ul>-->
+		<ul class="data-group">
+			<li class="data-row mui-table-view-cell member-name">
+				<p class="opt md-icon icon-right"></p>
+				<div class="body pdl-16">
+					消息免打扰
+				</div>
+				<div class="mui-switch mui-switch-blue mui-switch-mini" id="mySwitch"
+					ng-class="{'mui-active':domData.GroupInfo.IsSilence==1}">
+					<div class="mui-switch-handle"></div>
+				</div>
+			</li>
+		</ul>
+
+
+		<ul class="data-group">
+			<li class="data-row mui-table-view-cell" ng-click="event.openRecord()">
+				<p class="opt md-icon icon-right"></p>
+				<div class="body pdl-16">
+					查找聊天内容
+				</div>
+			</li>
+		</ul>
+
+		<div class="mui-content-padded">
+			<span class="mui-btn mui-btn-block quit-btn" ng-click="event.quit()" ng-bind="domData.QuitBtnTxt"></span>
+		</div>
+	</div>
+
+	<script src="../../js/mui.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/rpc.js"></script>
+	<script type="text/javascript" src="group-info.js"></script>
+</body>
+
+</html>

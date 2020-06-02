@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<style type="text/css">
+			.mui-table-view .mui-table-view-cell label,
+			.mui-table-view .mui-table-view-cell .opt {
+				position: absolute;
+				top: 50%;
+				-webkit-transform: translateY(-50%);
+				transform: translateY(-50%);
+				overflow: hidden;
+				margin: 0;
+			}
+			
+			.mui-table-view .mui-table-view-cell .opt,
+			.data-group .data-row .opt {
+				color: #AEAEAE;
+				top: 50%;
+			}
+			
+			.mui-table-view .mui-table-view-cell .opt:active {
+				color: #169BD5;
+			}
+			
+			.mui-table-view .mui-table-view-cell .opt,
+			.mui-table-view .mui-table-view-cell .body.arrow:after {
+				font-size: 1.7rem;
+				right: 0;
+				padding: 10px 14px 11px 10px;
+			}
+			
+			.mui-table-view-cell:after {
+				background-color: #ECECEC;
+			}
+			
+			.mui-table-view .mui-table-view-cell:after {
+				left: 10px;
+				right: 10px;
+			}
+			
+			.imgslist {
+				float: left;
+				width: 55px;
+				height: 55px;
+				margin-right: 10px;
+				background-size: cover!important;
+			}
+			
+			.opt span {
+				font-size: 1.4rem;
+				color: #3296FA;
+			}
+			
+			.opt:not(.md-icon):after {
+				position: absolute;
+				top: 10%;
+				height: 80%;
+				left: 0;
+				content: '';
+				background-color: #EAEAEA;
+				width: 1px;
+				-webkit-transform: scaleY(0.5);
+				transform: scaleY(0.5);
+			}
+		</style>
+	</head>
+
+	<body ng-controller="searchCtrl">
+		<div ng-class="{'mui-block':domShowX}" style="display: none;" ng-style="{'margin-bottom':action=='select'?'40px':'0px'}">
+			<div class="search_input">
+				<form ng-submit="search.doSearch()">
+					<a class="mui-action-back mui-icon icon-back mui-pull-left"></a>
+					<input type="search" placeholder="请输入设备名称" ng-model="search.text" maxlength="50">
+					<i class="icon-search-thin color-gray-dark"></i>
+					<i class="icon-delete color-gray" ng-click="search.deleteSearch()" ng-show='search.text'></i>
+					<span ng-click="search.doSearch()">搜索</span>
+				</form>
+			</div>
+			<div class="search_group" ng-if="!domShow">
+				<div class="content">
+					<span ng-repeat="h in search.history" ng-bind="h" ng-click="search.searchSpan(h)"></span>
+				</div>
+			</div>
+			<div id="pullrefresh" class="mui-scroll-wrapper" ng-class="{'mui-block':domShow}" style="display: none;">
+				<div class="mui-content" style="padding-top: 48px;">
+					<!--设备列表-->
+					<ul class="mui-table-view mui-table-view-chevron" style="margin-top: 8px;" ng-show="allMain && allMain.length>0">
+						<li class="mui-table-view-cell mui-media" ng-repeat="equ in allMain">
+							<p class="opt md-icon-more" ng-if="action!='select'&&('Q81' | hasAuth)" style="width: 24vw;right: 26vw;" ng-click="commissioning(equ)">
+								<span style="font-size: 1.3rem;">设备投产</span>
+							</p>
+							<p class="opt md-icon-more" ng-if="action!='select'" style="width: 28vw;" ng-click="accessRecord(equ.ID)">
+								<span style="font-size: 1.3rem;">出入库记录</span>
+							</p>
+							<p class=" opt md-icon " ng-click="equSelect(equ) ">
+								<i class="mui-pull-right " ng-class="{ 'icon-round color-gray':selectedId!=equ.ID, 'icon-roundcheckfill color-blue':selectedId==equ.ID} " ng-if="action=='select' "></i>
+							</p>
+							<div class="mui-clearfix " style="width: 44vw; " ng-style="{ 'width':action=='select' ? '80vw': '44vw'} " ng-click="equSelect(equ) ">
+								<div class="mui-ellipsis equ-title " ng-bind="equ.EqName "></div>
+								<p class="mui-ellipsis equ-sub " ng-bind="equ.SkuName "></p>
+								<p class="mui-ellipsis equ-sub " ng-bind=" '库存数量：'+equ.StockNum "></p>
+							</div>
+						</li>
+					</ul>
+					<md-no-data ng-show="allMain && allMain.length==0 " data-options="{type: 'search'} ">暂无数据</md-no-data>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript " src="../../js/angular.min.js "></script>
+		<script type="text/javascript " src="../../js/mui.min.js "></script>
+		<script type="text/javascript " src="../../js/common.js "></script>
+		<script type="text/javascript " src="../../js/utils.js "></script>
+		<script type="text/javascript " src="../../js/rpc.js "></script>
+		<script type="text/javascript " src="equ-warehouse-search.js "></script>
+	</body>
+
+</html>

@@ -1,0 +1,184 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+    <meta charset="UTF-8" <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+    <link href="../../css/mui.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../../css/common.css" />
+    <link rel="stylesheet" href="../../icon-font/iconfont.css" />
+    <link rel="stylesheet" href="../../css/mui.previewimage.css" />
+    <style type="text/css">
+        .data-group:first-child {
+            margin-top: 0;
+        }
+
+        .data-group .data-row label {
+            width: 80px;
+        }
+    </style>
+</head>
+
+<body ng-controller="GroupEdit">
+    <header class="mui-bar mui-bar-nav">
+        <a class="mui-action-back mui-icon icon-back mui-pull-left">发起群聊</a>
+    </header>
+    <div class="mui-content equiFM" style="display: none;" ng-class="{'mui-block':isLoad}">
+        <ul class="data-group">
+            <li class="data-row must">
+                <label>群名称</label>
+                <div class="body">
+                    <div class="edit">
+                        <div ng-model-div-text="groupName" class="needsclick padr" lenlimit="50" placeholder="请输入群名称"></div>
+                    </div>
+                </div>
+            </li>
+            <li class="data-row must">
+                <label>群描述</label>
+                <div class="body">
+                    <div class="edit">
+                        <div ng-model-div-text="declared" class="needsclick padr" lenlimit="200" placeholder="请输入群描述"></div>
+                    </div>
+                </div>
+            </li>
+            <li class="mui-table-view-cell data-row">
+                <label>群成员</label>
+                <p class="opt md-icon font-15" ng-click="selectChatMember()">
+                    <span class="icon-right"></span>
+                </p>
+                <div class="body" ng-click="selectChatMember()">
+                    <span class="placeholder" ng-show="chatMembers.length==0">请选择群成员</span>
+                    <span ng-show="chatMembers.length>0" ng-repeat="user in chatMembers" ng-bind="$index==0?user.ViewName:'，'+user.ViewName"></span>
+                </div>
+            </li>
+        </ul>
+
+        <div class="mui-content-padded">
+            <span class="mui-btn mui-btn-block" ng-click="save()">创建群聊</span>
+        </div>
+    </div>
+    <!--无网络或请求失败重试-->
+    <md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+    <script type="text/javascript" src="../../js/mui.min.js"></script>
+    <script type="text/javascript" src="../../js/angular.min.js"></script>
+    <script type="text/javascript" src="../../js/common.js"></script>
+    <script type="text/javascript" src="../../js/utils.js"></script>
+    <script type="text/javascript">
+        app.controller("GroupEdit", ["$scope", "UtilsService", "DataService", "ApiService", "Loading", "ChatUserService", "RPCObserver",
+            function ($scope, UtilsService, DataService, ApiService, Loading, ChatUserService, RPCObserver) {
+                //群聊成员
+                $scope.chatMembers = [];
+                $scope.groupName = "";
+                $scope.declared = "";
+                $scope.isLoad = true;
+                $scope.failUserIds = [];
+                $scope.groupChatInfo = {};
+
+                //避免重复点击
+                var isSubmitting = false;
+
+                //保存
+                $scope.save = function () {
+                    document.activeElement.blur();
+
+                    if (!trim($scope.groupName)) {
+                        mui.toast("请输入群名称！");
+                        return;
+                    }
+                    if (!trim($scope.declared)) {
+                        mui.toast("请输入群描述！");
+                        return;
+                    }
+                    //验证填字符长度
+                    if (!checkLengthUtil.check()) {
+                        return false;
+                    }
+                    if (isSubmitting) return;
+                    isSubmitting = true;
+                    Loading.show()
+                    // 防止重复创建群聊
+                    if ($scope.failUserIds.length > 0) {
+                        saveUser($scope.groupChatInfo)
+                    } else {
+                        saveGroupChat()
+                    }
+                };
+                // 保存群聊
+                function saveGroupChat() {
+                    // 创建群聊
+                    var addUrl = ApiService.Api50 + "/api/v1/Message/GroupAdd?groupName=" + encodeURIComponent(trim($scope.groupName)) + "&declared=" + encodeURIComponent(trim($scope.declared));
+                    DataService.post(addUrl).then(function (res) {
+                        $scope.groupChatInfo = res;
+                        saveUser(res)
+
+                    }, function (err) {
+                        isSubmitting = false;
+                        Loading.hide();
+                    })
+                }
+                // 保存群成员
+                function saveUser(res) {
+                    var userids = []
+                    for (var i = 0; i < $scope.chatMembers.length; i++) {
+                        var meb = $scope.chatMembers[i];
+                        userids.push(meb.UserID)
+                    }
+                    // 添加群员
+                    var mebUrl = ApiService.Api50 + "/api/v1/Message/GroupMemberAdd_Manage?groupId=" + res.ID;
+                    DataService.post(mebUrl, userids).then(function (result) {
+                        Loading.hide()
+                        isSubmitting = false;
+                        if (result.failUserIds && result.failUserIds.length === 0) {
+                            // 跳转到聊天页面
+                            mui.toast("群聊创建成功")
+                            // 跳转到群聊
+                            ChatUserService.tapGroup({
+                                GroupCode: res.GroupCode,
+                                GroupName: res.GroupName,
+                                needLogin: true
+                            });
+                            RPCObserver.broadcast('refresh_chat_group_list');
+                            setTimeout(function () {
+                                plus.webview.currentWebview().close('none');
+                            }, 500)
+                        } else {
+                            // 存储失败成员id 用于判断
+                            $scope.failUserIds = result.failUserIds;
+                            mui.alert("创建失败，以下人员：" + result.failUserNames.join() + "不能被添加入群")
+                        }
+
+                    }, function (err) {
+                        isSubmitting = false;
+                        Loading.hide();
+                    })
+                }
+                //选择群成员
+                $scope.selectChatMember = function (key, event) {
+                    event && event.stopPropagation();
+                    UtilsService.openWindow({
+                        needLogin: true,
+                        id: "contact-select.html",
+                        url: "../common/contact-select.html?action=select&multiselect=true",
+                        extras: {
+                            selectObj: $scope.chatMembers,
+                            callback: "selectWorkUserCallback"
+                        }
+                    })
+                };
+            }
+        ]);
+
+        //选择人员后回调
+        function selectWorkUserCallback(obj) {
+            var appElement = document.querySelector('[ng-controller=GroupEdit]');
+            var $scope = angular.element(appElement).scope();
+            $scope.chatMembers = angular.copy(obj);
+            $scope.$apply();
+        }
+
+        mui.plusReady(function () {
+            angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+        });
+    </script>
+</body>
+
+</html>

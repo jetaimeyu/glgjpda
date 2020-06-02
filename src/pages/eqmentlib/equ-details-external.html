@@ -1,0 +1,569 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+	<link href="../../css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	<link rel="stylesheet" href="equ-details.css" />
+	<!--<link rel="stylesheet" href="../../css/mui.previewimage.css" />-->
+	<style type="text/css">
+		.equ-title {
+			font-size: 1.5rem;
+			color: #000000;
+		}
+
+		.equ-info-line {
+			padding: 0px 16px;
+		}
+
+		.equ-info-line .mui-ellipsis {
+			line-height: 20px;
+		}
+
+		.equ-info-line .equ-title {
+			font-size: 1.6rem;
+		}
+
+		.equ-info-line .equ-sub {
+			margin-top: 4px !important;
+			margin-bottom: 0 !important;
+		}
+
+		.equ-info-line .equ-state {
+			color: #000000;
+			border: 1px solid #000;
+			padding: 2px 10px;
+			border-radius: 5px;
+			margin: 0 10px 10px 0;
+			box-shadow: 2px 2px 3px #aaaaaa;
+		}
+
+		.avatar {
+			float: left;
+			width: 48px;
+			height: 48px;
+			border-radius: 0;
+			background-size: cover;
+		}
+
+		#slider {
+			height: 200px;
+		}
+
+		#slider .avatar {
+			width: 100%;
+			height: 200px;
+			background-size: cover;
+		}
+
+		 #slider img {
+			max-width: 100% !important;
+		}
+
+		.data-group .equ-info-line .opt~.body {
+			margin-right: 25vw;
+		}
+
+		#map {
+			margin-top: 10px;
+			width: 100%;
+			height: 200px;
+		}
+	</style>
+</head>
+
+<body ng-controller="EquDetailsExternalController">
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left">设备详情</a>
+	</header>
+	<div class="mui-scroll-wrapper md-info-page" style="display: none;" ng-class="{'mui-block':isLoad}">
+		<div class="mui-content">
+			<div id="slider" class="mui-slider">
+				<div class="mui-slider-group mui-slider-loop" ng-click="previewImages()">
+					<!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
+					<div class="mui-slider-item mui-slider-item-duplicate">
+						<img class="avatar images" src="../../images/imgPre.png" ng-style="{'background-image':'url(' + SmallImgService + EqInfo.Attach[0].FilePath +'&w=400&h=200)'}"
+						 ng-if="EqInfo.Attach&&EqInfo.Attach.length>0" fullpath="{{SmallImgService+EqInfo.Attach[0].FilePath+'&w=200'}}"></img>
+						<img class="avatar" src="http://pic.maidiyun.com/cGtnL2xvZ28=_0_200x200.jpg" ng-if="EqInfo.Attach&&EqInfo.Attach.length==0"></img>
+					</div>
+					<div class="mui-slider-item" ng-if="EqInfo.Attach&&EqInfo.Attach.length>0" ng-repeat="obj in EqInfo.Attach">
+						<img class="avatar images" src="../../images/imgPre.png" ng-style="{'background-image':'url(' + SmallImgService + obj.FilePath +'&w=400&h=200)'}"
+						 ng-if="EqInfo.Attach&&EqInfo.Attach.length>0" fullpath="{{SmallImgService+obj.FilePath+'&w=0'}}"></img>
+					</div>
+					<div class="mui-slider-item" ng-if="EqInfo.Attach&&EqInfo.Attach.length==0">
+						<img class="avatar" src="http://pic.maidiyun.com/cGtnL2xvZ28=_0_200x200.jpg"></img>
+					</div>
+					<!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+					<div class="mui-slider-item mui-slider-item-duplicate">
+						<img class="avatar" src="../../images/imgPre.png" ng-style="{'background-image':'url(' + SmallImgService + EqInfo.Attach[0].FilePath +'&w=400&h=200)'}"
+						 ng-if="EqInfo.Attach&&EqInfo.Attach.length>0" fullpath="{{SmallImgService+EqInfo.Attach[0].FilePath+'&w=200'}}">
+						</img>
+						<img class="avatar" src="http://pic.maidiyun.com/cGtnL2xvZ28=_0_200x200.jpg" ng-if="EqInfo.Attach&&EqInfo.Attach.length==0"></img>
+					</div>
+				</div>
+				<div class="mui-slider-indicator">
+					<div class="mui-indicator" ng-repeat="index in EqInfo.Attach track by $index" ng-if="EqInfo.Attach&&EqInfo.Attach.length>1"
+					 ng-class="{'mui-active':$index==0}"></div>
+				</div>
+			</div>
+		</div>
+		<ul class="data-group">
+			<li class="data-row equ-info-line">
+				<p class="opt md-icon">
+					<span class="equ-state" ng-bind="SteteDesc[eqState.State]"></span>
+				</p>
+				<div class="mui-clearfix body">
+					<div class="mui-ellipsis equ-title " ng-bind="EqInfo.EqName "></div>
+					<p class="mui-ellipsis equ-sub " ng-bind="EqInfo.SkuName"></p>
+				</div>
+			</li>
+		</ul>
+		<div class="mui-content">
+			<ul class="data-group " ng-show="eqState.State==1 ">
+				<li class="data-row " ng-if="eqState.UseMan ">
+					<label>使用人</label>
+					<div class="body ">
+						<span ng-bind="eqState.UseMan "></span>
+					</div>
+				</li>
+				<li class="data-row " ng-if="eqState.UseLinkPhone " ng-click="call(eqState.UseLinkPhone)">
+					<label>联系电话</label>
+					<p class="opt md-icon icon-tel"></p>
+					<div class="body ">
+						<span ng-bind="eqState.UseLinkPhone "></span>
+					</div>
+				</li>
+				<li class="data-row " ng-if="eqState.RepairMan ">
+					<label>维修人</label>
+					<div class="body ">
+						<span ng-bind="eqState.RepairMan "></span>
+					</div>
+				</li>
+				<li class="data-row " ng-if="eqState.RepairLinkPhone " ng-click="call(eqState.RepairLinkPhone)">
+					<label>联系电话</label>
+					<p class="opt md-icon icon-tel"></p>
+					<div class="body ">
+						<span ng-bind="eqState.RepairLinkPhone "></span>
+					</div>
+				</li>
+				<li class="data-row " ng-if="eqState.MaintainMan ">
+					<label>保养人</label>
+					<div class="body ">
+						<span ng-bind="eqState.MaintainMan "></span>
+					</div>
+				</li>
+				<li class="data-row " ng-if="eqState.MaintainLinkPhone " ng-click="call(eqState.MaintainLinkPhone)">
+					<label>联系电话</label>
+					<p class="opt md-icon icon-tel"></p>
+					<div class="body ">
+						<span ng-bind="eqState.MaintainLinkPhone "></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>设备位置</label>
+					<div class="body">
+						<span ng-bind="EqInfo.Province | locationfilter:EqInfo.City:EqInfo.District:EqInfo.Address:EqInfo.Street"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group " ng-show="eqState.State==4 ">
+				<li class="data-row " ng-if="eqState.FreeRemark">
+					<label>设备说明</label>
+					<div class="body ">
+						<span ng-bind="eqState.FreeRemark"></span>
+					</div>
+				</li>
+				<li class="data-row " ng-if="eqState.FreeQuotation>0">
+					<label>费用</label>
+					<div class="body">
+						<span ng-bind="eqState.FreeQuotation + ' 元'"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="eqState.FreeLinkMan">
+					<label>联系人</label>
+					<div class="body">
+						<span ng-bind="eqState.FreeLinkMan"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="eqState.FreeLinkPhone" ng-click="call(eqState.FreeLinkPhone)">
+					<label>联系电话</label>
+					<p class="opt md-icon icon-tel"></p>
+					<div class="body">
+						<span ng-bind="eqState.FreeLinkPhone"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>设备位置</label>
+					<div class="body">
+						<span ng-bind="EqInfo.Province | locationfilter:EqInfo.City:EqInfo.District:EqInfo.Address:EqInfo.Street"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group" ng-show="eqState.State==3">
+				<li class="data-row" ng-if="eqState.Remark">
+					<label>设备说明</label>
+					<div class="body">
+						<span ng-bind="eqState.Remark"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="eqState.ServiceLife>0">
+					<label>使用寿命</label>
+					<div class="body">
+						<span ng-bind="eqState.ServiceLife + ' 年'"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="eqState.LinkPhone">
+					<label>联系人</label>
+					<div class="body">
+						<span ng-bind="eqState.Linkman"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="eqState.LinkPhone" ng-click="call(eqState.LinkPhone)">
+					<label>联系电话</label>
+					<p class="opt md-icon icon-tel"></p>
+					<div class="body">
+						<span ng-bind="eqState.LinkPhone"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="eqState.PurchasePrice>0">
+					<label>购入价格</label>
+					<div class="body">
+						<span ng-bind="eqState.PurchasePrice + ' 元'"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="eqState.SellingPrice>0">
+					<label>出售价格</label>
+					<div class="body">
+						<span ng-bind="eqState.SellingPrice + ' 元'"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="eqState.TraitLable">
+					<label>特征标签</label>
+					<div class="body">
+						<span class="mui-pull-left" style="border: 1px solid #007AFF;padding: 2px 10px;border-radius: 5px;margin: 0 10px 10px 0;"
+						 ng-repeat="sp in eqState.TraitLable.split(',')" ng-bind="sp"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>设备位置</label>
+					<div class="body">
+						<span ng-bind="EqInfo.Province | locationfilter:EqInfo.City:EqInfo.District:EqInfo.Address:EqInfo.Street"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<li class="data-row" ng-click="openCompInfo(EqInfo.CompID)">
+					<label>所属企业</label>
+					<p class="opt md-icon icon-right"></p>
+					<div class="body mui-ellipsis" ng-bind="EqInfo.CompName">
+					</div>
+				</li>
+				<li class="data-row" ng-click="chat()" ng-show="EqInfo.PersonLiableID">
+					<label>设备负责人</label>
+					<p class="opt md-icon icon-chat-single"></p>
+					<div class="body mui-ellipsis">
+						<span ng-bind="EqInfo.PersonLiableName"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-click="openCompInfo(EqInfo.CompID,3)">
+					<label>企业客服</label>
+					<p class="opt md-icon icon-right"></p>
+					<div class="body mui-ellipsis">
+						咨询
+					</div>
+				</li>
+				<li class="data-row" ng-show="Juli>0">
+					<label>距您</label>
+					<div class="body mui-ellipsis">
+						<span ng-bind="(Juli/1000)+'公里'"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group" ng-if="EqInfo.Params.length>0">
+				<p class="data-group-tip">设备参数</p>
+				<li class="data-row" ng-repeat="param in EqInfo.Params">
+					<label ng-bind="param.ParamName" style="word-break: break-all;word-wrap:break-word;"></label>
+					<div class="body" style="margin-left: 8px;">
+						<span ng-bind="param.ParamValue"></span>
+					</div>
+				</li>
+			</ul>
+			<div id="map">
+
+			</div>
+		</div>
+	</div>
+	<!--无网络或请求失败重试-->
+	<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+	<script type="text/javascript" src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/rpc.js"></script>
+	<script type="text/javascript" src="../message/transMessage.js"></script>
+	<script type="text/javascript" src="https://api.map.baidu.com/api?v=3.0&ak=W6WIQmkWMM7fHZ1bQzONDGwimUikfaPU"></script>
+	<script>
+		app.controller("EquDetailsExternalController", ["$scope", "AuthService", "UtilsService", "ApiService", "DataService",
+			"Loading", "ChatUserService", "DatePickerService", "$Modal", "BillService", "RPCObserver", "$filter",
+			"ShareLogService", "CacheService",
+			function ($scope, AuthService, UtilsService, ApiService, DataService, Loading, ChatUserService, DatePickerService,
+				$Modal, BillService, RPCObserver, $filter, ShareLogService, CacheService) {
+				$scope.equUserData = ""; //登录的设备详情信息
+				//相关和详细信息tab
+				$scope.TabType = "1";
+				$scope.SmallImgService = ApiService.Api47 + '/api/v1/BillFile/DownLoadFile?filePath=';
+				$scope.BigImgService = ApiService.Down + '/';
+				//设备编号
+				$scope.EqID = query("equid");
+				$scope.EqInfo = {};
+				$scope.eqState = {};
+				$scope.Juli = query('Juli') || 0;
+				$scope.SteteDesc = {
+					"1": "正常",
+					"4": "空闲",
+					"3": "二手",
+					"7": "故障",
+					"11": "租赁",
+					"9": "回收"
+				}
+				var _curUser = CacheService.get("user");
+
+				//无网络或请求失败重试
+				$scope.retryModal = {
+					msg: "设备",
+					retry: getUserData,
+					state: ''
+				}
+
+				//初始化
+				function init() {
+					Loading.show();
+					loadEqInfo();
+				};
+
+				var curUser = "";
+				//设备人员选择
+				function getUserData() {
+					getEqInfoForModifyState();
+					AuthService.getAuth().then(function (res) {
+						curUser = res;
+						$scope.equUserData = res;
+						init();
+					});
+				}
+
+				$scope.call = function (phone) {
+					plus.device.dial(phone, false);
+					return false;
+				}
+
+				getUserData();
+
+				//获取设备信息
+				function loadEqInfo() {
+					var url = ApiService.Api50 + "/api/v1/Equipment/GetEqInfoById/" + $scope.EqID;
+					DataService.get(url).then(function (res) {
+						$scope.retryModal.state = '';
+						Loading.hide();
+						$scope.isLoad = true;
+						if (res) {
+							res.Attach.forEach(function (item) {
+								item.FilePath = item.FilePath.replace(/\\/g, "\\\/");
+							})
+							$scope.EqInfo = res;
+							bMap.renderMarker(res.MapLng, res.MapLat);
+						}
+						setTimeout(function () {
+							$scope.previewImages();
+							var sliderDom = document.querySelector("#slider");
+							if (sliderDom && $scope.EqInfo.Attach.length !== 0 && $scope.EqInfo.Attach.length !== 1) {
+								mui(sliderDom).slider({
+									interval: 1500
+								});
+							}
+						}, 500);
+
+					}, function (error) {
+						$scope.isLoad = false;
+						$scope.retryModal.state = error.State;
+					})
+				};
+
+				var bMap = {
+					container: "map",
+					map: "",
+					zoom: 4,
+					center: new BMap.Point(103.94863, 36.775374),
+					init: function () {
+						this.map = new BMap.Map(this.container, {
+							enableDragging: true,
+							enableDblclickZoom: true,
+							enablePinchToZoom: true,
+							enableInertialDragging: true,
+							enableMapClick: true
+						});
+						this.map.centerAndZoom(this.center, this.zoom);
+
+						this.controler.add();
+
+						this.getLocation();
+
+					},
+					controler: {
+						zoom: "",
+						add: function () {
+							var top_right_navigation = new BMap.NavigationControl({
+								anchor: BMAP_ANCHOR_TOP_RIGHT,
+								type: BMAP_NAVIGATION_CONTROL_SMALL
+							}); //右
+							bMap.map.addControl(top_right_navigation);
+						}
+					},
+					location: {
+						marker: "",
+						circle: ""
+					},
+					getLocation: function (callback) {
+						UtilsService.getLocation().then(function (res) {
+							var point = new BMap.Point(res.lng, res.lat);
+							var myIcon = new BMap.Icon(
+								"https://api.map.baidu.com/images/geolocation-control/point/position-icon-14x14.png", new BMap.Size(14,
+									14))
+							var marker = new BMap.Marker(point, {
+								icon: myIcon
+							});
+
+							bMap.location.marker = marker;
+							bMap.map.addOverlay(marker);
+							typeof (callback) == "function" && callback();
+						}, function () {
+
+						});
+					},
+					renderMarker: function (mapLng, mapLat) {
+						var point = new BMap.Point(mapLng, mapLat);
+						var marker = new BMap.Marker(point);
+						bMap.map.addOverlay(marker);
+
+						var polyline = new BMap.Polyline([this.location.marker.point, point], {
+							strokeColor: "blue",
+							strokeWeight: 2,
+							strokeOpacity: 0.7
+						}); //定义折线
+						bMap.map.addOverlay(polyline); //添加折线到地图上
+
+						setTimeout(function () {
+							var viewPort = bMap.map.getViewport(polyline.getBounds());
+							bMap.map.setViewport(viewPort);
+						}, 200)
+					}
+				};
+
+
+				bMap.init();
+
+
+				//获取设备状态信息
+				function getEqInfoForModifyState() {
+					var url = ApiService.Api50 + "/api/v1/Equipment/GetEqInfoForModifyState?eqId=" + $scope.EqID;
+					DataService.get(url).then(function (res) {
+						$scope.eqState.State = res.State;
+						switch ($scope.eqState.State) {
+							case 1:
+								$scope.eqState.UseMan = res.UseMan;
+								$scope.eqState.UseLinkPhone = res.UseLinkPhone;
+								$scope.eqState.MaintainMan = res.MaintainMan;
+								$scope.eqState.MaintainLinkPhone = res.MaintainLinkPhone;
+								$scope.eqState.RepairMan = res.RepairMan;
+								$scope.eqState.RepairMan = res.RepairMan;
+								$scope.eqState.RepairLinkPhone = res.RepairLinkPhone;
+								break;
+							case 4:
+								$scope.eqState.FreeRemark = res.Remark;
+								$scope.eqState.FreeQuotation = res.HoursPrice;
+								$scope.eqState.FreeLinkMan = res.LinkMan;
+								$scope.eqState.FreeLinkPhone = res.LinkPhone;
+								break;
+							case 10:
+								$scope.eqState.Remark = res.Remark;
+								$scope.eqState.ServiceLife = String(res.ServiceLife);
+								$scope.eqState.Linkman = res.LinkMan;
+								$scope.eqState.LinkPhone = res.LinkPhone;
+								$scope.eqState.PurchasePrice = res.PurchasePrice;
+								$scope.eqState.SellingPrice = res.SellingPrice;
+								$scope.eqState.TraitLable = res.TraitLable;
+								break;
+							default:
+								break;
+						}
+					})
+				}
+
+				//预览
+				$scope.previewImages = function () {
+					var images = [].slice.call(document.querySelectorAll('.images'));
+					images.splice(0, 1)
+					var urls = [];
+					images.forEach(function (item) {
+						console.log(item.getAttribute("fullpath").replace(/\\/g, "/"))
+						item.getAttribute("fullpath") && urls.push(item.getAttribute("fullpath").replace(/\\/g, "/"));
+					});
+					mui('body').off('tap', '.images');
+					mui('body').on('tap', '.images', function () {
+						var index = images.indexOf(this);
+						if (index < 0) {
+							var index = 0;
+						}
+						plus.nativeUI.previewImage(urls, {
+							current: index,
+							loop: true,
+							indicator: 'number'
+						});
+					});
+				}
+
+				//聊天
+				$scope.chat = function () {
+					ChatUserService.tap({
+						chatId: $scope.EqInfo.PersonLiableID,
+						chatName: $scope.EqInfo.PersonLiableName,
+						hasLogo: $scope.EqInfo.ULogoIsExist,
+						chatCompId: $scope.EqInfo.PersonLiableCompID
+					});
+				};
+
+				$scope.openCompInfo = function (compId, tabIdx) {
+					var tab = "";
+					if (tabIdx) {
+						tab += "&tabidx=" + tabIdx
+					}
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'complib-index.html',
+						url: '../complib/index.html?compid=' + compId + tab
+					});
+				};
+
+				var mui_back = mui.back;
+				mui.back = function () {
+					if ($Modal.modals().length > 0) {
+						$Modal.close();
+						return;
+					}
+					mui_back()
+				}
+
+			}
+		]);
+
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+		});
+	</script>
+</body>
+
+</html>

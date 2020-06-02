@@ -1,0 +1,127 @@
+<ul class="data-group md-list" style="margin-top: 0px;">
+	<li class="mui-table-view-cell data-row mui-block" ng-repeat="item in model">
+		<i class="mui-pull-left font-18" ng-class="{'icon-round color-gray':item.ID!=selectedId,'icon-roundcheckfill color-blue ':item.ID==selectedId}" ng-if="action=='select'"></i>
+		<div class="bodyTxt" ng-click="tap(item)">
+			<p class="recordTXT mui-ellipsis-2" style="margin-bottom: 10px;" ng-bind="item[options.mapping.IsHasAudio] | formatFaultInfo:item[options.mapping.AudioLength]:item[options.mapping.Description]"></p>
+			<div class="bodyDiv">
+				<img src="../../images/imgPre.png" ng-style="{'background-image':'url('+ (item | getProdLogo:40:0) +')'}" class="imgslist" />
+				<div>
+					<p class='bodyP01 mui-ellipsis' ng-bind="item[options.mapping.ProdName]"></p>
+					<p class='bodyP02'><span class="faultySpan01 mui-ellipsis" ng-bind="item[options.mapping.SkuName]"></span><span class="faultySpan01 mui-ellipsis" ng-if="item[options.mapping.ProdInnerCode]">/</span><span class="faultySpan01 mui-ellipsis" ng-bind="item[options.mapping.ProdInnerCode]"></span></p>
+				</div>
+			</div>
+			<p class="recordSign font-12">
+				<span style="max-width: 30vw;" ng-bind="item[options.mapping.CreateDate]"></span>
+				<span class="equFaultType" ng-bind="item[options.mapping.WorkOrderType]==2&&item[options.mapping.JobFrom]==1?'企业内部维修':item[options.mapping.CreateName]"></span>
+			</p>
+		</div>
+	</li>
+</ul>
+<style type="text/css">
+	.md-list .data-row {
+		padding: 10px 16px;
+	}
+	
+	.md-list .data-row i {
+		line-height: 114px;
+		margin-right: 10px;
+	}
+	
+	.recordTXT {
+		font-size: 1.5rem;
+		line-height: 17px;
+		color: #000000;
+		margin-bottom: 8px;
+		word-break: break-all;
+	}
+	
+	.recordSign {
+		margin-bottom: 0px;
+		font-size: 1.2rem;
+		line-height: 14px;
+		color: #AAAAAA;
+		/*CSS3弹性盒子*/
+		display: -ms-flex;
+		display: -webkit-flex;
+		display: flex;
+		-ms-flex-align: center;
+		-webkit-align-items: center;
+		-webkit-box-align: center;
+		align-items: center;
+	}
+	
+	.recordSign>span {
+		display: inline-block;
+		margin-right: 10px;
+	}
+	
+	.recordSign>span:last-child {
+		margin-right: 0;
+	}
+	
+	.equFaultType {
+		max-width: 50.0vw;
+		/*字符串截取*/
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		text-overflow: ellipsis;
+		-ms-text-overflow: ellipsis;
+	}
+	
+	i~.bodyTxt {
+		margin-left: 28px;
+	}
+	
+	.chekbox {
+		display: inline-block;
+		/*margin-right: 16px;*/
+		font-size: 20px;
+	}
+	
+	.bodyDiv {
+		padding: 10px;
+		margin-bottom: 10px;
+		border: 1px solid #F7F7F7;
+		background-color: #F7F7F7;
+	}
+	
+	.bodyDiv>img {
+		float: left;
+		width: 40px;
+		height: 40px;
+	}
+	
+	.bodyDiv>div {
+		margin-left: 50px;
+	}
+	
+	.bodyDiv .bodyP01 {
+		font-size: 1.5rem;
+		line-height: 17px;
+		color: #AAAAAA;
+		margin-bottom: 8px;
+	}
+	
+	.bodyDiv .bodyP02 {
+		margin-bottom: 0px;
+		line-height: 12px;
+	}
+	
+	.bodyDiv .faultySpan01 {
+		display: inline-block;
+		max-width: 30.0vw;
+		font-size: 1.2rem;
+		line-height: 14px;
+		color: #AAAAAA;
+		margin-right: 7px;
+	}
+	
+	.imgslist {
+		width: 40px;
+		height: 40px;
+		background-size: cover!important;
+	}
+</style>

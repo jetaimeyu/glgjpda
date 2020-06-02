@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<style type="text/css">
+			.mui-content {
+				background-color: transparent;
+			}
+			
+			.firstUL {
+				position: fixed;
+				top: 45px;
+				left: 0px;
+				right: 0px;
+				z-index: 99;
+			}
+			
+			.mui-active {
+				background-color: #FFF;
+			}
+			
+			.mui-table-view:before,
+			.mui-table-view:after,
+			.mui-table-view-cell:after {
+				height: 0px;
+			}
+			
+			.mui-table-view-cell {
+				padding: 8px 16px;
+			}
+			
+			.firstUL {
+				border-top: 1px solid #EEE;
+			}
+			
+			.firstLiBody {
+				height: 56px;
+				padding-top: 4px;
+				padding-left: 9px;
+			}
+			
+			.firstLiP01 {
+				font-size: 1.5rem;
+				line-height: 17px;
+				color: #000;
+				width: 70%;
+			}
+			
+			.firstLiP02,
+			.firstLiP03 {
+				font-size: 1.2rem;
+				line-height: 12px;
+				color: #AAA;
+				width: 70%;
+			}
+			
+			.firstLiP02 {
+				margin: 9px 0 3px 0!important;
+			}
+			
+			.Circle {
+				display: inline-block;
+				width: 11px;
+				height: 11px;
+				border-radius: 50%;
+				background-color: #CFCFCF;
+				position: absolute;
+				top: 13px;
+				left: -7px;
+			}
+			
+			.matPartDiv {
+				margin-top: 117px;
+			}
+			
+			.matPartDiv .currPart {
+				position: absolute;
+				right: 6px;
+			}
+			
+			.matPartDiv .bottomP {
+				text-align: center;
+				font-size: 1.2rem;
+				line-height: 1.2rem;
+				color: #3296FA;
+				padding: 8px 0 9px 0;
+				border-top: 1px solid #EAEAEA;
+			}
+			
+			.matPartDiv .mui-table-view-cell {
+				padding: 8px!important;
+			}
+			
+			.matPartDiv .dateLi {
+				padding-left: 2px!important;
+				position: static;
+			}
+			
+			.currPart {
+				font-size: 1rem;
+				line-height: 1rem;
+				padding: 4px 8px;
+				color: #FFF;
+				border-radius: 6px;
+				position: absolute;
+				top: 8px;
+				right: 16px;
+			}
+			
+			.currPartBgcolor01 {
+				background-color: #3296FA;
+			}
+			
+			.currPartBgcolor02 {
+				background-color: #1AAE12;
+			}
+			
+			.matPartDiv {
+				padding-left: 16px;
+			}
+			
+			.matPartDiv .mui-table-view {
+				padding-left: 8px;
+				padding-right: 10px;
+				border-left: 3px solid #CFCFCF;
+				background-color: transparent;
+			}
+			
+			.matPartDiv .liViewBody {
+				padding: 0px!important;
+				border-radius: 6px;
+				background-color: #FFF;
+			}
+			
+			.matPartDiv .liViewBody>div {
+				padding: 8px!important;
+			}
+			
+			.imgslist {
+				float: left;
+				width: 56px;
+				height: 56px;
+				background-size: cover!important;
+			}
+			
+			.historySpan {
+				margin-top: 46px;
+				padding: 16px 16px 6px 6px;
+				zoom: 1;
+			}
+			
+			.historySpan:after {
+				content: "\0020";
+				display: block;
+				height: 0;
+				clear: both;
+			}
+			
+			.historySpan>span {
+				float: left;
+				font-size: 1.3rem;
+				line-height: 1.3rem;
+				color: #323232;
+				padding: 7.5px 15px;
+				margin: 0 0 10px 10px;
+				border-radius: 6px;
+				background-color: #FFF;
+			}
+			
+			.search_input form input {
+				width: calc(100% - 139px);
+			}
+			
+			.search_input .icon-saoyisao {
+				padding: 15px 12px 15px 0;
+			}
+			
+			.search_input .icon-delete {
+				right: 90px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="searchMatPart">
+		<div class="search_input" ng-class="{'mui-block':domShow}" style="display: none;">
+			<form ng-submit="search.doSearch()">
+				<a class="mui-action-back mui-icon icon-back mui-pull-left"></a>
+				<input type="search" placeholder="请输入零配件编号" maxlength="50" ng-model="search.text">
+				<i class="icon-search-thin color-gray-dark"></i>
+				<i class="icon-delete color-gray" ng-click="search.deleteSearch()" ng-show='search.text'></i>
+				<span ng-click="search.doSearch()">搜索</span>
+				<i class="icon-saoyisao color-gray-dark" ng-click="scan()"></i>
+			</form>
+		</div>
+		<!--当前零配件-->
+		<ul class="mui-table-view firstUL" ng-class="{'mui-block':searchData.PartProdName}" style="display: none;">
+			<li class="mui-table-view-cell mui-media">
+				<div>
+					<img src="../../images/imgPre.png" ng-style="{'background-image':'url('+ (searchData | getProdLogo:56:56) +')'}" class="imgslist" />
+					<div class="mui-media-body firstLiBody">
+						<p class='mui-ellipsis firstLiP01' ng-bind="searchData.PartProdName"></p>
+						<p class='mui-ellipsis firstLiP02' ng-bind="'型号：'+searchData.PartSkuName"></p>
+						<p class='mui-ellipsis firstLiP03' ng-bind="'编号：'+searchData.PartProdInnerCode"></p>
+					</div>
+					<span class="currPart currPartBgcolor01">当前零配件</span>
+				</div>
+			</li>
+		</ul>
+		<div class="mui-content" ng-class="{'mui-block':domShow}" style="display: none;">
+			<div class="historySpan" ng-show="domShowHistory">
+				<span ng-repeat="his in search.history" ng-bind="his" ng-click="search.searchSpan(his)"></span>
+			</div>
+			<!--列表-->
+			<div class="matPartDiv" ng-class="{'mui-block':searchData.PartProdName}" style="display: none;">
+				<ul class="mui-table-view" ng-repeat="partItem in searchData.HostData">
+					<li class="mui-table-view-cell mui-media dateLi">
+						<span class="Circle"></span>
+						<p ng-bind="partItem.AssembleDate"></p>
+					</li>
+					<li class="mui-table-view-cell mui-media liViewBody" ng-click="partDetail(partItem.AssembleType,partItem.LinkID,partItem.ID)">
+						<div>
+							<img src="../../images/imgPre.png" ng-style="{'background-image':'url('+ (partItem | getProdLogo:56:56) +')'}" class="imgslist" />
+							<div class="mui-media-body firstLiBody">
+								<p class='mui-ellipsis firstLiP01' ng-bind="partItem.HostProdName"></p>
+								<p class='mui-ellipsis firstLiP02' ng-bind="'型号：'+partItem.HostSkuName"></p>
+								<p class='mui-ellipsis firstLiP03' ng-bind="'编号：'+partItem.HostProdInnerCode"></p>
+							</div>
+							<span class="currPart currPartBgcolor02">装配在</span>
+						</div>
+						<p class="bottomP" ng-bind="partItem.AssembleType|getViewTitle"></p>
+					</li>
+				</ul>
+			</div>
+			<md-no-data ng-show="!domShowHistory && !searchData.PartProdName" data-options="{type:'search'}">暂无数据</md-no-data>
+		</div>
+		<script src="../../js/angular.min.js"></script>
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("searchMatPart", ["$scope", "ApiService", "AuthService", "CacheService", "DataService", "UtilsService", "Loading", "$timeout", function($scope, ApiService, AuthService, CacheService, DataService, UtilsService, Loading, $timeout) {
+				$scope.domShow = true;
+				$scope.domShowHistory = true;
+				$scope.dateListDom = false;
+				$scope.searchData = {
+					"PartProdID": "",
+					"PartProdName": "",
+					"PartSkuID": "",
+					"PartSkuName": "",
+					"PartProdInnerCode": "",
+					"IsNew": "",
+					"HostData": []
+				}; //接口返回的所有维修
+				var userId = "";
+				AuthService.getAuth().then(function(res) {
+					userId = res.UserID;
+					$scope.search.getHistory();
+				});
+				//弹出键盘
+				showInput();
+				//扫一扫：除了扫到迈迪码显示innercode外，其他的都显示扫描的码的值 
+				$scope.scan = function() {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: "scan.html",
+						url: "../scan/scan.html",
+						extras: {
+							callback: "ScanBack",
+							type: "search_part"
+						}
+					});
+				};
+				$scope.search = {
+					text: "",
+					history: [],
+					getHistory: function() {
+						var temp = CacheService.get(userId + "part_search");
+						if(temp)
+							$scope.search.history = CacheService.get(userId + "part_search");
+					},
+					doSearch: function(flag) {
+						!flag && ($scope.search.text = document.querySelector("input").value.trim());
+						if(!$scope.search.text) {
+							mui.toast("请输入零配件编号！");
+							return;
+						}
+						Loading.show();
+						//关闭键盘
+						document.activeElement.blur();
+
+						var idx = $scope.search.history.indexOf($scope.search.text);
+						if(idx >= 0) {
+							$scope.search.history.splice(idx, 1);
+						}
+
+						//存储本地cach
+						if($scope.search.history.length == 10) {
+							$scope.search.history.splice(9, 1);
+						}
+
+						$scope.search.history = [$scope.search.text].concat($scope.search.history);
+
+						CacheService.set(userId + "part_search", $scope.search.history, true);
+						pullupRefresh();
+					},
+					//点击历史span搜索
+					searchSpan: function(eqIdentifier) {
+						$scope.search.text = eqIdentifier;
+						$timeout(function() {
+							$scope.search.doSearch();
+						}, 100)
+					},
+					//点击搜索x
+					deleteSearch: function() {
+						$scope.search.text = '';
+						$scope.searchData = {
+							"PartProdID": "",
+							"PartProdName": "",
+							"PartSkuID": "",
+							"PartSkuName": "",
+							"PartProdInnerCode": "",
+							"IsNew": "",
+							"HostData": []
+						};
+						$scope.domShowHistory = true;
+					}
+				};
+
+				function pullupRefresh() {
+					var url = ApiService.Api50 + "/api/v1/MatWorkOrder/GetAssembleList?newPartsNum=" + encodeURIComponent($scope.search.text);
+					DataService.get(url).then(function(res) {
+						$scope.searchData = res;
+						$scope.domShowHistory = false;
+						$scope.dateListDom = true;
+						Loading.hide();
+					});
+				};
+				RpcServer.expose("RPC_MatPartSearchRefresh", function() {
+					pullupRefresh();
+				})
+				//跳转详情
+				$scope.partDetail = function(AssembleType, LinkID, ID) {
+					if(AssembleType == 2) {
+						UtilsService.openWindow({
+							needLogin: true,
+							id: 'mat-part-info.html',
+							url: 'mat-part-info.html?id=' + LinkID
+						});
+					}
+					if(AssembleType == 1) {
+						UtilsService.openWindow({
+							needLogin: true,
+							id: 'assemble-info.html',
+							url: 'assemble-info.html?id=' + ID
+						});
+					}
+				};
+			}]);
+
+			app.filter("getViewTitle", function() {
+				return function(type) {
+					var title = '';
+					switch(type) {
+						case 1:
+							title = '装配';
+							break;
+						case 2:
+							title = '换件';
+							break;
+					}
+					return '查看' + title + '详情';
+				}
+			});
+
+			//扫码回调
+			function ScanBack(obj) {
+				var appElement = document.querySelector('[ng-controller=searchMatPart]');
+				var $scope = angular.element(appElement).scope();
+				obj = JSON.parse(obj);
+				if(obj.resType) {
+					if(obj.resInfo && !decodeURIComponent(obj.resInfo.InnerCode)) {
+						mui.toast("当前扫描" + (obj.resType == 2 ? "设备" : "产品") + "未设置零配件编号");
+						return;
+					}
+					$scope.search.text = decodeURIComponent(obj.resInfo.InnerCode).replace(/@squotes@/g, "'").replace(/@dquotes@/g, "\"");
+				} else {
+					$scope.search.text = obj.codeValue;
+				}
+				$scope.search.doSearch(true);
+			}
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+				var style = {
+					scrollIndicator: 'none'
+				};
+				mui.os.android && (style.softinputMode = 'adjustResize');
+				plus.webview.currentWebview().setStyle(style);
+			});
+		</script>
+	</body>
+
+</html>

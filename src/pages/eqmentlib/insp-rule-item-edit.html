@@ -1,0 +1,175 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/common.css">
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+	</head>
+
+	<body ng-controller="insplaneditController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">增加项目</a>
+		</header>
+		<div class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<ul class="data-group mt0">
+				<li class="data-row must">
+					<label>点检项名称</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="data.ItemName" lenlimit="50" class="needsclick" placeholder="请输入点检项名称"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row must">
+					<label>记录方式</label>
+					<p class="opt md-icon font-15" ng-click="chooseType()">
+						<span class="icon-right" ng-hide="data.ID>0"></span>
+					</p>
+					<div class="body" ng-click="chooseType()">
+						<span ng-bind="types[data.Type]" ng-if="data.Type"></span>
+						<span class="placeholder" ng-if="!data.Type">请选择记录方式</span>
+					</div>
+				</li>
+				<li class="data-row must" ng-if="isChoose">
+					<label>选择项</label>
+					<div class="body">
+						<div class="edit">
+							<div id="ItemValue" ng-model-div-text="data.ItemValue" lenlimit="50" class="needsclick must" placeholder="选项以|分割"></div>
+						</div>
+					</div>
+				</li>
+
+			</ul>
+			<div class="mui-content-padded">
+				<span class="mui-btn mui-btn-block" ng-click="save()">保存</span>
+			</div>
+		</div>
+	</body>
+	<script src="../../js/mui.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript">
+		app.controller("insplaneditController", ["$scope", "UtilsService","RPCObserver" , "ApiService", "DataService","Loading", function($scope, UtilsService,RPCObserver, ApiService, DataService,Loading) {
+
+			var cur_view = plus.webview.currentWebview();
+			$scope.data = cur_view.itemdata;
+
+			$scope.isLoad = true;
+
+			if($scope.data) {
+				if($scope.data.Type == 4 || $scope.data.Type == 101) {
+					$scope.isChoose = true;
+				} else {
+					$scope.isChoose = false;
+				}
+			} else {
+				$scope.isChoose = false;
+
+			}
+
+			//记录方式
+			$scope.types = {
+				4: '勾选',
+				2: '数字 ',
+				101: '列表',
+				19: '文字描述',
+			};
+
+			var types = [{
+				title: "勾选",
+				value: 4
+			}, {
+				title: "数字",
+				value: 2
+			}, {
+				title: "列表",
+				value: 101
+			}, {
+				title: "文字描述",
+				value: 19
+			}];
+
+			//选择记录方式
+			$scope.chooseType = function() {
+				if($scope.data.ID > 0) {
+					return
+				}
+				document.activeElement.blur();
+				UtilsService.actionSheet('记录方式', types).then(function(res) {
+					$scope.data.Type = res.value;
+
+					if($scope.data.Type == 4 || $scope.data.Type == 101) {
+
+						$scope.isChoose = true;
+						$scope.data.ItemValue = '';
+						document.getElementById('ItemValue').innerText = ""
+					} else {
+						$scope.isChoose = false;
+					}
+
+				});
+
+			};
+			
+
+			//保存
+			$scope.save = function() {
+				document.activeElement.blur();
+				if($scope.data.ItemName.trim() == '') {
+					mui.toast("请输入点检项名称");
+					return;
+				}
+				if(!$scope.data.Type) {
+					mui.toast("请选择记录方式");
+					return;
+				}
+				if(($scope.data.Type == 4 || $scope.data.Type == 101) && $scope.data.ItemValue.trim() == '') {
+					mui.toast("请输入选择项");
+					return;
+				}
+				//验证填字符长度
+				if(!checkLengthUtil.check()) {
+					return false;
+				}
+
+				if(cur_view.callback) {
+					cur_view.opener().evalJS(cur_view.callback + "(" + JSON.stringify($scope.data) + ")");
+					mui.back();
+				}else{
+					var _data = $scope.data
+					var url = ApiService.Api50 + "/api/v1/Equipment/SaveEqOverhaulStandardItem";
+					var postData = {
+						"ID": _data.ID,
+						"StandardID": _data.StandardID,
+						"ItemName":_data.ItemName,
+						"Type": _data.Type,
+						"ItemValue":_data.ItemValue,
+						"SortID": _data.SortID,
+						"FieldName":_data.FieldName
+					}
+					Loading.show()
+					DataService.post(url, postData).then(function(res){
+						Loading.hide()
+						RPCObserver.broadcast('refresh_mat_worklog_info') // 更新点检项目详情
+						RPCObserver.broadcast('refresh_insp_rule_lnfo') // 更新巡检标准详情页 巡检项目点检信息
+						mui.toast("保存成功！")
+						mui.back();
+					},function(err){
+						Loading.hide()
+					})
+				}
+			};
+
+		}]);
+
+		mui.plusReady(function() {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+		});
+	</script>
+
+</html>

@@ -1,0 +1,79 @@
+<!--故障维护 scz-->
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+	<link href="../../css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	<style type="text/css">
+		.data-group {
+			margin-top: 8px !important;
+		}
+
+		.data-group .data-row {
+			min-height: 30px;
+		}
+
+		.icon-dustbin:before {
+			margin-right: 10px;
+		}
+
+		.data-group .data-row:after {
+			height: 0;
+		}
+
+		.data-group .data-row .body {
+			padding: 9px 10px 5px 0px;
+		}
+
+		.data-group .data-row .body.datetime {
+			padding-bottom: 0;
+		}
+
+		.spare-item {
+			padding-left: 16px !important;
+		}
+	</style>
+</head>
+
+<body ng-controller="CompIntroController">
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left">草稿箱</a>
+	</header>
+	<div class="mui-content">
+		<ul class="md-tab" top="84">
+			<li class="md-tab-item" ng-class="'md-active'" href="mat-drafts-work-log.html" winid=""mat-drafts-work-log.html">工作日志</li>
+			<li class="md-tab-item" href="mat-drafts-prod-wx.html" winid="mat-drafts-prod-wx.html">故障维修</li>
+			<li class="md-tab-item" href="mat-drafts-prod-tx.html" winid="mat-drafts-prod-tx.html">安装调试</li>
+			<li class="md-tab-item" href="mat-drafts-dev-bx.html" winid="mat-drafts-dev-bx.html">设备报修</li> 
+		</ul>
+	</div>
+
+	<script type="text/javascript" src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/rpc.js"></script>
+	<script type="text/javascript">
+		app.controller("CompIntroController", ["$scope", "$filter", "AuthService", "ApiService", "DataService",
+			"UtilsService", "ChatUserService", "Loading", "RPCObserver", "ShareLogService", "CacheService",
+			function ($scope, $filter, AuthService, ApiService, DataService, UtilsService, ChatUserService, Loading,
+				RPCObserver, ShareLogService, CacheService) {
+
+				setTimeout(function () {
+					MdConfig.StartUsingTab();
+				}, 200);
+			}
+		]);
+
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+		});
+	</script>
+</body>
+
+</html>

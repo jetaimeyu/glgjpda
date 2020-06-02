@@ -1,0 +1,135 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../css/common.css" />
+		<link rel="stylesheet" href="../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="../css/swiper-4.2.2.min.css" />
+		<link rel="stylesheet" href="work/work.css" />
+		<style>
+			.img-add {
+				position: absolute;
+				top: -6px;
+				right: 14px;
+				border-radius: 50%;
+				font-size: 16px;
+				height: 16px;
+				width: 16px;
+				line-height: 16px;
+				text-align: center;
+				color: #007aff;
+				background: #ffffff;
+			}
+			
+			.img-remove {
+				position: absolute;
+				top: -6px;
+				right: 14px;
+				color: #fb6664;
+				background: #ffffff;
+				border-radius: 50%;
+				font-size: 16px;
+				height: 16px;
+				width: 16px;
+				line-height: 16px;
+				text-align: center;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="WorkController">
+
+		<div class="mui-content" ng-class="{'mui-block':loaded}" style="display: none;">
+			<div class="mui-banner" ng-if="user.CompID>0">
+				<div class="swiper-container" id="swiper1">
+					<div class="swiper-wrapper">
+						<div class="swiper-slide" ng-repeat="item in picPath track by $index" data-swiper-autoplay="1500">
+							<div class="ban-img">
+								<img src="{{item}}" />
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="broadcast">
+					<div class="broadcast-list">
+						<span class="broadcast-img">
+					<img src="../images/broscat_notice.png
+						"/>
+					</span>
+						<div class="swiper-container swiper2 " id="swiper2">
+							<div ng-if="newslist.length==0" ng-click="gomore()">暂无公告</div>
+							<div class="swiper-wrapper">
+								<div class="swiper-slide swiper-slide2" ng-repeat="item in newslist" ng-if="newslist.length>0" ng-bind="item.Title" ng-click="gonewsinfo(item.ID)"></div>
+							</div>
+						</div>
+					</div>
+					<span class="more" ng-click="gomore()" ng-if="newslist.length>0">更多</span>
+				</div>
+			</div>
+			<div class="business-details mui-grid-view mui-grid-9" id="ul_imgs">
+				<!--<div class="application-title" style="padding-top: 0!important;">
+					<span>常用应用<span ng-show="showTips" style="color: #b5b5b5;line-height: 16px;font-weight: normal;">（按住拖动调整排序）</span></span>
+					<span class="float-right"></span>
+				</div>-->
+				<div ng-repeat="app in CommonApp track by $index" ng-style="{'margin-top':($index>3)?'25px':'0'}" ng-click="tap(app.action)" class="application-list mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 drag-handle">
+					<span ng-if="app.action=='workDesk' || app.action=='workTodoPer'" class="mui-badge" id="span_todo" style="display:none;" data-value="0">0</span>
+					<span ng-if="app.action=='workRecord'" class="mui-badge" id="span_badge_log" style="display:none;" data-value="0">0</span>
+					<img ng-src="{{app.icon}}" />
+					<div ng-bind="app.title"></div>
+				</div>
+			</div>
+			<div class="common-application">
+				<div class="application-title">
+					<span>我的应用</span>
+					<span class="float-right"></span>
+				</div>
+				<div class="application-1f mui-grid-view mui-grid-9">
+					<!--<div ng-click="tap('crm')" ng-if="user.CompID" class="application-list mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+						<img src="../images/customermanagement.png" />
+						<div>客户管理</div>
+					</div>-->
+					<div ng-repeat="app in OtherApp" ng-show="app.hasAuth" ng-style="{'margin-top':($index>(user.CompID?3:4))?'25px':'0'}" ng-click="tap(app.action)" class="application-list mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+						<img ng-src="{{app.icon}}" />
+						<div ng-bind="app.action=='devicemanagement'?'资产管理':app.title" ></div>
+					</div>
+					<div id="edit" ng-style="{'margin-top':(OtherApp.length>(user.CompID?3:4))?'25px':'0'}" class="application-list mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+						<img src="../images/Plus.png" />
+						<div>添加</div>
+					</div>
+				</div>
+			</div>
+			<!--<div class="common-application" ng-if="mod.menus.length!=0" ng-repeat="mod in Mods">
+				<div class="application-title">
+					<span ng-bind="mod.title"></span><span ng-show="showTips" style="color: #b5b5b5;line-height: 16px;font-weight: normal;font-size: 13px;">（点击添加到我的应用）</span>
+					<span class="float-right"></span>
+				</div>
+				<div class="application-1f mui-grid-view mui-grid-9">
+					<div ng-repeat="app in mod.menus" ng-style="{'margin-top':($index>3)?'25px':'0'}" ng-click="tap(app.action)" class="application-list mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+						<img ng-src="{{app.icon}}" />
+						<div ng-bind="app.title"></div>
+						<i ng-show="showTips" class="img-add icon-add-active" ng-click="addAction(app,$event)"></i>
+						<i ng-show="showTips&&app.hasAdd" class="img-remove icon-delete-active-2" ng-click="delAction(app,$event)"></i>
+					</div>
+				</div>
+			</div>-->
+		</div>
+
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/angular.min.js"></script>
+		<script src="../js/common.js"></script>
+		<script src="../js/utils.js"></script>
+		<script src="../js/rpc.js"></script>
+		<script src="../js/sortable-edit.js"></script>
+		<script src="work/work.js"></script>
+		<script src="../libs/swiper-4.2.2.min.js"></script>
+	</body>
+	<script>
+		
+		
+	</script>
+
+</html>

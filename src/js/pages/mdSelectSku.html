@@ -1,0 +1,99 @@
+<div class="slt-sku">
+	<img class="size60 float-left border-f2 bg-f2 mr10" src="{{imgUrl}}/prod/logo/{{prodid}}_60x60.jpg" />
+	<div class="head">
+		<p class="font-15 color-black" ng-bind="prodname"></p>
+		<p class="font-12">型号：<span ng-class="{'color-red-md':sku&&sku.SkuName}">{{sku.SkuName?sku.SkuName:'--'}}</span></p>
+	</div>
+	<div class="content">
+		<div class="sku-row font-15" ng-repeat="param in allParams">
+			<div class="name color-gray-deep">{{param.ItemName}}</div>
+			<div class="params">
+				<span class="font-12" ng-class="{'selected':val.Selected,'disabled':val.Disabled}" ng-repeat="val in param.Values" ng-click="selectParam(param,val)">{{val.Value}}</span>
+			</div>
+		</div>
+	</div>
+</div>
+<style>
+	.slt-sku {
+		height: 70vh;
+		margin: -20px -10px -20px -10px;
+	}
+	
+	.slt-sku img {
+		position: absolute;
+		top: -15px;
+		left: 10px;
+	}
+	
+	.slt-sku .head {
+		border-bottom: 1px solid #CCCCCC;
+		padding: 5px;
+	}
+	
+	.slt-sku .head p {
+		margin-left: 80px;
+		margin-bottom: 2px;
+		max-width: calc(100vw - 90px);
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		-o-text-overflow: ellipsis;
+		overflow: hidden;
+		display: block;
+	}
+	
+	.slt-sku .content {
+		width: 100%;
+		max-height: calc(70vh - 60px);
+		-webkit-overflow-scrolling: touch;
+		overflow-y: auto;
+		overflow-x: hidden;
+		padding: 5px 5px 5px 10px;
+	}
+	
+	.slt-sku .content .sku-row {
+		display: flex;
+		flex-direction: row;
+		align-items: baseline;
+	}
+	
+	.slt-sku .content .sku-row .name {
+		width: 80px;
+		line-height: 20px;
+		height: 20px;
+		display: table;
+		white-space: normal;
+		word-break: break-all;
+	}
+	
+	.slt-sku .content .sku-row .params {
+		display: flex;
+		flex-wrap: wrap;
+		flex-direction: row;
+		line-height: 20px;
+		margin-left: 10px;
+	}
+	
+	.slt-sku .content .sku-row .params span {
+		display: inline-block;
+		border: 1px solid #CCCCCC;
+		padding: 0 8px;
+		flex-grow: 0;
+		margin: 5px 10px 5px 0px;
+		max-width: calc(100vw - 110px);
+		white-space: normal;
+		word-break: break-all;
+		/*white-space: nowrap;
+		text-overflow: ellipsis;
+		-o-text-overflow: ellipsis;
+		overflow: hidden;*/
+	}
+	
+	.slt-sku .content .sku-row .params .selected {
+		border-color: #DC0000;
+	}
+	
+	.slt-sku .content .sku-row .params .disabled {
+		border: 1px dotted #cccccc;
+		background: #f2f2f2;
+	}
+</style>

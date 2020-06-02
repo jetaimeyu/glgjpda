@@ -1,0 +1,180 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style>
+			.data-group:first-child {
+				margin-top: 0;
+			}
+			
+			.md-icon {
+				color: #323232!important;
+				padding-right: 17px!important;
+			}
+			
+			.icon-right {
+				color: #AEAEAE;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="PartEditController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">物料信息</a>
+		</header>
+		<div class="mui-scroll-wrapper">
+			<ul class="data-group">
+				<li class="data-row mui-table-view-cell must" ng-click="selectProdSkuPage()">
+					<label>物料名称</label>
+					<p class="opt md-icon font-15">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body">
+						<span class="placeholder" ng-if="!pickNewItem.MaterialName">请选择物料</span>
+						<span id="MaterialName" ng-bind="pickNewItem.MaterialName" ng-show="pickNewItem.MaterialName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>规格型号</label>
+					<div class="body">
+						<span class="placeholder" ng-if="!pickNewItem.Spec">请选择物料</span>
+						<span id="Spec" ng-bind="pickNewItem.Spec" ng-show="pickNewItem.Spec"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>图号</label>
+					<div class="body">
+						<span class="placeholder" ng-if="!pickNewItem.DwgNo">请选择物料</span>
+						<span id="DwgNo" ng-bind="pickNewItem.DwgNo" ng-show="pickNewItem.DwgNo"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<li class="data-row must">
+					<label>领料量</label>
+					<p class="opt md-icon font-15">
+						<span>件</span>
+					</p>
+					<div class="body">
+						<input type="number" maxlength="9" id="Nums" onkeyup="value=value.substr(0,9)" placeholder="请输入领料量" ng-value="pickNewItem.Nums" />
+					</div>
+				</li>
+				<li class="data-row">
+					<label>备注</label>
+					<div class="body">
+						<div class="edit">
+							<div id="Remark" class="needsclick" lenlimit="400" contenteditable="true" placeholder="请输入备注" ng-bind="pickNewItem.Remark"></div>
+						</div>
+					</div>
+				</li>
+			</ul>
+			<div class="mui-content-padded" ng-click="saveChange()">
+				<span class="mui-btn mui-btn-block">确认</span>
+			</div>
+		</div>
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script>
+			app.controller("PartEditController", ["$scope", "ApiService", "DataService", "AuthService", "UtilsService", function($scope, ApiService, DataService, AuthService, UtilsService) {
+				$scope.oneSave = true; //保存一次
+				$scope.pickNewItem = {
+					ID: 0,
+					MaterialName: '',
+					ProdID: '',
+					SkuID: '',
+					Spec: '',
+					DwgNo: '',
+					Nums: 1,
+					Remark: '',
+					IsDelete: 0
+				};
+				$scope.pickNewData = plus.webview.currentWebview().newPick;
+				if(!$scope.pickNewData) {
+					$scope.pickNewItem.ID = 0;
+				} else {
+					$scope.pickNewItem = $scope.pickNewData;
+				}
+				//选择型号
+				$scope.selectProdSkuPage = function() {
+					UtilsService.openWindow({
+						id: "problib-index.html",
+						url: "../problib/index.html?state=selsku",
+						extras: {
+							selectObj: {
+								ProdID: $scope.pickNewItem.ProdID,
+								SkuID: $scope.pickNewItem.SkuID
+							},
+							callback: 'sltProdSku'
+						}
+					})
+				};
+
+				$scope.saveChange = function() {
+					$scope.pickNewItem = {
+						ID: $scope.pickNewItem.ID,
+						ProdID : $scope.pickNewItem.ProdID,
+						SkuID : $scope.pickNewItem.SkuID,
+						MaterialName: replaceHTML(document.getElementById("MaterialName").innerText),
+						Spec: replaceHTML(document.getElementById("Spec").innerText),
+						DwgNo: replaceHTML(document.getElementById("DwgNo").innerText),
+						Nums: replaceHTML(document.getElementById("Nums").value),
+						Remark: replaceHTML(document.getElementById("Remark").innerText),
+						IsDelete: 0
+					};
+					if(!$scope.pickNewItem.MaterialName) {
+						mui.toast("物料名称不能为空！", {
+							duration: 1300,
+							type: 'div'
+						});
+						$scope.oneSave = true;
+						return false;
+					} else if(!/^[0-9]+$/.test($scope.pickNewItem.Nums) || $scope.pickNewItem.Nums <= 0) {
+						mui.toast("领料量为正整数！", {
+							duration: 1300,
+							type: 'div'
+						});
+						$scope.oneSave = true;
+						return false;
+					}
+					$scope.pickNewItem.Nums = parseInt($scope.pickNewItem.Nums);
+
+					if($scope.oneSave) {
+						$scope.oneSave = false; //保存一次
+						mui.back();
+						RpcClient.invoke("pick-newList.html", "RPC_PickNewItem", {
+							state: "main",
+							partData: $scope.pickNewItem,
+							index: plus.webview.currentWebview().newPickIndex === undefined ? '' : plus.webview.currentWebview().newPickIndex
+						});
+					}
+				}
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+
+			function sltProdSku(obj) {
+				var appElement = document.querySelector('[ng-controller=PartEditController]');
+				var $scope = angular.element(appElement).scope();
+				$scope.pickNewItem.MaterialName = obj.ProdName;
+				$scope.pickNewItem.ProdID = obj.ProdID;
+				$scope.pickNewItem.SkuID = obj.SkuID;
+				$scope.pickNewItem.Spec = obj.SkuName;
+				$scope.pickNewItem.SkuID = obj.SkuID;
+				$scope.pickNewItem.DwgNo = obj.MatCode;
+				$scope.$apply();
+			}
+		</script>
+	</body>
+
+</html>

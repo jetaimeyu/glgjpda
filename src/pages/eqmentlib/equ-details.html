@@ -1,0 +1,1337 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="equ-details.css" />
+		<!--<link rel="stylesheet" href="../../css/mui.previewimage.css" />-->
+	</head>
+
+	<body ng-controller="EquDetailsController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">设备详情</a>
+			<a class="menu-more icon-more right-menu-icon-detail" href="#popover" id="openPopover" style="display: none;" ng-class="{'mui-block':isLoad}" ng-if="(['Q9','Q14','Q5'] | hasAuth:EqInfo.PersonLiableID)&&isScrap!='true'"></a>
+			<i class="mui-pull-right menu-more-share icon-share" ng-click="goShare()" style="display: none;" ng-if="equUserData.CompID>0&&isScrap!='true'" ng-class="{'mui-block':isLoad}"></i>
+		</header>
+		<div class="mui-scroll-wrapper md-info-page" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<!-- <div class="network-equipment" ng-if="EqInfo.MDCode">
+				已绑定固定资产铭牌
+			</div> -->
+			<!--<div class="eqmentlist" ng-if="EqInfo.Attach.length>0&&EqInfo.Attach.length<3">
+				<div style="float: left;margin-right: 10px;height: 78px;">
+					<div class="imgslist">
+						<span class="img-placeholder">设备图片</span>
+					</div>
+				</div>
+				<div class="eqmentimgs" ng-repeat="pic in EqInfo.Attach">
+					<img src="../../images/imgPre.png" ng-style="{'background-image':'url(' + SmallImgService + (pic.FilePath | filePathReg) +'&w=100)'}" data-preview-src="{{BigImgService+pic.FilePath}}" data-preview-group="1" class="imgslist" />
+				</div>
+			</div>
+			<div class="eqmentlist" ng-if="EqInfo.Attach.length>0&&EqInfo.Attach.length>2" style="overflow:auto;">
+				<div style="width:18000px;">
+					<div class="eqmentimgs" ng-repeat="pic in EqInfo.Attach">
+						<img src="../../images/imgPre.png" ng-style="{'background-image':'url(' + SmallImgService + (pic.FilePath | filePathReg) +'&w=100)'}" data-preview-src="{{BigImgService+pic.FilePath}}" data-preview-group="2" class="imgslist" />
+					</div>
+				</div>
+			</div>-->
+			<ul class="data-group listnames">
+				<li class="data-row">
+					<label>设备编号</label>
+					<div class="body">
+						<span ng-bind="EqInfo.EqIdentifier"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>设备名称</label>
+					<div class="body">
+						<span ng-bind="EqInfo.EqName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>设备型号</label>
+					<div class="body">
+						<span ng-bind="EqInfo.SkuName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>设备负责人</label>
+					<p class="vertical-right float-right" ng-if="EqInfo.PersonLiableID && EqInfo.PersonLiableID!=equUserData.UserID"></p>
+					<p class="opt md-icon font-15" ng-if="EqInfo.PersonLiableID && EqInfo.PersonLiableID!=equUserData.UserID" ng-click="chat()">
+						<span class="icon-chat-single"></span>
+					</p>
+					<div class="body mui-ellipsis" style="max-width: 45%;">
+						<span ng-bind="EqInfo.PersonLiableName"></span>
+					</div>
+				</li>
+				<!--<li class="data-row" ng-if="equUserData.CompID>0&&isScrap!='true'">
+					<label>下次巡检日期</label>
+					<div class="body">
+						<span ng-bind="EqInfo.NextRepairDate||'未设置'"></span>
+						<span class="float-right setting" ng-click="setNextReDate()" ng-if="('Q5' | hasAuth:EqInfo.PersonLiableID:EqInfo.PersonLiableCompID)&&isScrap!='true'">设置</span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="equUserData.CompID>0&&isScrap!='true'">
+					<label>下次保养日期</label>
+					<div class="body">
+						<span ng-bind="EqInfo.NextMaintainDate||'未设置'"></span>
+						<span class="float-right setting" ng-click="setNextPrDate()" ng-if="('Q5' | hasAuth:EqInfo.PersonLiableID:EqInfo.PersonLiableCompID)&&isScrap!='true'">设置</span>
+					</div>
+				</li>-->
+				<li class="data-row" ng-click="openLog()" ng-if="('Q5' | hasAuth:EqInfo.PersonLiableID:EqInfo.PersonLiableCompID) && EqInfo.MDCode">
+					<label>设备日志</label>
+					<div class="body color-blue">
+						设备运转日志
+					</div>
+				</li>
+				<!-- <li class="data-row"> -->
+				<!-- <label>巡检标准</label> -->
+				<!-- <p class="opt md-icon setting" style="padding-right: 10px;" ng-click="setInspStandard(EqInfo)" ng-if="'Q5' | hasAuth:EqInfo.PersonLiableID:EqInfo.PersonLiableCompID">设置</p> -->
+				<!-- <div class="body"> -->
+				<!-- <span ng-bind="EqInfo.StandardInfo.Name||'未设置'"></span> -->
+				<!-- </div> -->
+				<!-- </li> -->
+			</ul>
+			<ul id="tab-type" class="md-tab data-group">
+				<li class="md-tab-item" ng-class="{'md-active':TabType=='1'}" href="#tab1">相关</li>
+				<li class="md-tab-item" ng-class="{'md-active':TabType=='2'}" href="#tab2">详细信息</li>
+				<li class="md-tab-item" ng-class="{'md-active':TabType=='3'}" href="#tab3">设备图册</li>
+				<li class="md-tab-item" ng-class="{'md-active':TabType=='4'}" href="#tab4" ng-show="isScrap!='true'">设备状态</li>
+				<li class="md-tab-item" ng-class="{'md-active':TabType=='5'}" href="#tab5">设备履历</li>
+				<li class="md-tab-item" ng-class="{'md-active':TabType=='6'}" href="#tab6" ng-show="isScrap=='true'">报废记录</li>
+			</ul>
+			<div id="tab1" ng-show="TabType=='1'">
+				<ul class="data-group mt0 eqtab">
+					<li class="data-row">
+						<label class="title">故障工单</label>
+						<p class="opt md-icon font-15" ng-click="tap('faultEdit')" ng-if="('Q9' | hasAuth)&&(equUserData.CompID>0||EqInfo.SourceMDCode)&&isScrap!='true'">
+							<span class="icon-add"></span>
+						</p>
+					</li>
+					<li class="data-row mui-table-view-cell mui-block" ng-click="tap('faultInfo')" ng-show="EqWorkOrderFailureInfo.Total>0">
+						<div class="body recordlist">
+							<span ng-show="EqWorkOrderFailureInfo.Data.ULogoIsExist" class="icon-item">
+							<div class="avatar" ng-style="{'background-image':'url('+ (EqWorkOrderFailureInfo.Data.CreateUserID|getUserLogo:48:0) +')'}"></div>
+							<!--<img class="avatar" ng-src="{{EqWorkOrderFailureInfo.Data.CreateUserID|getUserLogo:48:48}}" />-->
+						</span>
+							<div class="mui-media-object mui-pull-left md-userCustomLogo" ng-if="!EqWorkOrderFailureInfo.Data.ULogoIsExist" ng-bind="EqWorkOrderFailureInfo.Data.CreateUserName | getUserCustomLogo"></div>
+							<div class="name-title">
+								<div class="names mui-ellipsis" ng-bind="EqWorkOrderFailureInfo.Data.CreateUserName"></div>
+								<div class="introduction" ng-bind="EqWorkOrderFailureInfo.Data.CreateDate"></div>
+							</div>
+
+						</div>
+						<div class="fault-description mui-ellipsis-2">
+							<span ng-bind="EqWorkOrderFailureInfo.Data.IsHasAudio | formatDeviceFaultInfo:EqWorkOrderFailureInfo.Data.AudioLength:EqWorkOrderFailureInfo.Data.FaultDescription"></span>
+						</div>
+					</li>
+					<li class="data-row mui-table-view-cell mui-block" ng-click="tap('faultrecord')" ng-show="EqWorkOrderFailureInfo.Total>0">
+						<div class="total">合计
+							<span ng-bind="EqWorkOrderFailureInfo.Total"></span>次故障</div>
+					</li>
+				</ul>
+				<ul class="data-group eqtab">
+					<li class="data-row">
+						<label class="title">维修记录</label>
+						<p class="opt md-icon font-15" ng-click="tap('repair')" ng-if="('Q9' | hasAuth)&&equUserData.CompID>0&&isScrap!='true'">
+							<span class="icon-add"></span>
+						</p>
+					</li>
+					<li class="data-row mui-table-view-cell mui-block" ng-click="tap('repairView')" ng-show="EqRepairRecordsInfo.Total>0">
+						<div class="body recordlist">
+							<span ng-show="EqRepairRecordsInfo.Data.ULogoIsExist" class="icon-item">
+							<div class="avatar" ng-style="{'background-image':'url('+ (EqRepairRecordsInfo.Data.CreateUserID|getUserLogo:48:0) +')'}"></div>
+							<!--<img class="avatar" ng-src="{{EqRepairRecordsInfo.Data.CreateUserID|getUserLogo:48:48}}" />-->
+						</span>
+							<div class="mui-media-object mui-pull-left md-userCustomLogo" ng-if="!EqRepairRecordsInfo.Data.ULogoIsExist" ng-bind="EqRepairRecordsInfo.Data.CreateUserName | getUserCustomLogo"></div>
+							<div class="name-title">
+								<div class="names mui-ellipsis" ng-bind="EqRepairRecordsInfo.Data.CreateUserName"></div>
+								<div class="introduction" ng-bind="EqRepairRecordsInfo.Data.CreateDate"></div>
+							</div>
+						</div>
+						<div class="fault-description mui-ellipsis-2">
+							<span ng-bind="EqRepairRecordsInfo.Data.IsHasAudio | formatDeviceRepairInfo:EqRepairRecordsInfo.Data.AudioLength:EqRepairRecordsInfo.Data.RepairDescription"></span>
+						</div>
+					</li>
+					<li class="data-row mui-table-view-cell mui-block" ng-show="EqRepairRecordsInfo.Total>0">
+						<div class="total" ng-click="tap('repairList')">合计
+							<span ng-bind="EqRepairRecordsInfo.Total"></span>次维修</div>
+					</li>
+				</ul>
+				<ul class="data-group eqtab">
+					<li class="data-row" ng-show="EqRepairPartsInfo.Data.Data.length>0&&isScrap!='true'">
+						<label class="title">配件更换记录</label>
+						<!--<p class="opt md-icon font-15" ng-click="tap('replacement')" ng-if="'Q9' | hasAuth">
+							<span class="icon-add"></span>
+						</p>-->
+					</li>
+					<li class="data-row mui-table-view-cell mui-block" ng-click="tap('partinfo')" ng-show="EqRepairPartsInfo.Data.Data.length>0">
+						<div class="body recordlist">
+							<span ng-show="EqRepairPartsInfo.Data.ULogoIsExist" class="icon-item">
+							<!--<img class="avatar" ng-src="{{EqRepairPartsInfo.Data.CreateUserID|getUserLogo:48:48}}" />-->
+							<div class="avatar" ng-style="{'background-image':'url('+ (EqRepairPartsInfo.Data.CreateUserID|getUserLogo:48:0) +')'}"></div>
+						</span>
+							<div class="mui-media-object mui-pull-left md-userCustomLogo" ng-if="!EqRepairPartsInfo.Data.ULogoIsExist" ng-bind="EqRepairPartsInfo.Data.CreateUserName | getUserCustomLogo"></div>
+							<div class="name-title">
+								<div class="names mui-ellipsis" ng-bind="EqRepairPartsInfo.Data.CreateUserName"></div>
+								<div class="introduction" ng-bind="EqRepairPartsInfo.Data.CreateDate"></div>
+							</div>
+
+						</div>
+						<div class="fault-description mui-ellipsis-2" ng-repeat="part in EqRepairPartsInfo.Data.Data">
+							<span ng-bind="part.ProdName" class="part-name"></span>
+							<span ng-bind="part.SkuName"></span> x
+							<span ng-bind="part.Nums"></span>
+							<span ng-bind="part.Remark"></span>
+						</div>
+					</li>
+					<li class="data-row mui-table-view-cell mui-block" ng-click="tap('partInfoList')" ng-show="EqRepairPartsInfo.Total>0">
+						<div class="total">合计更换
+							<span ng-bind="EqRepairPartsInfo.Total"></span>个配件</div>
+					</li>
+				</ul>
+				<ul class="data-group eqtab" ng-if="equUserData.CompID>0">
+					<li class="data-row">
+						<label class="title">巡检记录</label>
+						<!--<p class="opt md-icon font-15" ng-click="tap('maintenance')" ng-if="('Q14' | hasAuth)&&isScrap!='true'">
+							<span class="icon-add"></span>
+						</p>-->
+					</li>
+					<li class="data-row mui-table-view-cell mui-block" ng-repeat="item in EqOverhaulInfo.DataRows" ng-click="tap('maintenanceView')" ng-show="EqOverhaulInfo.TotalCount>0">
+						<div class="body recordlist" ng-repeat="Operators in item.Users">
+							<span ng-show="Operators.ULogoIsExist" class="icon-item">
+							<!--<img class="avatar" ng-src="{{EqOverhaulInfo.Data.CreateUserID|getUserLogo:48:48}}" />-->
+							<div class="avatar" ng-style="{'background-image':'url('+ (item.Operators|getUserLogo:48:0) +')'}"></div>
+						</span>
+							<div class="mui-media-object mui-pull-left md-userCustomLogo" ng-if="!Operators.ULogoIsExist" ng-bind="EqOverhaulInfo.Data.CreateUserName | getUserCustomLogo"></div>
+							<div class="name-title">
+								<div class="names mui-ellipsis" ng-bind="Operators.Name"></div>
+								<div class="introduction" ng-bind="item.RepairDate"></div>
+							</div>
+
+						</div>
+						<div class="fault-description mui-ellipsis-2" ng-bind="item.StdName"></div>
+					</li>
+					<li class="data-row mui-table-view-cell mui-block" ng-click="tap('maintenanceList')" ng-show="EqOverhaulInfo.TotalCount>0">
+						<div class="total">合计
+							<span ng-bind="EqOverhaulInfo.TotalCount"></span>次巡检</div>
+					</li>
+				</ul>
+				<ul class="data-group eqtab" ng-if="equUserData.CompID>0">
+					<li class="data-row">
+						<label class="title">保养记录</label>
+						<!--<p class="opt md-icon font-15" ng-click="tap('preserve')" ng-if="('Q9' | hasAuth)&&isScrap!='true'">
+							<span class="icon-add"></span>
+						</p>-->
+					</li>
+					<li class="data-row mui-table-view-cell mui-block" ng-repeat="item in EqPreserveInfo.DataRows" ng-click="tap('preserveView')" ng-show="EqPreserveInfo.TotalCount>0">
+						<div class="body recordlist"  ng-repeat="Operators in item.Users">
+							<span ng-show="Operators.ULogoIsExist" class="icon-item">
+							<div class="avatar" ng-style="{'background-image':'url('+ (item.Operators|getUserLogo:48:0) +')'}"></div>
+						    </span> 
+						
+							<div class="mui-media-object mui-pull-left md-userCustomLogo" ng-if="!Operators.ULogoIsExist" ng-bind="Operators.Name | getUserCustomLogo"></div>
+							<div class="name-title">
+								<div class="names mui-ellipsis" ng-bind="Operators.Name"></div>
+								<div class="introduction" ng-bind="item.MaintainDate"></div>
+							</div>
+
+						</div>
+						<div class="fault-description mui-ellipsis-2" ng-bind="item.PlanName"></div>
+					</li>
+					<li class="data-row mui-table-view-cell mui-block" ng-click="tap('preserveList')" ng-show="EqPreserveInfo.TotalCount>0">
+						<div class="total">合计
+							<span ng-bind="EqPreserveInfo.TotalCount"></span>次保养</div>
+					</li>
+				</ul>
+
+			</div>
+			<div id="tab2" ng-show="TabType=='2'">
+				<ul class="data-group mt0">
+					<li class="data-row">
+						<label>归类</label>
+						<div class="body">
+							<span ng-bind="EqInfo.CatalogName"></span>
+						</div>
+					</li>
+				</ul>
+				<ul class="data-group">
+					<p class="data-group-tip">投产信息</p>
+					<li class="data-row">
+						<label>投产地</label>
+						<div class="body">
+							<!--						<span ng-bind="EqInfo.ProcPosName"></span>-->
+							<span ng-bind="EqInfo.ProcPosInfo.Province | locationfilter:EqInfo.ProcPosInfo.City:EqInfo.ProcPosInfo.District:EqInfo.ProcPosInfo.Address:EqInfo.ProcPosInfo.Street"></span>
+						</div>
+					</li>
+					<li class="data-row">
+						<label>投产工位</label>
+						<div class="body">
+							<span ng-bind="EqInfo.Station"></span>
+						</div>
+					</li>
+					<li class="data-row">
+						<label>投产日期</label>
+						<div class="body">
+							<span ng-bind="EqInfo.BeginProduceDate"></span>
+						</div>
+					</li>
+				</ul>
+				<ul class="data-group">
+					<p class="data-group-tip">采购信息</p>
+					<li class="data-row">
+						<label>购入日期</label>
+						<div class="body">
+							<span ng-bind="EqInfo.BuyDate"></span>
+						</div>
+					</li>
+					<li class="data-row">
+						<label>供应商</label>
+						<div class="body">
+							<span ng-bind="EqInfo.SupplierName"></span>
+						</div>
+					</li>
+				</ul>
+				<!--<p style="padding: 10px 10px 2px 10px;color: #999;text-align: left;font-size: 1.2rem;margin: 0;">设备参数</p>-->
+				<ul class="data-group" ng-if="EqInfo.Params.length>0">
+					<p class="data-group-tip">设备参数</p>
+					<li class="data-row" ng-repeat="param in EqInfo.Params">
+						<label ng-bind="param.ParamName"></label>
+						<div class="body" style="margin-left: 8px;">
+							<span ng-bind="param.ParamValue"></span>
+						</div>
+					</li>
+				</ul>
+			</div>
+			<div id="#tab3" class="prod-details" ng-show="TabType=='3'" style="background: #fff;">
+				<div ng-if="EqInfo.Attach.length>0" class="mui-table-view mui-grid-view mui-grid-12" style="margin-top: 0!important;">
+					<div ng-if="EqInfo.Attach.length>0" class="mui-table-view-cell mui-media mui-col-xs-6 mui-col-sm-6" ng-repeat="pic in EqInfo.Attach">
+						<!--<img style="max-width: 100%;" ng-src="{{SmallImgService + (pic.FilePath | filePathReg) +'&w=600'}}" data-preview-group="1" data-preview-src="{{BigImgService+pic.FilePath}}" />-->
+						<img style="max-width: 100%;" ng-click="preview($index)" ng-src="{{SmallImgService + (pic.FilePath | filePathReg) +'&w=600'}}" />
+					</div>
+				</div>
+				<md-no-data ng-show="EqInfo.Attach&&EqInfo.Attach.length==0">暂无图册</md-no-data>
+			</div>
+			<div id="tab4" ng-show="TabType=='4'" class="mui-content">
+				<ul class="mui-table-view data-group mt0 flex-group">
+					<li class="mui-table-view-cell data-row" ng-if="eqState.State==4">
+						<span class="md-icon icon-state-free" style="color: #3399FF;font-size: 3.2rem;"></span>
+						<div class="mui-clearfix">
+							<div class="mui-ellipsis equ-status">空闲</div>
+							<p class="mui-ellipsis-2 equ-status-desc">设备处于闲置状态，可对外提供服务</p>
+						</div>
+					</li>
+					<li class="mui-table-view-cell data-row" ng-if="eqState.State==7">
+						<span class="md-icon icon-eq-repire" style="color:#E60303;font-size: 3.2rem;"></span>
+						<div class="mui-clearfix">
+							<div class="mui-ellipsis equ-status">维修</div>
+							<p class="mui-ellipsis-2 equ-status-desc">设备出现故障,需要维修</p>
+						</div>
+					</li>
+					<li class="mui-table-view-cell data-row" ng-if="eqState.State==1">
+						<span class="md-icon icon-state-normal" style="color: #00CC00;font-size: 3.2rem;"></span>
+						<div class="mui-clearfix">
+							<div class="mui-ellipsis equ-status">在用</div>
+							<p class="mui-ellipsis-2 equ-status-desc">设备处于忙碌状态，屏蔽对外服务</p>
+						</div>
+					</li>
+					<li class="mui-table-view-cell data-row" ng-if="eqState.State==3">
+						<span class="md-icon icon-state-second-hand" style="color: #FFCC00;font-size: 3.2rem;"></span>
+						<div class="mui-clearfix">
+							<div class="mui-ellipsis equ-status">待售</div>
+							<p class="mui-ellipsis-2 equ-status-desc">设备可以随时进行二手交易</p>
+						</div>
+					</li>
+					<li class="mui-table-view-cell data-row" ng-if="eqState.State==2">
+						<span class="md-icon icon-eq-maintain" style="color: #0066CC;font-size: 3.2rem;"></span>
+						<div class="mui-clearfix">
+							<div class="mui-ellipsis equ-status">保养</div>
+							<p class="mui-ellipsis-2 equ-status-desc">设备停止工作，正在进行维护保养</p>
+						</div>
+					</li>
+					<li class="mui-table-view-cell data-row" ng-if="eqState.State==8">
+						<span class="md-icon icon-eq-stop" style="color: #666666;font-size: 3.2rem;"></span>
+						<div class="mui-clearfix">
+							<div class="mui-ellipsis equ-status">停用</div>
+							<p class="mui-ellipsis-2 equ-status-desc">设备停止使用,等待被处理</p>
+						</div>
+					</li>
+					<li class="mui-table-view-cell data-row" ng-if="eqState.State==9">
+						<span class="md-icon icon-eq-useless" style="color: #999966;font-size: 3.2rem;"></span>
+						<div class="mui-clearfix">
+							<div class="mui-ellipsis equ-status">报废</div>
+							<p class="mui-ellipsis-2 equ-status-desc">设备已经报废，可回收</p>
+						</div>
+					</li>
+					<li class="mui-table-view-cell data-row" ng-if="eqState.State==11">
+						<span class="md-icon icon-eq-zulin" style="color: #6699CC;font-size: 3.2rem;"></span>
+						<div class="mui-clearfix">
+							<div class="mui-ellipsis equ-status">租赁</div>
+							<p class="mui-ellipsis-2 equ-status-desc">该设备可对外出租</p>
+						</div>
+					</li>
+					<li class="btn-row" ng-click="tap('status')" ng-if="'Q5' | hasAuth:EqInfo.PersonLiableID:EqInfo.PersonLiableCompID">
+						<div>修改状态</div>
+					</li>
+				</ul>
+				<ul class="data-group" ng-show="eqState.State==1">
+					<li class="data-row" ng-if="eqState.UseMan">
+						<label>使用人</label>
+						<div class="body">
+							<span ng-bind="eqState.UseMan"></span>
+						</div>
+					</li>
+					<li class="data-row" ng-if="eqState.UseLinkPhone">
+						<label>联系电话</label>
+						<div class="body">
+							<span ng-bind="eqState.UseLinkPhone"></span>
+						</div>
+					</li>
+					<li class="data-row" ng-if="eqState.RepairMan">
+						<label>维修人</label>
+						<div class="body">
+							<span ng-bind="eqState.RepairMan"></span>
+						</div>
+					</li>
+					<li class="data-row" ng-if="eqState.RepairLinkPhone">
+						<label>联系电话</label>
+						<div class="body">
+							<span ng-bind="eqState.RepairLinkPhone"></span>
+						</div>
+					</li>
+					<li class="data-row" ng-if="eqState.MaintainMan">
+						<label>保养人</label>
+						<div class="body">
+							<span ng-bind="eqState.MaintainMan"></span>
+						</div>
+					</li>
+					<li class="data-row" ng-if="eqState.MaintainLinkPhone">
+						<label>联系电话</label>
+						<div class="body">
+							<span ng-bind="eqState.MaintainLinkPhone"></span>
+						</div>
+					</li>
+				</ul>
+				<ul class="data-group" ng-show="eqState.State==4  || eqState.State==9 || eqState.State==8 || eqState.State==2  || eqState.State==11">
+					<li class="data-row" ng-if="eqState.FreeRemark">
+						<label>设备说明</label>
+						<div class="body">
+							<span ng-bind="eqState.FreeRemark||'-'"></span>
+						</div>
+					</li>
+					<li class="data-row" ng-if=" (eqState.State==4 || eqState.State==11)">
+						<label>加工工时</label>
+						<div class="body">
+							<span ng-bind="eqState.FreeQuotation + ' 元'"></span>
+						</div>
+					</li>
+					<li class="data-row" ng-if="eqState.SellingPrice>0 && eqState.State==9">
+						<label>出售价格</label>
+						<div class="body">
+							<span ng-bind="eqState.SellingPrice + ' 元'"></span>
+						</div>
+					</li>
+					<li class="data-row" ng-if="eqState.FreeLinkMan">
+						<label>联系人</label>
+						<div class="body">
+							<span ng-bind="eqState.FreeLinkMan"></span>
+						</div>
+					</li>
+					<li class="data-row" ng-if="eqState.FreeLinkPhone">
+						<label>联系电话</label>
+						<div class="body">
+							<span ng-bind="eqState.FreeLinkPhone"></span>
+						</div>
+					</li>
+				</ul>
+				<ul class="data-group" ng-show="eqState.State==3">
+					<li class="data-row" ng-if="eqState.Remark">
+						<label>设备说明</label>
+						<div class="body">
+							<span ng-bind="eqState.Remark||'-'"></span>
+						</div>
+					</li>
+					<li class="data-row" ng-if="eqState.ServiceLife>0">
+						<label>使用寿命</label>
+						<div class="body">
+							<span ng-bind="eqState.ServiceLife + ' 年'"></span>
+						</div>
+					</li>
+					<li class="data-row" ng-if="eqState.LinkPhone">
+						<label>联系人</label>
+						<div class="body">
+							<span ng-bind="eqState.Linkman"></span>
+						</div>
+					</li>
+					<li class="data-row" ng-if="eqState.LinkPhone">
+						<label>联系电话</label>
+						<div class="body">
+							<span ng-bind="eqState.LinkPhone"></span>
+						</div>
+					</li>
+					<li class="data-row" ng-if="eqState.PurchasePrice>0">
+						<label>购入价格</label>
+						<div class="body">
+							<span ng-bind="eqState.PurchasePrice + ' 元'"></span>
+						</div>
+					</li>
+					<li class="data-row" ng-if="eqState.SellingPrice>0">
+						<label>出售价格</label>
+						<div class="body">
+							<span ng-bind="eqState.SellingPrice + ' 元'"></span>
+						</div>
+					</li>
+					<li class="data-row" ng-if="eqState.TraitLable">
+						<label>特征标签</label>
+						<div class="body">
+							<span class="mui-pull-left" style="border: 1px solid #007AFF;padding: 2px 10px;border-radius: 5px;margin: 0 10px 10px 0;" ng-repeat="sp in eqState.TraitLable.split(',')" ng-bind="sp"></span>
+						</div>
+					</li>
+				</ul>
+			</div>
+			<div id="tab5" ng-show="TabType=='5'">
+				<ul class="data-group mt0" ng-if="EquOperationLog.length>0">
+					<li class="data-row" ng-repeat="log in EquOperationLog" style="padding: 8px 16px;">
+						<div class="mui-clearfix" style="width: 80vw;">
+							<div class="mui-ellipsis" style="font-size: 1.7rem;margin-bottom: 5px;" ng-bind="'操作人：' + log.OperationUserName"></div>
+							<p class="mui-ellipsis" style="margin-bottom: 5px;" ng-bind="'操作时间：' + log.OperationDate"></p>
+							<p class="mui-ellipsis equ-sub" ng-if="log.State!=0" style="margin-bottom: 0;" ng-bind="'操作详情：状态变更为'+showBind(log.State)"></p>
+							<p class="mui-ellipsis equ-sub" ng-if="log.State==0" style="margin-bottom: 0;" ng-bind="'操作详情：投产'"></p>
+						</div>
+					</li>
+					<li style="padding: 8px;background: #f1f1f1;">
+						<center>没有更多数据了</center>
+					</li>
+				</ul>
+				<md-no-data ng-show="EquOperationLog&&EquOperationLog.length==0">暂无设备履历记录</md-no-data>
+			</div>
+			<div id="tab6" ng-show="TabType=='6'">
+				<ul class="data-group mt0" ng-if="EqScrapApplyFlow.ID">
+					<li class="data-row">
+						<label>申请人</label>
+						<div class="body">
+							<span ng-bind="EqScrapApplyFlow.ApplicantName"></span>
+						</div>
+					</li>
+					<li class="data-row">
+						<label>申请时间</label>
+						<div class="body">
+							<span ng-bind="EqScrapApplyFlow.ApplicationDate"></span>
+						</div>
+					</li>
+					<li class="data-row">
+						<label>设备报废原因</label>
+						<div class="body">
+							<span ng-bind="EqScrapApplyFlow.Reason"></span>
+						</div>
+					</li>
+					<li class="data-row">
+						<label>审核时间</label>
+						<div class="body">
+							<span ng-bind="EqScrapApplyFlow.FlowRecordList.CreateDate"></span>
+						</div>
+					</li>
+					<li class="data-row">
+						<label>审核意见</label>
+						<div class="body">
+							<span ng-bind="EqScrapApplyFlow.FlowRecordList.Remarks || '-'"></span>
+						</div>
+					</li>
+				</ul>
+				<md-no-data ng-show="!EqScrapApplyFlow.ID">暂无设备报废记录</md-no-data>
+			</div>
+		</div>
+		<!--无网络或请求失败重试-->
+		<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+		<div id="popover" class="mui-popover menuDivModel">
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell" ng-click="tap('status')" ng-if="'Q5' | hasAuth:EqInfo.PersonLiableID:EqInfo.PersonLiableCompID">
+					<a class="mui-icon icon-eq-state">
+						<!--原：设备故障-->
+						<font>设定设备状态</font>
+					</a>
+				</li>
+				<li class="mui-table-view-cell" ng-click="tap('thirdRepair')" ng-if="('Q9' | hasAuth:EqInfo.PersonLiableID)&&equUserData.CompID>0">
+					<a class="mui-icon icon-repair">
+						<!--原：设备维修-->
+						<font>报修给第三方</font>
+					</a>
+				</li>
+				<!--<li class="mui-table-view-cell delLiAfter" ng-click="tap('replacement')" ng-if="'Q9' | hasAuth">
+					<a class="mui-icon icon-exchange">
+						<font>配件更换</font>
+					</a>
+				</li>-->
+				<!--原：设备巡检-->
+				<!--<li class="mui-table-view-cell" ng-click="tap('maintenance')" ng-if="'Q14' | hasAuth">
+					<a class="mui-icon icon-report">
+						<font>查找相同设备</font>
+					</a>
+				</li>-->
+				<li class="mui-table-view-cell popover" ng-if="EqInfo.MDCode==''&&('Q5' | hasAuth:EqInfo.PersonLiableID:EqInfo.PersonLiableCompID)" ng-click="tap('scan')">
+					<a class="mui-icon icon-saoyisao">
+						<font>绑定设备信息</font>
+					</a>
+				</li>
+				<li class="mui-table-view-cell" ng-if="EqInfo.MDCode">
+					<a class="mui-icon icon-report color-gray">
+						<font>已绑定设备信息</font>
+					</a>
+				</li>
+				<li class="mui-table-view-cell" ng-click="tap('edit')" ng-if="'Q5' | hasAuth:EqInfo.PersonLiableID:EqInfo.PersonLiableCompID">
+					<a class="mui-icon icon-edit">
+						<font>设备信息修改</font>
+					</a>
+				</li>
+				<li class="mui-table-view-cell" ng-if="EqInfo.MDCode==''&&('Q5' | hasAuth:EqInfo.PersonLiableID:EqInfo.PersonLiableCompID)" ng-click="del()">
+					<a class="mui-icon icon-dustbin">
+						<font>删除</font>
+					</a>
+				</li>
+			</ul>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../message/transMessage.js"></script>
+		<script>
+			app.controller("EquDetailsController", ["$scope", "AuthService", "UtilsService", "ApiService", "DataService",
+				"Loading", "ChatUserService", "DatePickerService", "$Modal", "BillService", "RPCObserver", "$filter",
+				"ShareLogService", "CacheService",
+				function($scope, AuthService, UtilsService, ApiService, DataService, Loading, ChatUserService, DatePickerService,
+					$Modal, BillService, RPCObserver, $filter, ShareLogService, CacheService) {
+					$scope.equUserData = ""; //登录的设备详情信息
+					//相关和详细信息tab
+					$scope.TabType = "1";
+					$scope.SmallImgService = ApiService.Api47 + '/api/v1/BillFile/DownLoadFile?filePath=';
+					$scope.BigImgService = ApiService.Down + '/';
+					//设备编号
+					$scope.EqID = query("equid");
+					$scope.EqInfo = {};
+					$scope.eqState = {};
+					$scope.EqWorkOrderFailureInfo = {};
+					$scope.EqRepairRecordsInfo = {};
+					$scope.EqRepairPartsInfo = {};
+					$scope.EqOverhaulInfo = {};
+					$scope.EqPreserveInfo = {};
+					$scope.EquOperationLog = [];
+					$scope.EqScrapApplyFlow = {};
+					var _curUser = CacheService.get("user");
+					$scope.showBind = function(state) {
+						if(state == 1) {
+							return "在用";
+						}
+						if(state == 2) {
+							return "保养";
+						}
+						if(state == 3) {
+							return "待售";
+						}
+						if(state == 4) {
+							return "空闲";
+						}
+						if(state == 7) {
+							return "维修";
+						}
+						if(state == 8) {
+							return "停用";
+						}
+						if(state == 9) {
+							return "报废";
+						}
+						if(state == 11) {
+							return "租赁";
+						}
+					};
+
+					//无网络或请求失败重试
+					$scope.retryModal = {
+						msg: "设备",
+						retry: getUserData,
+						state: ''
+					}
+					var logid = query('logid') || 0;
+					//从设备报废页面载入
+					$scope.isScrap = query("isScrap") || "";
+
+					//初始化
+					function init() {
+						//					mui.previewImage();
+						Loading.show();
+						loadLastOneEqWorkOrderFailureInfo(); //故障
+						loadLastOneEqRepairRecordsInfo(); //维修
+						loadLastOneEqRepairPartsInfo(); //配件更换
+						loadLastOneEqOverhaulInfo(); //巡检
+						loadLastOneEqPreserveInfo(); //保养
+						getOperationLogList(); //设备履历
+						$scope.isScrap == "true" && getScrapApplyFlow(); //报废记录
+						mui("#tab-type").on("tap", ".md-tab-item", function() {
+							var tabvalue = this.getAttribute("href");
+							switch(tabvalue) {
+								case '#tab1':
+									$scope.TabType = "1";
+									break;
+								case '#tab2':
+									$scope.TabType = "2";
+									break;
+								case '#tab3':
+									previewImages();
+									$scope.TabType = "3";
+									break;
+								case '#tab4':
+									$scope.TabType = "4";
+									break;
+								case '#tab5':
+									$scope.TabType = "5";
+									break;
+								case '#tab6':
+									$scope.TabType = "6";
+									break;
+								default:
+									break;
+							}
+							$scope.$apply();
+						});
+					};
+
+					var curUser = "";
+					//设备人员选择
+					function getUserData() {
+						getEqInfoForModifyState();
+						AuthService.getAuth().then(function(res) {
+							curUser = res;
+							$scope.equUserData = res;
+							loadEqInfo(); //设备状态
+							logid && ShareLogService.add(logid, 9);
+							init();
+						});
+					}
+
+					getUserData();
+
+					//获取设备信息
+					function loadEqInfo() {
+						//var url = ApiService.Api50 + "/api/v1/Equipment/GetEqInfoById/" + $scope.EqID;--正式
+						var url = ApiService.Api52 + "/api/v1/Equipment/GetEqInfoById/" + $scope.EqID;
+						logid && (url += '?logid=' + logid);
+						DataService.get(url).then(function(res) {
+
+							$scope.retryModal.state = '';
+							Loading.hide();
+							$scope.isLoad = true;
+							if(res) {														
+								$scope.EqInfo = res;
+							}
+
+						}, function(error) {
+							$scope.isLoad = false;
+							$scope.retryModal.state = error.State;
+						})
+					};
+
+					//获取设备状态信息
+					function getEqInfoForModifyState() {
+						url = ApiService.Api50 + "/api/v1/Equipment/GetEqInfoForModifyState?eqId=" + $scope.EqID;
+						DataService.get(url).then(function(res) {
+							$scope.eqState.State = res.State;
+							switch($scope.eqState.State) {
+								case 1:
+									$scope.eqState.UseMan = res.UseMan;
+									$scope.eqState.UseLinkPhone = res.UseLinkPhone;
+									$scope.eqState.MaintainMan = res.MaintainMan;
+									$scope.eqState.MaintainLinkPhone = res.MaintainLinkPhone;
+									$scope.eqState.RepairMan = res.RepairMan;
+									$scope.eqState.RepairMan = res.RepairMan;
+									$scope.eqState.RepairLinkPhone = res.RepairLinkPhone;
+									break;
+								case 4:
+									$scope.eqState.FreeRemark = res.Remark;
+									$scope.eqState.FreeQuotation = res.HoursPrice;
+									$scope.eqState.FreeLinkMan = res.LinkMan;
+									$scope.eqState.FreeLinkPhone = res.LinkPhone
+									break;
+								case 9:
+									$scope.isScrap = 'true';
+									break;
+								case 8:
+								case 2:
+								case 11:
+									$scope.eqState.FreeRemark = res.Remark;
+									$scope.eqState.FreeQuotation = res.HoursPrice;
+									$scope.eqState.FreeLinkMan = res.LinkMan;
+									$scope.eqState.FreeLinkPhone = res.LinkPhone;
+									$scope.eqState.PurchasePrice = res.PurchasePrice;
+									$scope.eqState.SellingPrice = res.SellingPrice;
+									break;
+								case 3:
+									$scope.eqState.Remark = res.Remark;
+									$scope.eqState.ServiceLife = String(res.ServiceLife);
+									$scope.eqState.Linkman = res.LinkMan;
+									$scope.eqState.LinkPhone = res.LinkPhone;
+									$scope.eqState.PurchasePrice = res.PurchasePrice;
+									$scope.eqState.SellingPrice = res.SellingPrice;
+									$scope.eqState.TraitLable = res.TraitLable;
+									break;
+								default:
+									break;
+							}
+						})
+
+					}
+
+					//预览
+					$scope.preview = function(index) {
+						var images = $scope.EqInfo.Attach.map(function(img) {
+							return ApiService.Down + "/" + $filter("filePathReg")(img.FilePath);
+						});
+						plus.nativeUI.previewImage(images, {
+							current: index,
+							loop: true,
+							indicator: 'number'
+						});
+					};
+
+					//获取最新一条故障工单信息
+					function loadLastOneEqWorkOrderFailureInfo() {
+						var url = ApiService.Api50 + "/api/v2/MatWorkOrder/GetLastOneEqWorkOrderFailureInfo?equipmentId=" + $scope.EqID;
+						DataService.get(url).then(function(res) {
+							if(res) {
+								$scope.EqWorkOrderFailureInfo = res;
+							}
+						})
+					};
+
+					//获取最新一条设备维修信息
+					function loadLastOneEqRepairRecordsInfo() {
+						var url = ApiService.Api50 + "/api/v2/MatWorkOrder/GetLastOneEqRepairRecordsInfo?equipmentId=" + $scope.EqID;
+						DataService.get(url).then(function(res) {
+							if(res) {
+								$scope.EqRepairRecordsInfo = res;
+							}
+						})
+					};
+
+					//获取最新一条配件更换信息
+					function loadLastOneEqRepairPartsInfo() {
+						var url = ApiService.Api50 + "/api/v2/MatWorkOrder/GetLastOneEqRepairPartsInfo?equipmentId=" + $scope.EqID;
+						DataService.get(url).then(function(res) {
+							if(res) {
+								$scope.EqRepairPartsInfo = res;
+							}
+						})
+					};
+
+					//获取最新一条设备巡检信息
+					function loadLastOneEqOverhaulInfo() {
+						var url = ApiService.Api52 + "/api/v1/EqPatrolPlan/GetEqInfoPatrolList?eqId=" + $scope.EqID+"&pageIndex=0&pageSize=1";
+						DataService.get(url).then(function(res) {
+							if(res) {
+								$scope.EqOverhaulInfo = res;
+								
+								$scope.lastepreinfo = res.DataRows[0]
+								
+							}
+						})
+					};
+
+					//获取最新一条设备保养信息
+					function loadLastOneEqPreserveInfo() {
+						var url = ApiService.Api52 + "/api/v1/EqMaintain/GetEqInfoMaintainList?eqId=" + $scope.EqID+"&pageIndex=0&pageSize=1";
+						DataService.get(url).then(function(res) {
+							if(res) {
+								$scope.EqPreserveInfo = res;
+								$scope.lasteinfo = res.DataRows[0]
+								
+							}
+						})
+					};
+
+					//获取设备履历记录
+					function getOperationLogList() {
+						var url = ApiService.Api52 + "/api/v1/EqApply/GetOperationLogList?eqId=" + $scope.EqID;
+						DataService.get(url).then(function(res) {
+							res && ($scope.EquOperationLog = res);
+						})
+					}
+
+					//获取设备报废记录
+					function getScrapApplyFlow() {
+						var url = ApiService.Api52 + "/api/v1/EqApply/GetScrapApplyFlowByEqId?state=4&eqId=" + $scope.EqID;
+						DataService.get(url).then(function(res) {
+							res && ($scope.EqScrapApplyFlow = res);
+						})
+					}
+
+					$scope.openLog = function() {
+						UtilsService.openWindow({
+							id: "eq-log-history-all.html",
+							url: "eq-log-history-all.html?equid=" + $scope.EqInfo.ID + "&mdcode=" + $scope.EqInfo.MDCode
+						});
+					}
+
+					//跳转
+					$scope.tap = function(key) {
+						
+						var url = {
+							
+							edit: 'equ-edit.html?equid=' + $scope.EqID,
+							scan: '../scan/scan.html',
+							repair: 'equ-repair.html?equid=' + $scope.EqID + "&fromeqdels=true",
+							repairList: 'equ-repairList-head.html?equid=' + $scope.EqID + "&isScrap=" + $scope.isScrap,
+							repairView: 'equ-repairView.html?id=' + ($scope.EqRepairRecordsInfo.Data && $scope.EqRepairRecordsInfo.Data.ID) || 0,
+//							maintenanceList: 'equ-maintenanceList-head.html?equid=' + $scope.EqID + "&isScrap=" + $scope.isScrap,
+                            maintenanceList: 'equ-patrolrecard-list.html?eqId=' + $scope.EqID+'&planLogId='+($scope.lastepreinfo?$scope.lastepreinfo.ID:0)+'&havedoen=true'+'&done=true',
+                            
+							maintenance: 'equ-maintenance.html?equid=' + $scope.EqID,
+							maintenanceView: "equ-patrol-all-info.html?planId=" +($scope.lastepreinfo?$scope.lastepreinfo.PlanID + "&id=" + $scope.lastepreinfo.ID + "&eqId=" + $scope.lastepreinfo.EQID + "&isEdit=true" + "&done=true":0),
+							preserve: 'equ-preserve.html',
+//							preserveList: 'equ-preserveList-head.html?equid=' + $scope.EqID + "&isScrap=" + $scope.isScrap,
+                            preserveList: 'equ-havemainte-list.html?eqId=' + $scope.EqID+'&planLogId='+($scope.lasteinfo?$scope.lasteinfo.ID:0)+'&havedoen=true'+'&done=true',
+                            
+							preserveView:"equ-mainten-info.html?planId=" +($scope.lasteinfo? $scope.lasteinfo.PlanID + "&id=" + $scope.lasteinfo.ID + "&eqId=" + 
+							$scope.lasteinfo.EQID +'&planLogId='+$scope.lasteinfo.PlanLogID
+							+ "&isEdit=true" + "&done=true&hasdone=true":0),
+							faultEdit: "../aftersale/mat-fault-submit.html",
+							status: "equ-status.html?equid=" + $scope.EqID + "&epId=" + $scope.EqInfo.EPID,
+							thirdRepair: "../aftersale/mat-fault-submit.html?jobfrom=3&nochoosed=1",
+							faultInfo: ($scope.EqWorkOrderFailureInfo.Data.JobFrom == 3) ?
+								"../eqmentlib/equ-thirdpart-repair-info.html?id=" + ($scope.EqWorkOrderFailureInfo.Data && $scope.EqWorkOrderFailureInfo
+									.Data.ID) || 0 : (($scope.EqWorkOrderFailureInfo.Data.JobFrom == 1 ? 'fault-info.html?id=' :
+									'../mine/fault-info.html?id=') + ($scope.EqWorkOrderFailureInfo.Data && $scope.EqWorkOrderFailureInfo.Data
+									.ID) || 0),
+							faultrecord: 'fault-record-head.html?equid=' + $scope.EqID + "&isScrap=" + $scope.isScrap,
+							replacement: 'part-replacement.html?equid=' + $scope.EqID,
+							partinfo: 'equ-repairView.html?id=' + ($scope.EqRepairPartsInfo.Data && $scope.EqRepairPartsInfo.Data.ID) ||
+								0,
+							partInfoList: 'part-infolist-header.html?equid=' + $scope.EqID
+						};
+						var options = {
+							needLogin: true,
+							id: url[key].substring(url[key].lastIndexOf('/') + 1, url[key].indexOf('?')),
+							url: url[key]
+						};
+						if(['faultEdit', 'faultrecord', 'repair', 'repairList', 'maintenance', 'maintenanceList', 'replacement',
+								'partInfoList', 'thirdRepair', "preserve", "preserveList", "status"
+							].indexOf(key) >= 0) {
+							if(key == 'faultEdit' || key == 'faultrecord' || key == 'thirdRepair' || key == 'status') {
+								options.extras = {
+									prodInfo: {
+										MDCode: $scope.EqInfo.SourceMDCode,
+										EqID: $scope.EqInfo.ID,
+										EqName: $scope.EqInfo.EqName,
+										SkuName: $scope.EqInfo.SkuName,
+										EqIdentifier: $scope.EqInfo.EqIdentifier,
+										SourceMDCode: $scope.EqInfo.SourceMDCode,
+										ProdID: ($scope.EqInfo.ProdInfo && $scope.EqInfo.ProdInfo.ProdID) || "",
+										ProdName: ($scope.EqInfo.ProdInfo && $scope.EqInfo.ProdInfo.ProdName) || "",
+										ProdInnerCode: ($scope.EqInfo.ProdInfo && $scope.EqInfo.ProdInfo.ProdInnerCode) || "",
+										SkuID: ($scope.EqInfo.ProdInfo && $scope.EqInfo.ProdInfo.SkuID) || "",
+										CompID: ($scope.EqInfo.ProdInfo && $scope.EqInfo.ProdInfo.CompID) || 0,
+										Province: $scope.EqInfo.Province,
+										City: $scope.EqInfo.City,
+										District: $scope.EqInfo.District,
+										Street: $scope.EqInfo.Street,
+										Address: $scope.EqInfo.Address,
+										Maplat: $scope.EqInfo.MapLat,
+										Maplng: $scope.EqInfo.MapLng,
+										EqJane:$scope.EqInfo.EqJane||"",
+										CatalogName: {
+											ID: $scope.EqInfo.CatalogID
+										}
+									}
+								}
+							} else {
+								options.extras = {
+									addEquRecord: {
+										EquipmentID: $scope.EqInfo.ID,
+										EqIdentifier: $scope.EqInfo.EqIdentifier,
+										EqName: $scope.EqInfo.EqName,
+										SkuName: $scope.EqInfo.SkuName,
+										NextRepairDate: $scope.EqInfo.NextRepairDate || '',
+										NextMaintainDate: $scope.EqInfo.NextMaintainDate || ''
+									}
+								};
+							}
+						} else if(key == "scan") {
+							options.extras = {
+								callback: "ScanBack",
+								type: "eq"
+							};
+						}
+						//fault-record.html 
+						var webId = null;
+						switch(options.id) {
+							case 'fault-record-head.html':
+								webId = plus.webview.getWebviewById('fault-record-head.html');
+								break;
+							case 'equ-repairList-head.html':
+								webId = plus.webview.getWebviewById('equ-repairList-head.html');
+								break;
+							case 'part-infolist-header.html':
+								webId = plus.webview.getWebviewById('part-infolist-header.html');
+								break;
+							case 'equ-maintenanceList-head.html':
+								webId = plus.webview.getWebviewById('equ-maintenanceList-head.html');
+								break;
+							case 'equ-preserveList-head.html':
+								webId = plus.webview.getWebviewById('equ-preserveList-head.html');
+								break;
+							default:
+								break;
+						}
+						if(webId) {
+							plus.webview.close(webId)
+						}
+						UtilsService.openWindow(options);
+						mui('#popover').popover('hide');
+					};
+
+					//聊天
+					$scope.chat = function() {
+						ChatUserService.tap({
+							chatId: $scope.EqInfo.PersonLiableID,
+							chatName: $scope.EqInfo.PersonLiableName,
+							hasLogo: $scope.EqInfo.ULogoIsExist,
+							chatCompId: $scope.EqInfo.PersonLiableCompID
+						});
+					};
+
+					//删除
+					$scope.del = function() {
+						mui.confirm("确认删除吗？", function(e) {
+							if(e.index == 0) {
+								var url = ApiService.Api50 + "/api/v1/Equipment/DeleteEqInfoById/" + $scope.EqID;
+								DataService.post(url).then(function(res) {
+									RPCObserver.broadcast('refresh_equ_insp_plan_list');
+									RPCObserver.broadcast('refresh_equ_list');
+									//刷新投产地详情-设备列表合计
+									RPCObserver.broadcast("refresh_my_sxun");
+									// 刷新巡检详情 适用设备列表
+									RPCObserver.broadcast("refresh_insp_rule_lnfo");
+									// 设备投产地刷新
+									RpcClient.invoke("bill-view.html", "RPC_BillViewRefresh", "equ");
+									//刷新投产地
+									RpcClient.invoke("pos-info.html", "RPC_BillViewRefresh");
+									//刷新工作台列表
+									RPCObserver.broadcast("refresh_msg_all_list");
+
+									if(plus.webview.getWebviewById("produce-list-sub.html")) {
+										RpcClient.invoke("produce-list-sub.html", "RPC_refresh");
+									}
+
+									if(plus.webview.getWebviewById("produce-map.html")) {
+										RpcClient.invoke("produce-map.html", "RPC_refresh");
+									}
+
+									mui('#popover').popover('hide');
+									mui.back();
+								}, function(error) {
+									mui('#popover').popover('hide');
+								});
+							} else {
+								mui('#popover').popover('hide');
+							}
+						});
+					};
+					//扫码回调
+					$scope.scanBack = function(code, mtype) {
+						var message = "当前设备已经绑定过铭牌，确认替换？";
+						var title = "更换铭牌";
+						var btns = ["确定", "取消"];
+						var tip = "铭牌已更换";
+						//未入网
+						if(!$scope.EqInfo.MDCode) {
+							message = "确定将铭牌和当前设备绑定？";
+							title = "绑定铭牌";
+							tip = "铭牌已绑定";
+						}
+						mui.confirm(message, title, btns, function(e) {
+							if(e.index == 0) {
+								//确认
+								var postdata = {
+									"ID": $scope.EqID,
+									"NewMdCode": code,
+									"OldMdCode": $scope.EqInfo.MDCode
+								};
+								var url = ApiService.Api50 + "/api/v1/Equipment/UpdateEqInfoMdCode";
+								DataService.post(url, postdata).then(function(reData) {
+									if(reData) {
+										$scope.EqInfo.MDCode = code;
+										mui.toast(tip)
+									}
+								});
+							}
+						});
+					};
+					//刷新故障 的rpc
+					RPCObserver.on('refresh_equ_info_fault', 'equDetailFaultRefresh');
+					window.equDetailFaultRefresh = loadLastOneEqWorkOrderFailureInfo;
+
+					//刷新维修 的rpc
+					RPCObserver.on('refresh_equ_info_repair', 'equDetailsRepairRefresh');
+					window.equDetailsRepairRefresh = loadLastOneEqRepairRecordsInfo;
+
+					//刷新配件更换 的rpc
+					RPCObserver.on('refresh_equ_info_pact', 'equDetailsPartRefresh');
+					window.equDetailsPartRefresh = loadLastOneEqRepairPartsInfo;
+
+					//刷新巡检 的rpc
+					RPCObserver.on('refresh_equ_info_insp', 'equDetailsInspRefresh');
+					window.equDetailsInspRefresh = loadLastOneEqOverhaulInfo;
+
+					//刷新保养 的rpc
+					RPCObserver.on('refresh_equ_info_preserve', 'equDetailsPreserveRefresh');
+					window.equDetailsPreserveRefresh = loadLastOneEqPreserveInfo;
+
+					//刷新 设备状态 的rpc
+					RPCObserver.on('refresh_equ_state', 'equStateRefresh');
+					window.equStateRefresh = getEqInfoForModifyState;
+
+					//刷新 设备履历 的PRC
+					RPCObserver.on('refresh_equ_operationLog', 'equOperationLogRefresh');
+					window.equOperationLogRefresh = getOperationLogList;
+
+					//刷新设备信息 的rpc
+					RPCObserver.on('refresh_equ_info', 'equDetailsRefresh');
+					window.equDetailsRefresh = loadEqInfo;
+					//刷新关闭popover
+					RPCObserver.on('close_popover', 'close_popover');
+					window.close_popover = function() {
+						mui('#popover').popover('hide');
+					}
+					$scope.goShare = function() {
+						UtilsService.openWindow({
+							needLogin: true,
+							id: "contact-select.html",
+							url: "../common/contact-select.html?action=select&must=true&multiselect=true&type=org&hideself=true",
+							extras: {
+								selectObj: [],
+								callback: 'shareEqu'
+							}
+						});
+					};
+
+					//设置下次巡检时间
+					$scope.setNextReDate = function() {
+						DatePickerService.pickDate({
+							selected: $scope.EqInfo.NextRepairDate,
+							minDate: $scope.EqInfo.Today
+						}).then(function(res) {
+							//$scope.EqInfo.NextRepairDate = res;
+							var selectDate = res;
+							DatePickerService.pickTime({
+								selected: $scope.EqInfo.NextRepairDate
+							}).then(function(re) {
+								$scope.EqInfo.NextRepairDate = selectDate + " " + re + ":00";
+								updateNextRepairDate();
+							});
+						});
+					};
+
+					//更新巡检时间
+					function updateNextRepairDate() {
+						var url = ApiService.Api50 + "/api/v1/Equipment/UpdateEqInfoNextRepairDate/" + $scope.EqID + "?nextRepairDate=" + $scope.EqInfo.NextRepairDate;
+						DataService.get(url).then(function(res) {
+							if(res) {
+								mui.toast("设备下次巡检时间已更新");
+								//刷新工作台页签
+								RpcClient.invoke("msg-list.html", "RPC_UnreadRefreshForChat");
+								// 刷新work、tab页 两个角标数量
+								RpcClient.invoke("work.html", "RefTodoCount");
+								//RpcClient.invoke("tab.html", "RPC_RefToDo");
+								//刷新工作台列表
+								RPCObserver.broadcast("refresh_msg_all_list");
+								RPCObserver.broadcast('refresh_equ_insp_plan_list');
+								RPCObserver.broadcast('refresh_equ_maintenance', $scope.EqInfo.NextRepairDate);
+							}
+						});
+					};
+
+					//设置下次保养时间
+					$scope.setNextPrDate = function() {
+						DatePickerService.pickDate({
+							selected: $scope.EqInfo.NextMaintainDate,
+							minDate: $scope.EqInfo.Today
+						}).then(function(res) {
+							$scope.EqInfo.NextMaintainDate = res;
+							updateNextPreserveDate();
+						});
+					};
+					//更新保养时间
+					function updateNextPreserveDate() {
+						var url = ApiService.Api50 + "/api/v1/Equipment/UpdateEqInfoNextMaintainDate/" + $scope.EqID +
+							"?nextMaintainDate=" +
+							$scope.EqInfo.NextMaintainDate;
+						DataService.get(url).then(function(res) {
+							if(res) {
+								mui.toast("设备下次保养时间已更新");
+								//刷新工作台页签
+								RpcClient.invoke("msg-list.html", "RPC_UnreadRefreshForChat");
+								// 刷新work、tab页 两个角标数量
+								RpcClient.invoke("work.html", "RefTodoCount");
+								//RpcClient.invoke("tab.html", "RPC_RefToDo");
+								//刷新工作台列表
+								RPCObserver.broadcast("refresh_msg_all_list");
+								RPCObserver.broadcast('refresh_equ_preserve_list');
+								RPCObserver.broadcast('refresh_equ_preserve', $scope.EqInfo.NextMaintainDate);
+							}
+						});
+					}
+
+					//设置设备巡检标准
+					$scope.setInspStandard = function(item) {
+						$Modal.modal({
+							size: "small",
+							footer: false,
+							autoClose: true,
+							params: {
+								obj: {
+									ID: 0,
+									EqName: $scope.EqInfo.EqName,
+									IsEqDir: 0,
+									IsDelete: 0,
+									Code: $scope.EqInfo.ID,
+									SkuName: $scope.EqInfo.SkuName,
+									Province: $scope.EqInfo.Province,
+									City: $scope.EqInfo.City,
+									District: $scope.EqInfo.District,
+									Address: $scope.EqInfo.Address,
+									Street: $scope.EqInfo.Street,
+									Station: $scope.EqInfo.Station,
+									AttachFilePath: $scope.EqInfo.Attach.length > 0 && $scope.EqInfo.Attach[0].FilePath
+								}
+							},
+							template: "<div style='max-height:55vh;overflow:auto;margin: -20px -10px -20px -10px;'><ul class='data-group normUL'><li class='data-row mui-ellipsis-2' ng-click='selectNorm(norm)' ng-repeat='norm in NormList' style='justify-content: center;'><div style='overflow: hidden;'><span ng-bind='norm.Name'></span></div></li><li class='data-row add-norm' ng-click='addnorm()' style='justify-content: center;'><i class='md-icon font-18 icon-add' style='color: #3296FA!important'></i><span class='font-15'> 添加</span></li></ul></div>",
+							controller: ['$scope', "ApiService", "DataService", "UtilsService", function($scope, ApiService,
+								DataService, UtilsService) {
+								//获取巡检标准列表
+								function getInspNormList() {
+									/*alert(1)*/
+
+									var url = ApiService.Api50 + "/api/v1/Equipment/GetEqOverhaulStandardListByEqId?eqId=" + item.ID;
+									DataService.get(url).then(function(res) {
+										$scope.NormList = res;
+
+									})
+								}
+
+								getInspNormList();
+								//新增巡检标准
+								$scope.addnorm = function() {
+									UtilsService.openWindow({
+										needLogin: true,
+										id: "insp-rule-edit.html",
+										url: "insp-rule-edit.html",
+										extras: {
+											selectObj: $scope.params.obj,
+											callback: 'addstandcallback'
+										}
+									});
+								};
+
+								//选择巡检标准
+								$scope.selectNorm = function(norm) {
+									$scope.$modal.resolve(norm);
+									$scope.$modal.close();
+								}
+								//新增巡检标准回调
+								window.addstandcallback = function(res) {
+									setTimeout(function() {
+										getInspNormList()
+									}, 100)
+
+									$scope.$apply();
+								}
+							}]
+						}).show().then(function(res) {
+							item.StandardInfo.ID = res.ID;
+							item.StandardInfo.Name = res.Name;
+							var url = ApiService.Api50 + "/api/v1/Equipment/UpdateEqInfoStandardID/" + item.ID + '?standardId=' + res.ID;
+							DataService.get(url).then(function(res) {
+								res == true && mui.toast('设置巡检标准成功');
+							})
+						});
+					}
+
+					$scope.doShare = function(sltUsers) {
+						var src = "";
+						if($scope.EqInfo.Attach.length) {
+							src = $scope.SmallImgService + $scope.EqInfo.Attach[0].FilePath + '&w=100';
+						} else
+							src = "../../images/equ/defImg.png";
+						var obj = {
+							id: $scope.EqID,
+							img: src,
+							title: $scope.EqInfo.EqName,
+							desc: $scope.EqInfo.SkuName,
+						}
+						UtilsService.shareMsg(obj, sltUsers).then(function() {
+							var userNames = [];
+							sltUsers.forEach(function(user) {
+								userNames.push(user.ViewName);
+								ChatUserService.send({
+									chatId: user.UserID,
+									chatName: user.ViewName,
+									chatCompId: user.CompID,
+									hasLogo: _curUser.ULogoIsExist,
+									chatLogo: user.ULogoIsExist,
+									type: 7,
+									content: {
+										eventName: "equInfo",
+										logo: src,
+										title: $scope.EqInfo.EqName,
+										desc: $scope.EqInfo.SkuName,
+										params: [$scope.EqID]
+									}
+								});
+							})
+							mui.toast("成功分享给：" + userNames.join("，"));
+						});
+					}
+
+					var mui_back = mui.back;
+					mui.back = function() {
+						if($Modal.modals().length > 0) {
+							$Modal.close();
+							return;
+						}
+						mui_back()
+					}
+
+				}
+			]);
+			//扫码回调mtype:设备还是产品
+			function ScanBack(obj) {
+				obj = JSON.parse(obj);
+				var appElement = document.querySelector('[ng-controller=EquDetailsController]');
+				var $scope = angular.element(appElement).scope();
+				if(obj.codeValue == $scope.EqInfo.MDCode) {
+					mui.toast("该铭牌已绑定此设备");
+					return;
+				}
+				if(!obj.isEmpty) {
+					mui.toast("该铭牌已经绑定设备或产品,请重新扫描");
+				} else {
+					$scope.scanBack(obj.codeValue, obj.resType);
+				}
+			}
+
+			function shareEqu(sltObjs) {
+				var appElement = document.querySelector('[ng-controller=EquDetailsController]');
+				var $scope = angular.element(appElement).scope();
+				$scope.doShare(angular.copy(sltObjs));
+			}
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

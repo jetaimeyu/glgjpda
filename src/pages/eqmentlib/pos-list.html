@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-cn" id="testForm">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="Expires" content="0">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-control" content="no-cache">
+		<meta http-equiv="Cache" content="no-cache">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="format-detection" content="telephone=no" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title ng-bind="title"></title>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../css/common.css" rel="stylesheet" />
+		<link href="../../icon-font/iconfont.css" rel="stylesheet" />
+		<link href="../../bill/css/common.min.css?version=0.0.10" rel="stylesheet">
+		<link href="../../bill/css/app.min.css?v=dd3424b5e5b9713b0203" rel="stylesheet">
+		<style type="text/css">
+			.bill-search {
+				top: 44px;
+			}
+			
+			.mui-scroll-wrapper {
+				overflow: auto;
+			}
+			
+			.md-modal .md-modal-content input[type='text'] {
+				margin-bottom: 0;
+				font-size: 1.3rem;
+			}
+			
+			.mui-icon-back {
+				line-height: 44px;
+				margin-left: -17px!important;
+				color: #323232;
+				font-size: 2.7rem!important;
+			}
+			
+			.mui-bar .icon-add {
+				line-height: 44px;
+				color: #323232;
+				font-size: 2.2rem!important;
+			}
+			
+			.mui-bar .mui-title {
+				left: 19px;
+				color: #323232;
+				font-weight: 420;
+				line-height: 46px;
+			}
+			
+			.search-list .scroll-wrapper .md-list .item .container img {
+				position: absolute;
+				left: 10px;
+				top: 50%;
+				-webkit-transform: translateY(-50%);
+				transform: translateY(-50%);
+				overflow: hidden;
+				margin: 0px;
+			}
+			
+			.search-list .scroll-wrapper .md-list .item .container .content .info {
+				margin-left: 27px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="TestFormCtl">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-back mui-pull-left"></a>
+			<h1 class="mui-action-back mui-title">设备投产地</h1>
+			<a class="mui-pull-right icon-add" ng-click="method.add()" ng-if="'Q4' | hasAuth" style="display: none;" ng-class="{'mui-block':isLoad}"></a>
+		</header>
+		<md-bill-page data-options="options"></md-bill-page>
+		<script type="text/javascript" src="../../bill/script/libs.min.js?version=0.0.10"></script>
+		<script type="text/javascript" src="../../bill/script/common.min.js?version=0.0.10"></script>
+		<script type="text/javascript" src="../../bill/script/app.min.js?v=dd3424b5e5b9713b0203"></script>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../../js/bill.js"></script>
+		<script type="text/javascript">
+			app.controller("TestFormCtl", ["$scope", "ApiService", "$timeout", "$filter", function($scope, ApiService, $timeout, $filter) {
+				$timeout(function() {
+					$scope.isLoad = true;
+				}, 100);
+				
+				$scope.method = {
+					add: function() {
+						var addAction = $scope.options.skin.Actions.find(function(_action) {
+							return _action.ActionKey.indexOf('Add.') >= 0;
+						});
+						if(addAction) {
+							var skinkey = addAction.ActionKey.split('.').slice(-1)[0];
+							openWindow("../common/bill-edit.html?skinkey=" + skinkey + "&funckey=mdt-equ-pos");
+						} else {
+							mui.toast('配置错误');
+						}
+					},
+					view: function(_ret) {
+						var userid = (_ret.datas && _ret.datas.createuserid) || 0;
+						var url = "../eqmentlib/pos-info.html?skinkey=" + _ret.skinkey + "&dataid=" + _ret.dataid + "&funckey=mdt-equ-pos";
+						$filter("hasAuth")("Q5", userid) && (url += "&srchkey=" + _ret.srchkey);
+						openWindow(url, {}, "bill-view.html");
+					},
+					edit: function(_ret) {
+						openWindow("../common/bill-edit.html?skinkey=" + _ret.skinkey + "&dataid=" + _ret.dataid + "&funckey=mdt-equ-pos");
+					},
+					list: function() {
+						$scope.$broadcast('broadcast_load_data');
+					}
+				}
+
+				$scope.options = {
+					funckey: 'mdt-equ-pos',
+					edit: $scope.method.edit,
+					view: $scope.method.view,
+					list: $scope.method.list,
+					isshowadd: false,
+					params: {
+						hasOperateAuth: $filter("hasAuth")("Q5")
+					}
+				};
+
+				//投产地维护 刷新
+				RpcServer.expose("RPC_PosListRefresh", function() {
+					$scope.$broadcast('broadcast_load_data');
+				})
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("testForm"), ["TestForm"]);
+			});
+		</script>
+		
+	</body>
+
+</html>

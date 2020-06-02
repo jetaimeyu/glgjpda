@@ -1,0 +1,68 @@
+<ul class="data-group">
+	<li class="mui-table-view-cell data-row" ng-repeat="item in model" ng-click="tap(item)">
+		<p class="opt md-icon font-12">
+			<span class="no-visit" ng-bind="item.EndDay"></span>		
+		</p>
+		<div class="body">
+			
+			<div class="customer-name font-15" ng-bind="item.Title"></div>
+			<div class="repair-list">				
+				<span class="repair-people font-12">发布企业：<span ng-bind="item.CompName"></span></span>
+				<!--<span class="repair-date font-12">截止日期：<span ng-bind="item.EndDate"></span></span>-->
+			</div>
+		</div>
+	</li>
+</ul>
+
+<style>
+	body {
+		line-height: normal!important;
+	}
+	.recordTXT {
+		font-size: 1.5rem;
+		line-height: 18px;
+		color: #000000;
+		margin-bottom: 10px;
+		word-break: break-all;
+	}
+	.data-group {
+		margin-top: 0px;
+	}
+	
+	.data-group .data-row {
+		padding: 10px 12px 10px 17px;
+	}
+	
+	.data-group .data-row .body {
+		padding: 0px;
+	}
+	
+	.repair-list {
+		margin-top: 6px;
+	}
+	
+	.repair-people {
+		padding-left: 0px;
+		color: #AAAAAA;
+	}
+	
+	.repair-people-color {
+		color: #3296FA;
+	}
+	
+	.customer-name {
+		color: #000;
+	}
+	
+	.repair-date {
+		color: #AAAAAA;
+	}
+	
+	.has-visit {
+		color: #B5B5B5;
+	}
+	
+	.no-visit {
+		color: #1AAE12;
+	}
+</style>

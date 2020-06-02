@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html id="MdTong">
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../../css/common.css" />
+		<link rel="stylesheet" href="../../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="trace-info.css" />
+	</head>
+
+	<body ng-controller="traceInfoController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">加工过程追溯</h1>
+		</header>
+		<div class="mui-scroll-wrapper" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<p class="data-group-tip">加工参数</p>
+			<ul class="data-group">
+				<li class="data-row">
+					<label>图号</label>
+					<div class="body">{{ProcessInfo.DrawingNumber}}</div>
+				</li>
+				<li class="data-row">
+					<label>加工数量</label>
+					<div class="body">{{ProcessInfo.ProduceCount}}</div>
+				</li>
+				<li class="data-row">
+					<label>材料名称</label>
+					<div class="body">{{ProcessInfo.MaterialName}}</div>
+				</li>
+				<li class="data-row">
+					<label>材料供应</label>
+					<div class="body">{{ProcessInfo.MaterialSupply}}</div>
+				</li>
+				<li class="data-row">
+					<label>单重</label>
+					<div class="body">{{ProcessInfo.SingleWeight}}</div>
+				</li>
+				<li class="data-row">
+					<label>总重</label>
+					<div class="body">{{ProcessInfo.TotalWeight}}</div>
+				</li>
+				<li class="data-row">
+					<label>要求完工日期</label>
+					<div class="body">{{ProcessInfo.PlanFinishDate}}</div>
+				</li>
+				<li class="data-row">
+					<label>是否合套</label>
+					<div class="body">{{ProcessInfo.IsFit==0?'否':'是'}}</div>
+				</li>
+				<li class="data-row">
+					<label>备注信息</label>
+					<div class="body">{{ProcessInfo.Remark}}</div>
+				</li>
+			</ul>
+
+			<p class="data-group-tip" ng-if="ProcessInfo.OrderProcessStep.length>0">过程追溯</p>
+			<div class="cd-container cd-timeline mgbottom10" ng-if="ProcessInfo.OrderProcessStep.length>0">
+				<div class="cd-timeline-block" ng-repeat="step in ProcessInfo.OrderProcessStep">
+					<a>
+						<div class="cd-timeline-img cd-picture">
+						</div>
+						<div class="cd-timeline-content "  ng-click="tap(step.ID)">
+							<p>{{step.StepName}}</p>
+							<p class="font-12 color-gray-deep">{{step.LastModifyDate}}</p>
+							<p class="font-12 color-gray-deep"><span ng-repeat="(index,men) in step.WorkmenList">{{(index==0?'':'、')+men.Name}}</span></p>
+						</div>
+					</a>
+				</div>
+			</div>
+			<script type="text/javascript" src="../../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../../js/common.js"></script>
+		<script type="text/javascript" src="../../../js/utils.js"></script>
+			<script>
+			app.controller("traceInfoController",["$scope","UtilsService","ApiService","DataService","Loading",function($scope,UtilsService,ApiService,DataService,Loading){						
+				mui.init();
+				$scope.ProcessInfo="";
+				var processID=query("pid");
+				$scope.isLoad=false;
+				Loading.show();
+				processID&&getTraceInfo();
+				//获取设备信息
+				function getTraceInfo() {
+					var url = ApiService.Api45 + "/api/v1.0/Process/GetProcessMainbody?OrderProcessID=" + processID;
+					DataService.get(url).then(function(res) {
+						if(res) {
+							$scope.ProcessInfo = res;
+							
+						} 
+						Loading.hide();
+						$scope.isLoad=true;
+			
+					},function(e){
+									
+					})
+				}
+
+				$scope.tap=function(id){
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'trace-detail.html',
+						url: "trace-detail.html?pid=" + id
+					});
+				}
+			}])	
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+			</script>
+	</body>
+
+</html>

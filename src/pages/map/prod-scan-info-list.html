@@ -1,0 +1,100 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link rel="stylesheet" href="../../css/mui.min.css" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	<style>
+		.prodInfo  .data-row .body {
+		padding-left: 10px;
+	}
+	
+	.prodInfo  .data-row {
+		height: auto;
+	}
+	</style>
+</head>
+
+<body ng-controller="ParentPageController">
+	<div id="pullrefresh" ng-controller="pullrefreshController" class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}"
+	 style="display: none;">
+		<div class="mui-content">
+			<ul class="data-group prodInfo" style="margin-top:0px" >
+				<li class="data-row mui-table-view-cell" ng-repeat="item in data" ng-click="openProd(item)">
+					<p class="opt md-icon icon-right"></p>
+					<div class="body">
+						<md-prod-logo style="float:left;margin-right: 10px;" ng-model="item" data-width="66" data-height="66"></md-prod-logo>
+						<div class="mui-media-body" style="    padding-left: 75px;">
+							<p class='productName mui-ellipsis' style="color:#000;font-size:15px;" ng-bind="item.ProdName"></p>
+							<p class='productType mui-ellipsis' style="font-size: 12px;" ng-show="item.SkuName" ng-bind="'型号：'+item.SkuName"></p>
+							<p class="productType mui-ellipsis" ng-show="item.CompName" ng-bind="'所有者：'+item.CompName"></p>
+							<p class="productType mui-ellipsis" style="font-size: 12px;" ng-bind="'状态：'+getCodeStae(item.CodeState)"></p>
+						</div>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<script type="text/javascript" src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/rpc.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script>
+		app.controller("ParentPageController", ["$scope", "ApiService", "DataService", "Loading", "RPCObserver",
+			"UtilsService",
+			function (
+				$scope, ApiService, DataService, Loading, RPCObserver, UtilsService) {
+				$scope.pageIndex = 0;
+				$scope.pageSize = 20;
+				var mapLng = query("cmaplng");
+				var mapLat = query("cmaplat");
+				var count = query("count");
+				$scope.type = type = query("type");
+
+				$scope.getCodeStae = function (code) {
+					switch (code) {
+						case 0:
+							return "正常";
+						case 1:
+							return "未修好";
+						case 2:
+							return "已修好";
+					}
+				};
+				$scope.openProd = function (data) {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: "prodScanInfos.html",
+						url: "prodScanInfos.html?mdcode=" + data.MDCode + "&prodid=" + data.ProdID + "&skuid=" + data.SkuID +
+							"&count=" + count + "&cmaplat=" + mapLat + "&cmaplng=" + mapLng
+					});
+					setTimeout(function () {
+						plus.webview.currentWebview().opener().close("none")
+					}, 500);
+				}
+				var url = "";
+				if (type == 1) {
+					url = ApiService.Api50 + "/api/v1/Stock/GetMoreStockList?mapLat=" + mapLat + "&mapLng=" + mapLng;
+				} else {
+					url = ApiService.Api50 + "/api/v1/prod/GetMoreScanList?mapLat=" + mapLat + "&mapLng=" + mapLng;
+				}
+				$scope.url = url
+
+				$scope.$on("refresh_pageindex", function () {
+					$scope.url = url + "&pageIndex=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize;
+				});
+			}
+		]);
+
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+		});
+	</script>
+</body>
+
+</html>

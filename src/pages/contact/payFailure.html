@@ -1,0 +1,88 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	</head>
+
+	<body ng-controller="payController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">支付结果</a>
+		</header>
+		<div class="mui-content">
+			<div class="data-group mui-text-center" style="padding-bottom: 15px;padding-top:15px;">
+				<img src="../../images/pay/error.png" style="width: 40px;height: 40px;" />
+				<div class="mt5">抱歉，支付失败！</div>
+			</div>
+			<ul class="data-group" ng-show="Reason" ng-class="{'mui-block':isLoad}" style="display: none;">
+				<li class="data-row">
+					<label>失败原因</label>
+					<div class="body" ng-bind="Reason">
+					</div>
+				</li>
+			</ul>
+			<div class="mui-content-padded">
+				<button id="btnMyOrder" class="mui-btn mui-btn-primary mui-btn-block" style="border: 1px solid #3296FA;">进入我的订单</button>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript">
+			app.controller("payController", ["$scope", "$filter", "UtilsService", "ApiService", "DataService",
+				"UtilsService", "ChatUserService", "Loading", "RPCObserver", "ShareLogService", "CacheService",
+				function($scope, $filter, UtilsService, ApiService, DataService, UtilsService, ChatUserService, Loading,
+					RPCObserver, ShareLogService, CacheService) {
+					$scope.Reason = "";
+					var view = plus.webview.currentWebview();
+					setTimeout(function() {
+						if(view.msg.indexOf("6001") > 0 || view.msg.indexOf("62001") > 0 || view.msg.indexOf("-2"))
+							$scope.Reason = "用户支付中途取消";
+						//支付宝异常
+						else if(view.msg.indexOf("8000") > 0)
+							$scope.Reason = "正在处理中，支付结果未知（有可能已经支付成功），请查询商户订单列表中订单的支付状态";
+						else if(view.msg.indexOf("4000") > 0)
+							$scope.Reason = "订单支付失败";
+						else if(view.msg.indexOf("5000") > 0)
+							$scope.Reason = "重复请求";
+						else if(view.msg.indexOf("6002") > 0)
+							$scope.Reason = "网络连接出错";
+						else if(view.msg.indexOf("6004") > 0)
+							$scope.Reason = "支付结果未知（有可能已经支付成功），请查询商户订单列表中订单的支付状态";
+						//微信异常
+						else if(view.msg.indexOf("-1") > 0)
+							$scope.Reason = "支付出现异常";
+						else if(view.msg.indexOf("-3") > 0)
+							$scope.Reason = "发送失败";
+						else if(view.msg.indexOf("-4") > 0)
+							$scope.Reason = "授权失败";
+						else if(view.msg.indexOf("-5") > 0)
+							$scope.Reason = "微信不支持";
+						else
+							$scope.Reason = view.msg;
+						$scope.isLoad = true;
+						$scope.$apply();
+					}, 100);
+					document.body.querySelector("#btnMyOrder").addEventListener("tap", function() {
+						UtilsService.openWindow({
+							needLogin: true,
+							id: "myOrderList.html",
+							url: "myOrderList.html"
+						});
+					});
+				}
+			]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,32 @@
+/*第一个data-row高度，行高 左 上内边距 */
+.data-avatar .data-row .body{
+	padding: 8px 16px;
+}
+
+/*更改头像span样式 */
+.data-group:first-child label.modified {
+	padding-left: 120px;
+	width: auto;
+	color: #3296FA;
+	font-size: 1.4rem;
+}
+
+.data-group .data-row .body>span,.data-group .data-row .body input{
+	color: #323223;
+}
+/*按钮*/
+
+.btn-submit {
+	margin: 40px 16px 0 16px;
+}
+
+.btn-submit span.mui-btn-warning  {
+	background-color: #fff;
+	border-color: #ccc;
+	color: #323232;
+	font-size: 1.6rem;
+	background: rgba(255, 255, 255, 0.5);
+}
+.mui-flex{
+	display:flex!important;
+}

@@ -1,0 +1,508 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<link rel="stylesheet" href="equ-common.css" />
+		<style>
+			.top44 {
+				margin-top: 44px
+			}
+			
+			.top35 {
+				margin-top: 35px
+			}
+			
+			.top79 {
+				margin-top: 79px
+			}
+			
+			.autoTop {
+				margin-top: 35px;
+			}
+			
+			.padding-top0 {
+				padding-top: 0px!important;
+			}
+			
+			.mui-android .autoTop {
+				margin-top: 0px;
+			}
+			
+			.right-save {
+				font-size: 1.4rem;
+				line-height: 40px;
+				padding: 3px 2px;
+				float: right;
+				color: #3296FA;
+			}
+			
+			.data-group .data-row .label-gray {
+				color: #333333;
+			}
+			
+			.info-title {
+				margin-left: 10px;
+				line-height: 1;
+				color: #1f1f1f;
+			}
+			
+			.title {
+				color: #1f1f1f;
+			}
+			
+			.mdt_leftline {
+				width: 3px;
+				height: 14px;
+				background: #169BD5;
+				margin-top: -13px;
+				margin-left: -3px;
+			}
+			/*.empty-list{
+				margin-top: 30vw!important;
+			}*/
+			
+			.data-group .data-row .left-10 {
+				position: absolute;
+				left: 5px;
+				padding: 5px;
+				top: 50%;
+				transform: translateY(-50%);
+				font-size: 1.8rem;
+			}
+			
+			.data-group .data-row .name {
+				margin-left: 35px;
+				font-size: 1.5rem;
+				line-height: 40px;
+				max-width: calc(80vw - 20px);
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				-o-text-overflow: ellipsis;
+				overflow: hidden;
+				display: block;
+			}
+			
+			.btns {
+				position: fixed;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				border-top: 1px solid #EEEEEE;
+				background: #FFFFFF;
+			}
+			
+			.btns a {
+				display: block;
+				width: 50%;
+				height: 40px;
+				line-height: 40px;
+				font-size: 1.4rem;
+				text-align: center;
+				float: left;
+			}
+			
+			.btns a:first-child {
+				color: #B1B1B1;
+			}
+			
+			.btns a:last-child {
+				border-left: 1px solid #EEEEEE;
+				color: #3296FA;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="ContactOrgController">
+		<!--<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">选择盘点设备</a>
+			<a class="right-save" ng-click="selectAll()" ng-show="selectCatalogEquArr.length>0&&data.length>0" ng-bind="'全选('+selectEquArr.length+')'"></a>
+		</header>-->
+		<!--导航目录部分-->
+		<div id="res-slide" class="top-thin-line mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted nav-bar" ng-class="{'mui-block':isLoad}" ng-show="isLoad&&navDirData.length>1&&selectCatalogEquArr.length==0" style="display: none;">
+			<div class="mui-scroll" style="height: 35px;position: absolute;">
+				<a class="mui-control-item" ng-repeat="dir in navDirData" ng-class="{'mui-active':dir.ID==catalogID}" ng-attr-catalogid="{{dir.ID}}" ng-attr-index="{{$index}}" ng-attr-catalogname="{{dir.catalogname}}" ng-attr-pardirid="{{dir.ParDirID}}">
+					<span class="icon iconfont icon-right color-gray-deep" style="margin-left: 2px;" ng-show="$index>0"></span>
+					<span class="group-name" ng-bind="dir.catalogname"></span>
+				</a>
+			</div>
+		</div>
+		<!--,'top35':navDirData.length>1 'padding-top0':navDirData.length>=1&&selectCatalogEquArr.length==0-->
+		<div id="pullrefresh" class="mui-scroll-wrapper mui-content mui-fullscreen" style="display:none;margin-bottom: 40px;" ng-class="{'mui-block':isLoad,'autoTop':navDirData.length>1,'top44':data[catalogID].length==0,'padding-top0':navDirData.length>=2&&selectCatalogEquArr.length==0}">
+			<div class="scroll-body">
+				<!--目录-->
+				<ul class="data-group" ng-show="dirData&&dirData[catalogID].length>0&&selectCatalogEquArr.length==0" ng-style="{'margin-top':navDirData.length>1?'8px':'0px'}">
+					<!--ng-click="clickDir(catalog.ID,catalog.DirName)"-->
+					<li class="mui-table-view-cell data-row dir-row" ng-repeat="catalog in dirData[catalogID]" ng-attr-catalogid="{{catalog.ID}}" ng-attr-catalogname="{{catalog.DirName}}" ng-attr-pardirid="{{catalog.ParDirID}}">
+						<label style="width:85vw" class="mui-ellipsis">
+						<i class="icon-list"></i><span style="width:85vw;margin-left: 4px;" class="mui-ellipsis" ng-bind="' '+catalog.DirName"></span>
+					</label>
+						<p class="opt md-icon icon-right"></p>
+					</li>
+				</ul>
+				<!--设备列表-->
+				<md-device-list ng-model="data" action="action" selected-id="selectedId"></md-device-list>
+			</div>
+			<md-no-data ng-show="(!dirData[catalogID]||dirData[catalogID].length==0 )&& data.length==0">暂无设备数据</md-no-data>
+		</div>
+		<footer class="btns">
+			<a ng-click="cancel()">取消</a>
+			<a ng-click="save()">确定</a>
+		</footer>
+		<!--新增、修改-->
+		<script src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("ContactOrgController", ["$scope", "ApiService", "DataService", "Loading", "RPCObserver", function($scope, ApiService, DataService, Loading, RPCObserver) {
+				//目录ID
+				$scope.catalogID = 0;
+				$scope.DirName = "";
+				$scope.data = null;
+				var dataNums = 0;
+				$scope.isEnd = false;
+				$scope.isIos = mui.os.ios;
+				//是否用于选择设备
+				$scope.action = query("action");
+				$scope.selectedId = query("selectedid") || 0;
+				$scope.selectEquArr = plus.webview.currentWebview().selectArr;
+				//分类
+				$scope.selectCatalogEquArr = plus.webview.currentWebview().selectCatalogEquArr;
+				//				console.log(JSON.stringify($scope.selectCatalogEquArr))
+				var catalogs = "";
+				$scope.selectCatalogEquArr.forEach(function(item) {
+					catalogs += item.ID + '/';
+				})
+				if(!($scope.selectEquArr instanceof Array)) {
+					if($scope.selectEquArr.ID) {
+						$scope.selectEquArr = [$scope.selectEquArr];
+					} else {
+						$scope.selectEquArr = [];
+					}
+				}
+				$scope.selectedDirs = []; //存储选中的目录对象
+				$scope.selectedDirIds = []; //存储选中目录的id 用于选中
+				//设备数据类型
+				var equListType = query("type");
+				//目录数据
+				$scope.dirData = {};
+				var pageIndex = 0;
+				var pageSize = 10;
+				//目录
+				$scope.navDirData = [{
+					ID: 0,
+					catalogname: "设备归类"
+				}];
+
+				setTimeout(function() {
+					mui.init({
+						pullRefresh: {
+							container: '#pullrefresh',
+							down: {
+								callback: pulldownRefresh
+							},
+							up: {
+								auto: true,
+								callback: pullupRefresh
+							}
+						}
+					});
+				})
+
+				function pulldownRefresh() {
+					pageIndex = 1;
+					//获取设备目录
+					if($scope.selectCatalogEquArr.length == 0) {
+						getOrgList();
+					}
+
+					//获取所有的设备信息
+					getEqInfoList("down");
+				}
+
+				function pullupRefresh() {
+					pageIndex++;
+					//获取所有的设备信息
+					getEqInfoList();
+				}
+				var selectedCatalog;
+
+				init();
+				//loadData();
+
+				//初始化
+				function init() {
+					if(!$scope.dirData.hasOwnProperty($scope.catalogID)) {
+						$scope.dirData[$scope.catalogID] = null;
+						Loading.show();
+						//获取设备目录
+						if($scope.selectCatalogEquArr.length == 0) {
+							getOrgList();
+						}
+					}
+					selectedCatalog = {
+						"ID": $scope.catalogID
+					}
+					RpcClient.invoke("equ-list-menus.html", "RPC_FaultSettingList", selectedCatalog);
+				}
+
+				//Android返回键返回上级目录
+				var mui_back = mui.back;
+				mui.back = function() {
+					if($scope.navDirData.length > 1) {
+						$scope.navDirData.splice($scope.navDirData.length - 1, 1);
+						$scope.catalogID = $scope.navDirData[$scope.navDirData.length - 1].ID;
+						$scope.$apply();
+						pullupReset();
+						resScroll();
+						$scope.data = null;
+						loadData();
+					} else {
+						mui_back();
+					}
+				}
+
+				//数据加载
+				function loadData() {
+					$scope.dirData[$scope.catalogID] = null;
+					Loading.show();
+					//获取设备目录
+					if($scope.selectCatalogEquArr.length == 0) {
+						getOrgList();
+					}
+					//获取所有的设备信息
+					getEqInfoList();
+
+					selectedCatalog = {
+						"ID": $scope.catalogID,
+						"catalogname": $scope.navDirData[$scope.navDirData.length - 1].catalogname,
+						"ParDirID": $scope.navDirData[$scope.navDirData.length - 1].ParDirID
+					}
+					RpcClient.invoke("equ-list-menus.html", "RPC_FaultSettingList", selectedCatalog);
+					if(mui.os.ios) {
+						mui("#pullrefresh").pullRefresh() && mui('#pullrefresh').pullRefresh().scrollTo(0, 0);
+					}
+				}
+
+				//获取设备目录
+				function getOrgList() {
+					var url = ApiService.Api50 + "/api/v1/Equipment/GetEqInfoDirList?parDirId=" + $scope.catalogID;
+					DataService.get(url).then(function(res) {
+						if(res) {
+							$scope.dirData[$scope.catalogID] = res;
+						}
+					})
+				}
+
+				//获取所有的设备信息
+				function getEqInfoList(type) {
+					if(catalogs !== '') {
+						var url = ApiService.Api52 + "/api/v1/EqPatrolPlan/GetBjXjEqInfoByCatalogs?pageIndex=" + pageIndex + "&pageSize=" + pageSize + "&catalogs=" + catalogs;
+					} else {
+						var url = ApiService.Api52 + "/api/v1/EqPatrolPlan/GetBjXjEqInfoByCatalogs?pageIndex=" + pageIndex + "&pageSize=" + pageSize + "&catalogs=" + $scope.catalogID;
+					}
+					DataService.get(url).then(function(res) {
+						Loading.hide();
+						if(res) {
+							if(type == "down") {
+								$scope.data = null;
+							}
+							$scope.isLoad = true;
+							$scope.data == null && ($scope.data = []);
+							$scope.data = $scope.data.concat(res.DataRows);
+							$scope.isEnd = $scope.data.length >= res.TotalCount;
+							if(mui("#pullrefresh").pullRefresh()) {
+								if(type == "down") {
+									mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
+									mui('#pullrefresh').pullRefresh().refresh(true);
+									mui("#pullrefresh").pullRefresh().endPullupToRefresh($scope.isEnd);
+								} else {
+									mui("#pullrefresh").pullRefresh().endPullupToRefresh($scope.isEnd);
+								}
+							}
+							hideUpData();
+							RPCObserver.broadcast("RPC_InventoryEquNums", $scope.data);
+						}
+					}, function(error) {
+						$scope.isLoad = true;
+						if($scope.data == null) {
+							$scope.data = [];
+						}
+						if(mui("#pullrefresh").pullRefresh()) {
+							mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
+							mui("#pullrefresh").pullRefresh().endPullupToRefresh($scope.isEnd);
+						}
+						hideUpData();
+					})
+
+				}
+				//当数据为空时，隐藏上拉的提示
+				function hideUpData() {
+					var tip = document.querySelector('.mui-pull-bottom-pocket');
+					if(tip) {
+						if($scope.data.length == 0) {
+							tip.classList.contains('mui-visibility') && tip.classList.remove('mui-visibility');
+							tip.classList.contains('mui-block') && tip.classList.remove('mui-block');
+						} else {
+							!tip.classList.contains('mui-visibility') && tip.classList.add('mui-visibility');
+							!tip.classList.contains('mui-block') && tip.classList.add('mui-block');
+						}
+					}
+				}
+
+				//点击导航目录
+				mui("#res-slide").on("tap", ".mui-control-item", function() {
+					var catalogid = this.getAttribute("catalogid");
+					var index = this.getAttribute("index");
+					if(catalogid == $scope.catalogID) return;
+					$scope.catalogID = catalogid;
+					$scope.navDirData = $scope.navDirData.filter(function(_item, _index) {
+						return _index <= parseInt(index);
+					});
+					$scope.$apply();
+
+					pageIndex = 1;
+					$scope.data = null;
+					Loading.show();
+
+					pullupReset();
+					resScroll();
+					loadData();
+					selectedCatalog = {
+						"ID": $scope.catalogID,
+						"catalogname": this.getAttribute("catalogname"),
+						"ParDirID": this.getAttribute("pardirid")
+					};
+					RpcClient.invoke("equ-list-menus.html", "RPC_FaultSettingList", selectedCatalog);
+				})
+
+				//点击目录
+				mui(".data-group").on("tap", ".dir-row", function(e) {
+					e.stopPropagation();
+					var catalogid = this.getAttribute("catalogid");
+					var flag = $scope.selectedDirIds.toString().split(",").some(function(item) {
+						return item == catalogid;
+					});
+					if(flag) {
+						return;
+					}
+					$scope.catalogID = catalogid;
+					selectedCatalog = {
+						"ID": catalogid,
+						"catalogname": this.getAttribute("catalogname"),
+						"ParDirID": this.getAttribute("pardirid")
+					}
+					Loading.show();
+					$scope.data = null;
+					pageIndex = 1;
+
+					$scope.navDirData.push(selectedCatalog);
+					resScroll();
+					pullupReset();
+
+					loadData();
+					RpcClient.invoke("equ-list-menus.html", "RPC_FaultSettingList", selectedCatalog);
+				})
+
+				//点击目录和导航时重置pullrefresh
+				function pullupReset() {
+					if(mui("#pullrefresh").pullRefresh()) {
+						mui('#pullrefresh').pullRefresh().refresh(true);
+						if(mui.os.ios) {
+							mui('#pullrefresh').pullRefresh().scrollTo(0, 0, 0);
+						}
+					}
+					var tip = document.querySelector('.mui-pull-bottom-pocket');
+					if(tip) {
+						tip.classList.contains('mui-visibility') && tip.classList.remove('mui-visibility');
+						tip.classList.contains('mui-block') && tip.classList.remove('mui-block');
+					}
+				}
+
+				//导航栏滚动事件
+				function resScroll() {
+					setTimeout(function() {
+						var width = mui("#res-slide")[0].clientWidth;
+						var scrollWidth = mui("#res-slide .mui-scroll")[0].clientWidth;
+						scrollto = 0;
+						if((scrollWidth + 35) < width || width == 0) {
+							scrollto = 0;
+						} else {
+							scrollto = width - scrollWidth - 24;
+						}
+						mui('#res-slide').scroll().scrollTo(scrollto, 0, 0);
+					}, 100);
+				}
+
+				$scope.cancel = function() {
+					mui_back();
+				};
+
+				$scope.save = function() {
+					if($scope.selectEquArr.length == 0) {
+						mui.toast("请选择要巡检的设备")
+						return;
+					}
+					RPCObserver.broadcast("RPC_SelectInventoryEqu");
+					//					selectCallback();
+				}
+				//				window.selectCallback = function(){
+				//					var view = plus.webview.currentWebview();
+				//					var opener = view.opener();
+				//					if(view.callback) {
+				//						opener.evalJS(view.callback + "(" + JSON.stringify($scope.selectEquArr) + ")");
+				//					}
+				//					mui_back();
+				//				}
+
+				//刷新设备
+				RPCObserver.on('refresh_equ_list', 'refresh_equ_list');
+				window.refresh_equ_list = reload;
+
+				function reload() {
+					mui("#pullrefresh").pullRefresh() && mui('#pullrefresh').pullRefresh().refresh(true);
+					$scope.data = null;
+					pageIndex = 1;
+					loadData();
+				};
+				//全选
+				//				var isSelectAll=true;
+				//				$scope.selectAll=function(){
+				//					if(isSelectAll){
+				//						$scope.selectEquArr=$scope.data;
+				//					}else{
+				//						$scope.selectEquArr=[];
+				//					}
+				//					isSelectAll=!isSelectAll;
+				//					//更新选中设备
+				//					RPCObserver.broadcast("RPC_FaultEquSelectRefresh",$scope.selectEquArr)
+				//					
+				//				}
+				RpcServer.expose("RPC_GetSelectCatalog", function(params, callback) {
+					callback(selectedCatalog);
+				})
+				//rpc 选择设备
+				RPCObserver.on("RPC_FaultEquSelectInfo", "EquSelectInfo");
+				window.EquSelectInfo = function(params) {
+					$scope.selectEquArr = params;
+					$scope.$apply();
+					return;
+				}
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

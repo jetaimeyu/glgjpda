@@ -1,0 +1,104 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	</head>
+
+	<body ng-controller="RepairAllController">
+		<div id="pullrefresh" ng-controller="pullrefreshController" class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<div class="mui-content">
+				<md-mat-repair-list type="type" ng-model="data"></md-mat-repair-list>
+				<md-no-data ng-show="data && data.length==0">暂无数据</md-no-data>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script>
+			app.controller("RepairAllController", ["$scope", "$filter", "ApiService", "RPCObserver", function($scope, $filter, ApiService, RPCObserver) {
+				$scope.pageIndex = 0;
+				$scope.pageSize = 10;
+				$scope.type = query("type");
+				//扫码
+				var mdCode = query("mdcode") || "";
+				var prodId = query("prodid") || "";
+				var skuId = query("skuid") || "";
+				var innerCode = query("innercode") || "";
+				//统计
+				var statistics = {
+					year: query("year") || "",
+					quarter: query("quarter") || "",
+					month: query("month") || "",
+					orgid: query("orgid") || "",
+					userid: query("userid") || "",
+					iseval: query("iseval") || 0,
+					resultid: query("resultid") ||  "",
+					descid: query("descid") || "",
+					prodCompId : query("prodCompId") || "",
+				 	repairUserId : query("repairUserId") || ""
+				};
+
+				function init() {
+					var url = ApiService.Api50 + "/api/v1/MatWorkOrder/";
+					if(statistics.orgid) {
+						url += "GetOrgRepairRecordsList?orgId=" + statistics.orgid;
+						statistics.iseval && (url += "&isEval=" + statistics.iseval);
+					} else {
+						switch($scope.type) {
+							case "at":
+								url += "GetPagedRepairListForMe?pageIndex=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize;
+								break;
+							case "my":
+								url += "GetMyRepairRecordsList?pageIndex=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize;
+								break;
+							case "dept":
+							case "depts":
+							case "all":
+								var authType = {
+									dept: 2,
+									depts: 3,
+									all: 4
+								};
+								url += "GetCompRepairRecordsList?pageIndex=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize + "&authType=" + authType[$scope.type];
+								statistics.userid && (url += "&repairUserId=" + statistics.userid);
+								statistics.resultid && (url += "&repairResultId=" + statistics.resultid);
+								statistics.descid && (url += "&repairDescriptionId=" + statistics.descid);
+								statistics.prodCompId && (url += "&prodCompId=" + statistics.prodCompId);
+								statistics.repairUserId && (url += "&repairUserId=" + statistics.repairUserId);
+								mdCode && (url += "&mdCode=" + mdCode);
+								prodId && (url += "&prodId=" + prodId);
+								skuId && (url += "&skuId=" + skuId);
+								innerCode && (url += "&innerCode=" + encodeURIComponent(innerCode));
+								break;
+						}
+					}
+					if(statistics.year || statistics.quarter || statistics.month) {
+						var date = $filter("getCustomDate")(statistics.year, statistics.quarter, statistics.month);
+						url += "&starTime=" + date.start + "&endTime=" + date.end;
+					}
+					$scope.url = url;
+					
+				};
+
+				$scope.$on('refresh_pageindex', init);
+
+				RPCObserver.on('refresh_mat_repair_list', 'refresh_mat_repair_list');
+				window.refresh_mat_repair_list = function() {
+					$scope.$broadcast('md_pullrefresh');
+				};
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

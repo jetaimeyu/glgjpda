@@ -1,0 +1,204 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="../../css/mui.loading.css" />
+		<style type="text/css">
+			html {
+				font-size: 62.5%;
+			}
+			
+			.mui-table-view-cell img {
+				margin-top: 2px;
+			}
+			
+			.mui-grid-view.mui-grid-9 .mui-table-view-cell>a:not(.mui-btn) {
+				margin: 0 0 5px 0;
+				/*margin: 0;*/
+				padding: 0;
+			}
+			
+			.mui-media-body {
+				line-height: 16px!important;
+				font-size: 13px!important;
+				margin-top: 5px!important;
+			}
+			
+			.cmd-container {
+				position: relative;
+			}
+			
+			.mui-grid-view.mui-grid-9 .mui-table-view-cell {
+				padding: 3px 0px;
+				background-color: white;
+			}
+			
+			.mui-grid-view.mui-grid-9 {
+				background-color: #fff;
+				/*padding: 10px 0 ;*/
+				padding: 10px 0 5px 0;
+			}
+			
+			.mui-grid-view.mui-grid-9:after {
+				position: absolute;
+			}
+			
+			.mui-grid-9.bg {
+				position: absolute;
+				bottom: 0;
+				right: 0;
+				z-index: -1;
+			}
+			
+			.mui-grid-view.mui-grid-9 .mui-table-view-cell {
+				border: none;
+			}
+			
+			.imgslist {
+				float: left;
+				width: 62px;
+				height: 62px;
+				background-size: cover!important;
+			}
+			
+			.group-title {
+				padding: 5px 16px 12px;
+				font-size: 17px;
+				color: #323232;
+				margin: 0;
+				background-color: #fff;
+			}
+
+			#map {
+				width: 100%;
+				height: 200px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="ProdInfoCtl">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back">扫码签到详情</a>
+		</header>
+		<div class="mui-content" ng-if="ProdInfo.ProdID" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<ul class="data-group">
+				<li class="data-row mui-table-view-cell" ng-click="event.toDetail()">
+					<p class="opt md-icon">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" style="padding: 10px 5px 11px 16px;">
+						<!--<img class="float-left size70 bg-f2 border-f2 mr10" ms-attr="{src:ImgUrl+'/prod/logo/'+Prod.ID+'_100x100.jpg'}" />-->
+						<div class="float-left imgslist bg-f2 border-f2 mr10" src="../../images/imgPre.png" ng-style="{'background-image':'url('+ (ProdInfo | getProdLogo:62:62) +')'}"></div>
+						<div style="margin-left: 72px;">
+							<div class="title font-16 mui-ellipsis" ng-bind="ProdInfo.ProdName"></div>
+							<p class="color-gray-deep font-13 mui-ellipsis" style="margin-bottom: 0" ng-if="ProdInfo.SkuName" ng-bind="'型号：'+ProdInfo.SkuName"></p>
+							<p ng-if="ProdInfo.InnerCode" class="color-gray-deep font-13 mui-ellipsis" style="margin-bottom: 0" ng-bind="ProdInfo.InnerCodeName+'：'+ProdInfo.InnerCode"></p>
+						</div>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group" ng-if="FacInstall.Name||(Fac.ID==user.CompID&&ProdInfo.InnerCode)">
+				<li class="data-row" ng-click="event.toComp(FacInstall.ID)">
+					<p class="opt md-icon">
+						<span class="icon-right"></span>
+					</p>
+					<label>生产厂家</label>
+					<div class="body">
+						<span ng-bind="FacInstall.Name"></span>
+					</div>
+				</li>
+				<li class="data-row" ms-if="ProdInfo.ProdInnerCode">
+					<label>{{ProdInfo.InnerCodeName}}</label>
+					<div class="body">
+						<span ng-bind="ProdInfo.InnerCode"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<!--如果是厂家，则显示第一次出库信息和最后一次出库信息-->
+				<li class="data-row" ng-if="OutCust.FirstCust">
+					<label ng-if="!OutCust.LastCust">已出库给</label>
+					<label ng-if="OutCust.LastCust">首次出库给</label>
+					<p ng-if="OutCust.FirstCust.LinkPhone" class="opt md-icon icon-tel color-blue font-18" ng-click="event.tel(OutCust.FirstCust.LinkPhone)"></p>
+					<!--企业或者经销商客户-->
+					<div class="body" style="margin-right: 30px;" ng-if="OutCust.FirstCust.CustomerType!=3">
+						{{OutCust.FirstCust.CustomerName}}
+						<p>
+							{{OutCust.FirstCust.LinkName+' '+OutCust.FirstCust.LinkPhone}}
+						</p>
+						<p>
+							{{OutCust.FirstCust.OutDate}}
+						</p>
+					</div>
+					<!--个人客户-->
+					<div class="body" ng-if="OutCust.FirstCust.CustomerType==3">
+						{{OutCust.FirstCust.LinkName+' '+OutCust.FirstCust.LinkPhone}}
+						<p>
+							{{OutCust.FirstCust.OutDate}}
+						</p>
+					</div>
+				</li>
+				<li class="data-row" ng-if="OutCust.LastCust">
+					<label>最后出库给</label>
+					<p ng-if="OutCust.LastCust.LinkPhone" class="opt md-icon icon-tel color-blue font-18" ng-click="event.tel(OutCust.LastCust.LinkPhone)"></p>
+					<!--企业或者经销商客户-->
+					<div class="body" style="margin-right: 30px;" ng-if="OutCust.LastCust.CustomerType!=3">
+						{{OutCust.LastCust.CustomerName}}
+						<p>
+							{{OutCust.LastCust.LinkName+' '+OutCust.LastCust.LinkPhone}}
+						</p>
+						<p>
+							{{OutCust.LastCust.OutDate}}
+						</p>
+					</div>
+					<!--个人客户-->
+					<div class="body" ng-if="OutCust.LastCust.CustomerType==3">
+						{{OutCust.LastCust.LinkName+' '+OutCust.LastCust.LinkPhone}}
+						<p>
+							{{OutCust.LastCust.OutDate}}
+						</p>
+					</div>
+				</li>
+			</ul>
+
+			<ul class="data-group">
+				<p class="data-group-tip">签到信息</p>
+				<li class="data-row">
+					<label>所在地</label>
+					<div class="body" ng-bind="ProdInfo.Province | locationfilter:ProdInfo.City:ProdInfo.District:ProdInfo.Address:ProdInfo.Street">
+					</div>
+				</li>
+				<li class="data-row">
+					<label>签到人</label>
+					<div class="body" ng-bind="ProdInfo.UserName">
+					</div>
+				</li>
+				<li class="data-row">
+					<label>签到时间</label>
+					<div class="body" ng-bind="ProdInfo.CreateDate">
+					</div>
+				</li>
+			</ul>
+
+			<div id="map">
+
+			</div>
+
+		</div>
+
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/mui.loading.js"></script>
+		<script type="text/javascript" src="https://api.map.baidu.com/api?v=3.0&ak=W6WIQmkWMM7fHZ1bQzONDGwimUikfaPU"></script>
+		<script type="text/javascript" src="prodSignInfo.js"></script>
+	</body>
+
+</html>

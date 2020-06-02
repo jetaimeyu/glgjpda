@@ -1,0 +1,240 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<link rel="stylesheet" href="../../css/mui.min.css" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css">
+	<link rel="stylesheet" href="contact-common.css" />
+	<style>
+		.top45 {
+				margin-top: 45px
+			}
+			
+			.top91 {
+				margin-top: 91px
+			}
+			
+			.top44 {
+				margin-top: 44px;
+			}
+			
+			.top98{
+				margin-top: 98px;
+			}
+			
+			.top133 {
+				margin-top: 133px;
+			}
+			/*加号图标样式*/
+			
+			.icon {
+				width: 16px;
+			}
+			
+			#adpopover {
+				/*min-width: 260px;*/
+				/*height: 370px;*/
+				top: 65% ;
+
+				margin-top: -150px;
+				left: 50% !important;
+				margin-left: -141px;
+				border-radius: 3px;
+				background-color: #fff;
+			}
+			
+			#adpopover.mui-popover .mui-popover-arrow {
+				display: none !important;
+			}
+			
+			#adpopover .data-group:before {
+				height: 0;
+			}
+			
+			.data-group .data-row label{
+				width: 70px;
+			}
+			#adpopover .data-group .data-row .body {
+				padding: 10px 5px 11px 10px;
+			}
+			
+			#adpopover .data-group .data-row:after {
+				left: 10px;
+				background-color: #E5E5E5;
+			}
+			
+			#adpopover .data-group .data-row.first:after {
+				left: 5px;
+				right: 5px;
+				background-color: #E5E5E5;
+			}
+			
+			#adpopover .data-group .data-row:last-child:after {
+				height: 1px;
+				left: 5px;
+				right: 5px;
+			}
+			
+			#adpopover .data-group .data-row.first {
+				min-height: 38px
+			}
+			
+			.addelment {
+				margin: 12px 20px 12px 20px;
+			}
+			
+			.addelment a {
+				background-color: #3296FA;
+				color: #fff;
+				padding: 5px 0;
+				border: 1px solid #3296FA;
+			}
+			
+			.data-group .data-row .label-gray {
+				color: #333333;
+			}
+			
+			.info-title {
+				margin-left: 10px;
+				line-height: 1;
+				color: #1f1f1f;
+			}
+			
+			.title {
+				color: #1f1f1f;
+			}
+			
+			.mdt_leftline {
+				width: 3px;
+				height: 14px;
+				background: #169BD5;
+				margin-top: -13px;
+				margin-left: -3px;
+			}
+			
+		</style>
+</head>
+
+<body ng-controller="ContactOrgController">
+	<!--header-->
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left" ng-click="mui_back()">组织架构</a>
+		<a class="mui-pull-right menu-add" id="add" href="#popover" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<img class="icon" src="../../images/add.png" />
+		</a>
+	</header>
+	<!--搜索框部分-->
+	<div class="search-box top44">
+		<div class="search-body">
+			<span class="mui-icon mui-icon-search" method="search"></span>
+		</div>
+		<div class="search-placeholder" ng-click="doSearchUser()">
+			<i class="mui-icon mui-icon-search"></i>
+			<span class="placeholder">搜索</span>
+		</div>
+	</div>
+	<!--导航目录部分-->
+	<div id="res-slide" class="top-thin-line mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted nav-bar"
+	 ng-class="{'mui-block':isLoad}" ng-show="isLoad&&navDirData.length>1" style="display: none;">
+		<div class="mui-scroll" style="height: 35px;">
+			<a class="mui-control-item" ng-repeat="dir in navDirData" ng-class="{'mui-active':dir.ID==OrgID}" ng-attr-orgid="{{dir.ID}}"
+			 ng-attr-index="{{$index}}">
+				<span class="icon iconfont icon-right color-gray-deep" style="margin-left: 2px;" ng-show="$index>0"></span>
+				<span class="group-name" ng-bind="dir.OrgName"></span>
+			</a>
+		</div>
+	</div>
+	<div id="slider" class="mui-scroll-wrapper" style="display:none;" ng-class="{'mui-block':isLoad,'top98':navDirData.length<2&&data[OrgID].deps.length==0,'top91':navDirData.length<2&&data[OrgID].deps.length>0,'top133':navDirData.length>1||(navDirData.length>1&&data[OrgID].deps.length==0)}">
+		<!--目录部分-->
+		<ul class="data-group" ng-show="data[OrgID] && data[OrgID].deps.length>0" style="margin-top: 0;">
+			<li class="mui-table-view-cell data-row  dir-row" ng-repeat="dept in data[OrgID].deps" ng-click="clickDir(dept.ID,dept.OrgName,dept.OrgPersonNums,dept.IsChild)">
+				<label style="width: auto;line-height: 27px;" class="mui-ellipsis">
+					<i class="icon-bumenguanli">
+						<span ng-style="{'top':ios?0:'5px'}" class="dir_name mui-ellipsis" ng-bind="' '+dept.OrgName"></span>
+					</i>
+					<span class="dir_num" ng-bind="'('+dept.OrgPersonNums+')'"></span>
+				</label>
+				<p class="opt md-icon icon-right"></p>
+			</li>
+		</ul>
+		<!--<ul class="data-group" ng-show="data[OrgID] && data[OrgID].deps.length>0" style="margin-top: 0;">
+				<li class="mui-table-view-cell data-row  dir-row" ng-repeat="dept in data[OrgID].deps" ng-click="clickDir(dept.ID,dept.OrgName)">
+					<label style="width:85vw" class="mui-ellipsis">
+						<i class="icon-bumenguanli">
+							<span style="width:85vw;margin-left: 4px;" class="mui-ellipsis" ng-bind="' '+dept.OrgName+'('+dept.OrgPersonNums+')'"></span>
+						</i>
+					</label>
+					<p class="opt md-icon icon-right"></p>
+				</li>
+			</ul>-->
+		<!--联系人部分-->
+		<div ng-show="data[OrgID] && data[OrgID].users.length>0" ng-style="{'margin-top':data[OrgID].deps.length==0||!data[OrgID].deps?'0px':'8px'}">
+			<md-user-list ng-model="data[OrgID].users" optant="view"></md-user-list>
+		</div>
+		<md-no-data ng-show="data[OrgID].deps.length==0 && data[OrgID].users.length==0">暂无数据</md-no-data>
+	</div>
+	<div id="popover" class="mui-popover menuDivModel">
+		<ul class="mui-table-view">
+			<li class="mui-table-view-cell" ng-click="tap('adddept')" ng-if="IsShowOrg">
+				<a class="mui-icon icon-bumenguanli">
+					<font>添加子部门</font>
+				</a>
+			</li>
+			<li class="mui-table-view-cell" ng-click="tap('addperson')" ng-if="IsShowOrg">
+				<a class="mui-icon icon-addperson">
+					<font>添加员工</font>
+				</a>
+			</li>
+
+			<li ng-show="navDirData.length>1" class="mui-table-view-cell" ng-click="tap('deptsetting')" ng-if="IsShowOrg">
+				<a class="mui-icon icon-departmentset">
+					<font>部门设置</font>
+				</a>
+			</li>
+			<li class="mui-table-view-cell" ng-click="tap('concerned')">
+				<a class="mui-icon icon-concerned">
+					<font>关怀一下</font>
+				</a>
+			</li>
+		</ul>
+	</div>
+	<!--新增子部门-->
+	<div id="adpopover" class="mui-popover" style="padding: 0 0px;">
+		<ul class="data-group" style="margin-top: 3px;">
+			<li class="data-row first">
+				<a class="opt md-icon icon-close" href="#adpopover"></a>
+				<div class="body">
+					<div class="pdLeft100 mui-ellipsis info-title">
+						<span class="color-gray-dark font-14">添加子部门</span>
+					</div>
+					<div class="mdt_leftline mui-pull-left"></div>
+				</div>
+			</li>
+			<li class="data-row">
+				<label class="label-gray">子部门名称</label>
+				<div class="body">
+					<div class="edit" style="margin: 0px 10px;border: 1px solid #f0f0f0;border-radius: 3px;">
+						<div class="needsclick" id="deptname" lenlimit="20" ng-bind="" contenteditable="true" placeholder="请输入子部门名称"></div>
+					</div>
+				</div>
+			</li>
+		</ul>
+		<div class="addelment">
+			<a type="button" class="font-15 mui-btn mui-btn-block" ng-click="addDept()">保存</a>
+		</div>
+	</div>
+	<script src="../../js/mui.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/rpc.js"></script>
+	<script type="text/javascript" src="org.js"></script>
+</body>
+
+</html>

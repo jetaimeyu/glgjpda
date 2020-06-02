@@ -1,0 +1,156 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="../../css/mui.picker.min.css" />
+		<link rel="stylesheet" href="../../css/mui.loading.css" />
+
+		<body ng-controller="bodyCtl">
+			<header class="mui-bar mui-bar-nav">
+				<a class="mui-action-back mui-icon icon-back mui-pull-left">教育背景</a>
+			</header>
+			<div class="mui-content">
+				<ul class="data-group">
+					<li class="data-row must">
+						<label>学校名称</label>
+						<div class="body">
+							<input type="text" maxlength="50" ng-model="data.SchoolName" placeholder="请输入学校名称" />
+						</div>
+					</li>
+					<li class="data-row must" ng-click="event.chooseDate(false)">
+						<label>开始时间</label>
+						<p class="opt md-icon font-15">
+							<span class="icon-right"></span>
+						</p>
+						<div class="body" data-options=''>
+							<span ng-if="!data.EduStartDate" class="placeholder">请选择开始时间</span>
+							<span ng-if="data.EduStartDate" ng-bind="event.transDate(data.EduStartDate)"></span>
+						</div>
+					</li>
+					<li class="data-row must" ng-click="event.chooseDate(true)">
+						<label>结束时间</label>
+						<p class="opt md-icon font-15">
+							<span class="icon-right"></span>
+						</p>
+						<div class="body" data-options='{}'>
+							<span ng-if="!data.EduEndDate" class="placeholder">请选择结束时间</span>
+							<span ng-if="data.EduEndDate" ng-bind="event.transDate(data.EduEndDate)"></span>
+						</div>
+					</li>
+					<li class="data-row must">
+						<label>学历</label>
+						<div class="body">
+							<input type="text" maxlength="50" ng-model="data.Education" placeholder="请输入学历" />
+						</div>
+					</li>
+					<li class="data-row must">
+						<label>专业</label>
+						<div class="body">
+							<input type="text" maxlength="50" ng-model="data.Major" placeholder="请输入所学专业" />
+						</div>
+					</li>
+				</ul>
+				<div class="mui-content-padded">
+					<span class="mui-btn mui-btn-block" ng-click="event.save()">保存</span>
+				</div>
+			</div>
+			<script type="text/javascript" src="../../js/mui.min.js"></script>
+			<script type="text/javascript" src="../../js/angular.min.js"></script>
+			<script type="text/javascript" src="../../js/common.js"></script>
+			<script type="text/javascript" src="../../js/utils.js"></script>
+			<script type="text/javascript" src="../../js/rpc.js"></script>
+			<script type="text/javascript" src="../../js/mui.loading.js"></script>
+			<script type="text/javascript" src="../../js/mui.picker.min.js"></script>
+			<script>
+				app.controller("bodyCtl", ["$scope", "ApiService", "DataService", "UtilsService", "CacheService",
+					"DatePickerService",
+					function($scope, ApiService, DataService, UtilsService, CacheService, DatePickerService) {
+						var curView = plus.webview.currentWebview();
+
+						$scope.data = curView.data || {
+							EduStartDate: "",
+							EduEndDate: "",
+							SchoolName: "",
+							Education: "",
+							Major: ""
+						};
+
+						$scope.event = {
+							transDate: function(value) {
+								return value.substr(0, 7);
+							},
+							chooseDate: function(isEnd) {
+								if(isEnd && !$scope.data.EduStartDate) {
+									mui.toast("请选择开始时间！");
+									return;
+								}
+
+								var datePicker = new mui.DtPicker({
+									"type": "month",
+									"beginYear": 1900,
+									"endYear": new Date().getFullYear(),
+									"value": isEnd ? $scope.data.EduEndDate : $scope.data.EduStartDate
+								});
+								datePicker.show(function(res) {
+									isEnd && ($scope.data.EduEndDate = res.text);
+									!isEnd && ($scope.data.EduStartDate = res.text);
+
+									$scope.$apply();
+									datePicker.dispose();
+								});
+
+								// DatePickerService.pickDate({
+								//     selected: isEnd ? $scope.data.EduEndDate : $scope.data.EduStartDate,
+								//     minDate: isEnd ? $scope.data.EduStartDate : ""
+								// }).then(function (res) {
+								//     isEnd && ($scope.data.EduEndDate = res);
+								//     !isEnd && ($scope.data.EduStartDate = res);
+								// });
+							},
+							save: function() {
+								var data = $scope.data;
+								if(!data.SchoolName.trim()) {
+									mui.toast("请填写就读学校");
+									return;
+								}
+								if(!data.EduStartDate) {
+									mui.toast("请选择开始时间");
+									return;
+								}
+								if(!data.EduEndDate) {
+									mui.toast("请选择结束时间");
+									return;
+								}
+								if(!data.Education.trim()) {
+									mui.toast("请填写学历");
+									return;
+								}
+								if(!data.Major.trim()) {
+									mui.toast("请填写专业");
+									return;
+								}
+
+								if(data.EduEndDate <= data.EduStartDate) {
+									mui.toast("您选择的时间不正确");
+									return;
+								}
+								$scope.data.EduStartDate = new Date($scope.data.EduStartDate).Format("yyyy-MM-dd");
+								$scope.data.EduEndDate = new Date($scope.data.EduEndDate).Format("yyyy-MM-dd");
+								curView.opener().evalJS(curView.callback + "(" + JSON.stringify($scope.data) +
+									"," + curView.idx + ")");
+								mui.back();
+							}
+						};
+					}
+				]);
+
+				mui.plusReady(function() {
+					angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+				});
+			</script>

@@ -1,0 +1,111 @@
+body,
+.mui-content {
+	background: #fff;
+}
+
+.business-details {
+	box-sizing: border-box;
+	padding-top: 15px!important;
+}
+
+.application-list {
+	float: left;
+	text-align: center;
+	border: none!important;
+	padding: 0px!important;
+	/*min-height: 84px;*/
+}
+
+.application-list:after {
+	height: 0px;
+}
+
+.application-list {
+	float: left;
+	text-align: center;
+}
+
+.application-list img {
+	width: 48px;
+}
+
+.application-list div {
+	color: #323232!important;
+	font-size: 1.3rem!important;
+	margin-top: 4px;
+	line-height: 13px;
+}
+
+.business-details .application-list {
+	font-size: 1.4rem!important;
+}
+
+.application-title,
+.statistical-title {
+	padding-top: 15px;
+	padding-left: 16px;
+	padding-bottom: 15px;
+}
+
+.application-title>span {
+	font-size: 1.7rem;
+	color: #323232;
+	font-weight: bold;
+}
+
+.application-title span:nth-child(2) {
+	font-weight: normal;
+}
+
+.application-title span:last-child {
+	padding-right: 16px;
+	font-size: 1.3rem;
+	color: #B5B5B5;
+}
+
+.common-application {
+	border-top: 1px solid #EAEAEA;
+	margin-top: 25px;
+	box-sizing: border-box;
+}
+
+.application-2f {
+	margin-top: 25px;
+}
+
+.application-1f .application-1f {}
+
+.statistical,.otherstatistical {
+	box-sizing: border-box;
+	border-top: 1px solid #EAEAEA;
+	margin-top: 25px;
+}
+.otherstatistical{
+	margin-bottom: 25px;
+}
+.statistical-title>span {
+	font-size: 1.7rem;
+	color: #323232;
+	font-weight: bold;
+}
+
+.application-1f,
+.application-2f,
+.business-details,
+.other-application {
+	overflow: hidden;
+	background-color: #fff!important;
+	border: none!important;
+	margin-left: 6px!important;
+	margin-right: 6px!important;
+}
+
+.other-application {
+	border-top: 1px solid #EAEAEA!important;
+	box-sizing: border-box;
+	margin-top: 25px!important;
+}
+
+.application-2f>.application-list {
+	margin-top: 25px!important;
+}

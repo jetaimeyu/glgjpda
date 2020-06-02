@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="select-customer.css" />
+		<style type="text/css">
+			footer {
+				width: 100%;
+				height: 44px;
+				position: fixed;
+				bottom: -1px;
+				line-height: 44px;
+				text-align: center;
+				color: #169BD5;
+				background-color: #ffffff;
+				z-index: 800;
+				overflow: hidden;
+			}
+			
+			footer .footer-btn-sure {
+				background-color: #169BD5;
+			}
+			
+			footer .footer-btn-sure .btn-sure {
+				color: #fff;
+			}
+			.top82{
+				margin-top: 82px!important;
+			}
+			.top42{
+				margin-top: 42px!important;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="OutStockController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">选择客户</a>
+			<a class="mui-btn-outlined mui-btn" id="btn_select" ng-click="selectCustomer()">确定</a>
+			<!--<a class="right-menu-words " id="btn_select" ng-click="selectCustomer()">确定</a>-->
+		</header>
+		<div class="mui-scroll-wrapper" id="scroll" style="display:none;" ng-class="{'mui-block':isLoad}">
+			<div class="search_input search-box"  style="z-index: 8;">
+				<!--<div class="search-body">
+					<input id="txtSearch" type="text" placeholder="请输入客户名称" />
+					<span class="mui-icon mui-icon-search" method="search"></span>
+				</div>
+				<div class="search-placeholder">
+					<input id="txtSearch" type="text" placeholder="请输入客户名称" />
+					<span class="mui-icon mui-icon-search"></span><span class="placeholder">搜索</span>
+				</div>-->
+				<form ng-submit="search()">
+					<input type="search" placeholder="请输入搜索内容" ng-model="data.customerName" ng-change="searchClear()" maxlength="50">
+					<i class="icon-search-thin color-gray-dark"></i>
+					<i class="icon-delete color-gray" ng-show='data.customerName' ng-click="deleteSearch()"></i>
+					<span ng-click="search()">搜索</span>
+				</form>
+					
+			</div>
+			<div class="search-result top-thin-line" style="display: none;">
+				查询结果:共<span class="color-red-md" ng-bind="data.totalCount"></span>条数据
+				<div class="opt md-icon">
+					<span class="icon-close-4">
+                    </span>
+				</div>
+			</div>
+			<div class=" mui-scroll-wrapper" id="pullrefresh" ng-class="{'mui-block':isLoad,'top42':isIos&&!isSearch,'top82':isSearch&&isIos}">
+				<div>
+				<!--客户目录-->
+				<ul class="data-group biglabel" id="customerCatalog" ng-show="data.customerList.length>0">
+					<!--客户-->
+					<li class="data-row chooseType" ng-repeat="customer in data.customerList" ng-attr-index="{{$index}}" ng-attr-CustomerID="{{customer.CustomerID}}" ng-click="selectRow(customer.CustomerID)">
+						<p class="selectCustomer float-left" ng-class="{'icon-roundcheckfill color-blue':data.checkedID==customer.CustomerID,'icon-round color-gray':data.checkedID!=customer.CustomerID}"></p>
+						<div class="body customer-manage">
+							<!--<img  ng-src="{{customer.CustCompID|getUserLogo:60:0}}" class="float-left border-f2 bg-f2 mr10" />-->
+							<span class="font-16 mui-ellipsis customerInfo" ng-bind="customer.CustomerName"></span>
+							<p class="font-13 color-gray-dark mui-ellipsis customerInfo" ng-if="!isglgj" ng-bind="'联系人：'+customer.MainLinkName"></p>
+							<p class="font-13 color-gray-dark mui-ellipsis customerInfo" ng-if="!isglgj" ng-bind="'联系人电话：'+customer.MainLinkPhone"></p>
+							<p class="font-13 color-gray-dark mui-ellipsis customerInfo" ng-if="isglgj" ng-bind="'联系人：'+(customer.MainLinkName|formatName)"></p>
+							<p class="font-13 color-gray-dark mui-ellipsis customerInfo" ng-if="isglgj" ng-bind="'联系人电话：'+(customer.MainLinkPhone|formatPhone)"></p>
+						</div>
+					</li>
+				</ul>
+		</div>
+			</div>
+
+			<md-no-data ng-show="data.customerList && data.customerList.length==0">暂无数据</md-no-data>
+		</div>
+		<footer class="font-16 footer top-thin-line" style="display: none;">
+			<span id="btn-all-add">新增客户</span>
+		</footer>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="select-customer.js"></script>
+	</body>
+
+</html>

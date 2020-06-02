@@ -1,0 +1,661 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title ng-bind="title"></title>
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+	<link href="../../css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	<style type="text/css">
+		.data-group .des:after {
+			height: 0;
+		}
+
+		.data-group .data-row:after {
+			left: 0;
+			right: 0;
+		}
+
+		.phraseUL {
+			text-align: center;
+			margin-top: 0;
+		}
+
+		.phraseUL li {
+			line-height: 20px;
+			padding: 15px;
+			padding-right: 36px;
+			min-height: 50px !important;
+		}
+
+		.add-phrase {
+			color: #3296FA;
+			box-shadow: 0px -1px 3px 0px rgba(180, 180, 180, 0.5)
+		}
+
+		#adpopover {
+			/*min-width: 260px;*/
+			/*height: 370px;*/
+			top: 55% !important;
+			margin-top: -120px;
+			left: 50% !important;
+			margin-left: -141px;
+			border-radius: 3px;
+			background-color: #fff;
+		}
+
+		#adpopover.mui-popover .mui-popover-arrow {
+			display: none !important;
+		}
+
+		#adpopover .data-group:before {
+			height: 0;
+		}
+
+		#adpopover .data-group .data-row .body {
+			padding: 10px 5px 11px 10px;
+		}
+
+		#adpopover .data-group .data-row:after {
+			left: 10px;
+			background-color: #E5E5E5;
+		}
+
+		#adpopover .data-group .data-row.first:after {
+			left: 5px;
+			right: 5px;
+			background-color: #E5E5E5;
+		}
+
+		#adpopover .data-group .data-row:last-child:after {
+			height: 1px;
+			left: 5px;
+			right: 5px;
+		}
+
+		#adpopover .data-group .data-row.first {
+			min-height: 38px
+		}
+
+		.addelment {
+			margin: 12px 20px 12px 20px;
+		}
+
+		.addelment a {
+			background-color: #3296FA;
+			color: #fff;
+			padding: 5px 0;
+			border: 1px solid #3296FA;
+		}
+
+		.data-group .data-row .label-gray {
+			color: #333333;
+		}
+
+		.info-title {
+			margin-left: 10px;
+			line-height: 1;
+			color: #1f1f1f;
+		}
+
+		.title {
+			color: #1f1f1f;
+		}
+
+		.mdt_leftline {
+			width: 3px;
+			height: 14px;
+			background: #169BD5;
+			margin-top: -13px;
+			margin-left: -3px;
+		}
+
+		#adpopover .data-group .data-row label {
+			width: 70px;
+		}
+
+		span.placeholder a {
+			color: #dddddd !important;
+		}
+	</style>
+</head>
+
+<body ng-controller="StateMarkController">
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left" ng-bind="title"></a>
+	</header>
+	<div class="mui-scroll-wrapper" style="display: none;" ng-class="{'mui-block':isLoad}">
+		<ul class="data-group">
+			<li class="data-row must des">
+				<label ng-bind="labelName"></label>
+				<div class="body">
+					<div class="edit">
+						<div class="needsclick" placeholder="请输入{{labelName}}" lenlimit="150" id="stateDescription" ng-model-div-text="stateDescription"></div>
+					</div>
+				</div>
+			</li>
+			<p class="button" ng-click="showPhraseList()">快捷短语</p>
+		</ul>
+		<ul class="data-group">
+			<li class="mui-table-view-cell data-row must">
+				<label ng-bind="UserName"></label>
+				<p class="opt md-icon font-15" ng-click="selectUser()">
+					<span class="icon-right"></span>
+				</p>
+				<div class="body" ng-click="selectUser()">
+					<span class="placeholder" ng-show="sendUsers.length==0">请选择
+						<a ng-bind="UserPlaceName"></a>人员</span>
+					<span ng-show="sendUsers.length>0" ng-repeat="user in sendUsers" ng-bind="$index==0?user.ViewName:'，'+user.ViewName"></span>
+				</div>
+			</li>
+			<li class="mui-table-view-cell data-row" ng-if="doType =='job'">
+				<label>抄送给</label>
+				<p class="opt md-icon font-15" ng-click="selectsendUser()">
+					<span class="icon-right"></span>
+				</p>
+				<div class="body" ng-click="selectsendUser()">
+					<span class="placeholder" ng-show="sendTo.length==0">请选择抄送人员</span>
+					<span ng-show="sendTo.length>0" ng-repeat="user in sendTo" ng-bind="$index==0?user.ViewName:'，'+user.ViewName"></span>
+				</div>
+			</li>
+		</ul>
+		<div class="mui-content-padded">
+			<span class="mui-btn mui-btn-block" ng-click="save()">确认</span>
+		</div>
+	</div>
+	<!--新增快捷短语-->
+	<div id="adpopover" class="mui-popover" style="padding: 0 0px;">
+		<ul class="data-group" style="margin-top: 3px;">
+			<li class="data-row first">
+				<a class="opt md-icon icon-close" href="#adpopover"></a>
+				<div class="body">
+					<div class="pdLeft100 mui-ellipsis info-title">
+						<span class="color-gray-dark font-14">添加快捷短语</span>
+					</div>
+					<div class="mdt_leftline mui-pull-left"></div>
+				</div>
+			</li>
+			<li class="data-row must">
+				<label class="label-gray">快捷短语</label>
+				<div class="body">
+					<div class="edit" style="margin-right: -5px;">
+						<div class="needsclick" id="newPhraseDesc" ng-bind="" contenteditable="true" placeholder="请输入快捷短语" lenlimit="150"></div>
+					</div>
+				</div>
+			</li>
+		</ul>
+		<div class="addelment">
+			<a type="button" class="font-15 mui-btn mui-btn-block savePhrase">保存</a>
+		</div>
+	</div>
+	<!--无网络或请求失败重试-->
+	<!--<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>-->
+	<script type="text/javascript" src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/rpc.js"></script>
+	<script type="text/javascript" src="../message/transMessage.js"></script>
+	<script type="text/javascript">
+		app.controller("StateMarkController", ["$scope", "UtilsService", "ApiService", "DataService", "$Modal", "$q",
+			"$timeout", "ChatUserService", "$filter", "RPCObserver", "CacheService",
+			function ($scope, UtilsService, ApiService, DataService, $Modal, $q, $timeout, ChatUserService, $filter,
+				RPCObserver, CacheService) {
+				$scope.process = {
+					SaveState: 0, //0未保存 1保存成功 2保存中 3保存失败
+					ProcessList: [{
+						Text: "保存进展标记",
+						State: 0,
+						RetryMethod: submitData
+					}, {
+						Text: "通知抄送人",
+						State: 0
+					}]
+				};
+
+				var curUser = CacheService.get("user");
+				var ws = plus.webview.currentWebview();
+				var id = ws.ID;
+				var key = ws.key;
+				$scope.stateDescription = ""; //说明
+				$scope.sendUsers = []; //抄送人
+				$scope.sendTo = [];
+				$scope.phraseList = []; //快捷短语列表
+				$scope.title = "";
+				$scope.labelName = "";
+				$scope.doType = ws.do;
+				$scope.UserName = $scope.doType == 'job' ? '派工给' : '抄送给';
+				$scope.UserPlaceName = $scope.doType == 'job' ? '派工' : '抄送';
+				switch ($scope.doType) {
+					case 'job':
+						$scope.title = "工作分配";
+						$scope.labelName = "分配说明";
+						break;
+					case 'mark':
+						$scope.title = "进展标记";
+						$scope.labelName = "标记说明";
+						break;
+					case 'report':
+						$scope.title = "工作报告";
+						$scope.labelName = "报告说明";
+						break;
+					default:
+						break;
+				}
+
+				if ($scope.doType != 'job') {
+
+					var url = ApiService.Api50 + "/api/v1/Common/GetSendLogInfoLastOne/" + id + "?dataForm=" + shareLog[key] +
+						"&sendOperate=派工给";
+					DataService.get(url).then(function (res) {
+						var users = res.map(function (user) {
+							return {
+								UserID: user.ID,
+								ViewName: user.Name,
+								CompID:user.CompID,
+								ULogoIsExist:user.ULogoIsExist
+							};
+						});
+
+						$scope.doType == 'mark' && !users.some(function (user) {
+							return user.UserID == ws.CreateUserID;
+						}) && users.push({
+							UserID: ws.CreateUserID,
+							ViewName: ws.CreateUserName,
+							CompID: ws.CompID,
+							ULogoIsExist: ws.ULogoIsExist
+						});
+						$scope.sendUsers = users;
+						$scope.isLoad = true;
+					});
+				} else {
+					$scope.sendTo.push({
+						UserID: ws.CreateUserID,
+						ViewName: ws.CreateUserName,
+						CompID: ws.CompID,
+						ULogoIsExist: ws.ULogoIsExist,
+
+					});
+					$scope.isLoad = true;
+				}
+
+				var saving = false;
+				//选择抄送人
+				$scope.selectUser = function () {
+					var url = "../common/contact-select.html?action=select&multiselect=true";
+					key == 'eq-fault' && (url += "&type=org");
+					UtilsService.openWindow({
+						needLogin: true,
+						id: "contact-select.html",
+						url: url,
+						extras: {
+							selectObj: $scope.sendUsers,
+							callback: "selectUserCallback"
+						}
+					});
+				};
+
+				$scope.selectsendUser = function () {
+					var url = "../common/contact-select.html?action=select&multiselect=true";
+					key == 'eq-fault' && (url += "&type=org");
+					UtilsService.openWindow({
+						needLogin: true,
+						id: "contact-select.html",
+						url: url,
+						extras: {
+							selectObj: $scope.sendTo,
+							callback: "selectsendUser"
+						}
+					});
+				};
+				//保存
+				$scope.save = function () {
+					document.activeElement.blur();
+
+					if ($scope.stateDescription.trim() == "") {
+						mui.toast("请输入" + $scope.labelName);
+						return;
+					}
+					if ($scope.sendUsers.length == 0) {
+						mui.toast('请选择' + $scope.UserPlaceName + '人员');
+						return;
+					}
+					if (saving) {
+						return;
+					}
+					//验证填字符长度
+					if (!checkLengthUtil.check()) {
+						return false;
+					}
+					//开始上传
+					saving = true;
+					submitData();
+					UtilsService.submitModal($scope.process, function () {
+						//刷新工作台页签
+						RpcClient.invoke("msg-list.html", "RPC_UnreadRefreshForChat");
+						//刷新工作台列表
+						RPCObserver.broadcast("refresh_msg_all_list");
+						saving = false;
+						mui.back();
+					});
+				};
+
+				function submitData() {
+					$scope.process.ProcessList[0].State = 1;
+					var url = ApiService.Api50 + "/api/v1/Common/SaveShare";
+					var operate = {
+						'job': '派工给',
+						'mark': '抄送给',
+						'report': '报告给'
+					};
+					var postdata = {
+						"DataFrom": shareLog.fault,
+						"DataID": id,
+						"Operate": operate[$scope.doType],
+						"Content": $scope.stateDescription.trim(),
+						"SendUsers": $scope.sendUsers.map(function (item) {
+							return item.UserID;
+						}).join('/'),
+						"DataType": $scope.doType == 'job' ? 1 : 0,
+						"ActionType": $scope.title == "进展标记" ? 2 : 0
+					};
+					$scope.process.SaveState = 2;
+					DataService.post(url, postdata).then(function (res) {
+						$scope.process.ProcessList[0].State = 2;
+						$scope.process.ProcessList[1].State = 2;
+						saving = false;
+						if (res) {
+							sendMsg(res);
+							sendCopy();
+							//刷新 故障列表
+							RPCObserver.broadcast("refresh_mat_fault_list");
+							RPCObserver.broadcast("refresh_equ_fault_list");
+							if ($scope.doType == 'job') {
+								// $scope.doType== 'job'  时更新业务预警
+								RpcClient.invoke("forewarning-all.html", "RPC_Msg_Change", {
+									key: 3,
+									init: false
+								});
+							}
+
+						}
+					},
+						function (res) {
+							saving = false;
+							$scope.process.ProcessList[0].State = 3;
+							$scope.process.ProcessList[1].State = 3;
+						});
+				}
+
+				//通知抄送人
+				function sendCopy() {
+					//如果抄送人的列表是空的
+					if ($scope.sendTo.length == 0) {
+
+						$timeout(function () {
+							$scope.process.SaveState = 1;
+						}, 800);
+					} else {
+						sendCopyMsg();
+
+						$timeout(function () {
+							$scope.process.SaveState = 1;
+						}, 800);
+					}
+
+				};
+
+				function sendMsg(res) {
+					var content = ws.hasOwnProperty('FaultDescription') ? {
+						'fault': {
+							eventName: "fault",
+							logo: ApiService.Down + "/chat/fault.png",
+							title: "故障工单",
+							desc: $filter("formatFaultInfo")(ws.IsHasAudio, ws.AudioLength, ws.FaultDescription),
+							params: [id, res]
+						},
+						'eq-fault': {
+							eventName: "equ-fault",
+							logo: ApiService.Down + "/chat/equ-fault.png",
+							title: "设备故障",
+							desc: $filter("formatDeviceFaultInfo")(ws.IsHasAudio, ws.AudioLength, ws.FaultDescription),
+							params: [id, res]
+						}
+					} : {
+							'fault': {
+								eventName: "repair",
+								logo: ApiService.Down + "/chat/repair.png",
+								title: "故障维修",
+								desc: $filter("formatFaultInfo")(ws.IsHasAudio, ws.AudioLength, ws.RepairDescription),
+								params: [ws.RepairID, res]
+							},
+							'eq-fault': {
+								eventName: "equ-repair",
+								logo: ApiService.Down + "/chat/equ-repair.png",
+								title: "设备维修",
+								desc: $filter("formatDeviceFaultInfo")(ws.IsHasAudio, ws.AudioLength, ws.RepairDescription),
+								params: [ws.RepairID, res]
+							}
+						};
+					$scope.doType == 'job' && (content[key].params.push(1));
+					$scope.sendUsers.forEach(function (user) {
+
+						if ($scope.doType == 'job' && user.UserID == curUser.UserID) {
+							//刷新带我处理
+							RpcClient.invoke("work.html", "RefTodoCount");
+						}
+
+						ChatUserService.send({
+							chatId: user.UserID,
+							chatName: user.ViewName,
+							chatCompId: user.CompID,
+							hasLogo: curUser.ULogoIsExist,
+							chatLogo: user.ULogoIsExist,
+							type: 7,
+							content: content[key]
+						});
+					})
+				};
+
+				function sendCopyMsg() {
+					var content = ws.hasOwnProperty('FaultDescription') ? {
+						'fault': {
+							eventName: "fault",
+							logo: ApiService.Down + "/chat/fault.png",
+							title: "故障工单",
+							desc: $filter("formatFaultInfo")(ws.IsHasAudio, ws.AudioLength, ws.FaultDescription),
+							params: [id]
+						},
+						'eq-fault': {
+							eventName: "equ-fault",
+							logo: ApiService.Down + "/chat/equ-fault.png",
+							title: "设备故障",
+							desc: $filter("formatDeviceFaultInfo")(ws.IsHasAudio, ws.AudioLength, ws.FaultDescription),
+							params: [id]
+						}
+					} : {
+							'fault': {
+								eventName: "repair",
+								logo: ApiService.Down + "/chat/repair.png",
+								title: "故障维修",
+								desc: $filter("formatFaultInfo")(ws.IsHasAudio, ws.AudioLength, ws.RepairDescription),
+								params: [ws.RepairID]
+							},
+							'eq-fault': {
+								eventName: "equ-repair",
+								logo: ApiService.Down + "/chat/equ-repair.png",
+								title: "设备维修",
+								desc: $filter("formatDeviceFaultInfo")(ws.IsHasAudio, ws.AudioLength, ws.RepairDescription),
+								params: [ws.RepairID]
+							}
+						};
+					$scope.doType == 'job' && (content[key].params.push(1));
+					$scope.sendTo.forEach(function (user) {
+						ChatUserService.send({
+							chatId: user.UserID,
+							chatName: user.ViewName,
+							chatCompId: user.CompID,
+							hasLogo: curUser.ULogoIsExist,
+							chatLogo: user.ULogoIsExist,
+							type: 7,
+							content: content[key]
+						});
+					})
+				}
+
+				var mui_back = mui.back;
+				mui.back = function () {
+					if (isModal) {
+						$Modal.close();
+					} else {
+						mui_back();
+					}
+				}
+				var isModal = false;
+
+				//用户短语列表modal
+				$scope.showPhraseList = function () {
+					$Modal.modal({
+						size: "small",
+						footer: false,
+						autoClose: true,
+						template: "<div style='max-height:55vh;overflow:auto;margin: -20px -10px -20px -10px;'><ul class='data-group phraseUL'><li class='data-row mui-ellipsis-2' ng-click='selPhrase(phrase)' ng-repeat='phrase in params.phraseList' style='justify-content: center;'><div style='overflow: hidden;'><span ng-bind='phrase.Content'></span></div><p class='opt md-icon font-14' ng-click='delPhrase($event,phrase)'><span class='icon-close'></span></p></li><li class='data-row add-phrase' ng-click='addPhrase()' style='justify-content: center;'><i class='md-icon font-18 icon-add'></i><span class='font-15'> 添加</span></li></ul></div>",
+						params: {
+							phraseList: [],
+							doType: $scope.doType
+						},
+						controller: ['$scope', "ApiService", "DataService", function ($scope, ApiService, DataService) {
+							isModal = true;
+							getPhraseList();
+							$scope.$on("modal_close", function () {
+								isModal = false;
+								mui("#adpopover").off("tap", ".savePhrase");
+							});
+
+							//获取用户快捷短语列表
+							function getPhraseList() {
+								var url = ApiService.Api50 + "/api/v1/Common/GetPhraseList?type=" + briefType[$scope.params.doType];
+								DataService.get(url).then(function (res) {
+									$scope.params.phraseList = res;
+								})
+							}
+
+							//选择快捷短语
+							$scope.selPhrase = function (phrase) {
+								document.getElementById("stateDescription").innerText = phrase.Content;
+								$scope.$modal.close();
+							}
+
+							//新增快捷短语弹窗
+							$scope.addPhrase = function () {
+								mui("#adpopover").popover("toggle");
+								document.getElementById("newPhraseDesc").innerText = "";
+								document.getElementById("newPhraseDesc").focus();
+							}
+
+							var issaving = false;
+							//保存新增快捷短语
+							mui("#adpopover").on("tap", ".savePhrase", function () {
+								if (issaving) {
+									return false;
+								}
+
+								if (document.getElementById("newPhraseDesc").innerText.trim() == '') {
+									mui.toast("请输入快捷短语");
+									return;
+								}
+								//验证填字符长度
+								if (!checkLengthUtil.check()) {
+									return false;
+								}
+								issaving = true;
+								var url = ApiService.Api50 + "/api/v1/Common/SavePhrase?type=" + briefType[$scope.params.doType] +
+									"&content=" + encodeURIComponent(document.getElementById("newPhraseDesc").innerText);
+								DataService.get(url).then(function (res) {
+									$scope.params.phraseList.push({
+										ID: res,
+										Content: document.getElementById("newPhraseDesc").innerText
+									})
+									if (document.getElementById("stateDescription").innerText.trim() == '') {
+										document.getElementById("stateDescription").innerText = document.getElementById("newPhraseDesc").innerText
+											.trim();
+										mui("#adpopover").popover("hide");
+										$scope.$modal.close();
+									} else {
+										mui("#adpopover").popover("hide");
+									}
+									setTimeout(function () {
+										issaving = false;
+									}, 600)
+								}, function () {
+									issaving = false;
+								});
+								return false;
+							})
+
+							//删除快捷短语
+							$scope.delPhrase = function (event, phrase) {
+								event.stopPropagation();
+								mui.confirm("确认删除吗？", function (e) {
+									if (e.index == 0) {
+										var url = ApiService.Api50 + "/api/v1/Common/DeletePhrase/" + phrase.ID;
+										DataService.get(url).then(function (res) {
+											mui.toast("删除成功");
+											getPhraseList();
+										});
+									}
+								});
+							}
+
+						}]
+					}).show();
+				}
+			}
+		])
+		//选择抄送人员回调
+		function selectUserCallback(obj) {
+			var appElement = document.querySelector('[ng-controller=StateMarkController]');
+			var $scope = angular.element(appElement).scope();
+			$scope.sendUsers = angular.copy(obj);
+			$scope.$apply();
+		};
+
+		function selectsendUser(obj) {
+			var appElement = document.querySelector('[ng-controller=StateMarkController]');
+			var $scope = angular.element(appElement).scope();
+			$scope.sendTo = angular.copy(obj);
+			$scope.$apply();
+		}
+
+		mui.plusReady(function () {
+			if(plus.device.model == "iPhone5"){
+				initSoftInput();
+			}
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+		});
+
+		var win_height;
+
+		function initSoftInput() {
+			plus.webview.currentWebview().setStyle({
+				softinputMode: "adjustResize"
+			});
+
+			win_height = window.innerHeight;
+
+			window.addEventListener("resize", function () {
+				var _dom = document.querySelector("#adpopover");
+				var _height = window.innerHeight;
+				if (_height < win_height) {
+					_dom.style.top = "70%";
+				} else {
+					_dom.style.top = "65%";
+				}
+			});
+		}
+	</script>
+</body>
+
+</html>

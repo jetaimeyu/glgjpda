@@ -1,0 +1,63 @@
+<div id="res-slide-directive-org" class="top-thin-line mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted nav-bar"
+    ng-class="{'mui-block':domData.isLoad}" ng-show="domData.isLoad&&domData.navDirData.length>1" style="display: none;">
+    <div class="mui-scroll" style="height: 35px;">
+        <a class="mui-control-item" ng-repeat="dir in domData.navDirData" ng-class="{'mui-active':dir.ID==domData.curId}" ng-attr-orgid="{{dir.ID}}"
+            ng-attr-index="{{$index}}">
+            <span class="icon iconfont icon-right color-gray-deep" style="margin-left: 2px;" ng-show="$index>0"></span>
+            <span class="group-name" ng-bind="dir.OrgName"></span>
+        </a>
+    </div>
+</div>
+<!--目录部分-->
+<ul class="data-group" style=" margin-top:0px;margin-bottom: 8px;">
+    <li class="mui-table-view-cell data-row  dir-row" ng-repeat="dept in domData.data[domData.curId]" ng-click="event.tapDir(dept)">
+        <label style="width: auto;line-height: 27px;" class="mui-ellipsis">
+            <i class="icon-bumenguanli">
+                <span ng-style="{'top':ios?0:'5px'}" class="dir_name mui-ellipsis" ng-bind="' '+dept.OrgName"></span>
+            </i>
+            <!-- <span class="dir_num" ng-bind="'('+dept.OrgPersonNums+')'"></span> -->
+        </label>
+        <p class="opt md-icon icon-right"></p>
+    </li>
+</ul>
+<style>
+    
+/*导航目录*/
+
+#res-slide-directive-org {
+	padding: 0 10px;
+	padding-right: 15px;
+	background: #fff;
+	overflow: hidden;
+	height: 35px;
+}
+ 
+#res-slide-directive-org.mui-segmented-control.mui-segmented-control-inverted .mui-control-item {
+	color: #169BD5;
+}
+
+#res-slide-directive-org.mui-segmented-control.mui-segmented-control-inverted .mui-control-item.mui-active {
+	color: #9A9A9C;
+	background: none;
+	border: none;
+}
+
+#res-slide-directive-org .mui-scroll{
+    position:absolute;
+}
+
+#res-slide-directive-org.mui-segmented-control .mui-control-item {
+	line-height: 35px;
+	padding: 0 !important;
+	margin-left: 6px;
+}
+
+#res-slide-directive-org.mui-slider-indicator {
+	border-bottom: 1px solid #EAEAEA;
+}
+
+#res-slide-directive-org.mui-segmented-control .mui-control-item>span {
+	font-size: 14px;
+}
+
+</style>

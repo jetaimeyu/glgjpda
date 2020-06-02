@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="myoffer.css">
+
+	</head>
+
+	<body >
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">我的报价</a>
+			<!--<h1 class="mui-title">我的报价</h1>-->
+		</header>
+		<ul class="md-tab" top="84">
+			<li class="md-tab-item md-active" href="mydemand-sub.html?state=0" winid="sub0">全部</li>
+			<li class="md-tab-item" href="mydemand-sub.html?state=1" winid="sub1">选标中</li>
+			<li class="md-tab-item" href="mydemand-sub.html?state=2" winid="sub2">已中标</li>
+			<li class="md-tab-item" href="mydemand-sub.html?state=3" winid="sub3">未中标</li>		
+		</ul>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript">
+			mui.plusReady(function(){	
+			MdConfig.StartUsingTab();
+		})
+			
+		</script>
+	</body>
+</html>

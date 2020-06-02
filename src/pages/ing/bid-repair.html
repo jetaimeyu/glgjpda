@@ -1,0 +1,190 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/common.css">
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+
+	</head>
+
+	<body ng-controller="EquEditController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">投标内容</a>
+
+		</header>
+		<!--mui-content改为mui-scroll-wrapper，不然拖拽时候页面会滚动-->
+		<div class="mui-scroll-wrapper" style="display: none;" ng-class="{'mui-block':isLoad}">
+
+			<ul class="data-group">
+				<li class="data-row must">
+					<label>投标内容</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="RepairResult" class="needsclick" placeholder="请输入投标内容" lenlimit="400"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>照片</label>
+					<div class="body attach" style="padding-bottom: 5px;">
+						<md-image images="EqInfo.Attach" readonly="false" canadd="true"></md-image>
+					</div>
+				</li>
+ 
+			</ul>
+			<div class="mui-content-padded">
+				<span class="mui-btn mui-btn-block" style="margin-bottom: 30px;" ng-click="submitData()">保存</span>
+			</div>
+		</div>
+
+		<!--无网络或请求失败重试-->
+		<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+		<script src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/sortable-edit.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script>
+			app.controller("EquEditController", ["$scope", "ApiService", "DataService", "UtilsService", "DatePickerService", "CacheService", "Loading", "$Modal", "$q", "$timeout", "RPCObserver", function($scope, ApiService, DataService, UtilsService, DatePickerService, CacheService, Loading, $Modal, $q, $timeout, RPCObserver) {
+				$scope.id=query('id');
+				$scope.isLoad = true;
+				//上传进度
+				$scope.process = {
+					SaveState: 0, //0未保存 1保存成功 2保存中 3保存失败
+					ProcessList: [{
+						Text: "上传图片",
+						State: 0,
+						RetryMethod: uploadEqPics
+					}, {
+						Text: "保存投标内容",
+						State: 0,
+						RetryMethod: saveEqInfo
+					}]
+				}
+
+				/*删除指定文件
+				 * relativePath 文件相对路径
+				 */
+				function delFile(relativePath) {
+					plus.io.resolveLocalFileSystemURL(relativePath, function(entry) {
+						entry.removeRecursively(function(entry) {
+							//console.log("已删除");
+						}, function(e) {
+							//console.log(e.message);
+						});
+					});
+				}
+
+				//避免重复点击
+				var isSubmitting = false;
+				$scope.submitData = function() {
+					//验证必填字段
+					if($scope.RepairResult.trim() == "") {
+						mui.toast("请输入投标内容！");
+						return;
+					}
+
+					if(isSubmitting) return;
+					//开始上传
+					isSubmitting = true;
+					UtilsService.submitModal($scope.process, function() {
+						isSubmitting = false;
+						mui.back();
+					}, function() {
+						isSubmitting = false;
+						$scope.process.SaveState = 0;
+						$scope.process.ProcessList.forEach(function(item) {
+							item.State = 0;
+						})
+						
+					}, function() {
+						isSubmitting = false;
+						$scope.process.ProcessList.forEach(function(item) {
+							item.State = 0;
+						})
+					});
+					uploadEqPics();
+				};
+				//上传图片
+				function uploadEqPics() {
+					$scope.process.ProcessList[0].State = 1;
+					var imgs = $scope.EqInfo.Attach ? $scope.EqInfo.Attach.filter(function(img, idx) {
+						img.idx = idx; //记录图片在数组中的位置
+						return img.State == 0;
+					}) : [];
+					if(imgs.length > 0) {
+						var promises = imgs.map(function(img) {
+							return UtilsService.uploadFileBill(img.FilePath, 1);
+						});
+						$q.all(promises).then(function(res) {
+							var flag = true;
+							res.forEach(function(img, index) {
+								if(img == null) {
+									flag = false;
+								} else {
+									$scope.EqInfo.Attach[imgs[index].idx] = {
+										ID: 0,
+										DataID: 0,
+										FileGuid: img.FileGuid,
+										FileName: img.FileName,
+										FileExt: img.FileExt,
+										FilePath: img.FilePath,
+										FileSize: imgs[index].FileSize,
+										FileType: 0,
+										State: 1,
+										IsDelete: 0
+									};
+								}
+							});
+							$scope.process.ProcessList[0].State = flag ? 2 : 3;
+							//上传详情内容
+							flag && saveEqInfo();
+						});
+					} else {
+						$scope.process.ProcessList[0].State = 2;
+						//上传详情内容
+						saveEqInfo();
+					}
+				}
+				//保存设备信息
+				function saveEqInfo() {
+					if($scope.process.ProcessList[0].State != 2) {
+						return;
+					}
+					$scope.process.ProcessList[1].State = 1;
+					var url = ApiService.Api50 + "/api/v1/Extetnal/SaveExtetnalBid";
+					var postdata = {
+						"ID":$scope.dataid || 0,
+						"Rid":$scope.id,
+						"Content": $scope.RepairResult,
+						"Attachs": $scope.EqInfo.Attach,
+					};
+					DataService.post(url, postdata).then(function (res) {
+						if (res) {
+							$scope.dataid=res;
+							RPCObserver.broadcast('refresh_Assist_detail');
+							$scope.process.ProcessList[1].State = 2;
+							$timeout(function () {
+								$scope.process.SaveState = 1;
+							}, 800);
+						}
+					}, function (res) {
+						$scope.process.ProcessList[1].State = 3;
+					});
+					
+				};
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

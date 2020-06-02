@@ -1,0 +1,154 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <link href="../../css/mui.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../../css/common.css" />
+    <link rel="stylesheet" href="../../icon-font/iconfont.css" />
+    <link rel="stylesheet" href="../../css/selecttime.css" />
+    <link rel="stylesheet" href="../../css/mui.loading.css" />
+    <link rel="stylesheet" href="../../css/mpicker.css" />
+    <link rel="stylesheet" href="scanProds.css" />
+</head>
+
+<body ng-controller="scanProdsCtl">
+    <div class="mui-content">
+        <div class="map_container">
+            <div class="map_tools">
+                <ul class="data-group">
+                    <li class="data-row">
+                        <div class="body">
+                            <i class=" icon-zuo" ng-click="event.datePlus()"></i>
+                            <p class="color-black font-12" id="a_date_view" ng-click="event.chooseDate()" ng-bind="domData.curDate.view">
+                            </p>
+                            <i class="  icon-you" ng-click="event.dateAdd()"></i>
+                        </div>
+                    </li>
+                    <!-- 
+					<li class="data-row" ng-show="domData.curDate.curType=='month'">
+						<div class="body">
+							<i class=" icon-zuo" ng-click="event.dayPlus()"></i>
+							<p class="color-black font-12" ng-bind="domData.curDate.curDay" ng-click="event.showDayChoose()">
+								整月
+							</p>
+							<i class=" icon-you" ng-click="event.dayAdd()"></i>
+						</div>
+					</li> -->
+
+                    <li class="data-row" id="showCityPickBody">
+                        <p class="opt md-icon">
+                            <i class="icon-right"></i>
+                        </p>
+                        <div class="body quanguo mui-ellipsis text-left" id="showCityPicker" style="margin-right: 0px;" ng-bind="domData.city || domData.province">
+                            全国
+                        </div>
+                    </li>
+                    <li class="data-row prod" ng-click="event.selectProd()">
+                        <p class="opt md-icon">
+                            <span id="delPro" class="mui-icon mui-icon-closeempty" style="display:none" ng-class="{'mui-block':domData.prodInfo.ProdName}" ng-click="event.delProd($event)"></span>
+                            <i class="icon-right"></i>
+                        </p>
+                        <div class="body mui-ellipsis-2 text-left" id="prodname" ng-bind="domData.prodInfo.ProdName || '所有产品'">
+                            所有产品
+                        </div>
+                    </li>
+
+                    <li class="data-row" style="display:none" ng-class="{'mui-block':domData.prodInfo.SkuID}">
+                        <div class="body mui-ellipsis text-left" ng-bind="'型号：'+domData.prodInfo.SkuName">
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div id="map">
+
+            </div>
+            <div class="map_days" ng-show="domData.curDate.curType=='month'">
+                <i class="iconfont icon-zuo" ng-click="event.dayPlus()"></i>
+                <span class="map_days_day" ng-bind="domData.curDate.curDay" ng-click="event.showDayChoose()">
+					整月
+				</span>
+                <i class="iconfont icon-you" ng-click="event.dayAdd()"></i>
+            </div>
+        </div>
+    </div>
+    <div class="day-pick" style="display:none;" ng-click="event.hideDayPick()">
+        <div class="pick-body">
+            <div class="item-row" ng-click="event.dayChoose('整月')" ng-class="{'item-selected':'整月'==domData.curDate.curDay}">
+                整月
+            </div>
+            <div class="item-row" ng-click="event.dayChoose(item)" ng-class="{'item-selected':item==domData.curDate.curDay}" ng-repeat='item in domData.curDate.days' ng-bind="item">
+
+            </div>
+            <div style="clear:both;">
+
+            </div>
+        </div>
+    </div>
+    <div class="scan-info" style="display:none;" ng-click="event.hideScanInfo()">
+        <div class="scan-body md-info-page">
+            <ul class="mui-table-view" ng-if="domData.scanInfo">
+                <li class="mui-table-view-cell mui-media">
+                    <div>
+                        <md-prod-logo style="float:left;margin-right: 10px;" ng-model="domData.scanInfo" data-width="66" data-height="66"></md-prod-logo>
+                        <div class="mui-media-body">
+                            <p class='productName mui-ellipsis' style="color:#000;font-size:15px;margin-top:5px;" ng-bind="domData.scanInfo.ProdName"></p>
+                            <p class='productType mui-ellipsis' style="font-size: 12px;" ng-show="domData.scanInfo.SkuName" ng-bind="'型号：'+domData.scanInfo.SkuName"></p>
+                            <p class='productType mui-ellipsis' style="font-size: 12px;" ng-show="domData.scanInfo.InnerCode" ng-bind="domData.InnerCodeName+'：'+domData.scanInfo.InnerCode"></p>
+                        </div>
+                    </div>
+                </li>
+
+            </ul>
+            <ul class="data-group mt0">
+                <li class="data-row">
+                    <label>扫码人</label>
+                    <div class="body" ng-click="event.openUser($event,domData.scanInfo.UserID)" ng-bind="domData.scanInfo.UserName || '游客'">
+                        <span></span>
+                        <span></span>
+                    </div>
+                </li>
+                <li class="data-row" ng-show="domData.scanInfo.CompName">
+                    <label>扫码企业</label>
+                    <div class="body" ng-click="event.openComp($event,domData.scanInfo.CompID)" ng-bind="domData.scanInfo.CompName?domData.scanInfo.CompName:''">
+                    </div>
+                </li>
+                <li class="data-row">
+                    <label>扫码时间</label>
+                    <div class="body" ng-bind="domData.scanInfo.ScanDate">
+
+                    </div>
+                </li>
+                <li class="data-row">
+                    <label>地址</label>
+                    <div class="body" ng-bind="domData.scanInfo.Province | locationfilter:domData.scanInfo.City:domData.scanInfo.District:domData.scanInfo.Address:domData.scanInfo.Street">
+                    </div>
+                </li>
+                <li class="data-row ">
+                    <div class="body scan-info-btns">
+                        <div class="scan-log" ng-click="event.openLog($event,domData.scanInfo.MdCode,domData.scanInfo.ProdID,domData.scanInfo.SkuID)">扫码日志</div>
+                        <div class="lines"></div>
+                        <div class="scan-track" ng-click="event.openTrack($event,domData.scanInfo.MdCode,domData.scanInfo.ProdID,domData.scanInfo.SkuID)">扫码轨迹</div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <script src="../../js/mui.min.js"></script>
+    <script type="text/javascript" src="../../js/angular.js"></script>
+    <script type="text/javascript" src="../../js/common.js"></script>
+    <script type="text/javascript" src="../../js/utils.js"></script>
+    <script type="text/javascript" src="../../js/json.js"></script>
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../js/mPicker.min.js"></script>
+    <!--<script type="text/javascript" src="https://api.map.baidu.com/api?ak=W6WIQmkWMM7fHZ1bQzONDGwimUikfaPU&type=lite&v=1.0"></script>-->
+    <script type="text/javascript" src="https://api.map.baidu.com/api?v=3.0&ak=W6WIQmkWMM7fHZ1bQzONDGwimUikfaPU"></script>
+    <script type="text/javascript" src="http://lbsyun.baidu.com/jsdemo/data/points-sample-data.js"></script>
+    <script type="text/javascript" src="../../js/mui.loading.js"></script>
+    <script type="text/javascript" src="scanProds.js"></script>
+</body>
+
+</html>

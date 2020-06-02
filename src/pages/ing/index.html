@@ -1,0 +1,137 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<link rel="stylesheet" href="../../css/mui.min.css" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	<style type="text/css">
+		.icon {
+			width: 16px;
+		}
+	</style>
+</head>
+
+<body ng-controller="inspListController" winid="findindex">
+
+	<md-tab ng-model="tabs" data-options="{header:false}"></md-tab>
+	<script type="text/javascript" src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/rpc.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript">
+		app.controller("inspListController", ["$scope", "UtilsService", "ApiService", "CacheService", "DataService",
+			"RPCObserver",
+			function ($scope, UtilsService, ApiService, CacheService, DataService, RPCObserver) {
+				var curUser = CacheService.get("user");
+
+				
+				
+
+				function getUserListdtByOrgId() {
+
+					var url = ApiService.Api64 + "/api/v1/ResCircle/GetAllResCircleUnReadCount"
+					DataService.get(url).then(function (res) {
+
+						if (res > 0) {
+							$scope.tabs[0].isunread = true
+							//							$scope.unread=true
+						} else {
+							$scope.tabs[0].isunread = false
+						}
+					}, function (error) {
+
+
+						//						$scope.retryModal.state = error.State;
+					})
+				}
+
+				function init() {
+					$scope.tabs = [{
+							url: "resource-circle.html?",
+							id: "ing-all.html-sub6",
+							title: "资源圈",
+							//					isunread:$scope.unread
+						}, {
+							url: "ing-all.html?type=0",
+							id: "ing-all.html-sub1",
+							title: "推荐"
+						}, {
+							url: "ing-all.html?type=7",
+							id: "ing-all.html-sub4",
+							title: "求助"
+						},
+						//  {
+						// 	url: "ing-all.html?type=8",
+						// 	id: "ing-all.html-sub5",
+						// 	title: "悬赏"
+						// },
+						{
+							url: "ing-all.html?type=4",
+							id: "ing-all.html-sub3",
+							title: "外协"
+						}
+					]
+
+					if (curUser.CompID == 0) {
+						$scope.tabs.splice(0, 1)
+					}
+					else{
+						getUserListdtByOrgId()
+					}
+				};
+
+				init();
+
+				RpcServer.expose("RPC_RefreshLogin", function (params) {
+					//var active = document.body.querySelector(".md-tab-item.md-active");
+//					refreshContact() 
+
+					// function refreshContact() {
+					// 	//					console.log(JSON.stringify(plus.webview.getWebviewById("ing-all.html-sub6")))
+					// 	if (plus.webview.getWebviewById("ing-all.html-sub1")) {
+					// 		plus.webview.getWebviewById("ing-all.html-sub1").close();
+					// 		plus.webview.getWebviewById("ing-all.html-sub6").show();
+					// 		init()
+					// 	}
+					// };
+					//init()
+					curUser = CacheService.get("user");
+
+					var childrens = plus.webview.currentWebview().children();
+
+					childrens.forEach(function(item){
+						item.close("none");
+					});
+					init();
+
+					setTimeout(function(){
+						var active = document.body.querySelector(".md-tab-item.md-active");
+						active.classList.remove("md-active");
+						mui.trigger(active,"tap")
+					}, 300);
+					$scope.$apply();
+				});
+
+				RPCObserver.on('refresh_readList', 'refresh_readlist')
+				window.refresh_readlist = function () {
+					if (curUser.CompID > 0) {
+						getUserListdtByOrgId()
+					}
+					$scope.$apply()
+				}
+			}
+		]);
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+		});
+	</script>
+</body>
+
+</html>

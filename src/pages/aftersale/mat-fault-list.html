@@ -1,0 +1,231 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.icon {
+				width: 16px;
+			}
+			
+			.mui-bar-nav~.mui-content .mui-pull-top-pocket {
+				top: 118px !important;
+			}
+			
+			.mui-bar-nav~.has-tab .mui-pull-top-pocket {
+				top:  118px !important;
+			}
+			
+			.mui-table {
+				display: table!important;
+			}
+			
+			.mui-bar-nav~.no-tab .mui-pull-top-pocket {
+				top: 50px!important;
+			}
+			#slider2 {
+				padding-top: 0px!important;
+				background: #ffffff;
+				height: 35px;
+			}
+			
+			
+			#slider2 .mui-segmented-control.mui-scroll-wrapper .mui-scroll {
+				height: 35px;
+				line-height: 35px;
+				padding-right: 15px!important;
+			}
+			
+			#slider2 .mui-segmented-control.mui-scroll-wrapper .mui-scroll a {
+				margin-left: 15px;
+				font-size: 12px;
+				height: 35px;
+				display: table-cell;
+				line-height: 35px;
+				padding: 0px 0px 0px 15px;
+			}
+			
+			#slider2  .mui-segmented-control.mui-scroll-wrapper .mui-scroll a i.icon-down {
+				font-size: 8px;
+				margin-left: 3px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="matFaultListController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left" ng-bind="title"></a>
+			<!--<a class="mui-pull-right menu-add" id="add" ng-click="tap('add')" ng-if="('Q25' | hasAuth)" style="display: none;" ng-class="{'mui-block':showadd}">
+				<img class="icon" src="../../images/add.png" />
+			</a>-->
+			<a class="mui-pull-right menu-search" id="search" ng-click="tap('search')" ng-if="!isscan" style="display: none;" ng-class="{'mui-block':showadd}">
+				<img class="icon" src="../../images/search.png" />
+			</a>
+		</header>
+		<div class="mui-content" ng-class="{'has-tab':isLoad,'no-tab':isscan}">
+			<ul class="md-tab" top="120" ng-if="!(['Q24','Q26']|hasAuth) && !isscan" style="display: none;" ng-class="{'mui-block':isLoad}">
+				<li class="md-tab-item" ng-class="'md-active'" href="mat-fault-all.html?type=my&action={{action}}&selectedid={{selectObj.ID}}&prodid={{prodId}}&skuid={{skuId}}&innercode={{innerCode}}&mdcode={{MDCode}}&stage={{domData.active}}" winid="mat-fault-my.html">我提交的</li>
+				<li class="md-tab-item"  href="mat-fault-all.html?type=at&action={{action}}&selectedid={{selectObj.ID}}&prodid={{prodId}}&skuid={{skuId}}&innercode={{innerCode}}&mdcode={{MDCode}}&ischeckcomp={{ischeckcomp}}&stage={{domData.active}}" winid="mat-fault-at.html">发给我的</li>
+				
+				<li class="md-tab-item" href="mat-fault-all.html?type=dept&action={{action}}&selectedid={{selectObj.ID}}&prodid={{prodId}}&skuid={{skuId}}&innercode={{innerCode}}&mdcode={{MDCode}}&stage={{domData.active}}" winid="mat-fault-dept.html" ng-if="(['Q22','Q23','Q24','Q26'] | hasAuth)&&comId>0">本部门的</li>
+				<li class="md-tab-item" href="mat-fault-all.html?type=depts&action={{action}}&selectedid={{selectObj.ID}}&prodid={{prodId}}&skuid={{skuId}}&innercode={{innerCode}}&mdcode={{MDCode}}&stage={{domData.active}}" winid="mat-fault-depts.html" ng-if="(['Q23','Q24','Q26'] | hasAuth)&&comId>0">下级部门</li>
+			</ul>
+			<ul class="md-tab" top="50" ng-if="isscan" style="display: none;">
+				<a class="md-tab-item md-active" href="mat-fault-all.html?type=all&prodid={{prodId}}&skuid={{skuId}}&innercode={{innerCode}}&mdcode={{MDCode}}" winid="mat-fault-all-scan.html">isscan</a>
+			</ul>
+			<div id="slider" class="mui-slider mui-fullscreen" ng-if="(['Q24','Q26']|hasAuth) && !isscan">
+				<div id="sliderSegmentedControl" class="mui-scroll-wrapper  mui-slider-indicator mui-segmented-control mui-segmented-control-inverted" style="background: #fff; display: none;" ng-class="{'mui-block':isLoad}">
+					<!--md-tab-block-->
+					<div class="mui-scroll md-tab " top="120">
+						<a class="md-tab-item" ng-class="'md-active'" href="mat-fault-all.html?type=my&action={{action}}&selectedid={{selectObj.ID}}&prodid={{prodId}}&innercode={{innerCode}}&skuid={{skuId}}&mdcode={{MDCode}}&stage={{domData.active}}" winid="mat-fault-my.html">我提交的</a>
+						<a class="md-tab-item"  href="mat-fault-all.html?type=at&action={{action}}&selectedid={{selectObj.ID}}&prodid={{prodId}}&skuid={{skuId}}&innercode={{innerCode}}&mdcode={{MDCode}}&ischeckcomp={{ischeckcomp}}&stage={{domData.active}}" winid="mat-fault-at.html">发给我的</a>
+						
+						<a class="md-tab-item" href="mat-fault-all.html?type=dept&action={{action}}&selectedid={{selectObj.ID}}&prodid={{prodId}}&innercode={{innerCode}}&skuid={{skuId}}&mdcode={{MDCode}}&stage={{domData.active}}" winid="mat-fault-dept.html" ng-if="(['Q22','Q23','Q24','Q26'] | hasAuth)&&comId>0">本部门的</a>
+						<a class="md-tab-item" href="mat-fault-all.html?type=depts&action={{action}}&selectedid={{selectObj.ID}}&prodid={{prodId}}&innercode={{innerCode}}&skuid={{skuId}}&mdcode={{MDCode}}&stage={{domData.active}}" winid="mat-fault-depts.html" ng-if="(['Q23','Q24','Q26'] | hasAuth)&&comId>0">下级部门</a>
+						<a class="md-tab-item" href="mat-fault-all.html?type=all&action={{action}}&selectedid={{selectObj.ID}}&prodid={{prodId}}&innercode={{innerCode}}&skuid={{skuId}}&mdcode={{MDCode}}&stage={{domData.active}}" winid="mat-fault-all.html" ng-if="(['Q24','Q26'] | hasAuth)&&comId>0">所有故障</a>
+					</div>
+					<div class="md-tab-block-line"></div>
+				</div>
+			</div>
+			<div id="slider2" class="mui-slider  mui-content mui-fullscreen" style="display: none;top:84px;" ng-class="{'mui-block':isLoad}">
+					<div id="sliderSegmentedControl" class="mui-scroll-wrapper  mui-slider-indicator mui-segmented-control mui-segmented-control-inverted" style="background: #fff; ">
+						<div class="mui-scroll " top="84">
+							<a ng-click="event.chooseType(item.value)" ng-repeat="item in domData.states"> <i class="icon-roundcheckfill  color-red-md left-10 ng-scope font-15" ng-if="domData.active== item.value"></i>
+								<i class="icon-round color-gray font-15 ng-hide" ng-show="domData.active != item.value"></i><span ng-bind="item.label"></span>
+								<span ng-bind="domData.data['state'+item.value]?'('+domData.data['state'+item.value].length+')':''" ng-if="domData.data['state'+item.value].length>0"></span>
+							</a>
+						</div>
+						<div class="md-tab-block-line"></div>
+					</div>
+				</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("matFaultListController", ["$scope", "UtilsService", "RPCObserver","CacheService", "$timeout", "$filter", function($scope, UtilsService, RPCObserver, CacheService,$timeout, $filter) {
+				$timeout(function() {
+					$scope.showadd = true;
+					$scope.isscan = query('isscan');
+					$scope.isLoad = $filter("hasAuth")('Q23') ? $filter("hasAuth")(['Q22', 'Q23', 'Q24', 'Q26']) : true;
+					//选择故障
+					if($scope.action == "select") {
+						//接受已选择的参数
+						$scope.selectObj = plus.webview.currentWebview().selectObj;
+					}
+				}, 100);
+				$scope.domData = {
+					active: 0,
+					states: [{
+							value: 0,
+							label: "全部"
+						},
+						{
+							value: 1,
+							label: "待派工"
+						},
+						{
+							value: 2,
+							label: "待处理"
+						},
+						{
+							value: 3,
+							label: "未修好"
+						},
+						{
+							value: 4,
+							label: "已修好"
+						},
+						{
+							value: 5,
+							label: "已完成"
+						}
+					],
+				};
+
+				
+				window.getActive=function(){
+					return $scope.active;
+				}
+
+				$scope.event = {
+					chooseType: function(type) {
+						if($scope.domData.active != type) {
+							$scope.domData.active = type;
+
+							plus.webview.currentWebview().children().forEach(function(item){
+								item.evalJS("reload("+type+")");
+							});
+						}
+					}
+				};
+
+
+				var user = CacheService.get('user');
+				$scope.comId=user.CompID;
+				$scope.title = query('title') || '产品故障记录';
+				$scope.prodId = query("prodid") || "";
+				$scope.skuId = query("skuid") || "";
+				$scope.action = query("action");
+				$scope.innerCode =  encodeURIComponent((plus.webview.currentWebview().innercode||(query("innercode")?query("innercode"):"")).replace(/\'/g, "@squotes@").replace(/\"/g, "@dquotes@"));
+				$scope.MDCode = query("mdcode") || "";
+				$scope.selectObj = {};
+				$scope.ischeckcomp = query("ischeckcomp") || 0;
+				$scope.must = query("must");
+				setTimeout(function() {
+					MdConfig.StartUsingTab();
+				}, 200);
+
+				//选择
+				RPCObserver.on('refresh_mat_fault_Select_Info', 'refresh_mat_fault_Select_Info');
+				window.refresh_mat_fault_Select_Info = function(params) {
+					RPCObserver.broadcast('refresh_mat_fault_Select_Refresh', params.ID);
+					$scope.selectObj = params;
+					$scope.$apply();
+					var view = plus.webview.currentWebview();
+					var opener = view.opener();
+					if(view.callback) {
+						opener.evalJS(view.callback + "(" + JSON.stringify($scope.selectObj) + ")");
+					}
+					mui.back();
+					return;
+				};
+
+				// 产品信息
+				var ws = plus.webview.currentWebview();
+
+				//页面跳转
+				$scope.tap = function(key) {
+					var mdCode = $scope.innerCode ? '' : $scope.MDCode;
+					var url = {
+						add: 'mat-fault-edit.html?mdcode=' + $scope.MDCode + "&from=" + query('from'),
+						search: 'mat-fault-search.html?action=' + $scope.action + "&selectedid=" + $scope.selectObj.ID + "&must=" + $scope.must + "&prodid=" + $scope.prodId + "&skuid=" + $scope.skuId + "&mdcode=" + mdCode + "&innercode=" + $scope.innerCode
+					};
+					UtilsService.openWindow({
+						needLogin: true,
+						id: url[key].substring(0, url[key].lastIndexOf(".html") + 5),
+						url: url[key],
+						extras: {
+							selectObj: $scope.selectObj,
+							addMatRecord: $scope.isscan ? ws.prodInfo : ws.addMatRecord,
+							isscan: $scope.isscan
+						}
+					});
+				};
+			}]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

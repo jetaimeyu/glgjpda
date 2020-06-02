@@ -1,0 +1,127 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style>
+			/*第一个data-row高度，行高 左 上内边距 */
+			
+			.data-avatar .data-row .body {
+				padding: 8px 16px;
+			}
+			/*更改头像span样式 */
+			
+			.data-group:first-child label.modified {
+				padding-left: 120px;
+				width: auto;
+				color: #3296FA;
+				font-size: 1.4rem;
+			}
+			
+			.data-group .data-row .body>span,
+			.data-group .data-row .body input {
+				color: #323223;
+			}
+			/*按钮*/
+			
+			.btn-submit {
+				margin: 40px 16px 0 16px;
+			}
+			
+			.btn-submit span {
+				background-color: #fff;
+				border-color: #ccc;
+				color: #323232;
+				font-size: 1.6rem;
+				background: rgba(255, 255, 255, 0.5);
+			}
+		</style>
+	</head>
+
+	<body ng-controller="CatalogAddController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">设备归类</a>
+			<a class="right-menu-words" id="save" ng-click="saveInfo()">保存</a>
+		</header>
+		<div class="mui-content">
+			<ul class="data-group">
+				<li class="data-row must">
+					<label class="label-gray">归类名称</label>
+					<div class="body">
+						<input id="dirName" ng-model="dirName" type="text" placeholder="请输入归类名称" lenlimit="50" />
+					</div>
+				</li>
+			</ul>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script>
+			app.controller("CatalogAddController", ["$scope", "ApiService", "DataService", "UtilsService", "CacheService", "Loading", "RPCObserver", function($scope, ApiService, DataService, UtilsService, CacheService, Loading, RPCObserver) {
+				var ws = plus.webview.currentWebview();
+				var catalog = ws.catalog;
+				$scope.catalogID = catalog.ID || 0;
+				$scope.billKey = "B23";
+				$scope.dirName = "";
+				var saving = false; //保存状态
+				
+				$scope.saveInfo = function() {
+					if(saving) {
+						return;
+					};
+					if(!$scope.dirName) {
+						mui.toast("归类名称不能为空");
+						return;
+					}
+					//验证填字符长度
+					if(!checkLengthUtil.check()) {
+						return false;
+					}
+					saving = true;
+					setTimeout(function() {
+						saving = false;
+					}, 1000)
+					var postdata = {
+						"ID": 0,
+						"ParDirID": $scope.catalogID || 0,
+						"DirName": $scope.dirName
+					}
+					var url = ApiService.Api47 + "/api/v1.0/Data/DataDirSave?pId=" + $scope.catalogID + "&billKey=" + $scope.billKey;
+					DataService.post(url, postdata).then(function(res) {
+						var obj = {
+							"ID": res,
+							"ParDirID": $scope.catalogID || 0,
+							"DirName": $scope.dirName,
+							"IsChildDirs": 0
+						}
+						//调用rpc更新
+						RPCObserver.broadcast('refresh_equ_dir');
+						mui.toast("归类已新增");
+						document.getElementById("dirName").blur();
+						mui.back();
+					}, function(error) {
+						isSubmitting = false;
+						error.State == -1 && mui.toast("网络异常", {
+							duration: 1300,
+							type: 'div'
+						});
+					});
+				};
+			}]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+				plus.webview.currentWebview().setStyle({
+					softinputMode: "adjustResize"
+				});
+			});
+		</script>
+	</body>
+
+</html>

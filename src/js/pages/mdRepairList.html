@@ -1,0 +1,51 @@
+<ul class="data-group mdDervRepaList" style="margin-top: 0px;">
+	<li class="mui-table-view-cell data-row" ng-repeat="obj in model">
+		<div class="body" ng-click="tap('repairView',obj)">
+			<div class="repair-content mui-ellipsis-2" ng-bind="obj.IsHasAudio | formatDeviceRepairInfo:obj.AudioLength:obj.RepairDescription""></div>
+			<div class="repair-sub">
+				<span class="repair-time" ng-bind="obj.CreateDate"></span>
+				<md-chat-user-list ng-model="obj.Users"></md-chat-user-list>
+			</div>
+		</div>
+		<i class="opt md-icon icon-edit" ng-if="action!='select'" ng-click="tap('repairEdit',obj)"></i>
+		<i ng-if="action=='select'" class="opt icon-check chekbox" ng-click="tap('repairEdit',obj)" ng-class="{'icon-round color-gray-deep':obj.ID!=selectedId,'icon-check color-blue-dark':obj.ID==selectedId}"></i>
+	</li>
+</ul>
+<style>
+	
+	.data-group.mdDervRepaList .data-row .body {
+		padding: 4px 0px 4px 16px;
+		margin-right: 40px;
+	}
+	
+	.data-group .data-row .opt {
+		color: #AEAEAE;
+	}
+	
+	.data-group .data-row .body .repair-content {
+		font-size: 1.4rem;
+		color: #323223;
+		line-height: 19px;
+		font-family: MicrosoftYaHei;
+	}
+	
+	.data-group .data-row .body .repair-sub {
+		font-size: 1.3rem;
+		line-height: 17px;
+		margin-top: 3px;
+	}
+	
+	.data-group .data-row .body .repair-sub .repair-time {
+		color: #929292;
+	}
+	
+	.data-group .data-row .opt:not(.md-icon):after {
+		width: 0;
+	}
+	
+	.chekbox {
+		display: inline-block;
+		margin-right: 16px;
+		font-size: 20px;
+	}
+</style>

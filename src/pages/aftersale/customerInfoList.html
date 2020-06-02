@@ -1,0 +1,137 @@
+<ul class="data-group mdDervRepaList" style="margin-top: 0px;">
+	<li class="mui-table-view-cell data-row" ng-repeat="obj in (model.data.DataRows||model.data.Data)" ng-if="model.type!='parts' ||(model.type=='parts' && obj.Data && obj.Data.length>0)">
+		<div class="body" ng-click="tap(model.href,obj)" ng-switch="model.type">
+			<!-- 客户回访 -->
+			<div class="repair-content mui-ellipsis-2" ng-switch-when="service" ng-bind="obj.IsEval==0?'待回访':'已回访'"></div>
+			<!-- 零配件更换 -->
+			<div class="repair-content mui-ellipsis-2" ng-switch-when="parts">
+				<div class="part-item" ng-repeat="part in obj.Data">
+					<span ng-bind="part.ProdName" class="part-name"></span>
+					<span ng-bind="part.SkuName"></span> x
+					<span ng-bind="part.Nums"></span>
+					<span ng-bind="part.Remark"></span>
+				</div>
+			</div>
+			<!-- 延保记录 -->
+			<div class="repair-content mui-ellipsis-2" ng-switch-when="delay" ng-bind="obj.ProdName+' '+obj.SkuName"></div>
+			<!-- 工单日志 -->
+			<div class="repair-content mui-ellipsis-2" ng-switch-when="repair-log">
+				<span class="repair-item" ng-bind="obj.WorkContent"></span>
+			</div>
+			<!--联系人-->
+			<div class="repair-content mui-ellipsis-2" ng-switch-when="linkman">
+				<div class="link-man" ng-bind="obj.LinkName"></div>
+			</div>
+			<!-- 其他 -->
+			<div class="repair-content mui-ellipsis-2" ng-switch-default ng-bind="obj.IsHasAudio|formatRepairInfo:obj.AudioLength:(obj.Description||obj.Description==''?obj.Description:obj.JobContent)"></div>
+			<div class="repair-sub">
+				<!-- 联系人 -->
+				<span class="repair-item" ng-if="model.type=='delay'" ng-bind="'延保:'+obj.ExtendedWarranty +DateType[obj.ExtendedWarrantyUnit]"></span>
+				<div class="parts-item" ng-if="model.type=='linkman' && obj.LinkPhone">
+					<i class="md-icon icon-tel" ng-click="call(obj.LinkPhone)"></i>
+					<span ng-bind="obj.LinkPhone"></span>
+				</div>
+				<!--回访-->
+				<!--<span class="repair-item" ng-if="model.type=='service'">维修日期：</span>-->
+				<!-- 其他 -->
+				<span class="repair-item" ng-bind="obj.CreateDate"></span>
+				<span class="chat-user" ng-if="userid!=obj.CreateUserID" ng-bind="obj.CreateUserName" ng-click="chart($event,obj)"></span>
+				<span class="chat-user" ng-if="userid==obj.CreateUserID" ng-bind="obj.CreateUserName"></span>
+				<!--回访维修人-->
+				<span class="repair-item font-12" ng-if="model.type=='service'">维修人：
+					<span class="chat-user" ng-if="userid!=item.ID" ng-bind="item.Name" ng-click="chart($event,item)" ng-repeat="item in obj.Users"></span>
+				<span class="chat-user" ng-if="userid==item.ID" ng-bind="item.Name" ng-repeat="item in obj.Users"></span>
+				</span>
+			</div>
+		</div>
+	</li>
+	<li class="data-row mui-table-view-cell mui-block" ng-show="model.data.TotalCount>0" ng-click="lookover(model.type,model.name)">
+		<div class="total">合计
+			<span ng-bind="model.data.TotalCount"></span> <span ng-bind="model.unit"></span></div>
+	</li>
+</ul>
+<style>
+	.data-group.mdDervRepaList .data-row:after {
+		left: 0;
+		right: 0;
+	}
+	
+	.data-group.mdDervRepaList .data-row .body {
+		padding: 4px 0px 4px 16px;
+		margin-right: 16px;
+	}
+	
+	.data-group .data-row .opt {
+		color: #AEAEAE;
+	}
+	
+	.data-group .data-row .body .repair-content {
+		padding: 4px 0;
+		font-size: 1.5rem;
+		color: #000;
+		line-height: 21px;
+		font-family: MicrosoftYaHei;
+	}
+	
+	.data-group .data-row .body .repair-content .part-item {
+		word-break: break-all;
+	}
+	
+	.data-group .data-row .body .repair-content .part-item .part-name {
+		vertical-align: bottom;
+		white-space: nowrap;
+		/*强制span不换行*/
+		display: inline-block;
+		/*将span当做块级元素对待*/
+		max-width: 50%;
+		/*限制宽度*/
+		overflow: hidden;
+		/*超出宽度部分隐藏*/
+		text-overflow: ellipsis;
+		/*超出部分以点号代替*/
+	}
+	
+	.data-group .data-row .body .repair-sub {
+		font-size: 1.2rem;
+		line-height: 17px;
+	}
+	
+	.data-group .data-row .body .repair-sub .repair-item {
+		color: #AAAAAA;
+	}
+	
+	.data-group .data-row .opt:not(.md-icon):after {
+		width: 0px;
+	}
+	
+	.chekbox {
+		display: inline-block;
+		margin-right: 16px;
+		font-size: 20px;
+	}
+	
+	.parts-item {
+		color: #AAA;
+		font-size: 1.2rem;
+	}
+	
+	.repair-content .md-icon.icon-tel {
+		font-size: 1.2rem;
+		color: #AAA;
+	}
+	
+	.chat-user {
+		color: #3296FA;
+		margin-right: 5px;
+	}
+	
+	.chat-user:last-child {
+		margin-right: 0;
+	}
+	
+	.total {
+		text-align: center;
+		line-height: 40px;
+		color: #3296FA;
+	}
+</style>

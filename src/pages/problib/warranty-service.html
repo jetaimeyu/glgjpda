@@ -1,0 +1,400 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="warranty-service.css" />
+	</head>
+	<style>
+		.recard-world {
+			font-size: 1.2rem;
+			color: #3296FA;
+		}
+		
+		.goonrecard {
+			position: absolute;
+			bottom: 10px;
+			right: 15px;
+		}
+		
+		.goonrecard img {
+			width: 16px;
+			height: 14px;
+			vertical-align: middle;
+		}
+	</style>
+
+	<body ng-controller="WarrantyServiceController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">三包期查阅</a>
+			<a class="menu-more icon-more right-menu-icon-detail" href="#popover" style="display: none;" ng-class="{'mui-block':isLoad}" ng-if="(data.CustomerID||data.CustomerName)&&data.Warranty>0&&data.BeginDate&&('Q63' | hasAuth)"></a>
+		</header>
+		<div class="mui-content" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<ul class="mui-table-view mui-table-view-chevron" style="margin-top: 8px;" ng-if="data.ProdID">
+				<li class="mui-table-view-cell mui-media">
+					<img src="../../images/imgPre.png" ng-src="{{data | getProdLogo:0:150}}" class="imgslist" style="object-fit: cover;" />
+					<div class="mui-clearfix" style="margin-right: 30px;">
+						<div class="mui-ellipsis equ-title" ng-bind="data.ProdName"></div>
+						<p class="mui-ellipsis equ-sub" ng-bind="'型号：'+data.SkuName"></p>
+						<p class="mui-ellipsis equ-sub" ng-if="data.ProdInnerCode" ng-bind="InnerCodeName+'：'+data.ProdInnerCode"></p>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<li class="data-row">
+					<label>保修期</label>
+					<div class="body">
+						<span ng-if="data.Warranty==0">未设置</span>
+						<span ng-if="data.Warranty>0" ng-bind="data.Warranty + ' ' + WarrantyUnitType[data.WarrantyUnit]"></span>
+						<!--<span class="float-right setting" ng-if="data.Warranty==0&&!data.IsSale" ng-click="tap('warranty')">设置</span>-->
+					</div>
+					<div class="goonrecard" ng-if="isShowExtendList()" ng-click="gotoserver()">
+						<img src="../../images/yan.png" />
+						<span class="recard-world">延保记录</span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>起保日期</label>
+					<div class="body">
+						<span ng-if="!data.BeginDate">未设置</span>
+						<span ng-if="data.BeginDate" ng-bind="data.BeginDate"></span>
+						<!--<span class="float-right setting" ng-if="!data.BeginDate&&!data.IsSale" ng-click="chooseDate('BeginDate')">设置</span>-->
+					</div>
+				</li>
+				<li class="data-row">
+					<label>过保日期</label>
+					<div class="body">
+						<span ng-if="!data.EndDate">未设置</span>
+						<span ng-if="data.EndDate" ng-bind="data.EndDate"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>客户</label>
+					<div class="body">
+						<div class="body">
+							<span ng-if="!data.CustomerID && !data.CustomerName">未设置</span>
+							<span ng-if="data.CustomerID || data.CustomerName" ng-bind="data.CustomerName"></span>
+							<!--<span class="float-right setting" ng-if="!data.CustomerID && !data.CustomerName" ng-click="tap('selectCustomer')">设置</span>-->
+						</div>
+					</div>
+				</li>
+			</ul>
+			<!--配件-->
+			<ul class="partDomUl data-group">
+				<li class="data-row partDomHead" ng-if="data.Parts.length!=0">
+					<div class="body mui-grid-view mui-row">
+						<div class="mui-media mui-col-xs-5 mui-col-sm-5 width50">配件</div>
+						<div class="mui-media mui-col-xs-2 mui-col-sm-2 width30">保修期</div>
+						<div class="mui-media mui-col-xs-3 mui-col-sm-3 width30">过保日期</div>
+					</div>
+				</li>
+				<li class="data-row mui-table-view-cell partDomList" ng-repeat="item in data.Parts">
+					<div class="body mui-grid-view mui-row">
+						<div class=" mui-media mui-col-xs-5 mui-col-sm-5 width40 mui-ellipsis remarkscontent">
+							<span ng-bind="item.PartProdName"></span>
+							<p class="mui-ellipsis font-13 sku-name" ng-bind="'型号：' + item.PartSkuName"></p>
+						</div>
+						<div class=" mui-media mui-col-xs-2 mui-col-sm-2 width30 mui-ellipsis-2 remarkscontent" style="padding-left: 10px;" ng-bind="item.Warranty + ' ' + WarrantyUnitType[item.WarrantyUnit]" ng-if="item.Warranty>0"></div>
+						<div class=" mui-media mui-col-xs-3 mui-col-sm-3 width30 mui-ellipsis-2 remarkscontent" ng-bind="computeOverDate(data.BeginDate,item.Warranty,item.WarrantyUnit)"></div>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<div id="popover" class="mui-popover menuDivModel">
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell" ng-click="tap('hostExtand')">
+					<a class="mui-icon icon-extension-service">
+						<font>主机延保</font>
+					</a>
+				</li>
+			</ul>
+		</div>
+		<!-- 设置保修期和延保期弹窗 -->
+		<div id="hostExtandWarrantyPopover" class="mui-popover" style="padding: 0 0px;">
+			<ul class="data-group">
+				<li class="data-row first">
+					<a class="opt md-icon icon-close" href="#hostExtandWarrantyPopover"></a>
+					<div class="body">
+						<div class="mui-ellipsis info-title">
+							<span class="color-gray-dark font-14">{{warranty?'设置保修期':'设置延保时间'}}</span>
+						</div>
+						<div class="mdt_leftline mui-pull-left"></div>
+					</div>
+				</li>
+				<li class="data-row must" id="wdateType">
+					<div class="number" style="width: 50%;padding-left: 20px;">
+						<span class="icon-add" ng-click="changeNum(1)"></span>
+						<span style="font-size: 1.5rem !important;" ng-bind="extandDate" id="extandDate"></span>
+						<span class="icon-remove" ng-click="changeNum(0)" ng-style="{'color':extandDate==1?'#CCCCCC':'#000'}"></span>
+					</div>
+					<div class="md-switch-group" style="width: 50%;padding-left: 20px;">
+						<span style="padding: 1px 9px;" dataId="3" class="md-switch-button" ng-class="{'md-active':extandUnit==3}">年</span>
+						<span style="padding: 1px 9px;border-right:none;margin-left: -5px;margin-right: -4px;" dataId="2" class="md-switch-button" ng-class="{'md-active':extandUnit==2}">月</span>
+						<span style="padding: 1px 9px;" dataId="1" class="md-switch-button" ng-class="{'md-active':extandUnit==1}">日</span>
+					</div>
+				</li>
+			</ul>
+			<div id="add_div">
+				<a type="button" class="font-15 mui-btn mui-btn-block" ng-click="confirmExtand()">确认</a>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script>
+			app.controller("WarrantyServiceController", ["$scope", "ApiService", "DataService", "UtilsService", "DatePickerService", "CacheService", "$filter", "Loading", "AuthService",
+				function($scope, ApiService, DataService, UtilsService, DatePickerService, CacheService, $filter, Loading, AuthService) {
+					$scope.MDCode = query('mdcode');
+					$scope.data = {};
+					$scope.ext = query("ext"); // 延保进来的页面
+					$scope.isscan = query("isscan"); // 延保进来的页面
+					//延保日期
+					$scope.extandDate = 1;
+					//延保日期单位
+					$scope.extandUnit = "3";
+					$scope.WarrantyUnitType = {
+						1: "日",
+						2: "月",
+						3: "年"
+					};
+
+					AuthService.getAuth().then(function(res) {
+						$scope.InnerCodeName = res.InnerCodeName || '出厂编号';
+					});
+
+					getPkgWarrantyByMdCode();
+
+					//通过物联码获取产品详情
+					function getPkgWarrantyByMdCode() {
+						var url = ApiService.Api50 + "/api/v2/Prod/GetPkgWarrantyByMdCode?mdCode=" + $scope.MDCode;
+						console.log(url)
+						DataService.get(url).then(function(res) {
+							$scope.isLoad = true;
+							$scope.data = res;
+							if(res.EndDate && res.Warranty && (res.CustomerID||res.CustomerName) && $scope.ext){
+								mui("#hostExtandWarrantyPopover").popover("show");
+								$scope.ext = false;
+							}else{
+								// 延保进入，未设置保修，设置起保日期之后，不弹出
+								$scope.ext = false;
+							}
+						})
+					}
+
+					//tap
+					$scope.tap = function(key) {
+						switch(key) {
+							case 'selectCustomer':
+								UtilsService.openWindow({
+									needLogin: true,
+									id: "customer-search.html",
+									url: "../search/customer-search.html?action=select&must=true",
+									extras: {
+										selectObj: {
+											ID: $scope.data.CustomerID,
+											CustomerName: $scope.data.CustomerName
+										},
+										callback: "selectCustomerCallback"
+									}
+								});
+								break;
+							case "addNewPart":
+								UtilsService.openWindow({
+									id: "problib-index.html",
+									url: "../problib/index.html?state=selsku",
+									extras: {
+										selectObj: $scope.ProdInfo,
+										callback: 'partSelectCallback'
+									}
+								})
+								break;
+							case 'hostExtand':
+								$scope.warranty = false; 
+								mui("#hostExtandWarrantyPopover").popover("toggle");
+								break;
+							case 'warranty':
+								$scope.warranty = true; // 当前日期弹窗是 设置保修期；
+								mui("#hostExtandWarrantyPopover").popover("toggle");
+								break;
+							default:
+								break;
+						}
+					}
+
+					//设置相关//
+					//设置起保日期
+					$scope.chooseDate = function(field) {
+						DatePickerService.pickDate({
+							selected: $scope.data[field],
+						}).then(function(res) {
+							$scope.data[field] = res;
+							var url = ApiService.Api50 + "/api/v2/Prod/SavePkgWarranty";
+							var postData = {
+								ID: $scope.data.ID,
+								MDCode: $scope.data.MDCode,
+								ProdID: $scope.data.ProdID,
+								SkuID: $scope.data.SkuID,
+								Warranty: $scope.data.Warranty,
+								WarrantyUnit: $scope.data.WarrantyUnit,
+								BeginDate: $scope.data[field] + " 00:00:00",
+								CustomerID: $scope.data.CustomerID,
+								CustomerName: $scope.data.CustomerName
+							};
+							DataService.post(url, postData).then(function(res) {
+								if(res) {
+									mui.toast("设置起保时间成功");
+									$scope.data.ID = res;
+									$scope.data.BeginDate = $scope.data[field];
+								}
+								getPkgWarrantyByMdCode();
+							});
+						});
+					};
+
+					var isConfirm = false;
+					//设置主机延保时间
+					$scope.confirmExtand = function() {
+						if(isConfirm) return;
+						isConfirm = true;
+						// 设置保修期分支
+						if($scope.warranty){
+							confirmwarranty();
+							return
+						}
+						var url = ApiService.Api50 + "/api/v2/Prod/SavePkgWarrantyDelayLog";
+						var postdata = {
+							ID: 0,
+							WarrantyID: $scope.data.ID,
+							Warranty: $scope.data.Warranty,
+							WarrantyUnit: $scope.data.WarrantyUnit,
+							ExtendedWarranty: document.getElementById("extandDate").innerText,
+							ExtendWarrantyUnit: $scope.extandUnit,
+							EndDate: $scope.computeOverDate($scope.data.EndDate, $scope.extandDate, $scope.extandUnit) + " 00:00:00"
+						}
+						DataService.post(url, postdata).then(function(res) {
+							isConfirm = false;
+							res > 0 && mui.toast("设置主机延保时间成功");
+							getPkgWarrantyByMdCode();
+							mui("#hostExtandWarrantyPopover").popover("hide");
+						})
+					}
+					//设置保修期
+					var confirmwarranty = function() {
+						var url = ApiService.Api50 + "/api/v2/Prod/SavePkgWarranty";
+						var postdata = {
+							ID: $scope.data.ID,
+							MDCode: $scope.data.MDCode,
+							ProdID: $scope.data.ProdID,
+							SkuID: $scope.data.SkuID,
+							Warranty: document.getElementById("extandDate").innerText,
+							WarrantyUnit: $scope.extandUnit
+						}
+						DataService.post(url, postdata).then(function(res) {
+							isConfirm = false;
+							res > 0 && mui.toast("保修期设置成功");
+							getPkgWarrantyByMdCode();
+							mui("#hostExtandWarrantyPopover").popover("hide");
+						})
+					}
+
+					//设置客户客户
+					window.selectCustomerCallback = function(obj) {
+						if(obj) {
+							var url = ApiService.Api50 + "/api/v2/Prod/SavePkgWarranty";
+							var postData = {
+								ID: $scope.data.ID,
+								MDCode: $scope.data.MDCode,
+								ProdID: $scope.data.ProdID,
+								SkuID: $scope.data.SkuID,
+								BeginDate: $scope.data.BeginDate + " 00:00:00",
+								Warranty: $scope.data.Warranty,
+								WarrantyUnit: $scope.data.WarrantyUnit,
+								CustomerID: obj.ID,
+								CustomerName: obj.CustomerName
+							};
+							DataService.post(url, postData).then(function(res) {
+								if(res) {
+									$scope.data.ID = res;
+									$scope.data.CustomerID = obj.ID;
+									$scope.data.CustomerName = obj.CustomerName;
+									mui.toast("设置客户成功");
+								}
+							});
+						}
+
+					}
+					//选择配件
+					window.partSelectCallback = function(obj) {
+						$scope.data.parts.push(obj);
+						$scope.$apply();
+					}
+
+					/**
+					 * ****************切换延保期单位************
+					 */
+					mui("#wdateType").on("tap", ".md-switch-button", function() {
+						$scope.extandUnit = this.getAttribute("dataId");
+						$scope.$apply();
+					});
+
+					//更改保修期
+					$scope.changeNum = function(isAdd) {
+						if(isAdd == 1) {
+							if($scope.extandDate == 999) return;
+							$scope.extandDate++;
+						} else {
+							if($scope.extandDate == 1) return;
+							$scope.extandDate--;
+						}
+					};
+					$scope.isShowExtendList = function() {
+						return $scope.data.Warranty && $scope.data.WarrantyUnit && $scope.data.EndDate && $scope.computeOverDate($scope.data.BeginDate, $scope.data.Warranty, $scope.data.WarrantyUnit) != $scope.data.EndDate;
+					}
+					// 跳转到延保记录列表
+					$scope.gotoserver = function() {
+						UtilsService.openWindow({
+							needLogin: true,
+							id: "securing-services.html",
+							url: "securing-services.html?mdcode=" + query("MDCode") + "&isscan=1"
+						});
+					}
+					//计算过保日期
+					$scope.computeOverDate = function(beginDate, extandDate, dateUnit) {
+						//WarrantyUnit 单位 1日2月3年
+						if(!beginDate || !extandDate) return;
+						var filterName = "";
+						switch(dateUnit) {
+							case 1:
+							case '1':
+								filterName = "dateAddDays";
+								break;
+							case 2:
+							case '2':
+								filterName = "dateAddMonths";
+								break;
+							case 3:
+							case '3':
+								filterName = "dateAddYears";
+								break;
+							default:
+								break;
+						}
+						return $filter(filterName)(beginDate, extandDate, "yyyy-MM-dd");
+
+					}
+				}
+			]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

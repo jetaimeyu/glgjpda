@@ -1,0 +1,92 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<style>
+			.list {
+				padding: 8px 16px!important;
+				background-color: #fff;
+			}
+			
+			.list .name {
+				display: block;
+				width: 100%;
+				color: #000;
+				font-size: 1.5rem;
+				/* white-space: pre-wrap; */
+				word-break: break-all;
+				line-height: 21px;
+			}
+			
+			.list .city {
+				color: #aaa;
+				font-size: 1.2rem;
+				white-space: pre-wrap;
+				line-height: 16px;
+				margin-top: 5px;
+			}
+			
+			.mui-content .data-group .data-row:after {
+				left: 0;
+				right: 0;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="CustomerController">
+		<div id="pullrefresh" ng-controller="pullrefreshController" class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<div class="mui-content">
+				<ul class="data-group mt0">
+					<li class="data-row mui-table-view-cell list" ng-repeat="x in data" ng-click="tap(x.ID)">
+						<div class="countent">
+							<div class="name" ng-bind="x.CustomerName"></div>
+							<div class="city"><span ng-bind="x.Province | locationfilter:x.City"></span></div>
+						</div>
+					</li>
+				</ul>
+				<md-no-data ng-show="data && data.length==0">暂无数据</md-no-data>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script>
+			app.controller("CustomerController", ["$scope", "ApiService", "DataService", "UtilsService","RPCObserver",function($scope, ApiService, DataService, UtilsService,RPCObserver) {
+				$scope.pageIndex = 0;
+				$scope.pageSize = 10;
+				function init() {
+					if(query("authType")==5){
+						$scope.url = ApiService.Api50 + "/api/v1/Customer/GetPagedCustomerListForMe" + "?page=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize;
+					}else{
+						$scope.url = ApiService.Api50 + "/api/v1/Customer/GetCompCustomerList" + "?page=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize + "&authType=" + query("authType");
+					}
+					
+				}
+
+				$scope.$on('refresh_pageindex', init);
+
+				$scope.tap = function(id) {
+					UtilsService.openWindow({
+						id: "customer-info.html",
+						url: "customer-info.html?customerid=" + id
+					});
+				}
+				RPCObserver.on('refresh_customer_list', 'refresh_customer_list');
+				window.refresh_customer_list = function() {
+					$scope.$broadcast('md_pullrefresh');
+				};
+			}])
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

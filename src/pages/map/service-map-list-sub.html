@@ -1,0 +1,115 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link rel="stylesheet" href="../../css/mui.min.css" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	<style type="text/css">
+		.icon {
+			width: 16px;
+		}
+
+		/*.li_bottom-box span {
+				display: inline-block;
+				width: 36%;
+			}*/
+
+		.imgslist {
+			float: left;
+			width: 80px;
+			height: 80px;
+			margin-right: 10px;
+			background-size: cover !important;
+		}
+
+		.crm_title {
+			font-size: 15px !important;
+			padding-bottom: 3px;
+		}
+
+		.crm_info {
+			margin-top: 5px;
+			background: #fafafa;
+			padding: 0px 5px;
+		}
+
+		.crm_info div {
+			color: #8f8f94;
+			font-size: 13px;
+		}
+
+		.data-group .data-row .opt~.body {
+			padding-left: 15px;
+		}
+	</style>
+</head>
+
+<body ng-controller="ParentPageController">
+	<div id="pullrefresh" ng-controller="pullrefreshController" class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}"
+	 style="display: none;">
+		<div class="mui-content">
+
+			<ul class="data-group" ng-show="data && data.length>0">
+				<li class="data-row mui-table-view-cell" ng-repeat="item in data" ng-click="tap(item)">
+					<p class="opt md-icon icon-right" ></p>
+					<div class="body">
+						<p class="crm_title mui-ellipsis" ng-bind="item.CustomerName"></p>
+						<div class="crm_info">
+							<div><span style="float:left">所在城市:</span><div style="margin-left:56px" ng-bind="item.Province | locationfilter:item.City:item.District:item.Address:item.Street"></div></div>
+							<div><span style="float:left">联系人:</span><div style="margin-left:56px" ng-bind="item.LinkName"></div></div>
+							<div><span style="float:left">联系电话:</span><div style="margin-left:56px" ng-bind="item.LinkPhone"></div></div>
+						</div>
+					</div>
+				</li>
+
+			</ul>
+			<md-no-data class="no-data" ng-show="data && data.length==0">暂无设备数据</md-no-data>
+		</div>
+	</div>
+	<script type="text/javascript" src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/rpc.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script>
+		app.controller("ParentPageController", ["$scope", "ApiService", "DataService", "UtilsService", "RPCObserver",
+			"$filter",
+			function ($scope, ApiService, DataService, UtilsService, RPCObserver, $filter) {
+				var view = plus.webview.currentWebview();
+				$scope.pageIndex = 0;
+				$scope.pageSize = 20;
+				$scope.autoUserPull = false;
+				$scope.realUrl = "";
+
+				window.loadData = function (url) {
+					$scope.realUrl = url;
+					$scope.$broadcast('md_pullrefresh');
+					$scope.$apply();
+				};
+
+				$scope.action = "view";
+				$scope.tap = function (item) {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: "crm/index.html",
+						url: "../crm/index.html#/client/clientDetails?backIndex=1&id=" + item.ID
+					});
+				}
+
+				$scope.$on("refresh_pageindex", function () {
+					$scope.url = $scope.realUrl + "&pageIndex=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize;
+				});
+			}
+		]);
+
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+		});
+	</script>
+</body>
+
+</html>

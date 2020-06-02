@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../css/mui.previewimage.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="manage-address.css" />
+	</head>
+
+	<body ng-controller="addressListController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left"></a>
+			<h1 class="mui-title">管理收货地址</h1>
+		</header>
+		<div class="mui-scroll-wrapper" style="margin-bottom: 45px;display: none;" ng-class="{'mui-block':isLoad}">
+			<ul class="data-group" ng-if="addressData.AddrList&&addressData.AddrList.length>0" ng-repeat="(idx,addr) in addressData.AddrList">
+				<li class="data-row">
+					<div class="body select_address_con">
+						<div class="select_address_info">
+							<span ng-bind="addr.RecvUserName"></span>
+							<span ng-bind="addr.LinkPhone"></span>
+							<p class="font-13 color-gray-dark" ng-bind="addr.Province | locationfilter:addr.City:addr.District:addr.Address:addr.Street"></p>
+						</div>
+					</div>
+				</li>
+				<li class="data-row">
+					<div class="body">
+						<a class="sltDefault font-14" ng-click="setDefault(addr)">
+							<i ng-class="addr.IsDefault=='1'?'icon-roundcheckfill color-red-md':'icon-round color-gray-dark' " class="select_address_icon font-16"></i> 设为默认地址
+						</a>
+						<a class="btn float-right del" ng-click="del(addr.ID)">删除</a>
+						<a class="btn float-right edit" ng-click="tap(addr.ID)">编辑</a>
+					</div>
+				</li>
+			</ul>
+			<div style="padding:15px;color:#ccc;font-size:12px;">
+				特别提醒：该个人地址信息对他人是隐藏信息，其他人（包括所在公司）无法在正常情况下看到该信息
+			</div>
+			<md-no-data ng-show="addressData.AddrList&&addressData.AddrList.length==0">暂无数据</md-no-data>
+		</div>
+		<footer id="btnAdd" class="font-16 top-thin-line address-btn" ng-click="tap()">新增收货地址</footer>
+		<script src="../../js/angular.min.js"></script>
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/rpc.js"></script>
+		<script src="../../js/common.js"></script>
+		<script src="../../js/utils.js"></script>
+		<script type="text/javascript">
+			app.controller("addressListController", ["$scope", "UtilsService", "ApiService", "Loading", "DataService", "RPCObserver", function($scope, UtilsService, ApiService, Loading, DataService, RPCObserver) {
+				$scope.addressData = {
+					AddrList: "",
+					SelectedID: query("id"), //当前选中的收货地址ID
+				}
+				$scope.isLoad = false;
+				init()
+
+				function init() {
+					Loading.show();
+					loadPage()
+				}
+
+				function loadPage() {
+
+					//获取用户收货地址
+					var url = ApiService.Api42 + "/api/PostAddr/GetList";
+					DataService.get(url).then(function(reData) {
+						//						console.log(JSON.stringify(reData))
+
+						$scope.addressData.AddrList = reData;
+						$scope.isLoad = true;
+						Loading.hide();
+					})
+				}
+				$scope.tap = function(id) {
+					//					var aId=id||0;
+					UtilsService.openWindow({
+						needLogin: true,
+						id: "save-address.html",
+						url: "save-address.html?id=" + id
+
+					});
+				};
+				//设为默认地址
+				$scope.setDefault = function(addr) {
+					if(addr.IsDefault == 1)
+						return;
+					var url = ApiService.Api42 + "/api/PostAddr/SetDefault?addrID=" + addr.ID;
+					Loading.show();
+					DataService.get(url).then(function(reData) {
+						if(reData) {
+							loadPage()
+						}
+						Loading.hide();
+					},function(){
+						Loading.hide();
+					});
+				};
+				$scope.del = function(Id) {
+					mui.confirm("确定删除此收货地址？", "确定", ["取消", "确定"], function(e) {
+						if(e.index == 1) {
+							//获取用户收货地址
+							var url = ApiService.Api42 + "/api/PostAddr/Delete?addrID=" + Id;
+							DataService.get(url).then(function(reData) {
+								if(reData) {
+									mui.toast("删除成功");
+									loadPage()
+								}
+							});
+						}
+					});
+				}
+				RPCObserver.on('refresh_addr_manage_list', 'refresh_addr_manage_list');
+				window.refresh_addr_manage_list = function() {
+					loadPage();
+				};
+			}]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,65 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/common.css">
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<style>
+			.icon {
+				width: 16px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="RepairListController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">设备维修记录</a>
+			<a class="mui-pull-right menu-add" id="add">
+				<img class="icon" src="../../images/add.png" ng-click="tap()" ng-if="('Q9' | hasAuth)&&isScrap!='true'" />
+			</a>
+		</header>
+		<script src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<!--<script type="text/javascript" src="equ-repairList.js"></script>-->
+		<script type="text/javascript">
+			app.controller("RepairListController", ["$scope", "UtilsService", function($scope, UtilsService) {
+				$scope.isScrap = query("isScrap");
+				//跳转
+				$scope.tap = function() {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'equ-repair.html',
+						url: 'equ-repair.html',
+						extras: {
+							addEquRecord: plus.webview.currentWebview().addEquRecord || ''
+						}
+					});
+				};
+
+				//创建子页面的下拉刷新
+				mui.init({
+					subpages: [{
+						url: "equ-repairList.html?equid=" + query("equid"), //下拉刷新内容页面地址
+						id: "equ-repairList.html", //内容页面标志
+						styles: {
+							top: '44px',
+							bottom: '0px',
+						}
+					}]
+				});
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

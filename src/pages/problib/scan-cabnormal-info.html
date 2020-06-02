@@ -1,0 +1,149 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+	<link href="../../css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+</head>
+
+<body ng-controller="AbnormalInfoController">
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left">窜货预警详情</a>
+	</header>
+	<div class="mui-scroll-wrapper md-info-page" style="display: none;" ng-class="{'mui-block':isLoad}">
+		<ul class="data-group">
+			<p class="data-group-tip">相关设备</p>
+			<li class="data-row">
+				<label>异常设备</label>
+				<p class="opt md-icon font-15" ng-click="prodInfos(data)">
+					<span class="icon-right"></span>
+				</p>
+				<div class="body" ng-click="prodInfos(data)">
+					<span ng-bind="data.ProdName | formatProdInfo:data.SkuName"></span>
+				</div>
+			</li>
+			<li class="data-row">
+				<label>出厂编号</label>
+				<div class="body">
+					<span ng-bind="data.InnerCode"></span>
+				</div>
+			</li>
+			<li class="data-row" >
+				<label>经销商名称</label>
+				<div class="body">
+					<span ng-bind="data.DealerName"></span>
+				</div>
+			</li>
+			<li class="data-row" >
+				<label>管辖区域</label>
+				<div class="body">
+					<span ng-bind="data.Precinct"></span>
+					
+				</div>
+			</li>
+			<li class="data-row">
+				<label>扫码位置</label>
+				<div class="body">
+					<span ng-bind="data.Province | locationfilter:data.City:data.District:data.Address"></span>
+				</div>
+			</li>
+			<li class="data-row">
+				<label>扫码时间</label>
+				<div class="body">
+					<span ng-bind="data.ScanDate"></span>
+				</div>
+			</li>
+		</ul>
+		<!--<ul class="data-group">
+			<p class="data-group-tip">本次扫码</p>
+			<li class="data-row">
+				<label>管辖区域</label>
+				<div class="body">
+					<span ng-bind="data.Info.province | locationfilter:data.Info.city:data.Info.district:data.Info.address"></span>
+				</div>
+			</li>
+			
+			<li class="data-row">
+				<label>异常信息</label>
+				<div class="body">
+					<span ng-bind="data.AdnomalInfo"></span>
+				</div>
+			</li>
+		</ul>-->
+		<!--<ul class="data-group">
+			<p class="data-group-tip">上次扫码</p>
+			<li class="data-row">
+				<label>扫码位置</label>
+				<div class="body">
+					<span ng-bind="data.LastInfo.province | locationfilter:data.LastInfo.city:data.LastInfo.district:data.LastInfo.address"></span>
+				</div>
+			</li>
+			<li class="data-row">
+				<label>扫码时间</label>
+				<div class="body">
+					<span ng-bind="data.LastInfo.date | dateFormat:'yyyy-MM-dd HH:mm:ss'"></span>
+				</div>
+			</li>
+		</ul>-->
+	</div>
+	<!--无网络或请求失败重试-->
+	<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+
+	<script type="text/javascript" src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/rpc.js"></script>
+	<script type="text/javascript" src="../message/transMessage.js"></script>
+	<script type="text/javascript">
+		app.controller("AbnormalInfoController", ["$scope", "AuthService", "ApiService", "DataService", "UtilsService",
+			"Loading", "RPCObserver", "$filter", "ShareLogService", "CacheService",
+			function ($scope, AuthService, ApiService, DataService, UtilsService, Loading, RPCObserver, $filter,
+				ShareLogService, CacheService) {
+					
+				//无网络或请求失败重试
+				$scope.retryModal = {
+					msg: "扫码异常详情",
+					retry: getAdnormalMdCodeInfo,
+					state: ''
+				}
+				var logid = query("logid") || 0;
+
+				logid && ShareLogService.add(logid, 19);
+
+				//页面数据
+				$scope.data = {};
+				AuthService.getAuth().then(function (res) {
+					$scope.InnerCodeName = res.InnerCodeName || '出厂编号';
+					getAdnormalMdCodeInfo();
+				});
+				function getAdnormalMdCodeInfo() {
+					var url = ApiService.Api52 + "/api/v1/Suppliers/GetFleeingGoodById/" + query("id");
+					DataService.get(url).then(function (res) {
+						$scope.data = res;
+                        $scope.isLoad = true;
+					})
+				}
+
+				//跳转产品详情
+				$scope.prodInfos = function (info) {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'prodinfo-head.html',
+						url: '../problib/prodinfo-head.html?prodId=' + info.ProdID + "&SkuID=" + info.SkuID + "&MdCode=" + info.MDCode
+					});
+				};
+			}
+		]);
+
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+		});
+	</script>
+</body>
+
+</html>

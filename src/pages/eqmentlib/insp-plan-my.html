@@ -1,0 +1,52 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	</head>
+
+	<body ng-controller="inspplanListController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">我的巡检计划</a>
+		</header>
+		<div class="content"></div>
+		<footer class="btn-bottom" ng-click="viewComplete()">查看已完成巡检</footer>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("inspplanListController", ["$scope", "UtilsService", "RPCObserver", "$timeout", "$filter", function($scope, UtilsService, RPCObserver, $timeout, $filter) {
+				mui.init({
+					subpages: [{
+						url: 'insp-plan-my-sub.html',
+						id: 'insp-plan-my-sub.html',
+						styles: {
+							top: '45px',
+							bottom: '40px',
+						}
+					}]
+				});
+				$scope.viewComplete = function() {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: "",
+						url: ""
+					});
+				};
+			}]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

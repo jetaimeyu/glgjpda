@@ -1,0 +1,148 @@
+/*更多按钮*/
+
+/*.menu-more {
+	z-index: 20;
+	padding: 13px 13px 13px 13px;
+	margin-right: -15px;
+}*/
+
+.mui-bar-nav {
+	-webkit-box-shadow: none;
+	box-shadow: none;
+}
+
+.mui-bar-nav {
+	background-color: #FFFFFF;
+}
+
+.mui-table-view:before,
+.mui-table-view:after {
+	background-color: #FFFFFF;
+	border: none;
+	height: 0px;
+}
+
+.data-group .data-row .opt .icon-delete {
+	color: #AEAEAE;
+	margin-right: 6px;
+}
+
+.part-group .data-row:after {
+	left: 0px;
+	right: 0px;
+}
+
+.btn-group .btn-col {
+	color: #3296FA;
+	font-size: 1.4rem;
+}
+
+.part-group .data-row .body .cell {
+	font-size: 1.4rem !important;
+}
+
+.part-group :after {
+	height: 0;
+}
+
+
+/*savebtn*/
+
+.md-info-bottom-bar li.mui-media {
+	width: 25vw!important;
+	background:rgba(255, 255, 255, 0.95);
+}
+
+.md-info-bottom-bar li.mui-media:last-child {
+	border-right: 0px!important;
+	border-top-right-radius: 50px;
+	border-bottom-right-radius: 50px;
+}
+
+.md-info-bottom-bar li.mui-media:first-child {
+	border-top-left-radius: 50px;
+	border-bottom-left-radius: 50px;
+}
+
+.md-info-bottom-bar ul.mui-table-view {
+	margin: 0 auto;
+	box-shadow: 0px 0px 3px 1px rgba(138, 138, 138, 0.2);
+}
+
+.md-info-bottom-bar {
+	padding: 20px 0px!important;
+}
+
+.mui-table-view {
+	background: transparent!important;
+}
+
+.mui-table-view .mui-table-view-cell .mui-media-body {
+	font-size: 1.2rem;
+	margin-top: -12px;
+	color: #3296FA;
+}
+
+.data-group:first-child {
+	margin-top: 0;
+}
+
+.VertLine {
+	float: left;
+	width: 1.5px;
+	height: 15px;
+	background-color: #3296FA;
+	position: absolute;
+	top: 50%;
+	-webkit-transform: translateY(-50%);
+	transform: translateY(-50%);
+	overflow: hidden;
+	margin-left: 16px;
+}
+
+.equiFailSpan03 {
+	display: inline-block;
+	max-height: 2.8rem;
+	font-size: 1.4rem!important;
+	line-height: 1.7rem;
+	overflow: hidden;
+	vertical-align: middle;
+}
+
+.partsRepl {
+	width: 50%!important;
+	color: #323232!important;
+	padding-left: 24px!important;
+	position: absolute;
+	top: 53%;
+	-webkit-transform: translateY(-50%);
+	transform: translateY(-50%);
+}
+
+.equiFontColor {
+	color: #3296FA!important;
+}
+
+.ulFirstLi {
+	margin-top: 0px!important;
+}
+
+.ulFirstLi:after {
+	left: 0px!important;
+	right: 0px!important;
+}
+
+
+
+.hideLastLi {
+	height: 0px;
+}
+
+
+/*.partDomHead:after {
+	height: 0!important;
+}*/
+
+.partDomList {
+	color: #929292!important;
+}

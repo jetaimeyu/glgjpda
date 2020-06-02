@@ -1,0 +1,47 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link rel="stylesheet" href="../../css/mui.min.css">
+	<link rel="stylesheet" href="../../css/common.css">
+	<link rel="stylesheet" href="../../icon-font/iconfont.css">
+	<link rel="stylesheet" href="../../css/mui.loading.css" />
+	<link rel="stylesheet" href="chat-group-memberName.css">
+</head>
+
+<body ng-controller="GroupMemberNameController">
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left">修改群名片</a>
+	</header>
+	<div class="mui-content" style="display:none;" ng-class="{'mui-block':domData.GroupID}">
+		<ul class="data-group">
+			<li class="data-row must">
+				<label>群名片</label>
+				<div class="body">
+					<div class="edit">
+						<div ng-model-div-text="domData.MemberName" class="needsclick" placeholder="请输入您的群名片" lenlimit="50"></div>
+					</div>
+				</div>
+			</li>
+		</ul>
+		<div class="mui-content-padded">
+			<span class="mui-btn mui-btn-block" ng-click="event.save()">保存</span>
+		</div>
+
+	</div>
+
+
+
+	<script src="../../js/mui.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/rpc.js"></script>
+	<script type="text/javascript" src="../../js/mui.loading.js"></script>
+	<script type="text/javascript" src="chat-group-memberName.js"></script>
+</body>
+
+</html>

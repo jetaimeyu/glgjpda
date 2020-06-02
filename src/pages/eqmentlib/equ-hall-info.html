@@ -1,0 +1,361 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.data-group:first-child {
+				margin-top: 0px !important;
+			}
+			
+			.bx-span {
+				padding: 10px 15px !important;
+				display: inline-block;
+				font-size: 1.5rem !important;
+			}
+			
+			.data-time {
+				padding: 5px 15px !important;
+				display: flex;
+				justify-content: space-between;
+				color: #999999;
+			}
+			
+			.pr-box {
+				padding: 10px 15px !important;
+			}
+			
+			.repair-img {
+				margin-right: 10px;
+			}
+			
+			.pr-name {
+				font-size: 1.5rem !important;
+				color: #323232 !important;
+			}
+			
+			.md-bottom-bar {
+				width: 100%;
+				display: flex;
+				position: fixed;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				z-index: 10;
+			}
+			
+			.md-bottom-bar>div {
+				width: 50%;
+				height: 40px;
+				box-sizing: border-box;
+				line-height: 40px;
+				text-align: center;
+				color: #fff;
+				font-size: 1.4rem;
+			}
+			
+			.md-bottom-bar .bar-left {
+				background: #fe9900;
+			}
+			
+			.md-bottom-bar .bar-right {
+				background: #ff6634;
+			}
+			
+			.md-info-page {
+				padding-bottom: 80px;
+			}
+			
+			.imgslist {
+				width: 50px;
+				height: 50px;
+				background-size: cover;
+			}
+			
+			.w100 {
+				width: 100% !important;
+			}
+			
+			.imgslist {
+				float: left;
+				width: 60px;
+				height: 60px;
+				margin-right: 10px;
+				background-size: cover !important;
+			}
+			
+			#map {
+				width: 100%;
+				height: 200px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="MatDebugInfoController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left mui-ellipsis">详情</a>
+			<!--<a class="menu-more icon-more right-menu-icon-detail" href="#popover" id="openPopover" style="display: none;" ng-class="{'mui-block':isLoad}" ng-if="'Q31' | hasAuth:debugInfoData.CreateUserID:debugInfoData.CompID"></a>
+			<i class="mui-pull-right menu-more-share-mat icon-share" ng-click="goDebugShare()" style="display: none;" ng-class="{'mui-block':isLoad}"></i>-->
+		</header>
+		<div class="mui-scroll-wrapper md-info-page" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<ul class="data-group">
+				<li class="mui-table-view-cell mui-media">
+					<img src="../../images/imgPre.png" ng-style="{'background-image':'url('+ (data.AttachFilePath | getEquLogo:80) +')'}" class="imgslist" />
+					<div class="mui-clearfix">
+						<div class="mui-ellipsis equ-title" ng-bind="data.EqName"></div>
+						<p class="mui-ellipsis equ-sub" ng-bind="'型号：'+data.SkuName"></p>
+						<div class="font-12" ng-if="JuLi>0">距离：<span style="color:#ff9900" ng-bind="JuLi/1000"></span>公里</div>
+
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<li class="data-row">
+					<label>寿命</label>
+					<div class="body">
+						<span ng-bind="data.ServiceLife+'年'"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>价格</label>
+					<div class="body">
+						<span ng-bind="data.QuotedPrice && data.QuotedPrice!='0.00'?('￥'+data.QuotedPrice):'面议'"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-click="openComp(data.CompID)">
+					<label>所属企业</label>
+					<p class="opt md-icon icon-right"></p>
+					<div class="body">
+						<span ng-bind="data.CompName"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="data.LinkName">
+					<label>联系人</label>
+					<div class="body">
+						<span ng-bind="data.LinkName"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="data.LinkPhone">
+					<label>联系电话</label>
+					<i class="opt md-icon icon-tel" ng-click="telto(data.LinkPhone)" style="color: #3296FA;"></i>
+					<div class="body">
+						<span ng-bind="data.LinkPhone"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<i class="opt md-icon icon-position" style="color: #3296FA;"></i>
+					<label>详细地址</label>
+					<div class="body">
+						<span ng-bind="data.Province | locationfilter:data.City:data.District:data.Address:data.Street"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="data.TraitLable && data.State==3">
+					<label>特征标签</label>
+					<div class="body" style="padding-bottom:0px;">
+						<span class="mui-pull-left" style="border: 1px solid #007AFF;padding: 2px 10px;border-radius: 5px;margin: 0 10px 10px 0;" ng-repeat="sp in data.TraitLable.split(',')" ng-bind="sp"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-show="data.Remark">
+					<label>说明</label>
+					<div class="body" ng-bind="data.Remark">
+
+					</div>
+				</li>
+
+			</ul>
+
+			<div id="map">
+
+			</div>
+
+		</div>
+		<div class="bottom-wrap" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<div class="md-bottom-bar">
+				<div class="bar-left" id="iphone" ng-click="telto(data.LinkPhone)">
+					<i class="icon-tel"></i>
+					<span>电话</span>
+				</div>
+				<div class="bar-right" ng-click="sendMsg()">
+					<i class="icon-chat-single"></i>
+					<span>发送消息</span>
+				</div>
+			</div>
+		</div>
+		<!--无网络或请求失败重试-->
+		<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../message/transMessage.js"></script>
+		<script type="text/javascript" src="https://api.map.baidu.com/api?v=3.0&ak=W6WIQmkWMM7fHZ1bQzONDGwimUikfaPU"></script>
+		<script type="text/javascript">
+			app.controller("MatDebugInfoController", ["$scope", "AuthService", "ApiService", "DataService", "UtilsService",
+				"ChatUserService", "Loading", "RPCObserver", "$filter", "ShareLogService", "CacheService", "ChatUserService",
+				function($scope, AuthService, ApiService, DataService, UtilsService, ChatUserService, Loading, RPCObserver,
+					$filter, ShareLogService, CacheService, ChatUserService) {
+
+					//无网络或请求失败重试,或已删除
+					$scope.retryModal = {
+						msg: "详情",
+						retry: getData,
+						state: ''
+					};
+
+					$scope.id = query("id");
+					$scope.JuLi = query("juli");
+
+					$scope.data = {};
+
+					$scope.sendMsg = function() {
+						if($scope.data.PersonLiableID) {
+							ChatUserService.tap({
+								chatId: $scope.data.PersonLiableID,
+								chatName: $scope.data.PersonLiableName,
+								hasLogo: $scope.data.PersonLiableULogo,
+								chatCompId: $scope.data.CompID
+							});
+						} else {
+							$scope.openComp($scope.data.CompID, 3);
+						}
+					};
+					//获取安装调试详情
+					function getData() {
+						Loading.show();
+						//故障维修和list配件更换list
+
+						//设备详情list
+						var Equlisturl = ApiService.Api50 + "/api/v1/Equipment/GetEqInfoState/" + $scope.id;
+
+						DataService.get(Equlisturl).then(function(res) {
+							Loading.hide();
+
+							if(res) {
+								$scope.isLoad = true;
+								$scope.retryModal.state = '';
+								$scope.data = res;
+
+								bMap.renderMarker(res.MapLng, res.MapLat);
+							} else {
+								$scope.retryModal.state = 0;
+							}
+						}, function(error) {
+							$scope.retryModal.state = error.State;
+						});
+					};
+
+					//拨打电话
+					$scope.telto = function(phone) {
+
+						phone = (phone ? phone : "").replace('/', "-");
+
+						if(!phone) {
+							mui.toast("未对外公开联系方式!");
+							return;
+						}
+						plus.device.dial(phone, false);
+						return false;
+					};
+
+					$scope.openComp = function(compId, tabIdx) {
+						var tab = "";
+						if(tabIdx) {
+							tab += "&tabidx=" + tabIdx
+						}
+						UtilsService.openWindow({
+							needLogin: true,
+							id: 'complib-index.html',
+							url: '../complib/index.html?compid=' + compId + tab
+						});
+					};
+
+					var bMap = {
+						container: "map",
+						map: "",
+						zoom: 4,
+						center: new BMap.Point(103.94863, 36.775374),
+						init: function() {
+							this.map = new BMap.Map(this.container, {
+								enableDragging: true,
+								enableDblclickZoom: true,
+								enablePinchToZoom: true,
+								enableInertialDragging: true,
+								enableMapClick: true
+							});
+							this.map.centerAndZoom(this.center, this.zoom);
+
+							this.controler.add();
+
+							this.getLocation();
+
+						},
+						controler: {
+							zoom: "",
+							add: function() {
+								var top_right_navigation = new BMap.NavigationControl({
+									anchor: BMAP_ANCHOR_TOP_RIGHT,
+									type: BMAP_NAVIGATION_CONTROL_SMALL
+								}); //右
+								bMap.map.addControl(top_right_navigation);
+							}
+						},
+						location: {
+							marker: "",
+							circle: ""
+						},
+						getLocation: function(callback) {
+							UtilsService.getLocation().then(function(res) {
+								var point = new BMap.Point(res.lng, res.lat);
+								var myIcon = new BMap.Icon("https://api.map.baidu.com/images/geolocation-control/point/position-icon-14x14.png", new BMap.Size(14, 14))
+								var marker = new BMap.Marker(point, {
+									icon: myIcon
+								});
+
+								bMap.location.marker = marker;
+								bMap.map.addOverlay(marker);
+
+								getData();
+
+								typeof(callback) == "function" && callback();
+							}, function() {
+
+							});
+						},
+						renderMarker: function(mapLng, mapLat) {
+							var point = new BMap.Point(mapLng, mapLat);
+							var marker = new BMap.Marker(point);
+							bMap.map.addOverlay(marker);
+
+							var polyline = new BMap.Polyline([this.location.marker.point, point], {
+								strokeColor: "blue",
+								strokeWeight: 2,
+								strokeOpacity: 0.7
+							}); //定义折线
+							bMap.map.addOverlay(polyline); //添加折线到地图上
+
+							setTimeout(function() {
+								var viewPort = bMap.map.getViewport(polyline.getBounds());
+								bMap.map.setViewport(viewPort);
+							}, 200)
+						}
+					};
+
+					bMap.init();
+
+				}
+			]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

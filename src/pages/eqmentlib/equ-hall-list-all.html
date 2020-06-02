@@ -1,0 +1,219 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/common.css">
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<style type="text/css">
+			.icon {
+				width: 16px;
+			}
+			
+			.md-thirdpart-repair .all-date-wrap {
+				display: flex;
+				align-items: center;
+			}
+			
+			.md-thirdpart-repair.data-group .data-row::after {
+				right: 10px;
+				left: 10px;
+			}
+			
+			.md-thirdpart-repair.data-group .data-row .body .round {
+				position: absolute;
+				width: 7px;
+				height: 7px !important;
+				border-radius: 50%;
+				top: 28px;
+				background-color: #3396FB;
+			}
+			
+			.md-thirdpart-repair.data-group .data-row .body {
+				padding: 0px;
+			}
+			
+			.md-thirdpart-repair.data-group .data-row {
+				padding: 10px 16px 10px 16px;
+			}
+			
+			.md-thirdpart-repair.data-group:first-child {
+				margin-top: 0px;
+			}
+			
+			.md-thirdpart-repair .infos {
+				margin-left: 20px;
+				width: calc(100% - 60px);
+				;
+			}
+			
+			.md-thirdpart-repair .names {
+				font-size: 1.5rem;
+				color: #000;
+				padding-top: 6px;
+				margin-bottom: 6px;
+				max-width: 100%;
+			}
+			
+			.md-thirdpart-repair .CreateDate {
+				font-size: 1.2rem;
+				color: #AAAAAA;
+			}
+			
+			.equ-price {
+				font-size: 1.7rem;
+				color: #ff9900;
+				font-weight: bold;
+				margin-right: 15px;
+			}
+			
+			.md-thirdpart-repair .work-content {
+				color: #000;
+				margin-top: 7px;
+				word-break: break-all;
+			}
+			
+			.md-thirdpart-repair .worklocation {
+				margin-top: 6px;
+				margin-bottom: 6px;
+				color: #AAAAAA !important;
+				font-size: 1.2rem;
+				line-height: 1.4rem;
+			}
+			
+			.md-thirdpart-repair .worklocation span {
+				display: inline-block;
+				vertical-align: middle;
+				width: 90%;
+			}
+			
+			.md-thirdpart-repair .avatar {
+				width: 40px;
+				height: 40px;
+				background-size: cover !important;
+			}
+			
+			.md-thirdpart-repair .log-type {
+				position: absolute;
+				top: 16px;
+				right: 16px;
+				color: #3296FA !important;
+				display: inline-block;
+				max-width: 35%;
+			}
+			
+			.md-thirdpart-repair .mgl15 {
+				margin-left: 15px !important;
+			}
+			
+			.li_bottom-box {
+				height: 20px;
+				line-height: 20px;
+				display: flex;
+				justify-content: space-between;
+			}
+			/*.li_bottom-box span {
+				display: inline-block;
+				width: 36%;
+			}*/
+			
+			.imgslist {
+				float: left;
+				width: 80px;
+				height: 80px;
+				margin-right: 10px;
+				background-size: cover !important;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="equThirdpartRepairListController">
+		<div id="pullrefresh" ng-controller="pullrefreshController" class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<div class="mui-content">
+
+				<ul class="mui-table-view mui-table-view-chevron" style="margin-top: 0px;" ng-show="data && data.length>0">
+					<li class="mui-table-view-cell mui-media" ng-repeat="item in data" ng-click="tap(item)">
+						<img src="../../images/imgPre.png" ng-style="{'background-image':'url('+ (item.AttachFilePath | getEquLogo:80) +')'}" class="imgslist" />
+						<div class="mui-clearfix">
+							<div class="mui-ellipsis equ-title" ng-bind="item.EqName"></div>
+							<p class="mui-ellipsis equ-sub" ng-bind="'型号：'+item.SkuName"></p>
+							<div class="font-12">距离：<span style="color:#ff9900" ng-bind="item.JuLi/1000"></span>公里</div>
+							<div class="li_bottom-box">
+								<span class="equ-price" ng-bind="item.QuotedPrice && item.QuotedPrice!='0.00'?('￥'+item.QuotedPrice):'面议'"></span>
+							</div>
+						</div>
+					</li>
+				</ul>
+				<md-no-data ng-show="data && data.length==0">暂无数据</md-no-data>
+			</div>
+		</div>
+		</div>
+
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script>
+			app.controller("equThirdpartRepairListController", ["$scope", "ApiService", "UtilsService", "RPCObserver", function(
+				$scope, ApiService, UtilsService, RPCObserver) {
+				$scope.pageIndex = 0;
+				$scope.pageSize = 10;
+				$scope.autoUserPull=false;
+
+				$scope.cpath = "";
+				$scope.order = 0;
+
+				$scope.state = query("state");
+
+				var mapLat = 0;
+				var mapLng = 0;
+
+				UtilsService.getLocation(true).then(function(location) {
+					mapLat = location.lat; //纬度
+					mapLng = location.lng; //经度
+					
+					$scope.$broadcast('md_pullrefresh');
+				}, function() {});
+
+				function init() {
+					var url = ApiService.Api50 + "/api/v1/Equipment/GetEqByState?pageIndex=" +
+						$scope.pageIndex + "&pageSize=" + $scope.pageSize + "&mapLat=" + mapLat + "&mapLng=" + mapLng + "&state=" +
+						$scope.state + "&cpath=" + $scope.cpath + "&orderby=" + $scope.order+"&v="+new Date().getTime();
+
+					$scope.url = url;
+				};
+				$scope.$on('refresh_pageindex', init);
+				RPCObserver.on('refresh_equ_fault_list', 'refresh_equ_fault_list');
+				window.refresh_equ_fault_list = function() {
+					$scope.$broadcast('md_pullrefresh');
+				};
+				$scope.tap = function(item) {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'equ-hall-info.html',
+						url: 'equ-hall-info.html?id=' + item.ID + "&juli=" + item.JuLi
+					});
+				};
+
+				window.setPath = function(cpath) {
+					if(cpath != $scope.cpath) {
+						$scope.cpath = cpath;
+						$scope.$broadcast('md_pullrefresh');
+					}
+				};
+
+				window.setOrder = function(order) {
+					$scope.order = order;
+					$scope.$broadcast('md_pullrefresh');
+				};
+			}]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,204 @@
+.top44{
+	margin-top: 44px;
+}
+.contentbox{
+	min-height: calc(100vh - 200px);
+	/*background-color:#FFFFFF;*/
+}
+/*底部按钮*/
+.btn-submit-applicant {
+	margin: 20px 16px 0 16px;
+}
+
+.btn-submit-applicant span {
+	background-color: #3296FA;
+	border-color: #3296FA;
+	color: #fff;
+	font-size: 1.6rem;
+	border-radius: 3px;
+}
+/*公司名片*/
+.business-card{
+	height:60px;
+	margin-top:44px;
+	display: flex;
+	align-items: center;
+	background-color:#FFFFFF;
+}
+.comlogo{
+	width:48px;
+	height:48px;
+	border-radius: 50%;
+	border:1px solid #EAEAEA;
+	margin-left:16px;
+	background:url(../../images/bcard.png) no-repeat center center;
+	/*background-size:39px 28px;*/
+	margin-right: 13px;
+}
+.comnamebox{
+	height:60px;
+	
+}
+.comname{
+	margin-top:10px;
+	font-size: 1.5rem;
+	color:#323232;
+}
+.comnumbering{
+	font-size: 1.3rem;
+	color:#323232;
+}
+.certifiedbox{
+	background-color:#FFFFFF;
+}
+.certified-situation{
+	margin:10px;
+}
+.certified{
+	height:40px;
+	display: flex;
+	align-items: center;
+	border-bottom:1px solid #EAEAEA;
+}
+.certified-title{
+	width:110px;
+	font-size:1.4rem;
+	color:#323232;
+	text-indent: 6px;
+}
+.certified-opt{
+	font-size:1.4rem;
+	color:#323232;
+}
+.rightshow{
+	flex: 1;
+	text-align: right;
+}
+.biaoqian{
+	margin-top:13px;
+	display: flex;
+	justify-content:flex-start;
+}
+.mark-title{
+	width:110px;
+	font-size:1.4rem;
+	color:#323232;
+	flex-shrink: 0;
+	box-sizing: border-box;
+	padding-top:4px;
+	text-indent: 6px;
+}
+.mark-content{
+	width:100%;
+}
+.mark-in{
+	height:32px;
+	width:100%;
+	border:1px solid #3296FA;
+	border-radius:2px;
+	display: flex;
+	justify-content:flex-end;
+	align-items: center;
+	flex-grow:1;
+	overflow: hidden;
+}
+.inputmarkbox{
+	height:30px;
+	border:none;
+	flex-shrink: 1;
+	flex-grow:1;
+}
+.inputmark{
+	width:100%;
+	margin:0;
+	pading:0;
+	border:none;
+	height:30px;
+	color: #3296FA;
+	font-size:1.4rem;
+	text-indent: 2px;
+}
+.addmarkbtn{
+	padding:0 7px;
+	border-left:1px solid #B4DAFF;
+	font-size:1.4rem;
+	color:#3296FA;
+	flex-shrink: 0;
+	height:17px;
+	line-height: 17px;
+}
+.mark-show{
+	width:100%;
+	display: flex;
+	justify-content: flex-start;
+	flex-wrap: wrap;
+}
+.mark-show div{
+	height:22px;
+	background-color:#EFEFEF;
+	margin-right:10px;
+	border-radius: 2px;
+	margin-top:10px;
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+}
+.mark-show div span.marktext{
+	font-size: 1.1rem;
+	color:#999999;
+	padding:0 3px;
+	line-height: 22px;
+}
+.mark-show div span.markchahao{
+	width:19px;
+	height:11px;
+	display: inline-block;
+	border-left:1px solid #D8D8D8;
+	display: flex;
+	align-items: center;
+	margin-left:5px;
+}
+.mark-show div span.markchahao i{
+	width:8px;
+	height:8px;
+	display: inline-block;
+	background:url(../../images/chahao.png) no-repeat center center;
+	margin-left:5px;
+	margin-right:5px;
+	background-size: 100% 100%;
+}
+.mark-word{
+	color:#C6C6C6;
+	font-size:1.2rem;
+	margin:8px 0 2px 0;
+}
+/*联系人*/
+.contactpersonbox{
+	width:100%;
+	margin-top:10px;
+	height:81px;
+	background-color:#FFFFFF;
+}
+.applicant{
+	margin:0 10px;
+	border-bottom:1px solid #EAEAEA;
+	height:40px;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	font-size:1.4rem;
+	color:#323232;
+}
+.applicant-body{
+	width:110px;
+	text-indent: 6px;
+}
+.contactphone{
+	margin:0 10px;
+	height:40px;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	font-size:1.4rem;
+	color:#323232;
+}

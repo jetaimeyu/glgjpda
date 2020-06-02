@@ -1,0 +1,1133 @@
+<!--注册 scz-->
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>注册</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="../../css/mui.loading.css" />
+
+		<style type="text/css">
+			.stepDiv {
+				padding-left: 16px;
+				padding-right: 16px;
+				background-color: #F3F9FF;
+				/*CSS3弹性盒子*/
+				display: -ms-flex;
+				display: -webkit-flex;
+				display: flex;
+				-webkit-justify-content: space-between;
+				justify-content: space-between;
+			}
+			
+			.stepDiv>div:nth-child(1) {
+				width: 33%;
+				text-align: center;
+			}
+			
+			.stepDiv>div:nth-child(2) {
+				width: 33%;
+				text-align: center;
+			}
+			
+			.stepDiv>div:last-child {
+				width: auto;
+				text-align: center;
+			}
+			
+			.mui-table-view-cell>a:not(.mui-btn).mui-active {
+				background-color: transparent;
+			}
+			/*导航li*/
+			
+			.mui-table-view-cell {
+				list-style: none;
+				background-color: #FFFFFF;
+				background-color: #F3F9FF;
+			}
+			/*导航的a*/
+			
+			.mui-table-view-cell a {
+				height: 47px;
+				padding: 16px 0 !important;
+				font-size: 1.5rem;
+				line-height: 1.5rem;
+				background-color: #F3F9FF;
+			}
+			
+			.lastHeadA {
+				float: right;
+				color: #85C2FF !important;
+			}
+			
+			.aPadding {
+				text-align: center;
+				color: #85C2FF !important;
+			}
+			
+			.mui-navigate-right:after,
+			.mui-push-right:after {
+				right: 0px;
+			}
+			/*激活的步骤*/
+			
+			.stepActive {
+				color: #3296FA !important;
+			}
+			/*未激活的步骤*/
+			
+			.stepNoActive {
+				color: #85C2FF !important;
+			}
+			
+			.roundNum {
+				display: inline-block;
+				width: 15px;
+				height: 15px;
+				margin-right: 5px;
+				font-size: 1rem;
+				line-height: 15px;
+				text-align: center;
+				border-radius: 50%;
+				position: relative;
+				top: -1.0px;
+			}
+			
+			.roundNum01 {
+				color: #FFFFFF;
+				background-color: #3296FA;
+			}
+			
+			.roundNum02 {
+				color: #85C2FF;
+				border: 1px solid #85C2FF;
+				border-radius: 50%;
+			}
+			
+			.headRight {
+				float: right;
+				font-size: 1.5rem;
+			}
+			/*********第一步样式*********/
+			/*去掉ul上下边线*/
+			
+			.data-group:before,
+			.data-group:after {
+				height: 0;
+			}
+			/*li边线离左右距离、边线颜色*/
+			
+			.data-group .data-row:after {
+				left: 10px;
+				right: 10px;
+				background-color: #EAEAEA;
+			}
+			/*ul上下间距*/
+			
+			.data-group {
+				margin-top: 8px;
+			}
+			
+			.pdl-15 {
+				padding-left: 15px !important;
+			}
+			/*li高度*/
+			
+			.data-group .data-row .body {
+				line-height: 22px;
+			}
+			
+			.stepHtml01 .data-group .data-row>img {
+				float: left;
+				height: 16px;
+				margin-left: 16px;
+				/*margin-top: 14px;*/
+			}
+			/*.stepHtml01 .data-group .data-row .body {
+				margin-left: 41px;
+			}*/
+			/*按钮*/
+			
+			.btn-submit {
+				margin: 50px 10px 15px 10px;
+			}
+			
+			.btn-submit span {
+				background-color: #3296FA;
+				color: #ffffff;
+				font-size: 1.8rem;
+				border-color: #3296FA;
+			}
+			
+			.mui-btn-block {
+				padding: 6.5px 0px;
+			}
+			/*输入验证码框离右边宽度*/
+			
+			.data-group .data-row .opt~.body {
+				margin-right: 96px;
+			}
+			
+			.stepHtml01 .opt {
+				max-width: 97px !important;
+				padding: 17px 16px !important;
+			}
+			
+			.countdownColor {
+				color: #888888;
+			}
+			/*底部登录*/
+			
+			.footLoad {
+				font-size: 1.2rem;
+				line-height: 1.2rem;
+				margin-left: 11.5px;
+				margin-bottom: 10px;
+				color: #888888;
+			}
+			
+			.footLoad>a {
+				color: #3296FA;
+			}
+			
+			.extend-body .data-group-tip {
+				margin-top: 6px;
+			}
+			
+			.part-group .data-row:after {
+				left: 0px;
+				right: 0px;
+			}
+			
+			.btn-group .btn-col {
+				color: #3296FA;
+				font-size: 1.4rem;
+			}
+			
+			.part-group .data-row .body .cell {
+				font-size: 1.4rem !important;
+			}
+			
+			.part-group :after {
+				height: 0;
+			}
+			
+			.mui-switch {
+				width: 35px;
+				height: 20px;
+			}
+			
+			.mui-switch .mui-switch-handle {
+				width: 18px;
+				height: 18px;
+			}
+			
+			.mui-switch-blue.mui-active {
+				border: 2px solid #3296fa;
+				background-color: #3296fa;
+			}
+			
+			.photo.file .icon-add {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+			}
+			
+			.photo.file .img-body {
+				position: relative;
+				overflow: hidden;
+				height: 50px;
+				background-color: #eaf6fe;
+			}
+			
+			.photo {
+				width: 50px;
+				height: 50px;
+				margin-right: 14px;
+				/*display: block;
+	float:left;*/
+			}
+			
+			.photo.file .media-del {
+				position: absolute;
+				left: 35px;
+				top: 5px;
+				width: 25px;
+				height: 25px;
+				padding: 5px;
+			}
+			
+			.photo.file .img {
+				height: 100%;
+				background-size: cover;
+			}
+			/*********第3步样式*********/
+			
+			.stepHtml03 .data-group .data-row {
+				height: 40px;
+			}
+			
+			.stepHtml03 .data-group .data-row .body {
+				padding: 11px 5px 11px 10px;
+			}
+			
+			.succDiv {
+				height: 150px;
+				padding-top: 34.5px;
+				background-color: #FFFFFF;
+				text-align: center;
+			}
+			
+			.succDiv>img {
+				border-radius: 50%;
+				margin-bottom: 21px;
+			}
+			
+			.succDiv>p {
+				font-size: 1.8rem;
+				line-height: 1.8rem;
+				color: #1AAE12;
+			}
+			
+			.sh03_txt {
+				font-size: 1.5rem !important;
+				line-height: 1.5rem !important;
+				color: #323232 !important;
+			}
+			
+			.lastLiClass:after {
+				height: 0px !important;
+			}
+			/*暂且隐藏2，3页*/
+			
+			.stepHtml02,
+			.stepHtml03 {
+				display: none;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="CompIntroController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">注册</a>
+		</header>
+		<div class="mui-content" style="display:none;" ng-class="{'mui-block':isLoad}">
+			<!--第1步-->
+			<div class="stepHtml01" ng-show="newComp.showHtml.shHtml01">
+				<ul class="data-group">
+					<li class="data-row">
+						<img src="../../images/login/tel.png" />
+						<div class="body">
+							<input type="tel" class="pdl-15" placeholder="请输入手机号" ng-model="newComp.newPhone" />
+						</div>
+					</li>
+					<li class="data-row">
+						<img src="../../images/login/verify.png" />
+						<p class="opt" style="max-width: 150px!important;">
+							<img ng-src="{{newComp.ImgCode}}" style="width:100px;margin-top:5px;height:30px;" ng-click="newComp.getImgCode()" />
+						</p>
+						<div class="body" style="margin-right:150px">
+							<input type="text" class="pdl-15" placeholder="请输入图片验证码" ng-model="newComp.inputImgCode" />
+						</div>
+					</li>
+					<li class="data-row lastLiClass">
+						<img src="../../images/login/verify.png" />
+						<p id="faultcommon" class="opt">
+							<span class="font-13 color-blue" ng-show="newComp.veriTime==60||newComp.veriTime==0" ng-click="newComp.getVeriCode()">获取验证码</span>
+							<span class="font-13 countdownColor" ng-show="newComp.veriTime!=60&&newComp.veriTime!=0" ng-bind="'倒计'+newComp.veriTime+'秒'"></span>
+						</p>
+						<div class="body">
+							<input type="text" class="pdl-15" placeholder="请输入验证码" ng-model="newComp.inputVCode" />
+						</div>
+					</li>
+				</ul>
+				<ul class="data-group">
+					<li class="data-row">
+						<label>用户类型</label>
+						<div class="body">
+							<p ng-repeat="item in states" style="display:inline-block;float:left;margin-right:5px;" ng-click="event.choose(item)">
+								<i class="icon-roundcheckfill color-blue" ng-if="activeState == item.value"></i>
+								<i class="icon-round color-gray" ng-if="activeState!=item.value"></i>
+								<span class="name">{{item.label}}</span>
+							</p>
+						</div>
+					</li>
+					<li class="data-row must">
+						<label>密码</label>
+						<div class="body">
+							<input type="password" placeholder="密码必须为6~20位" ng-model="newComp.userPW" />
+						</div>
+					</li>
+					<li class="data-row must ">
+						<label>确认密码</label>
+						<div class="body">
+							<input type="password" placeholder="请再次输入密码" ng-model="newComp.againPW" />
+						</div>
+					</li>
+				</ul>
+
+				<div ng-if="activeState==7 || activeState==6" class="extend-body">
+					<p class="data-group-tip">所处行业</p>
+					<ul class="data-group">
+						<li class="data-row" style="padding-left: 15px;height:auto;" ng-if="extendData[activeState].IndData.length==0" ng-click="event.chooseIndusty()">
+							<p class="opt md-icon icon-right"></p>
+							<div class="body">选择行业</div>
+						</li>
+						<li class="mui-table-view-cell data-row" style="padding-left: 15px;" style="height:auto;" ng-click="event.chooseIndusty()" ng-repeat="item in extendData[activeState].IndData">
+							<p class="opt md-icon icon-right"></p>
+							<div class="body" ng-bind="item.CName"></div>
+						</li>
+					</ul>
+
+					<p class="data-group-tip">教育背景</p>
+					<ul class="data-group part-group">
+						<li style="padding-left:15px;" class="data-row" ng-repeat="(index,item) in extendData[activeState].Edus" ng-click="event.editEdu(item,index)">
+							<p class="opt md-icon icon-delete" ng-click="event.delEdu(index);;$event.stopPropagation();"></p>
+							<div class="body" ng-bind="item.SchoolName">
+							</div>
+						</li>
+						<li class="btn-group" ng-click="event.editEdu()">
+							<a id="addPart" class="btn-col">新增教育背景</a>
+						</li>
+					</ul>
+
+					<p class="data-group-tip">工作履历</p>
+					<ul class="data-group part-group">
+						<li style="padding-left:15px;" class="data-row" ng-repeat="(index,item) in extendData[activeState].Tracks" ng-click="event.editWork(item,index)">
+							<p class="opt md-icon icon-delete" ng-click="event.delWork(index);;$event.stopPropagation();"></p>
+							<div class="body" ng-bind="item.CompName">
+							</div>
+						</li>
+						<li class="btn-group" ng-click="event.editWork()">
+							<a id="addPart" class="btn-col">新增工作履历</a>
+						</li>
+					</ul>
+
+					<ul class="data-group" ng-if="activeState==6">
+						<li class="data-row">
+							<label>擅长设计软件</label>
+							<div class="body">
+								<p ng-repeat="item in designSoft" style="display:inline-block;float:left;margin-right:5px;" ng-click="event.chooseSoft('DesignSoft',item)">
+									<i class="icon-roundcheckfill color-blue" ng-if="extendData[activeState].DesignSoft.indexOf(item.CodeID)>=0"></i>
+									<i class="icon-round color-gray" ng-if="extendData[activeState].DesignSoft.indexOf(item.CodeID)<0"></i>
+									<span class="name">{{item.CodeName}}</span>
+								</p>
+							</div>
+						</li>
+						<li class="data-row">
+							<label>其他设计软件</label>
+							<div class="body">
+								<input ng-model="extendData[activeState].DesignSoftOther" type="text" placeholder="请输入擅长的其他设计软件" />
+							</div>
+						</li>
+						<li class="data-row">
+							<label>擅长分析软件</label>
+							<div class="body">
+								<p ng-repeat="item in analyzeSoft" style="display:inline-block;float:left;margin-right:5px;" ng-click="event.chooseSoft('AnalyzeSoft',item)">
+									<i class="icon-roundcheckfill color-blue" ng-if="extendData[activeState].AnalyzeSoft.indexOf(item.CodeID)>=0"></i>
+									<i class="icon-round color-gray" ng-if="extendData[activeState].AnalyzeSoft.indexOf(item.CodeID)<0"></i>
+									<span class="name">{{item.CodeName}}</span>
+								</p>
+							</div>
+						</li>
+						<li class="data-row">
+							<label>其他分析软件</label>
+							<div class="body">
+								<input ng-model="extendData[activeState].AnalyzeSoftOther" type="text" placeholder="请输入擅长的其他分析软件" />
+							</div>
+						</li>
+						<li class="data-row">
+							<label>技术能力</label>
+							<div class="body">
+								<p ng-repeat="item in technical" style="display:inline-block;float:left;margin-right:5px;" ng-click="event.chooseSoft('Technical',item)">
+									<i class="icon-roundcheckfill color-blue" ng-if="extendData[activeState].Technical.indexOf(item.CodeID)>=0"></i>
+									<i class="icon-round color-gray" ng-if="extendData[activeState].Technical.indexOf(item.CodeID)<0"></i>
+									<span class="name">{{item.CodeName}}</span>
+								</p>
+							</div>
+						</li>
+						<li class="data-row">
+							<label>其他能力</label>
+							<div class="body">
+								<input ng-model="extendData[activeState].TechnicalOther" type="text" placeholder="请输入其他能力" />
+							</div>
+						</li>
+
+						<li class="data-row">
+							<label>擅长产品</label>
+							<div class="body">
+								<input ng-model="extendData[activeState].ProdName" type="text" placeholder="请输入擅长产品" />
+							</div>
+						</li>
+						<li class="data-row">
+							<label>等级证书</label>
+							<div class="body">
+								<div class="photo file" ng-repeat="img in extendData[activeState].Photos" ng-show="img.ID>0">
+									<div class="img-body">
+										<img class="img" ng-style="{'background-image':'url(' + (event.getPreSrc(img) | filePathReg) +')'}" ng-click="event.preview($index)" src="../../images/imgPre.png" />
+									</div>
+									<img class="media-del" src="../../images/delete.png" ng-click="event.delRelPhoto($index)">
+								</div>
+								<div class="photo file" ng-repeat="img in extendData[activeState].FilePhoto">
+									<div class="img-body">
+										<img class="img" ng-style="{'background-image':'url(' + (event.getPreSrc(img) | filePathReg) +')'}" ng-click="event.preview($index)" src="../../images/imgPre.png" />
+									</div>
+									<img class="media-del" src="../../images/delete.png" ng-click="event.delPhoto($index)">
+								</div>
+								<div class="photo file">
+									<div class="img-body" ng-click="event.addPhoto()">
+										<i class="icon-add color-blue"></i>
+									</div>
+								</div>
+							</div>
+						</li>
+						<li class="data-row">
+							<label>技术能力描述</label>
+							<div class="body">
+								<div class="edit">
+									<div id="TechnicalInfo_6" class="needsclick" ng-bind="extendData[activeState].TechnicalInfo" placeholder="请输入技术能力描述" contenteditable="true" lenlimit="200"></div>
+								</div>
+							</div>
+						</li>
+					</ul>
+
+					<ul class="data-group" ng-if="activeState==7">
+						<li class="data-row">
+							<label>擅长领域</label>
+							<div class="body">
+								<input ng-model="extendData[activeState].Territory" type="text" placeholder="请输入擅长领域" />
+							</div>
+						</li>
+						<li class="data-row">
+							<label>擅长操作设备</label>
+							<div class="body">
+								<input ng-model="extendData[activeState].OprationProdName" type="text" placeholder="擅长操作设备" />
+							</div>
+						</li>
+
+						<li class="data-row">
+							<label>擅长维修设备</label>
+							<div class="body">
+								<input ng-model="extendData[activeState].RepairProdName" type="text" placeholder="请输入擅长维修设备" />
+							</div>
+						</li>
+						<li class="data-row">
+							<label>工时费</label>
+							<div class="body">
+								<input ng-model="extendData[activeState].ManHourCost" type="text" placeholder="请输入工时费" />
+							</div>
+						</li>
+						<li class="data-row">
+							<label>等级证书</label>
+							<div class="body">
+								<div class="photo file" ng-repeat="img in extendData[activeState].Photos" ng-show="img.ID>0">
+									<div class="img-body">
+										<img class="img" ng-style="{'background-image':'url(' + (event.getPreSrc(img) | filePathReg) +')'}" ng-click="event.preview($index)" src="../../images/imgPre.png" />
+									</div>
+									<img class="media-del" src="../../images/delete.png" ng-click="event.delRelPhoto($index)">
+								</div>
+								<div class="photo file" ng-repeat="img in extendData[activeState].FilePhoto">
+									<div class="img-body">
+										<img class="img" ng-style="{'background-image':'url(' + (event.getPreSrc(img) | filePathReg) +')'}" ng-click="event.preview($index)" src="../../images/imgPre.png" />
+									</div>
+									<img class="media-del" src="../../images/delete.png" ng-click="event.delPhoto($index)">
+								</div>
+								<div class="photo file">
+									<div class="img-body" ng-click="event.addPhoto()">
+										<i class="icon-add color-blue"></i>
+									</div>
+								</div>
+							</div>
+						</li>
+						<li class="data-row">
+							<label>技术能力描述</label>
+							<div class="body">
+								<div class="edit">
+									<div id="TechnicalInfo_7" ng-bind="extendData[activeState].TechnicalInfo" class="needsclick" placeholder="请输入技术能力描述" contenteditable="true" lenlimit="200"></div>
+								</div>
+							</div>
+						</li>
+					</ul>
+
+				</div>
+				<div class="btn-submit">
+					<span class="mui-btn mui-btn-block" ng-click="newComp.stepLog01()">注册</span>
+				</div>
+
+				<div class="footLoad">已有账号，
+					<a ng-click="newComp.back()">登录</a>
+				</div>
+			</div>
+			<div class="stepHtml03" ng-class="{'mui-block':newComp.showHtml.shHtml03}">
+				<div class="succDiv">
+					<img src="../../images/login/zhuceSucc.png" alt="注册成功" />
+					<p>注册成功</p>
+				</div>
+				<ul class="data-group">
+
+					<li class="data-row lastLiClass">
+						<label>登录账号</label>
+						<div class="body">
+							<p class="sh03_txt" ng-bind="newComp.loginAccount"></p>
+						</div>
+					</li>
+				</ul>
+				<div class="btn-submit">
+					<span class="mui-btn mui-btn-block" ng-click="newComp.loginUser()">欢迎您的加入</span>
+				</div>
+			</div>
+		</div>
+
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../../js/mui.loading.js"></script>
+
+		<script type="text/javascript">
+			app.controller("CompIntroController", ["$scope", "AuthService", "ApiService", "DataService", "Loading",
+				"UtilsService", "$q", "$Modal", "CacheService",
+				function($scope, AuthService, ApiService, DataService, Loading, UtilsService, $q, $Modal, CacheService) {
+					$scope.isLoad = false;
+					$scope.activeState = 1;
+					$scope.states = [{
+						label: "普通用户",
+						value: 1
+					}, {
+						label: "设计工程师",
+						value: 6
+					}, {
+						label: "技术工程师",
+						value: 7
+					}];
+
+					$scope.process = {
+						SaveState: 0, //0未保存 1保存成功 2保存中 3保存失败
+						ProcessList: [{
+							Text: "上传证书",
+							State: 0,
+							RetryMethod: uploadImages
+						}, {
+							Text: "保存内容",
+							State: 0,
+							RetryMethod: saveUserData
+						}]
+					};
+
+					$scope.event = {
+						addPhoto: function() {
+							UtilsService.chooseImage().then(function(res) {
+								$scope.extendData[$scope.activeState].FilePhoto = $scope.extendData[$scope.activeState].FilePhoto ? $scope
+									.extendData[$scope.activeState].FilePhoto.concat(res) : [].concat(res);
+							});
+						},
+						preview: function(index) {
+							var images = $scope.extendData[$scope.activeState].Photos.concat($scope.extendData[$scope.activeState].FilePhoto || []).map(function(img) {
+								if(img.ID) {
+									return ApiService.Api45 + "/api/v1/usercerif/" + img.UserID + "/" + img.ID + "_0x0.png";
+								} else {
+									return mui.os.android ? img.FilePath.replace("file://", "") : img.FilePath;
+								}
+							});
+							plus.nativeUI.previewImage(images, {
+								current: index,
+								loop: true,
+								indicator: 'number'
+							});
+						},
+						getPreSrc: function(img) {
+							if(img.ID)
+								return ApiService.Api45 + "/api/v1/usercerif/" + img.UserID + "/" + img.ID + "_100x0.png";
+							else
+								return img.FileSmall;
+						},
+						delPhoto: function(idx) {
+							$scope.extendData[$scope.activeState].FilePhoto.splice(idx, 1);
+
+						},
+						delRelPhoto: function(idx) {
+							var data = $scope.extendData[$scope.activeState].Photos;
+							if(data[idx].ID) {
+								$scope.extendData[$scope.activeState].DelPhotos.push(data[idx])
+							}
+							$scope.extendData[$scope.activeState].Photos.splice(idx, 1);
+
+						},
+						chooseSoft: function(property, item) {
+							var idx = $scope.extendData[$scope.activeState][property].indexOf(item.CodeID);
+							if(idx >= 0) {
+								$scope.extendData[$scope.activeState][property].splice(idx, 1);
+							} else {
+								$scope.extendData[$scope.activeState][property].push(item.CodeID)
+							}
+						},
+						choose: function(item) {
+							$scope.activeState = item.value;
+						},
+						chooseIndusty: function() {
+							UtilsService.openWindow({
+								url: "../mine/chooseIndustry.html",
+								id: "chooseIndustry.html",
+								extras: {
+									IndData: $scope.extendData[$scope.activeState].IndData,
+									IndList: $scope.extendData[$scope.activeState].IndList,
+									callback: "chooseIndBack"
+								}
+							});
+						},
+						editEdu: function(data, idx) {
+							UtilsService.openWindow({
+								url: "../mine/eduEdit.html",
+								id: "eduEdit.html",
+								extras: {
+									data: data,
+									idx: idx,
+									callback: "eduCallback"
+								}
+							});
+						},
+						delEdu: function(idx) {
+							var data = $scope.extendData[$scope.activeState].Edus;
+							if(data[idx].ID) {
+								$scope.extendData[$scope.activeState].DelEdus.push(data[idx])
+							}
+							$scope.extendData[$scope.activeState].Edus.splice(idx, 1);
+						},
+						editWork: function(data, idx) {
+							UtilsService.openWindow({
+								url: "../mine/workEdit.html",
+								id: "workEdit.html",
+								extras: {
+									data: data,
+									idx: idx,
+									state: $scope.activeState,
+									callback: "workCallback"
+								}
+							});
+						},
+						delWork: function(idx) {
+							var data = $scope.extendData[$scope.activeState].Tracks;
+							if(data[idx].ID) {
+
+								$scope.extendData[$scope.activeState].DelTracks.push(data[idx])
+							}
+							$scope.extendData[$scope.activeState].Tracks.splice(idx, 1);
+						}
+					};
+					window.chooseIndBack = function(data) {
+						$scope.extendData[$scope.activeState].IndData = data.IndData;
+						$scope.extendData[$scope.activeState].IndList = data.IndList;
+						$scope.$apply();
+					};
+					window.eduCallback = function(data, idx) {
+						if(idx >= 0) {
+							$scope.extendData[$scope.activeState].Edus[idx] = data;
+						} else {
+							$scope.extendData[$scope.activeState].Edus.push(data);
+						}
+
+						$scope.$apply();
+					}
+					window.workCallback = function(data, idx) {
+						if(idx >= 0) {
+							$scope.extendData[$scope.activeState].Tracks[idx] = data;
+						} else {
+							$scope.extendData[$scope.activeState].Tracks.push(data);
+						}
+
+						$scope.$apply();
+					}
+					$scope.extendData = {
+						1: {},
+						7: {
+							IndList: [],
+							IndData: [],
+							Edus: [],
+							Tracks: [],
+							Photos: [],
+							FilePhoto: [],
+							TechnicalInfo: "", //技能描述
+							ManHourCost: "", //工时费
+							Territory: "", //擅长领域
+							OprationProdName: "", //擅长操作设备
+							RepairProdName: "", //擅长维修设备
+						},
+						6: {
+							IndList: [],
+							IndData: [],
+							Edus: [],
+							FilePhoto: [],
+							Tracks: [],
+							Photos: [],
+							DesignSoft: [],
+							DesignSoftOther: "", //设计软件其他
+							AnalyzeSoft: [], //分析软件选择
+							AnalyzeSoftOther: "", //分析软件其他
+							Technical: [], //技术能力选择
+							TechnicalOther: "", //技术能力其他
+							TechnicalInfo: "", //技能描述
+							ProdName: "", //擅长产品
+						}
+					};
+
+					var curData = {
+						getData: function() {
+							var url = ApiService.Api31 + "/res/getcodebytype?type=";
+
+							var promises = [DataService.get(url + "DesignSoft"), DataService.get(url + "AnalyzeSoft"), DataService.get(
+								url + "Technical")];
+							$q.all(promises).then(function(resp) {
+								$scope.designSoft = resp[0];
+								$scope.analyzeSoft = resp[1];
+								$scope.technical = resp[2];
+
+							}, function() {});
+						}
+					};
+
+					curData.getData();
+					$scope.newComp = {
+						newPhone: query("phone") || '', //手机号
+						veriCode: '', //返回验证码
+						inputVCode: '', //输入的验证码
+						veriTime: 60, //验证码倒计时
+						compName: '', //企业名称
+						compProvince: '', //企业省
+						compCity: '', //企业市
+						compDistrict: '', //企业区
+						compAddress: '', //企业地址
+						compStreet: '', //企业街道
+						compMapLng: '', //企业经度
+						compMapLat: '', //企业纬度
+						userName: '', //您的名字
+						userPW: '', //您的密码
+						againPW: '', //确认密码
+						loginAccount: '', //返回的登录账号
+						inputImgCode: "",
+						UserID: 0,
+						ImgCode: ApiService.Api50 + "/api/checkcode/register.jpg?v=" + new Date().getTime(),
+						getImgCode: function() {
+							$scope.newComp.ImgCode = ApiService.Api50 + "/api/checkcode/register.jpg?v=" + new Date().getTime();
+						},
+						showHtml: query('quick') ? {
+							//是否显示
+							shHtml01: false,
+							shHtml02: true,
+							shHtml03: false,
+						} : {
+							//是否显示
+							shHtml01: true,
+							shHtml02: false,
+							shHtml03: false,
+						},
+						//获取验证码
+						getVeriCode: function() {
+							if($scope.newComp.veriTime != 60 && $scope.newComp.veriTime != 0) {
+								//每隔一分钟获取一次
+								return;
+							}
+							if(!$scope.newComp.newPhone) {
+								mui.toast("请输入手机号！", {
+									duration: 1300,
+									type: 'div'
+								});
+								return;
+							}
+							if(!/^1\d{10}$/.test($scope.newComp.newPhone)) {
+								mui.toast("请输入正确的手机号！");
+								return;
+							}
+
+							if(!$scope.newComp.inputImgCode) {
+								mui.toast("请输入图片验证码!");
+								return;
+							}
+
+							var url = ApiService.Api50 + "/api/v1/user/GetPhoneCode";
+
+							var _data = {
+								"Phone": $scope.newComp.newPhone,
+								"Code": $scope.newComp.inputImgCode,
+								"UserType": 2,
+								"CodeType": "register"
+							};
+
+							DataService.post(url, _data).then(function(res) {
+								$scope.newComp.veriCode = res;
+								//$scope.newComp.inputVCode = res;
+								$scope.newComp.veriTime = 59;
+
+								var intl = setInterval(function() {
+									$scope.$apply(function() {
+										$scope.newComp.veriTime--;
+									});
+									if($scope.newComp.veriTime <= 0) {
+										clearInterval(intl);
+									}
+								}, 1000);
+							}, function(res) {
+								$scope.newComp.getImgCode();
+								mui.toast((res && res.State == 3) ? res.Data || res.ErrorMessage : "获取验证码失败!");
+							});
+
+						},
+						//<1 的下一步>
+						stepLog01: function() {
+							if(!$scope.newComp.newPhone) {
+								mui.toast("请输入手机号！", {
+									duration: 1300,
+									type: 'div'
+								});
+								return false;
+							}
+
+							if(!$scope.newComp.inputVCode) {
+								mui.toast("请输入验证码！", {
+									duration: 1300,
+									type: 'div'
+								});
+								return false;
+							}
+							if($scope.newComp.userPW.length > 0 && $scope.newComp.userPW.trim() == '') {
+								mui.toast("密码不允许都输入空格！", {
+									duration: 1300,
+									type: 'div'
+								});
+								return false;
+							}
+							if($scope.newComp.userPW.trim() == '') {
+								mui.toast("请填写密码！", {
+									duration: 1300,
+									type: 'div'
+								});
+								return false;
+							}
+							if($scope.newComp.againPW.length > 0 && $scope.newComp.againPW.trim() == '') {
+								mui.toast("确认密码不允许都输入空格！", {
+									duration: 1300,
+									type: 'div'
+								});
+								return false;
+							}
+							if($scope.newComp.againPW.trim() == '') {
+								mui.toast("请填写确认密码！", {
+									duration: 1300,
+									type: 'div'
+								});
+								return false;
+							}
+
+							//校验input
+							if($scope.newComp.userPW.length < 6 || $scope.newComp.userPW.length > 20) {
+								mui.toast("密码必须为6~20位！", {
+									duration: 1300,
+									type: 'div'
+								});
+								return false;
+							} else if($scope.newComp.userPW != $scope.newComp.againPW) {
+								mui.toast("输入的两次密码不一致！", {
+									duration: 1300,
+									type: 'div'
+								});
+								return false;
+							}
+
+							if($scope.newComp.inputVCode != '') {
+								$scope.newComp.verifyCode(function() {
+									Loading.show();
+									//									UtilsService.submitModal($scope.process, function() {
+									//										mui.back();
+									//									}, function() {
+									//										$scope.process.SaveState = 0;
+									//										$scope.process.ProcessList.forEach(function(item) {
+									//											item.State = 0;
+									//										})
+									//									}, function() {
+									//										$scope.process.ProcessList.forEach(function(item) {
+									//											item.State = 0;
+									//										})
+									//									});
+
+									uploadImages();
+
+								});
+							}
+						},
+						//验证码是否过期
+						verifyCode: function(callback) {
+							var url = ApiService.Api50 + "/api/v1/User/VerifyCode?phone=" + $scope.newComp.newPhone + "&code=" + $scope.newComp
+								.inputVCode + "&type=register";
+							DataService.get(url).then(function(res) {
+								if(res) {
+									callback();
+								} else {
+									mui.toast("验证码不正确或者已经过期");
+								}
+							});
+						},
+						//保存企业信息
+						saveComp: function() {
+
+							//保存信息
+							var url = ApiService.Api50 + "/api/v1/Comp/RegisteredComp";
+							DataService.post(url, compDataOby).then(function(res) {
+								$scope.newComp.loginAccount = res;
+								$scope.newComp.showHtml.shHtml02 = false;
+								$scope.newComp.showHtml.shHtml03 = true;
+							});
+						},
+						back: function() {
+							mui.back();
+						},
+						//返回到上页 按钮
+						loginUser: function() {
+							mui.showLoading("正在自动登录...", "div");
+							DataService.get(ApiService.Api31 + "/u/userinfo?id=" + $scope.newComp.UserID).then(function(res1) {
+								//自动登录
+								AuthService.login(res1.Mdt, $scope.newComp.userPW).then(function(res) {
+									CacheService.set("preUserName", $scope.newComp.loginAccount, true);
+									CacheService.remove("user");
+									CacheService.remove("userList");
+									CacheService.set("user", res[0], true);
+									RpcClient.invoke("login.html", "RPC_LoginSuccess");
+									res[0].IsNew = true;
+									RpcClient.invoke("message.html", "RPC_Login", res[0]);
+									var promises = [AuthService.getUserSwitchList(), AuthService.getUserAuth(), DataService.get(ApiService.Api50 + '/api/v1/Org/OrgEditAuth'), AuthService.getMenuAuth(), AuthService.getYunModuleAuthority()];
+									$q.all(promises).then(function(resp) {
+										CacheService.set("userList", resp[0], true);
+										resp[2] && resp[1].push('Q0');
+										CacheService.set("userAuth", resp[1], true);
+										CacheService.set("menuAuth", resp[3], true);
+										CacheService.set("moduleAuth", resp[4], true);
+										mui.back();
+										mui.openWindow({
+											id: 'tab.html'
+										});
+									});
+								});
+							})
+
+							//mui.back();
+						}
+					};
+
+					function uploadImages() {
+						$scope.process.ProcessList[0].State = 1;
+						if($scope.activeState == 1) {
+							$scope.process.ProcessList[0].State = 2;
+							saveUserData();
+						} else {
+							var images = $scope.extendData[$scope.activeState].FilePhoto || [];
+
+							if(images.length > 0) {
+								var promises = images.map(function(img) {
+									return UtilsService.uploadImage(img.FilePath, "png");
+								});
+								$q.all(promises).then(function(res) {
+									var flag = true;
+									res.forEach(function(data) {
+
+										var guid = JSON.parse(data.responseText).Data;
+
+										if(!guid) {
+											flag = false;
+										} else {
+											$scope.extendData[$scope.activeState].Photos.push({
+												ID: 0,
+												FileName: guid + ".png"
+											});
+										}
+									});
+									$scope.process.ProcessList[0].State = flag ? 2 : 3;
+									//上传详情内容
+									flag && saveUserData();
+								}, function() {
+									$scope.process.ProcessList[0].State = 3;
+								});
+							} else {
+								$scope.process.ProcessList[0].State = 2;
+								saveUserData();
+							}
+						}
+					};
+
+					function saveUserData() {
+						if($scope.process.ProcessList[0].State != 2) {
+							return;
+						}
+						$scope.process.ProcessList[1].State = 1;
+						var data = {};
+
+						if($scope.activeState == 6 || $scope.activeState == 7) {
+							data.Extend = angular.copy($scope.extendData[$scope.activeState]);
+						}
+
+						if(data.Extend) {
+							delete data.Extend["IndData"];
+							delete data.Extend["FilePhoto"];
+							if(document.querySelector("#TechnicalInfo_" + $scope.activeState)) {
+								data.Extend.TechnicalInfo = document.querySelector("#TechnicalInfo_" + $scope.activeState).innerText.trim();
+							}
+						}
+						data.UserType = $scope.activeState;
+
+						data.Phone = $scope.newComp.newPhone;
+						data.Password = $scope.newComp.userPW;
+						data.UserType = $scope.activeState;
+
+						DataService.post(ApiService.Api50 + "/api/v1/user/RegMdtSingle", data).then(function(res) {
+							$scope.process.ProcessList[1].State = 2;
+							$scope.newComp.loginAccount = data.Phone;
+							$scope.newComp.UserID = res;
+							$scope.newComp.showHtml.shHtml01 = false;
+							$scope.newComp.showHtml.shHtml03 = true;
+							var _modelDom = document.querySelector(".md-modal.small.show");
+							_modelDom && (_modelDom.style.display = "none");
+							Loading.hide();
+						}, function(res) {
+							$scope.process.ProcessList[1].State = 3;
+							Loading.hide();
+						})
+
+					};
+					$scope.isLoad = true;
+				}
+			]);
+
+			//截取的企业通号
+			app.filter('passNum', function() { //可以注入依赖
+				return function(text) {
+					return text.substring(text.indexOf('@') + 1);
+				}
+			});
+
+			function getAddr(res) {
+				var appElement = document.querySelector('[ng-controller=CompIntroController]');
+				var $scope = angular.element(appElement).scope();
+				$scope.newComp.compProvince = res.province;
+				$scope.newComp.compCity = res.city;
+				$scope.newComp.compDistrict = res.district;
+				$scope.newComp.compAddress = res.address;
+				$scope.newComp.compStreet = res.street;
+				$scope.newComp.compMapLng = res.lng;
+				$scope.newComp.compMapLat = res.lat;
+				$scope.$apply();
+			}
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+				mui.os.ios
+				plus.webview.currentWebview().setStyle({
+					softinputMode: mui.os.ios ? "adjustPan" : "adjustResize"
+				});
+			});
+		</script>
+	</body>
+
+</html>

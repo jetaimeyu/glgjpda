@@ -1,0 +1,136 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport"
+		content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link href="../../css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	<link rel="stylesheet" href="yun-file-dir.css" />
+	<link rel="stylesheet" href="../../css/mui.loading.css" />
+</head>
+
+<body ng-controller="OrgSettingController">
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left" id="title">目录</a>
+	</header>
+	<div class="mui-content">
+		<ul class="data-group">
+			<li class="data-row must" ng-if="parent.ID>0">
+				<label class="label-gray">上级目录</label>
+				<div class="body" ng-bind="parent.catalogname">
+				</div>
+			</li>
+			<li class="data-row must">
+				<label class="label-gray">目录</label>
+				<div class="body">
+					<input ng-model="Name" type="text" maxlength="20" placeholder="请输入目录名称" />
+				</div>
+			</li>
+		</ul>
+		<div class="btn-submit">
+			<span style="display:none;" ng-class="{'mui-block':type=='edit'}"
+				class="mui-btn mui-btn-warning mui-btn-block" ng-click="delete()">删除</span>
+			<span class="mui-btn mui-btn-primary mui-btn-block" ng-click="saveInfo()">保存</span>
+		</div>
+
+	</div>
+	<script type="text/javascript" src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/rpc.js"></script>
+	<script type="text/javascript" src="../../js/mui.loading.js"></script>
+	<script>
+		app.controller("OrgSettingController", ["$scope", "ApiService", "DataService", "UtilsService", "CacheService",
+			"Loading",
+			function ($scope, ApiService, DataService, UtilsService, CacheService, Loading) {
+				var user = CacheService.get('user');
+				var ws = plus.webview.currentWebview();
+				$scope.parent = ws.parentData;
+				$scope.Name = "";
+				$scope.data = ws.curData;
+
+				$scope.type = query("type");
+
+				if($scope.type=="edit")
+				{
+					$scope.Name = $scope.data.catalogname;
+				}
+
+				$scope.delete = function () {
+					mui.confirm("确认删除吗？", function (e) {
+						if (e.index == 0) {
+							mui.showLoading("", "div");
+							var url = ApiService.Pan + "/api/v1/DriveDir/DeleteDirveDirById?id=" + $scope.data.ID;
+							DataService.post(url,{}).then(function (res) {
+								mui.hideLoading();
+								ws.opener().evalJS(ws.callback + "('del')");
+								mui.toast("删除成功！");
+								mui.back();
+							}, function (e) {
+								mui.hideLoading();
+							});
+						}
+					});
+				}
+
+				var isSave = false;
+				//保存
+				$scope.saveInfo = function () {
+					if (isSave) return;
+
+
+					if (!$scope.Name) {
+						mui.toast("请输入目录名称");
+						return;
+					}
+					//验证所填字符长度
+					if (!checkLengthUtil.check()) {
+						return false;
+					}
+
+					mui.showLoading("", "div");
+					isSave = true;
+					var _postData = {};
+
+					var url = ApiService.Pan + "/api/v1/DriveDir/SaveDriveDir";
+
+					_postData.DirName = $scope.Name;
+					_postData.PID = $scope.parent.ID;
+					if ($scope.type == "edit") {
+						_postData.ID = $scope.data.ID;
+					}
+					DataService.post(url, _postData).then(function () {
+						mui.hideLoading();
+						if ($scope.type == 'edit') {
+							ws.opener().evalJS(ws.callback + "('" + $scope.type + "','"+$scope.Name+"')");
+						} else {
+							ws.opener().evalJS(ws.callback + "('" + $scope.type + "','"+$scope.Name+"')");
+							mui.toast("保存成功");
+						}
+						setTimeout(function () {
+							isSave = false;
+						})
+						mui.back();
+					}, function (res) {
+						mui.hideLoading();
+						isSave = false;
+						//mui.toast(res.ErrorMessage)
+					});
+				};
+			}
+		]);
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			plus.webview.currentWebview().setStyle({
+				softinputMode: "adjustResize"
+			});
+		});
+	</script>
+</body>
+
+</html>

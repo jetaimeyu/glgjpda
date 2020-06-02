@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="../../css/mui.picker.min.css" />
+		<link rel="stylesheet" href="order-save.css" />
+		<style>
+			.tip {
+				background: #F1F1F1;
+				padding: 10px 10px 0 16px;
+				text-align: left;
+				font-size: 1.2rem;
+				margin: 0;
+			}
+			.mui-scroll-wrapper{
+				height: auto;
+			}
+			#baseInfo .body input {
+			/*	padding-right:18px;*/
+			}
+			.mui-btn{
+				width: 100%;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="OutStockController" style="z-index: 10;">
+		<header class="mui-bar mui-bar-nav">
+			<a id="spTitle" class="mui-action-back mui-icon icon-back mui-pull-left">填写出库单</a>
+			<div style="display: none;" ng-class="{'mui-block':isLoad}">
+				<a id="nextStep" class="mui-icon mui-pull-right lh28 font-14 color-blue">下一步</a>
+				<a id="confirmOrder" ng-show="!IsView" class="mui-icon mui-pull-right lh28 font-14 color-blue">完成出库</a>
+				<a id="edit" ng-show="IsView&&!IsEdit&&hasAuth" class="mui-icon mui-pull-right lh28 font-14 color-blue">修改</a>
+			</div>
+		</header>
+		<!--基本信息填写-->
+		<div id="baseInfo" class="mui-scroll-wrapper mui-fullscreen" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<p class="tip" ng-if="Data.CustomerType==1">出库给企业客户</p>
+			<p class="tip" ng-if="Data.CustomerType==2">出库给经销商</p>
+			<p class="tip" ng-if="Data.CustomerType==3">出库给个人</p>
+			<ul class="data-group">
+				<li class="data-row must" ng-show="Data.CustomerType!=3">
+					<label>{{Data.CustomerType==1?'企业客户':'经销商'}}</label>
+					<p class="opt choose_user" ng-show="!IsView">
+						<span>选择</span>
+					</p>
+					<div class="body">
+						<input ng-show="!IsView" ng-model="Data.CustInfo.CustomerName" type="text" ng-attr-placeholder="{{Data.CustomerType==1?'请选择或输入企业客户':'请选择或输入经销商'}}" id="txtCustomerName" maxlength="50" />
+						<span ng-show="IsView">{{Data.CustInfo.CustomerName}}</span>
+					</div>
+				</li>
+				<li class="data-row" ng-class="{'must':Data.CustomerType==3}" ng-if="LoginCompID!=glgjCompID">
+					<label>联系人</label>
+					<div class="body">
+						<input ng-show="!IsView" ng-model="Data.CustInfo.LinkName" type="text" placeholder="请输入联系人" id="txtLinkName" maxlength="50" />
+						<span ng-show="IsView">{{Data.CustInfo.LinkName}}</span>
+					</div>
+				</li>
+				<li class="data-row" ng-class="{'must':Data.CustomerType==3}" ng-if="LoginCompID!=glgjCompID">
+					<label>联系电话</label>
+					<div class="body">
+						<input ng-show="!IsView" type="tel" ng-model="Data.CustInfo.LinkPhone" placeholder="请输入联系电话" id="txtLinkPhone" maxlength="20" />
+						<span ng-show="IsView">{{Data.CustInfo.LinkPhone}}</span>
+					</div>
+				</li>
+				<!--桂林国际定制 start-->
+				<li class="data-row" ng-class="{'must':Data.CustomerType==3}" ng-if="LoginCompID==glgjCompID">
+					<label>联系人</label>
+					<div class="body">
+						<input ng-show="!IsView&&!isTakeLinkName" ng-model="Data.CustInfo.LinkName" type="text" placeholder="请输入联系人" id="txtLinkName" maxlength="50" />
+						<span ng-show="IsView||isTakeLinkName" ng-bind="Data.CustInfo.LinkName | formatName"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-class="{'must':Data.CustomerType==3}" ng-if="LoginCompID==glgjCompID">
+					<label>联系电话</label>
+					<div class="body">
+						<input ng-show="!IsView&&!isTakeLinkPhone" type="tel" ng-model="Data.CustInfo.LinkPhone" placeholder="请输入联系电话" id="txtLinkPhone" maxlength="20" />
+						<span ng-show="IsView||isTakeLinkPhone" ng-bind="Data.CustInfo.LinkPhone | formatPhone"></span>
+					</div>
+				</li>
+				<!--end-->
+				<li class="data-row">
+					<label>收货地址</label>
+					<p ng-show="!IsView" id="selAddress" class="opt">
+						<span>修改</span>
+					</p>
+					<div class="body">
+						<span ng-show="!Data.CustInfo.Province&&!IsView" class="placeholder">请选择收货地址</span>
+						<span ng-bind="Data.CustInfo.Province | locationfilter:Data.CustInfo.City:Data.CustInfo.District:Data.CustInfo.Address:Data.CustInfo.Street"></span>
+						<!--<i id="delAddress" ng-show="Data.CustInfo.Province&&!IsView" class="icon-close color-gray" style="margin-left: 10px;padding: 0px 2px;"></i>-->
+					</div>
+				</li>
+				<li class="data-row must">
+					<label>出库时间</label>
+					<p ng-show="!IsView" class="opt choose_date" id="choosedate" data-options='{}' ng-click="chooseDate()">
+						<span>选择</span>
+					</p>
+					<div class="body">
+						<input readonly="readonly" type="text" placeholder="请选择出库日期" id="txtOutDate" />
+					</div>
+				</li>
+			</ul>
+			<!--class="data-group biglabel"-->
+			<ul class="data-group baseInfo-ul" style="margin-top: 10px;margin-bottom: 42px;" ng-if="Data.OrderParams&&Data.OrderParams.length>0">
+				<li class="data-row " ng-class="{'must':param.IsRequired==1,'orderParam':param.ParamType==1}" ng-repeat="param in Data.OrderParams">
+					<label>{{param.ParamName}}</label>
+					<div class="body">
+						<!--<div class="edit" ng-show="param.ParamType=='0'&&!IsView" >
+							<div  class="needsclick" ng-attr-placeholder="{{'请输入'+param.ParamName}}" ng-attr-id="{{param.ParamType=='0'?('txtOrderParam_'+param.ParamID):''}}" lenlimit="50"></div>
+						</div>-->
+						<input type="text" ng-show="param.ParamType=='0'&&!IsView" ng-attr-placeholder="{{'请输入'+param.ParamName}}" ng-attr-id="{{param.ParamType=='0'?('txtOrderParam_'+param.ParamID):''}}" maxlength="50" />
+						<span type="text" style="padding-right: 25px;" ng-show="param.ParamType=='1'&&!IsView" ng-attr-id="{{param.ParamType=='1'?('txtOrderParam_'+param.ParamID):''}}" ng-attr-idx="{{$index}}" class="bg-f2 orderParam"></span>
+						<span ng-if="IsView" ng-attr-id="{{'spOrderParam_'+param.ParamID}}"></span>
+					</div>
+				</li>
+			
+			</ul>
+		</div>
+		<footer id="ftConfBaseInfo" class="font-16 click-gray hideTool" style="background-color: #F0F0F0;display: none;">
+			<ul class="btn-group" ng-show="!IsView">
+				<li class="btn-col color-red-md" id="confirmBaseInfo">
+					确定
+				</li>
+				<li class="btn-col color-gray-deep cancelBaseInfo">
+					取消
+				</li>
+			</ul>
+			<ul class="btn-group" ng-show="IsView">
+				<li class="btn-col color-red-md cancelBaseInfo">
+					关闭
+				</li>
+			</ul>
+		</footer>
+
+		<!--出库单详情展示-->
+		<div id="orderInfo" class="mui-scroll-wrapper hideOrderInfo" style="padding-top: 44px;padding-bottom: 50px;">
+			<ul class="data-group">
+				<li class="data-row click-gray" id="shortBaseInfo" style="padding: 10px 10px 10px 10px;">
+					<label class="cust" ng-if="Data.CustomerType==1">出库给企业</label>
+					<label class="cust" ng-if="Data.CustomerType==2">出库给经销商</label>
+					<label class="cust" ng-if="Data.CustomerType==3">出库给个人</label>
+					<div class="body" style="margin-right: 20px;">
+						<p ng-if="Data.CustomerType!=3" class="font-16 color-black" style="margin-bottom: 5px;">
+							{{Data.CustInfo.CustomerName}}
+						</p>
+						<p ng-if="Data.CustomerType==3" class="font-16 color-black" style="margin-bottom: 5px;">
+							<span>{{Data.CustInfo.LinkName}}</span>
+							<span class="font-14" style="display: block;">{{Data.CustInfo.LinkPhone}}</span>
+						</p>
+						<!--<p class="font-14 color-gray-dark" style="margin-bottom: 0px;">{{(Data.CustInfo.Province | contractAddress(Data.CustInfo.City, Data.CustInfo.District, Data.CustInfo.Address,Data.CustInfo.Street))||""}}</p>-->
+						<p class="font-13 color-gray-dark" style="margin-bottom: 0px;">{{Data.CustInfo.OutDate}}</p>
+					</div>
+					<p class="opt md-icon icon-down"></p>
+				</li>
+			</ul>
+			<p class="empty" ng-show="Data.OutProds&&Data.OutProds.length==0" style="text-align: center;padding-top: 10px;">
+				目前暂无出库产品，请点击添加
+			</p>
+			<p class="data-group-tip" ng-show="Data.OutProds.length>0" style="text-align: center;padding-top: 10px;">共
+				<font class="color-red-md"> {{Data.OutProds.length}} </font>个出库产品
+			</p>
+			<ul class="data-group" ng-show="Data.OutProds&&Data.OutProds.length>0">
+				<li class="data-row" ng-repeat="(idx,prod) in Data.OutProds">
+					<a class="body click-gray prodInfo" ng-attr-idx="{{$index}}" ng-attr-outProdId="{{prod.ID}}">
+						<span class="float-left color-gray-dark" style="margin:20px 10px 10px 10px">{{$index+1}}</span>
+						<img class="size60 float-left border-f2 bg-f2 mr10" ng-src="{{ImgUrl+'/prod/logo/'+prod.ProdID+'_100x100.jpg'}}" />
+						<div style="padding-left: 100px;">
+							<span class="font-16" ng-bind="prod.ProdName"></span>
+							<p class="font-14 color-red-md" style="margin-bottom: 0px;" ng-show="prod.SkuName">型号：<span ng-bind="prod.SkuName"></span></p>
+							<p class="font-14 color-gray-dark" ng-show="LoginCompID==prod.CompID&&prod.ProdInnerCode" style="margin-bottom: 0px;">{{Data.InnerCodeName}}：{{prod.ProdInnerCode}}</p>
+						</div>
+					</a>
+					<p ng-show="!IsView&&!IsEdit" class="opt md-icon icon-close color-red-md font-16" ng-attr-idx="{{$index}}" ng-attr-outProdId="{{prod.ID}}"></p>
+				</li>
+			</ul>
+		</div>
+		<footer id="ftScan" ng-show="!IsView&&!IsEdit" class="font-16 click-gray" style="background-color: #F0F0F0;z-index: 2;display: none;">
+			<ul class="btn-group">
+				<li class="btn-col color-blue font-15" id="btnScan">
+					<i class="icon-pen" style="margin-right: 5px;"></i> 手工输入迈迪国标通用物联码
+				</li>
+			</ul>
+		</footer>
+
+		<!--向上弹出的产品信息-->
+		<div id="prodInfoTop" class="mui-scroll-wrapper bg hideEditInfo">
+			<!--<div style="position: absolute;top: 140px;bottom: 44px;overflow-y: scroll;right: 0;left: 0">-->
+			<ul class="data-group">
+				<li class="data-row">
+					<!--../problib/prodinfo-head.html?prodId=' + id + "&SkuID=" + $scope.SkuID + "&MdCode=" + $scope.MdCode-->
+					<a style="padding: 9px 10px 10px 16px;" class="body click-gray" ng-href="{{'../problib/prodinfo-head.html?MdCode='+Data.ProdInfo.MDCode+'&prodId='+Data.ProdInfo.ProdID+'&SkuID='+Data.ProdInfo.SkuID}}" open-type="common">
+						<img class="size60 float-left border-f2 bg-f2 mr10" ng-src="{{ImgUrl+'/prod/logo/'+Data.ProdInfo.ProdID+'_100x100.jpg'}}" />
+						<span class="font-18" ng-bind="Data.ProdInfo.ProdName"></span>
+						<div style="padding-left: 70px;">
+							<p class="color-red-md" style="margin-bottom: 0px;padding-right: 15px;" ng-if="Data.ProdInfo.SkuName">产品型号：<span ng-bind="Data.ProdInfo.SkuName"></span></p>
+							<!--<p style="margin-bottom: 0px;"><span ng-bind="Data.ProdInfo.MDCode | getMdCode"></span></p>-->
+							<p style="margin-bottom: 0px;padding-right: 15px;"><span ng-bind="'物联码：'+Data.ProdInfo.MDCode"></span></p>
+						</div>
+						<p class="opt md-icon">
+							<span class="icon-right"></span>
+						</p>
+					</a>
+				</li>
+
+				<li class="data-row must" ng-show="LoginCompID==Data.ProdInfo.CompID">
+					<label>{{Data.InnerCodeName}}</label>
+					<div class="body">
+						<input ng-show="!IsView" type="text" id="txtInCode" ng-attr-placeholder="{{'请输入'+Data.InnerCodeName}}" maxlength="30" ng-bind="Data.ProdInfo.ProdInnerCode"/>
+						<span ng-if="IsView" id='spInCode'></span>
+					</div>
+				</li>
+				<li class="data-row" ng-class="{'must':param.IsRequired==1}" ng-repeat="param in Data.ProdInfo.ProdParams">
+					<label style="padding-right: 8px;text-align: justify;">{{param.ParamName}}</label>
+					<div class="body">
+						<input type="text" ng-show="param.ParamType=='0'&&!IsView" ng-attr-placeholder="{{'请输入'+param.ParamName}}" ng-attr-id="{{param.ParamType=='0'?('txtProdParam_'+param.ParamID):''}}" maxlength="50" />
+						<span type="text" ng-show="param.ParamType=='1'&&!IsView" ng-attr-idx="{{$index}}" ng-attr-id="{{param.ParamType=='1'?('txtProdParam_'+param.ParamID):''}}" class="bg-f2 prodParam"></span>
+						<span ng-if="IsView" ng-attr-id="{{'spProdParam_'+param.ParamID}}"></span>
+					</div>
+				</li>
+			</ul>
+			<!--</div>-->
+		</div>
+		<footer id="prodInfoTopTool" class="font-16 click-gray hideTool" style="background-color: #F0F0F0;display: none;" ng-class="{'mui-block':isLoad}">
+			<ul class="btn-group" ng-show="!IsView">
+				<li class="btn-col color-red-md" id="confirmProdInfo">
+					确定
+				</li>
+				<li class="btn-col color-gray-deep cancelProdInfo">
+					取消
+				</li>
+			</ul>
+			<ul class="btn-group" ng-show="IsView">
+				<li class="btn-col color-red-md cancelProdInfo">
+					关闭
+				</li>
+			</ul>
+		</footer>
+	</body>
+	<script type="text/javascript" src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/push.js"></script>
+	<script type="text/javascript" src="../../js/rpc.js"></script>
+	<script type="text/javascript" src="../../js/mui.picker.min.js"></script>
+	<script src="order-save.js"></script>
+
+</html>

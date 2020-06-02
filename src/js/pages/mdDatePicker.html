@@ -1,0 +1,89 @@
+<div class="date-wrap">
+    <i class="iconfont icon-zuo" ng-click="event.dateSub()"></i>
+    <span class="date-year" ng-click="event.chooseDate()" ng-bind="view"></span>
+    <i class="iconfont icon-you" ng-click="event.dateAdd()"></i>
+</div>
+<style>
+    .date-wrap::after {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        height: 1px;
+        content: '';
+        -webkit-transform: scaleY(.5);
+        transform: scaleY(.5);
+        background-color: #ccc;
+    }
+
+    .md-modal.small.middle .md-modal-body {
+        width: 80%;
+    }
+
+    .timemodal {
+        width: 100%;
+        margin: 0 auto;
+        background-color: #FFFFFF;
+        border-radius: 0.25rem;
+    }
+
+    .timetitle {
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        height: 45px;
+        line-height: 45px;
+    }
+
+    .icon-zuo,
+    .icon-you {
+        color: #AEAEAE;
+    }
+
+    .yearshow {
+        height: 45px;
+        line-height: 45px;
+        float: left;
+        padding: 0 20px;
+        font-size: 16px;
+    }
+
+    #timetable {
+        width: 100%;
+    }
+
+    #timetable tbody tr {
+        width: 100%;
+        height: 2.75rem;
+    }
+
+    #timetable tbody tr td {
+        border-top: 0.0625rem solid #ECECEC;
+        height: 45px;
+        line-height: 45px;
+        box-sizing: border-box;
+        white-space: nowrap;
+        overflow: hidden;
+        text-align: center;
+        font-size: 14px;
+    }
+
+    #timetable tbody tr:last-of-type td {
+        border-bottom: none;
+    }
+
+    .md-modal .md-modal-content {
+        padding: 0 !important;
+        border-radius: 0.25rem;
+    }
+
+    #timetable .active {
+        background: #88B2F6;
+        color: #FAFCFE;
+    }
+
+    #timetable tbody tr td:nth-last-of-type(2n+0) {
+        border-left: 0.0625rem solid #ECECEC;
+        border-right: 0.0625rem solid #ECECEC;
+    }
+</style>

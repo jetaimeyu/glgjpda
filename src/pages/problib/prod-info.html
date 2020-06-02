@@ -1,0 +1,221 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link href="../../css/common.css" rel="stylesheet" />
+		<link href="../../icon-font/iconfont.css" rel="stylesheet" />
+		<link href="../../css/mui.loading.css" rel="stylesheet" />
+		<link href="prod-info.css" rel="stylesheet" />
+		<link href="prod-info-jinshuhei.css" rel="stylesheet" />
+		<style type="text/css">
+			.imgslist {
+		width: 100px;
+		height: 100px;
+		background-size: cover!important;
+	}
+		</style>
+	</head>
+
+	<body ng-controller="prodInfoCtl">
+
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">产品详情</a>
+		</header>
+		<div style="display:none;" ng-class="{'mui-block':domData.prodInfo}">
+			<div class="mui-content" style="margin-top:44px;display:none;" ng-class="{'mui-block':domData.showTopBar}">
+				<!--<div class="topBar">
+					<div class="mui-ellipsis">
+						非本企业设备，点击按钮添加
+					</div>
+					<div class="btn-open" ng-click="event.openEqEdit()">
+						<div class="btn">
+							添加
+						</div>
+					</div>
+					<div class="btn-close icon-close font-20" ng-click="event.closeTopBar()">
+
+					</div>
+				</div>-->
+			</div>
+
+			<!--产品图片-->
+			<div class="mui-content">
+				<div class="mui-slider" id="slider">
+					<div class="mui-slider-group">
+						<div class="mui-slider-item" ng-if="domData.photos.length==0">
+							<a href="#">
+								<div class="mui-text-center">
+									<img src="{{domData.ImgUrl+'logo/'+domData.prodId+'_0x240.jpg'}}" data-preview-src="{{domData.ImgUrl+'logo/'+domData.prodId+'.jpg'}}" ng-style="{'object-fit':config.PicType==2?'cover':'contain'}" />
+								</div>
+							</a>
+						</div>
+						<div class="mui-slider-item" ng-repeat="item in domData.photos" ng-if="domData.photos.length>0">
+							<a href="#">
+								<div class="mui-text-center">
+									<img src="{{domData.ImgUrl+'photo/'+domData.prodId+'/'+item.ID+'_0x240.jpg'}}" data-preview-src="{{domData.ImgUrl+'photo/'+domData.prodId+'/'+item.ID+'.jpg'}}" ng-style="{'object-fit':config.PicType==2?'cover':'contain'}" />
+								</div>
+							</a>
+						</div>
+
+					</div>
+
+					<div class="mui-slider-indicator">
+						<div class="mui-indicator mui-active" ng-if="domData.photos==0"></div>
+						<div class="mui-indicator" ng-class="{'mui-active':$index==0}" ng-if="domData.photos.length>0" ng-repeat="item in domData.photos"></div>
+					</div>
+					<a href="{{domData.linkShow}}" title="3D秀" open-type="out" class="ext-btn">
+						<i></i>
+						<img src="../../images/prod/3dshow.png" class="btn3d" />
+					</a>
+				</div>
+			</div>
+			<div class="prod-info">
+				<div class="mui-ellipsis-2 prod-name" ng-bind="domData.prodInfo.ProdName">
+				</div>
+				<div class="mui-ellipsis sku-name">
+					型号：
+					<span ng-bind="domData.prodInfo.SkuName"></span>
+				</div>
+				<div class="mui-ellipsis code-name" ng-if="domData.prodInfo.InnerCode">
+					{{domData.innerCodeName}}：
+					<span ng-bind="domData.prodInfo.InnerCode"></span>
+				</div>
+				<div class="comp-name-box" ng-click="event.aboutComp()">
+					<div class="mui-ellipsis comp-name" ng-bind="domData.prodInfo.CompName"></div>
+					<div class="comp-right">
+						了解更多
+						<span class="mui-icon mui-icon-arrowright"></span>
+					</div>
+				</div>
+			</div>
+
+			<div class="prodGrid dynamicGrid">
+				<div class="flex-container" ng-click="event.prodGrid(item)" ng-repeat="item in domData.pkgItems">
+					<div class="flex-img">
+						<img ng-style="{'border-radius':ModuleIconStyle==1?'50%':'0'}" ms-css="{'border-radius':options.ModuleIconStyle==1?'50%':'0'}" src="{{item.imageurl}}">
+					</div>
+					<a class="flex-item" href="javascript:;">
+						<p>{{item.ModuleName}}</p>
+						<p>{{item.ModuleIntro}}</p>
+					</a>
+					<div class="flex-line borderthin_right"></div>
+					<div ng-if="$index%2==0" class="bottom_line"></div>
+				</div>
+			</div>
+
+			<div style="display: none;" ng-class="{'mui-block':domData.showEqExs}">
+				<ul class="data-group" ng-show="domData.eqWorks.Total>0">
+					<li class="data-row">
+						<label class="title">故障工单</label>
+					</li>
+					<li class="data-row mui-table-view-cell mui-block" ng-click="event.tap('faultInfo',domData.eqWorks.Data.JobFrom)">
+						<div class="body recordlist">
+							<span ng-show="domData.eqWorks.Data.ULogoIsExist" class="icon-item">
+							<div class="avatar" ng-style="{'background-image':'url('+ (domData.eqWorks.Data.CreateUserID|getUserLogo:48:0) +')'}"></div>
+						</span>
+							<div class="mui-media-object mui-pull-left md-userCustomLogo" ng-if="!domData.eqWorks.Data.ULogoIsExist" ng-bind="domData.eqWorks.Data.CreateUserName | getUserCustomLogo"></div>
+							<div class="name-title">
+								<div class="names mui-ellipsis" ng-bind="domData.eqWorks.Data.CreateUserName"></div>
+								<div class="introduction" ng-bind="domData.eqWorks.Data.CreateDate"></div>
+							</div>
+
+						</div>
+						<div class="fault-description mui-ellipsis-2">
+							<span ng-bind="domData.eqWorks.Data.IsHasAudio | formatDeviceFaultInfo:domData.eqWorks.Data.AudioLength:domData.eqWorks.Data.FaultDescription"></span>
+						</div>
+					</li>
+					<li class="data-row mui-table-view-cell mui-block" ng-click="event.tap('faultrecord')" ng-show="domData.eqWorks.Total>0">
+						<div class="total">合计
+							<span ng-bind="domData.eqWorks.Total"></span>次故障</div>
+					</li>
+				</ul>
+				<ul class="data-group" ng-show="domData.eqRepairs.Total>0">
+					<li class="data-row">
+						<label class="title">维修记录</label>
+					</li>
+					<li class="data-row mui-table-view-cell mui-block" ng-click="event.tap('repairView')">
+						<div class="body recordlist">
+							<span ng-show="domData.eqRepairs.Data.ULogoIsExist" class="icon-item">
+							<div class="avatar" ng-style="{'background-image':'url('+ (domData.eqRepairs.Data.CreateUserID|getUserLogo:48:0) +')'}"></div>
+						</span>
+							<div class="mui-media-object mui-pull-left md-userCustomLogo" ng-if="!domData.eqRepairs.Data.ULogoIsExist" ng-bind="domData.eqRepairs.Data.CreateUserName | getUserCustomLogo"></div>
+							<div class="name-title">
+								<div class="names mui-ellipsis" ng-bind="domData.eqRepairs.Data.CreateUserName"></div>
+								<div class="introduction" ng-bind="domData.eqRepairs.Data.CreateDate"></div>
+							</div>
+						</div>
+						<div class="fault-description mui-ellipsis-2">
+							<span ng-bind="domData.eqRepairs.Data.IsHasAudio | formatDeviceRepairInfo:domData.eqRepairs.Data.AudioLength:domData.eqRepairs.Data.RepairDescription"></span>
+						</div>
+					</li>
+					<li class="data-row mui-table-view-cell mui-block" ng-show="domData.eqRepairs.Total>0">
+						<div class="total" ng-click="event.tap('repairList')">合计
+							<span ng-bind="domData.eqRepairs.Total"></span>次维修</div>
+					</li>
+				</ul>
+				<ul class="data-group" ng-show="domData.eqRepairParts.Total>0">
+					<li class="data-row">
+						<label class="title">配件更换记录</label>
+					</li>
+					<li class="data-row mui-table-view-cell mui-block" ng-click="event.tap('partinfo')">
+						<div class="body recordlist">
+							<span ng-show="domData.eqRepairParts.Data.ULogoIsExist" class="icon-item">
+							<div class="avatar" ng-style="{'background-image':'url('+ (domData.eqRepairParts.Data.CreateUserID|getUserLogo:48:0) +')'}"></div>
+						</span>
+							<div class="mui-media-object mui-pull-left md-userCustomLogo" ng-if="!domData.eqRepairParts.Data.ULogoIsExist" ng-bind="domData.eqRepairParts.Data.CreateUserName | getUserCustomLogo"></div>
+							<div class="name-title">
+								<div class="names mui-ellipsis" ng-bind="domData.eqRepairParts.Data.CreateUserName"></div>
+								<div class="introduction" ng-bind="domData.eqRepairParts.Data.CreateDate"></div>
+							</div>
+
+						</div>
+						<div class="fault-description mui-ellipsis-2" ng-repeat="part in domData.eqRepairParts.Data.Data">
+							<span ng-bind="part.ProdName" class="part-name"></span>
+							<span ng-bind="part.SkuName"></span> x
+							<span ng-bind="part.Nums"></span>
+							<span ng-bind="part.Remark"></span>
+						</div>
+					</li>
+					<li class="data-row mui-table-view-cell mui-block" ng-click="event.tap('partInfoList')" ng-show="domData.eqRepairParts.Total>0">
+						<div class="total">合计更换
+							<span ng-bind="domData.eqRepairParts.Total"></span>个配件</div>
+					</li>
+				</ul>
+			</div>
+			<div >
+				<ul class="data-group" ng-show="domData.partList.length>0">
+					<li class="data-row">
+						<label class="title">相关备件</label>
+					</li>
+					<li class="data-row mui-table-view-cell mui-block" ng-click="event.tap('prodinfo','',part)" ng-repeat="part in domData.partList">
+						<div class="body recordlist mui-pull-left">
+							<img src="../../images/imgPre.png" ng-style="{'background-image':'url('+ (part | getProdLogo:100:0) +')'}" class="imgslist" />
+						</div>
+						<div class="fault-description mui-ellipsis-2 mui-pull-left part-desc" >
+							<p ng-bind="part.ProdName" style="color:#1F1F1F"></p>
+							<p style="color:#777;" ng-bind="'型号：'+part.SkuName"></p>
+							<p ng-show="!checkPrice(part)">暂无价格</p>
+		                    <p ng-show="checkPrice(part)" style="color:#DC0000" ng-bind="'¥'+part.Price.Price"></p>		
+						</div>
+					</li>
+					<li class="data-row mui-table-view-cell mui-block" ng-click="event.getMorePart()" ng-show="domData.totalCount>domData.partList.length">
+						<div class="total">查看全部备品备件</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/angular.min.js"></script>
+		<script src="../../js/common.js"></script>
+		<script src="../../js/utils.js"></script>
+		<script src="../../js/mui.loading.js"></script>
+		<script src="../../js/rpc.js"></script>
+		<script src="prod-info.js"></script>
+	</body>
+
+</html>

@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="pickareas.css" />
+	</head>
+
+	<body ms-controller="myCtl">
+		<div class="m-cityselect">
+			<div class="cityselect-header">
+				<p class="cityselect-title">所在地市</p>
+				<div class="cityselect-nav">
+					<a href="javascript:;" data-idx="1" ms-class="[chooseIdx==1?'crt':'']" ms-text="province?province:'请选择'"></a>
+					<a href="javascript:;" data-idx="2" ms-class="[chooseIdx==2?'crt':'']" ms-text="city?city:'请选择'" ms-visible="province"></a>
+					<a href="javascript:;" data-idx="3" ms-visible="city && level==3 && districtList.length>0" ms-class="[chooseIdx==3?'crt':'']" ms-text="district?district:'请选择'"></a>
+				</div>
+			</div>
+			<ul ms-class="['cityselect-content','cityselect-move-animate',chooseIdx==3&&level==3&&districtList.length>0?'cityselect-next':'cityselect-prev']" id="cityselect-content">
+				<li class="cityselect-item" id="item-province" >
+					<div class="cityselect-item-box"data-idx="1">
+						<a ms-class="[province==obj?'crt':'']" href="javascript:;" ms-attr="{'data-value':obj,'data-idx':index}" ms-for="index,obj in provinceList"><span ms-text="obj"></span></a>
+					</div>
+				</li>
+				<li class="cityselect-item" id="item-city" >
+					<div class="cityselect-item-box" data-idx="2">
+						<a ms-class="[city==obj?'crt':'']" href="javascript:;" ms-attr="{'data-value':obj,'data-idx':index}" ms-for="index,obj in cityList"><span ms-text="obj"></span></a>
+					</div>
+				</li>
+				<li class="cityselect-item" id="item-district" >
+					<div class="cityselect-item-box" data-idx="3">
+						<a ms-class="[district==obj?'crt':'']" href="javascript:;" ms-attr="{'data-value':obj,'data-idx':index}" ms-for="index,obj in districtList"><span ms-text="obj"></span></a>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/avalon.js" ></script>
+		<!--<script type="text/javascript" src="cityData.js"></script>-->
+		<script type="text/javascript" src="https://g.maidiyun.com/js/city2017.js"></script>
+		<script type="text/javascript" src="pickareas.js"></script>
+
+	</body>
+
+</html>

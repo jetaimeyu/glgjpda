@@ -1,0 +1,598 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>销售记录</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.right-save {
+				font-size: 1.4rem;
+				line-height: 40px;
+				padding: 3px 2px;
+				float: right;
+				color: #3296FA;
+			}
+			
+			.data-group-tip {
+				margin-top: 10px;
+			}
+			
+			.prod-list-empty {
+				padding: 10px 16px;
+				height: 130px;
+				background: #FFFFFF;
+			}
+			
+			.prod-list-empty .empty-logo {
+				background-image: url("../../images/complib/empty.png");
+				width: 80px;
+				height: 80px;
+				display: block;
+				background-size: cover;
+				/*text-align: center;*/
+			}
+			
+			.prodLibUl.mui-table-view:after {
+				height: 0px!important;
+			}
+			
+			.imgslist {
+				float: left;
+				width: 56px;
+				height: 56px;
+				background-size: cover!important;
+				position: absolute;
+				top: 50%;
+				-webkit-transform: translateY(-50%);
+				transform: translateY(-50%);
+				overflow: hidden;
+				margin: 0;
+			}
+			
+			.prodLibUl .mui-table-view-cell {
+				padding: 8px 16px!important;
+			}
+			
+			.prodLibUl .mui-media-body {
+				position: relative;
+				left: 70px;
+				width: 80%;
+			}
+			
+			.prodLibUl .productName {
+				font-size: 1.5rem;
+				color: #000;
+				margin-top: 2px;
+				margin-bottom: 10px;
+				line-height: initial;
+				max-width: 90%;
+			}
+			
+			.prodLibUl .productType {
+				font-size: 1.2rem;
+				color: #AAA;
+				max-width: 90%;
+			}
+			
+			.prodLibUl .opt {
+				color: #AEAEAE;
+				position: absolute;
+				top: 50%;
+				right: 10px;
+				-webkit-transform: translateY(-50%);
+				transform: translateY(-50%);
+				overflow: hidden;
+				margin: 0px;
+			}
+			
+			.mui-table-view-cell:after {
+				left: 0px;
+			}
+			
+			.number span {
+				display: inline-block;
+				width: 30px;
+				height: 30px !important;
+				line-height: 30px;
+				border: 1px solid #CCCCCC !important;
+				text-align: center;
+				font-size: 1.3rem !important;
+				float: left;
+			}
+			
+			.number .icon-add {
+				border-right: none !important;
+				border-top-left-radius: 5px;
+				border-bottom-left-radius: 5px;
+			}
+			
+			.number .icon-remove {
+				border-left: none !important;
+				border-top-right-radius: 5px;
+				border-bottom-right-radius: 5px;
+			}
+			.icon-topright-corner-delete {
+				color: red;
+				float: right;
+				margin-right: -16px;
+				margin-top: -4px;
+				font-size: 2.6rem;
+			}
+			
+			.body.drop-down-body .icon-roundclose {
+				right: 45px!important;
+				padding: 9px 5px 10px 5px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="ProdSalesRecordController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">新增销售记录</a>
+			<a class="right-save" ng-click="save()">保存</a>
+		</header>
+		<div class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}" style="display: none;margin-bottom: 41px;">
+			<p class="data-group-tip">客户信息</p>
+			<ul class="data-group">
+				<li class="data-row must">
+					<label>客户名称</label>
+					<p class="opt select-opt">
+						<md-custom-select data-options="customSelectOptions"></md-custom-select>
+					</p>
+					<div class="body" style="margin-right: 23px;">
+						<md-drop-down-list ng-model="CustomerInfo" data-options="{url:customerurl,labname:'请输入或选择客户',type:'sale'}"></md-drop-down-list>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>联系人</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="CustomerInfo.LinkName" class="needsclick" placeholder="请输入联系人姓名" lenlimit="10"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>联系电话</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="CustomerInfo.LinkPhone" class="needsclick" placeholder="请输入联系人电话" lenlimit="15"></div>
+						</div>
+					</div>
+				</li>
+				<li class="mui-table-view-cell data-row must">
+					<label>出厂日期</label>
+					<p class="opt md-icon font-15" ng-click="chooseDate()">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" data-options='{}' ng-click="chooseDate()">
+						<span ng-if="!ProductionDate" class="placeholder">请选择出厂日期</span>
+						<span ng-if="ProductionDate" ng-bind="ProductionDate"></span>
+					</div>
+				</li>
+			</ul>
+			<p class="data-group-tip">产品信息</p>
+			<ul class="data-group prodLibUl" ng-if="ProList.length>0" ng-repeat="prodItem in ProList">
+				<li class="mui-table-view-cell mui-media">
+					<span class="icon-topright-corner-delete" ng-click="removeProd($index)"></span>
+					<p class="opt md-icon font-15" ng-click="removeProd($index)">
+						<span class="icon-right"></span>
+					</p>
+					<img src="../../images/imgPre.png" ng-style="{'background-image':'url('+ (prodItem | getProdLogo:56:0) +')'}" class="imgslist" />
+					<div class="mui-media-body" ng-click="prodTap(prodItem)">
+						<p class='productName mui-ellipsis-2' ng-bind="prodItem.ProdName"></p>
+						<p class='productType mui-ellipsis' ng-bind="'型号：'+prodItem.SkuName"></p>
+					</div>
+				</li>
+				<li class="data-row">
+					<label ng-bind="curUser.InnerCodeName || '出厂编号'"></label>
+					<div class="body">
+						<span ng-if="prodItem.hasInnerCode" ng-bind="prodItem.ProdInnerCode"></span>
+						<div class="edit" ng-if="!prodItem.hasInnerCode">
+							<div ng-model-div-text="prodItem.ProdInnerCode" class="needsclick" placeholder="请输入{{curUser.InnerCodeName || '出厂编号'}}"   onkeyup="this.innerText=this.innerText.replace(/[\u4e00-\u9fa5]/ig,'');moveEnd(this,true);"  lenlimit="30"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>起保日期</label>
+					<p class="opt md-icon font-15" ng-click="setBeginDate($index)">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="setBeginDate($index)">
+						<span ng-bind="prodItem.BeginDate|formatDate"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>保修期</label>
+					<div class="body" id="wdateType">
+						<div class="number" style="width: 50%;">
+							<span class="icon-add" ng-click="changeNum(1,$index)"></span>
+							<span style="font-size: 1.5rem !important;" ng-bind="prodItem.Warranty" id="extandDate"></span>
+							<span class="icon-remove" ng-click="changeNum(0,$index)" ng-style="{'color':prodItem.Warranty==0?'#CCCCCC':'#000'}"></span>
+						</div>
+						<div class="md-switch-group" style="width: 50%;padding-left: 30px;padding-top: 3px;display: table-cell;font-size: 0;">
+							<span style="padding: 1px 9px;" dataId="3" class="md-switch-button" ng-click="changeUnit($index,3)" ng-class="{'md-active':prodItem.WarrantyUnit==3}" style="border-right:none;">年</span>
+							<span style="padding: 1px 9px;border-right:none;margin-left: -5px;margin-right: -4px;" dataId="2" class="md-switch-button" ng-click="changeUnit($index,2)" ng-class="{'md-active':prodItem.WarrantyUnit==2}">月</span>
+							<span style="padding: 1px 9px;" dataId="1" class="md-switch-button" ng-click="changeUnit($index,1)" ng-class="{'md-active':prodItem.WarrantyUnit==1}">日</span>
+						</div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>过保日期</label>
+					<div class="body">
+						<span ng-bind="prodItem.EndDate|formatDate"></span>
+						<span ng-if="prodItem.DelayRecord.length>0">【已延保】</span>
+					</div>
+				</li>
+			</ul>
+			<center ng-if="ProList.length==0">
+				<div class="prod-list-empty">
+					<span class="empty-logo"></span>
+					<p class="mt10">请点击底部按钮，添加产品</p>
+				</div>
+			</center>
+		</div>
+		<footer class="btn-bottom" ng-click="tap('scan')">
+			<i class="md-icon icon-saoyisao"> 扫码添加产品</i>
+		</footer>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../message/transMessage.js"></script>
+		<script>
+			app.controller("ProdSalesRecordController", ["$scope", "ApiService", "DataService", "UtilsService", "CacheService", "DatePickerService", "AuthService", "Loading", "$timeout", "$Modal", "$filter", "RPCObserver",
+				function($scope, ApiService, DataService, UtilsService, CacheService, DatePickerService, AuthService, Loading, $timeout, $Modal, $filter, RPCObserver) {
+					$scope.customerurl = ApiService.Api50 + "/api/v2/Customer/SearchCustomer?keyWords=";
+					$scope.curUser = CacheService.get("user");
+					$scope.ID = query("id") || 0;
+					var today = $filter("dateFormat")(new Date().getTime(), "yyyy-MM-dd");
+					$timeout(function() {
+						$scope.isLoad = true;
+					}, 200);
+
+					//客户信息
+					$scope.CustomerInfo = {
+						Name: "",
+						ID: 0,
+						LinkName: "",
+						LinkPhone: "",
+						LinkManList: []
+					}
+					//生产日期
+					$scope.ProductionDate = today;
+
+					//产品信息列表
+					$scope.ProList = [];
+
+					$scope.customSelectOptions = {
+						model: $scope.CustomerInfo,
+						idField: 'ID',
+						nameField: 'Name',
+						selectfn: function() {
+							$scope.tap('selectCustomer');
+						}
+					}
+
+					var saving = false;
+
+					//巡检设备选择
+					$scope.tap = function(key) {
+						switch(key) {
+							//设备详情
+							case 'selectCustomer':
+								UtilsService.openWindow({
+									needLogin: true,
+									id: "customer-search.html",
+									url: "../search/customer-search.html?action=select&must=true",
+									extras: {
+										selectObj: $scope.CustomerInfo,
+										callback: "selectCustomerContactCallback"
+									}
+								});
+								break;
+							case "scan":
+								setTimeout(function() {
+									UtilsService.openWindow({
+										needLogin: true,
+										id: 'scan.html',
+										url: '../scan/scan.html',
+										extras: {
+											callback: "ScanBack"
+										}
+									});
+								})
+								break;
+						}
+					}
+
+					//保存更改
+					$scope.save = function() {
+						if(saving) {
+							return;
+						}
+						document.activeElement.blur();
+						if(!checkLengthUtil.check()) {
+							return false;
+						}
+						if($scope.ProductionDate == "") {
+							mui.toast("请设置出厂日期");
+							return;
+						}
+						if($scope.CustomerInfo.Name == "") {
+							mui.toast("请输入或选择客户");
+							return;
+						}
+						if($scope.CustomerInfo.Name.length > 50) {
+							mui.toast("客户名称不能超过50个字");
+							return;
+						}
+						if($scope.ProList.length == 0) {
+							mui.toast("请扫码添加产品");
+							return;
+						}
+						//验证同型号产品出厂编号是否重复
+						var arr = [];
+						var checkList = $scope.ProList.filter(function(item) {
+							return item.ProdInnerCode.trim();
+						});
+						for(var i = 0; i < checkList.length;) {
+							var count = 0;
+							for(var j = i; j < checkList.length; j++) {
+								if(checkList[i].ProdID == checkList[j].ProdID && checkList[i].SkuID == checkList[j].SkuID && checkList[i].ProdInnerCode == checkList[j].ProdInnerCode) {
+									count++;
+								}
+							}
+							i += count;
+							arr.push({
+								prod: checkList[i],
+								count: count
+							})
+						}
+						for(var k = 0; k < arr.length; k++) {
+							if(arr[k].count > 1) {
+								mui.toast("同型号产品" + ($scope.curUser.InnerCodeName ? $scope.curUser.InnerCodeName : "出厂编号") + "不能重复");
+								return;
+							}
+						}
+						saving = true;
+						Loading.show();
+						submitData();
+					}
+					var mui_back = mui.back;
+					mui.back = function() {
+						if(isModal) {
+							isModal = false;
+							saving = false;
+							$Modal.close();
+						}
+						mui_back();
+					}
+					var isModal = false;
+
+					function submitData() {
+						var url = ApiService.Api50 + "/api/v1/PkgSale/MdtSavePkgSale";
+						var prodList = $scope.ProList;
+						prodList.forEach(function(prod) {
+							prod.BeginDate && prod.BeginDate.indexOf(" 00:00:00") < 0 && (prod.BeginDate += " 00:00:00");
+							prod.EndDate && prod.EndDate.indexOf(" 00:00:00") < 0 && (prod.EndDate += " 00:00:00");
+							prod.ProdInnerCode = prod.ProdInnerCode.trim();
+						})
+						var postdata = {
+							"ID": 0,
+							"CustomerID": $scope.CustomerInfo.ID,
+							"CustomerName": $scope.CustomerInfo.Name,
+							"LinkMan": $scope.CustomerInfo.LinkName,
+							"LinkPhone": $scope.CustomerInfo.LinkPhone,
+							"ProdInnerDate": $scope.ProductionDate + " 00:00:00",
+							"State": 0,
+							"ProList": prodList
+						};
+						isModal = true;
+						DataService.post(url, postdata).then(function(res) {
+							Loading.hide();
+							if(res) {
+								UtilsService.saveModal(function() {
+									saving = false;
+									isModal = false;
+									mui.back();
+								});
+							}
+						}, function() {
+							saving = false;
+						});
+					}
+
+					//选择出厂日期
+					$scope.chooseDate = function() {
+						DatePickerService.pickDate({
+							selected: $scope.ProductionDate
+						}).then(function(res) {
+							$scope.ProductionDate = res;
+						});
+					};
+
+					//设置起保日期
+					$scope.setBeginDate = function(index) {
+						DatePickerService.pickDate({
+							selected: $scope.ProList[index].BeginDate,
+							minDate: $scope.Today
+						}).then(function(res) {
+							$scope.ProList[index].BeginDate = res;
+							var endDate = $scope.ProList[index].BeginDate;
+							$scope.ProList[index].DelayRecord.length > 0 && $scope.ProList[index].DelayRecord.forEach(function(item) {
+								endDate = $scope.computeOverDate(endDate, item.ExtendedWarranty, item.ExtendWarrantyUnit);
+							})
+							$scope.ProList[index].EndDate = $scope.computeOverDate(endDate, $scope.ProList[index].Warranty, $scope.ProList[index].WarrantyUnit);
+						});
+					}
+
+					/**
+					 * ****************切换延保期单位************
+					 */
+					$scope.changeUnit = function(index, dataId) {
+						$scope.ProList[index].WarrantyUnit = dataId;
+						var endDate = $scope.ProList[index].BeginDate;
+						$scope.ProList[index].DelayRecord.length > 0 && $scope.ProList[index].DelayRecord.forEach(function(item) {
+							endDate = $scope.computeOverDate(endDate, item.ExtendedWarranty, item.ExtendWarrantyUnit);
+						})
+						$scope.ProList[index].EndDate = $scope.computeOverDate(endDate, $scope.ProList[index].Warranty, $scope.ProList[index].WarrantyUnit);
+					}
+
+					//计算过保日期
+					$scope.computeOverDate = function(beginDate, extandDate, dateUnit) {
+						//WarrantyUnit 单位 1日2月3年
+						if(!beginDate || !extandDate) return "";
+						var filterName = "";
+						switch(dateUnit) {
+							case 1:
+							case '1':
+								filterName = "dateAddDays";
+								break;
+							case 2:
+							case '2':
+								filterName = "dateAddMonths";
+								break;
+							case 3:
+							case '3':
+								filterName = "dateAddYears";
+								break;
+							default:
+								break;
+						}
+						return $filter(filterName)(beginDate, extandDate, "yyyy-MM-dd");
+					};
+
+					//更改保修期
+					$scope.changeNum = function(isAdd, index) {
+						if(isAdd == 1) {
+							if($scope.ProList[index].Warranty == 999) return;
+							$scope.ProList[index].Warranty++;
+						} else {
+							if($scope.ProList[index].Warranty == 0) return;
+							$scope.ProList[index].Warranty--;
+						}
+						var endDate = $scope.ProList[index].BeginDate;
+						$scope.ProList[index].DelayRecord.length > 0 && $scope.ProList[index].DelayRecord.forEach(function(item) {
+							endDate = $scope.computeOverDate(endDate, item.ExtendedWarranty, item.ExtendWarrantyUnit);
+						})
+						$scope.ProList[index].EndDate = $scope.computeOverDate(endDate, $scope.ProList[index].Warranty, $scope.ProList[index].WarrantyUnit);
+					};
+
+					//移除产品列表中的产品
+					$scope.removeProd = function(index) {
+						mui.confirm("确认删除该条产品吗？", function(e) {
+							e.index == 0 && $scope.ProList.splice(index, 1);
+							$scope.$apply();
+						});
+					}
+
+					//跳转产品详情
+					$scope.prodTap = function(prod) {
+						UtilsService.openWindow({
+							needLogin: true,
+							id: 'prodinfo-head.html',
+							url: 'prodinfo-head.html?prodId=' + prod.ProdID + '&SkuID=' + prod.SkuID + "&MdCode=" + prod.MdCode + '&ProdInnerCode=' + prod.ProdInnerCode + '&InnerCodeName=' + $scope.curUser.InnerCodeName || '出厂编号'
+						});
+					}
+					// 刷新
+					RPCObserver.on("refresh_equ_maintenance", "refresh_equ_maintenance");
+					window.refresh_equ_maintenance = function(ProductionDate) {
+						$scope.ProductionDate = ProductionDate;
+						$scope.$apply();
+					};
+
+					//选择客户回调
+					window.selectCustomerContactCallback = function(obj) {
+						$scope.CustomerInfo.ID = obj.ID;
+						$scope.CustomerInfo.Name = obj.CustomerName;
+						if(!obj.LinkName && obj.LinkManList.length > 0) {
+							$scope.CustomerInfo.LinkName = obj.LinkManList[0].LinkName;
+							$scope.CustomerInfo.LinkPhone = obj.LinkManList[0].LinkPhone;
+						} else {
+							$scope.CustomerInfo.LinkName = obj.LinkName;
+							$scope.CustomerInfo.LinkPhone = obj.LinkPhone;
+						}
+						$scope.$apply();
+					}
+					//扫码回调
+					window.ScanBack = function(obj) {
+						obj = JSON.parse(obj);
+						if(obj.resType == 1) {
+							//是否已处于销售记录中
+							if(obj.resInfo.IsSale || obj.resInfo.IsSale == "true") {
+								mui.toast("该产品已存在与其他销售记录中")
+								return;
+							}
+							if(obj.resInfo.IsMatching || obj.resInfo.IsMatching == "true") {
+								mui.toast("该产品不属于本企业，无权销售")
+								return;
+							}
+							var repetition = false;
+							var Warranty = "";
+							var WarrantyUnit = "";
+							var BeginDate = "";
+							var EndDate = "";
+							$scope.ProList.forEach(function(item) {
+								//判断扫描的产品是否已存在
+								if(item.MdCode == obj.codeValue) {
+									repetition = true;
+								}
+								//判断是否同型号
+								if(item.SkuID == obj.resInfo.SkuID) {
+									BeginDate = item.BeginDate;
+									EndDate = item.EndDate;
+									Warranty = item.Warranty;
+									WarrantyUnit = item.WarrantyUnit;
+								}
+							})
+							if(repetition) {
+								mui.toast("该产品已存在产品列表中")
+								return false;
+							}
+							var prod = {};
+							prod.ProdName = decodeURIComponent(obj.resInfo.ProdName).replace(/@squotes@/g, "'").replace(/@dquotes@/g, "\"");
+							prod.SkuName = decodeURIComponent(obj.resInfo.SkuName).replace(/@squotes@/g, "'").replace(/@dquotes@/g, "\"");
+							prod.SkuID = obj.resInfo.SkuID;
+							prod.ProdID = obj.resInfo.ProdID;
+							prod.ProdInnerCode = decodeURIComponent(obj.resInfo.InnerCode).replace(/@squotes@/g, "'").replace(/@dquotes@/g, "\"");
+							prod.ProdInnerCode != "" && (prod.hasInnerCode = true);
+							prod.Warranty = Warranty === "" ? (parseInt(obj.resInfo.Warranty) || 1) : Warranty;
+							prod.WarrantyUnit = WarrantyUnit === "" ? (parseInt(obj.resInfo.WarrantyUnit) || 3) : WarrantyUnit;
+							prod.BeginDate = BeginDate ? BeginDate : (obj.resInfo.BeginDate || today);
+							prod.EndDate = EndDate ? EndDate : $scope.computeOverDate(prod.BeginDate, prod.Warranty, prod.WarrantyUnit);
+							//prod.Warranty = obj.resInfo.Warranty && obj.resInfo.Warranty != "0" ? parseInt(obj.resInfo.Warranty) : Warranty;
+							//prod.WarrantyUnit = obj.resInfo.WarrantyUnit && obj.resInfo.WarrantyUnit != "0" ? parseInt(obj.resInfo.WarrantyUnit) : WarrantyUnit;
+							//prod.BeginDate = obj.resInfo.BeginDate ? obj.resInfo.BeginDate : BeginDate;
+							//prod.EndDate = obj.resInfo.EndDate ? obj.resInfo.EndDate : $scope.computeOverDate(prod.BeginDate, prod.Warranty, prod.WarrantyUnit);
+							prod.DelayRecord = obj.resInfo.DelayRecord;
+							prod.CompID = obj.resInfo.CompID;
+							prod.MdCode = obj.codeValue;
+							$scope.ProList.push(prod);
+							$scope.$apply();
+						} else {
+							mui.toast("设备不允许出售，请扫描产品码");
+						}
+					}
+				}
+			]);
+			app.filter("formatDate", ["$filter", function($filter) {
+				return function(date) {
+					if(!date) {
+						return "";
+					}
+					return date.substr(0, 10);
+				};
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

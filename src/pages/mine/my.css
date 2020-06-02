@@ -1,0 +1,111 @@
+.mui-content {
+	width: 100%;
+}
+
+.icon-item {
+	float: left;
+	margin-bottom: 10px;
+	MARGIN-TOP: 4PX;
+}
+
+.spare-item {
+	display: block;
+	padding-left: 16px!important;
+
+}
+
+.fun-group .spare-item{
+	height:47px;
+	line-height: 47px;
+}
+
+.fun-group .icon-item
+{
+	margin:0px;
+}
+
+
+.data-group:first-child .data-row {
+	min-height: 60px;
+	padding-top: 6px;
+}
+
+
+
+.data-group:first-child .data-row .opt {
+	padding-top: 5px;
+}
+
+.name-title {
+	padding: 6px 40px 6px 0;
+	width: 80%;
+}
+
+.names {
+	font-size: 1.5rem;
+	color: #323232;
+	position: relative;
+	left: 13px;
+}
+
+.introduction {
+	font-size: 1.3rem;
+	color: #929292;
+	position: relative;
+	left: 13px;
+	top: 2px;
+}
+
+.nointroduction {
+	font-size: 1.3rem;
+	color: #B5B5B5;
+	position: relative;
+	left: 13px;
+	top: 2px;
+}
+
+.data-group .data-row label {
+	left: auto!important;
+	color: #323232;
+	font-size: 1.6rem;
+	width: auto!important;
+}
+
+.data-group {
+	margin-top: 8px!important;
+}
+
+.data-group:nth-child(2) .data-row img {
+	margin-top: 16px;
+}
+
+.data-group:nth-child(3) .data-row img {
+	margin-top: 16px;
+}
+
+.data-group:nth-child(4) .data-row img {
+	margin-top: 14px;
+}
+
+.data-group:nth-child(5) .data-row img {
+	margin-top: 16px;
+}
+
+.data-group .data-row .opt {
+	color: #C7C7CB;
+	padding-right: 12px;
+	line-height: 27px;
+	font-size: 1.6rem;
+}
+
+.avatar {
+	height: 48px;
+	width: 48px;
+	border-radius: 48px;
+	float: left;
+	background-size: cover;
+}
+
+img[src=""] {
+	opacity: 0;
+}

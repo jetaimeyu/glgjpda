@@ -1,0 +1,225 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<link rel="stylesheet" href="equ-common.css" />
+		<style>
+			.top44 {
+				margin-top: 44px
+			}
+			
+			.top35 {
+				margin-top: 35px
+			}
+			
+			.top79 {
+				margin-top: 79px
+			}
+			
+			.autoTop {
+				margin-top: 35px;
+			}
+			
+			.mui-android .autoTop {
+				margin-top: 0px;
+			}
+			
+			.mui-table-view .mui-table-view-cell i {
+				line-height: 55px;
+				margin-right: 10px;
+				font-size: 1.8rem;
+				margin-left: -6px;
+			}
+			
+			.data-group:after,
+			.data-group .data-row:last-child:after {
+				content: none;
+			}
+			
+			.data-group .data-row label {
+				left: 16px;
+				right: 16px;
+			}
+			
+			.data-group .data-row .icon-bumenguanli span {
+				font-size: 1.4rem;
+				font-family: MicrosoftYaHei;
+				color: #323232;
+			}
+			
+			.data-group:before,
+			.data-group:after,
+			.data-group .data-row:after {
+				background-color: #EAEAEA;
+			}
+			
+			.data-group .data-row:after {
+				left: 10px;
+				right: 10px;
+			}
+			
+			.mui-table-view .mui-media-object {
+				border: none;
+			}
+			
+			.mui-table-view:before,
+			.mui-table-view:after {
+				content: none;
+			}
+			
+			.mui-table-view .mui-table-view-cell {
+				padding: 8px 16px;
+				height: 71px;
+			}
+			
+			.mui-table-view .mui-table-view-cell .mui-media-object {
+				line-height: 71px;
+				background-color: #FFFFFF;
+				width: 55px;
+				height: 55px;
+				max-width: 55px;
+				background-size: 50px;
+			}
+			
+			.mui-ellipsis {
+				white-space: nowrap!important;
+			}
+			
+			.equ-title {
+				/*line-height: 48px;*/
+				font-size: 1.5rem;
+				color: #000000;
+			}
+			
+			.equ-sub {
+				line-height: 16px;
+				font-size: 1.2rem;
+				color: #AAAAAA;
+				font-family: MicrosoftYaHei;
+			}
+			
+			.mui-table-view .mui-table-view-cell label,
+			.mui-table-view .mui-table-view-cell .opt {
+				position: absolute;
+				top: 50%;
+				-webkit-transform: translateY(-50%);
+				transform: translateY(-50%);
+				overflow: hidden;
+				margin: 0;
+			}
+			
+			.mui-table-view .mui-table-view-cell .opt,
+			.data-group .data-row .opt {
+				color: #AEAEAE;
+				top: 50%;
+			}
+			
+			.mui-table-view .mui-table-view-cell .opt:active {
+				color: #169BD5;
+			}
+			
+			.mui-table-view .mui-table-view-cell .opt,
+			.mui-table-view .mui-table-view-cell .body.arrow:after {
+				font-size: 1.7rem;
+				right: 0;
+				padding: 10px 14px 11px 10px;
+			}
+			
+			.mui-table-view-cell:after {
+				background-color: #ECECEC;
+			}
+			
+			.mui-table-view .mui-table-view-cell:after {
+				left: 10px;
+				right: 10px;
+			}
+			
+			.imgslist {
+				float: left;
+				width: 55px;
+				height: 55px;
+				margin-right: 10px;
+				background-size: cover!important;
+			}
+			
+			.opt span {
+				font-size: 1.4rem;
+				color: #3296FA;
+			}
+			
+			.opt:not(.md-icon):after {
+				position: absolute;
+				top: 10%;
+				height: 80%;
+				left: 0;
+				content: '';
+				background-color: #EAEAEA;
+				width: 1px;
+				-webkit-transform: scaleY(0.5);
+				transform: scaleY(0.5);
+			}
+		</style>
+	</head>
+
+	<body ng-controller="ContactOrgController">
+		<!--导航目录部分-->
+		<div id="res-slide" class="top-thin-line mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted nav-bar" ng-class="{'mui-block':isLoad}" ng-show="isLoad&&navDirData.length>1" style="display: none;">
+			<div class="mui-scroll" style="height: 35px;position: absolute;">
+				<a class="mui-control-item" ng-repeat="dir in navDirData" ng-class="{'mui-active':dir.ID==catalogID}" ng-attr-catalogid="{{dir.ID}}" ng-attr-index="{{$index}}" ng-attr-catalogname="{{dir.catalogname}}" ng-attr-pardirid="{{dir.ParDirID}}">
+					<span class="icon iconfont icon-right color-gray-deep" style="margin-left: 2px;" ng-show="$index>0"></span>
+					<span class="group-name" ng-bind="dir.catalogname"></span>
+				</a>
+			</div>
+		</div>
+		<!--,'top35':navDirData.length>1-->
+		<div id="pullrefresh" class="mui-scroll-wrapper mui-content mui-fullscreen" style="display:none;" ng-class="{'mui-block':isLoad,'autoTop':navDirData.length>1,'top44':data[catalogID].length==0}">
+			<div class="scroll-body">
+				<!--目录-->
+				<ul class="data-group" ng-show="dirData&&dirData[catalogID].length>0" ng-style="{'margin-top':navDirData.length>1?'8px':'0px'}">
+					<!--ng-click="clickDir(catalog.ID,catalog.DirName)"-->
+					<li class="mui-table-view-cell data-row dir-row" ng-repeat="catalog in dirData[catalogID]" ng-attr-catalogid="{{catalog.ID}}" ng-attr-catalogname="{{catalog.DirName}}" ng-attr-pardirid="{{catalog.ParDirID}}">
+						<label style="width:85vw" class="mui-ellipsis">
+						<i class="icon-list"></i><span style="width:85vw;margin-left: 4px;" class="mui-ellipsis" ng-bind="' '+catalog.DirName"></span>
+					</label>
+						<p class="opt md-icon icon-right"></p>
+					</li>
+				</ul>
+				<!--设备列表-->
+				<ul class="mui-table-view mui-table-view-chevron" style="margin-top: 8px;" ng-show="data && data.length>0">
+					<li class="mui-table-view-cell mui-media" ng-repeat="equ in data">
+						<p class="opt md-icon-more" ng-if="action!='select'&&('Q81' | hasAuth)" style="width: 24vw;right: 26vw;" ng-click="commissioning(equ)">
+							<span style="font-size: 1.3rem;">设备投产</span>
+						</p>
+						<p class="opt md-icon-more" ng-if="action!='select'" style="width: 28vw;" ng-click="accessRecord(equ.ID)">
+							<span style="font-size: 1.3rem;">出入库记录</span>
+						</p>
+						<p class="opt md-icon" ng-click="equSelect(equ)">
+							<i class="mui-pull-right" ng-class="{'icon-round color-gray':selectedId!=equ.ID,'icon-roundcheckfill color-blue':selectedId==equ.ID}" ng-if="action=='select'"></i>
+						</p>
+						<div class="mui-clearfix" style="width: 44vw;" ng-style="{'width':action=='select'?'60vw':'44vw'}" ng-click="equSelect(equ)">
+							<div class="mui-ellipsis equ-title" ng-bind="equ.EqName"></div>
+							<p class="mui-ellipsis equ-sub" ng-bind="equ.SkuName"></p>
+							<p class="mui-ellipsis equ-sub" ng-bind="'库存数量：'+equ.StockNum"></p>
+						</div>
+					</li>
+				</ul>
+			</div>
+			<md-no-data ng-show="dirData[catalogID].length==0 && data.length==0">暂无设备数据</md-no-data>
+		</div>
+		<script type="text/javascript" src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="equ-warehouse-list.js"></script>
+	</body>
+
+</html>

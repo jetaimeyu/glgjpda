@@ -1,0 +1,146 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link rel="stylesheet" href="../../../css/mui.min.css">
+	<link rel="stylesheet" href="../../../css/common.css">
+	<link rel="stylesheet" href="../../../icon-font/iconfont.css">
+	<style>
+		.data-group .data-row .body input {
+			width: 100%;
+		}
+	</style>
+</head>
+
+<body ng-controller="TCController">
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left">修改</a>
+	</header>
+	<div class="mui-content" ng-class="{'mui-block':isLoad}" style="display: none;">
+		<ul class="data-group">
+			<li class="data-row">
+				<label>订单编号</label>
+				<div class="body">
+					<p>{{OrderNo}}</p>
+					<!-- <input ng-model="OrderNo" readonly /> -->
+				</div>
+			</li>
+			<li class="data-row">
+				<label>工艺过程卡编号</label>
+				<div class="body">
+					<p>{{TechincsCode}}</p>
+					<!--<input type="text" ng-model="TechincsCode" placeholder="请输入工艺过卡编号" />-->
+					<!-- <input class="needsclick" ng-model="OrderProcessNo" readonly /> -->
+				</div>
+				
+			</li>
+			<li class="data-row">
+				<label>产品名称</label>
+				<div class="body">
+					<p>{{ProdName}}</p>
+					<!-- <input ng-model="ProdName" readonly /> -->
+				</div>
+			</li>
+			<li class="data-row">
+				<label>型号</label>
+				<div class="body">
+					<p>{{SkuName}}</p>
+					<!-- <input ng-model="SkuName" readonly /> -->
+				</div>
+			</li>
+			<li class="data-row">
+				<label>当前工艺</label>
+				<div class="body">
+					<p>{{StepName}}</p>
+					<!-- <input ng-model="StepName" readonly /> -->
+				</div>
+			</li>
+		</ul>
+		<ul class="data-group" ng-show="IsUserExist">
+			<li class="data-row operate_con" ng-show="isHaveOpera">
+				<label>定额台时</label>
+				<div class="body">
+					<input type="text" maxlength="40" ng-model="FixedTime" placeholder="请输入定额台时" />
+				</div>
+			</li>
+			<li class="data-row techincs_type operate_con" ng-show="isHaveOpera" ng-click="clickType('WorkShopList')">
+				<label>
+					<i
+						ng-class="{true:'icon-roundcheckfill color-blue font-17', false:'icon-round font-17 color-gray-deep'}[isChecked.workshop]"></i>
+					车间
+				</label>
+				<p class="opt md-icon icon-down"></p>
+			</li>
+			<li class="data-row" ng-show="isHaveOpera" ng-click="clickType('EquipmentList')">
+				<label><i
+						ng-class="{true:'icon-roundcheckfill color-blue font-17', false:'icon-round font-17 color-gray-deep'}[isChecked.equipment]"></i>使用设备</label>
+				<p class="opt md-icon icon-down"></p>
+			</li>
+			<li class="data-row operate_con" ng-show="isHaveOpera" ng-click="clickType('WorkmenList')">
+				<label><i
+						ng-class="{true:'icon-roundcheckfill color-blue font-17', false:'icon-round font-17 color-gray-deep'}[isChecked.workmen]"></i>操作人员</label>
+				<p class="opt md-icon icon-down"></p>
+			</li>
+			<li class="data-row examine_con" ng-show="isHaveCheck" ng-click="clickType('check')">
+				<label><i
+						ng-class="{true:'icon-roundcheckfill color-blue font-17', false:'icon-round font-17 color-gray-deep'}[isChecked.check]"></i>检验</label>
+				<p class="opt md-icon icon-down"></p>
+			</li>
+			<li class="data-row check_num" ng-show="IsCheckMan">
+				<label>合格</label>
+				<div class="body">
+					<input type="text" maxlength="40" ng-model="QualifiedCount" placeholder="请输入说明信息" />
+				</div>
+			</li>
+			<li class="data-row check_num" ng-show="IsCheckMan">
+				<label>次品</label>
+				<div class="body">
+					<input type="text" maxlength="40" ng-model="InferiorCount" placeholder="请输入说明信息" />
+				</div>
+			</li>
+			<li class="data-row check_num" ng-show="IsCheckMan">
+				<label>废品</label>
+				<div class="body">
+					<input type="text" maxlength="40" ng-model="WasteCount" placeholder="请输入说明信息" />
+				</div>
+			</li>
+			<li class="data-row examine_con" ng-show="isHaveCheck" ng-click="clickType('CheckerList')">
+				<label><i
+						ng-class="{true:'icon-roundcheckfill color-blue font-17', false:'icon-round font-17 color-gray-deep'}[isChecked.checker]"></i>检验员</label>
+				<p class="opt md-icon icon-down"></p>
+			</li>
+		</ul>
+		<div class="mui-content-padded" style="margin-bottom: 80px;" ng-if="IsUserExist && (isHaveOpera || isHaveCheck)">
+			<button class="mui-btn mui-btn-primary mui-btn-block" ng-click="btnSave()">保存</button>
+		</div>
+		<!-- <div id="shade"></div> -->
+		<!-- <div id="tech" class="tech hide-tech">
+			<div class="mui-scroll-wrapper" id="scroll">
+				<div class="mui-scroll">
+					<ul class="data-group">
+						<li class="data-row  techincs_type_child" ng-repeat="el in StepNameList" techincs_id="{{el.ID}}">
+							<label><i class="icon-round font-17 color-gray-deep"></i><span ng-bind="el.Name"></span></label>
+						</li>
+						<li class="data-row " ng-repeat="el in CheckTime" techincs_id="{{el.ID}}">
+							<label><span ng-bind="el.Name"></span></label>
+							<div class="body" ng-bind="CheckDate"></div>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div> -->
+	</div>
+	<!--无网络或请求失败重试-->
+	<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+	<script type="text/javascript" src="../../../js/mui.js"></script>
+	<script type="text/javascript" src="../../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../../js/common.js"></script>
+	<script type="text/javascript" src="../../../js/utils.js"></script>
+	<script type="text/javascript" src="../../../js/rpc.js"></script>
+	<script type="text/javascript" src="techincs-edit.js"></script>
+</body>
+
+</html>

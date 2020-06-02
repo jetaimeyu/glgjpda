@@ -1,0 +1,169 @@
+<ul class="data-group self-style">
+	<li class="data-row" ng-repeat="item in model" data-index="{{$index}}">
+		<!--ng-click="item.CommentCount!=0?tap(item):''"-->
+		<div class="question">
+			<div class="userLogo">
+				<md-user-logo ng-model="item.avatar" data-width="49" data-height="49" class="toperson" data-index="{{$index}}"></md-user-logo>
+			</div>
+			<div class="user-right">
+				<div class="user-right-row1" ng-if="type!='commentList'">
+					<div ng-bind="item.AUserInfo.UserName||item.CUserInfo.UserName" class="username toperson" data-index="{{$index}}"></div>
+					<div class="judge">
+
+						<span class="goodp" data-index="{{$index}}"><!-- ng-click="goodp(item,$event)"-->
+							
+							<i ng-if='item.IsMyJudgePos' class="icon-favourable-comment"></i>
+							<i ng-if="!item.IsMyJudgePos" class="icon-comment-good"></i>
+                            (<span ng-bind="item.PosCount"></span>)
+						</span>
+						<span class="lowp" data-index="{{$index}}"><!-- ng-click="lowp(item,$event)"-->
+							<i ng-if='item.IsMyJudgeNeg' class="icon-negative-comment"></i>
+							<i ng-if="!item.IsMyJudgeNeg" class="icon-comment-bad"></i>
+							(<span ng-bind="item.NegCount"></span>)
+						</span>
+					</div>
+				</div>
+				<div class="comment-info" ng-if="type=='commentList'" >
+					<span ng-bind="item.AUserInfo.UserName||item.CUserInfo.UserName" class="username toperson" data-index="{{$index}}"></span>
+					<span class="reply-tip" ng-if="item.ReplyUserID">回复</span>
+					<span ng-if="item.ReplyUserID" ng-bind="item.ReplyUserViewName" class="username toperson-of-reply" data-index="{{$index}}"></span>
+					<span ng-if="item.ReplyCommentContent" ng-bind="item.ReplyCommentContent" class="reply-content username mui-ellipsis"></span>
+				</div>
+				<div class="question-con">
+					<md-compile data-template="item.AContent || item.CContent"></md-compile>
+				</div>
+				<div class="time-row">
+					<span>
+						<span class="time" ng-bind="item.AnswerTime?(item.AnswerTime|formatAgo:item.AnswerTime):(item.CommentTime|formatAgo:item.CommentTime)"></span>
+					<span class="anwser1" ng-if="item.CommentCount&&item.CommentCount!=0&&type=='ingList'">
+							<i class="icon-reply font-12"></i>
+							<span class="font-12" ng-if="type=='ingList'" ng-bind="item.CommentCount+'条评论'"></span>
+					</span>
+					</span>
+					<sapn class="anwser reply" data-index="{{$index}}" ng-if="type!='header'">评论</sapn>
+					<!--ng-click="reply(item,$event)"-->
+				</div>
+			</div>
+		</div>
+	</li>
+</ul>
+<style>
+	.self-style {
+		width: 100%;
+		margin-top: 0;
+	}
+	
+	.self-style .question-con {
+		width: 100%;
+		overflow: hidden;
+		color: #323232;
+		line-height: 21px;
+		font-size: 1.4rem;
+		word-break: break-all;
+		padding-top: 10px;
+	}
+	
+	.self-style .question-con img {
+		width: auto !important;
+		height: auto !important;
+	}
+	
+	.self-style .question {
+		width: 100%;
+		display: flex;
+		box-sizing: border-box;
+		padding: 16px;
+		padding-bottom: 10px;
+		padding-top: 10px;
+	}
+	
+	.self-style .question .user-right .comment-info {
+		display: flex;
+	}
+	
+	.self-style .question .user-right .comment-info .reply-tip {
+		font-size: 1.4rem;
+		color:#3296fa;
+	}
+	
+	.self-style .question .user-right .comment-info span:not(:first-child) {
+		margin-left: 5px;
+	}
+	
+	.self-style .question .user-right .comment-info .reply-content {
+		flex: 1 1 0;
+		color: #323232;
+	}
+	
+	.self-style .userLogo {
+		height: 49px;
+	}
+	
+	.self-style .user-right {
+		margin-left: 15px;
+		width: 80%;
+		overflow: hidden;
+	}
+	
+	.self-style .time {
+		margin-right: 25px;
+	}
+	
+	.self-style .time-row {
+		color: #999;
+		font-size: 1.2rem;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+	
+	.self-style .anwser {
+		display: inline-block;
+		min-width: 50px;
+		background: #ECECEC;
+		border-radius: 14px;
+		text-align: center;
+		color: #3296FA;
+		height: 25px;
+		font-size: 1.2rem;
+		line-height: 25px;
+	}
+	
+	.self-style .username {
+		color: #999999;
+		font-size: 1.4rem;
+		max-width: 150px;
+	}
+	
+	.self-style .goodp {
+		color: #3296FA;
+		font-size: 1.4rem;
+		margin-right: 32px;
+	}
+	
+	.self-style .lowp {
+		color: #FA8232;
+	}
+	
+	.self-style .user-right-row1 {
+		width: 100%;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+	
+	.self-style .user-right-row2 {
+		width: 100%;
+	}
+	
+	md-compile img {
+		max-width: 100%;
+		width: auto!important;
+		height: auto!important;
+	}
+	
+	md-compile ul {
+		padding-left: 40px;
+		list-style: disc;
+	}
+</style>

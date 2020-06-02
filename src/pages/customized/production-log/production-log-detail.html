@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../../css/common.css" />
+	</head>
+	<body ms-controller="productionLogInfoController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">生产日志详情</h1>
+		</header>
+		<div class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<ul class="data-group biglabel">
+				<li class="data-row">
+					<label>工作内容</label>
+					<div class="body">
+						<div class="body" ng-bind="datalist.JobContent"></div>
+					</div>
+				</li>
+				<!--<li class="data-row">
+					<label>工作分类</label>
+					<div class="body" ng-bind="datalist.JobType"></div>
+				</li>-->
+				<li class="data-row">
+					<label>工作人</label>
+					<div class="body" ng-bind="datalist.CreateUserName"></div>
+				</li>
+				<li class="data-row">
+					<label>完成度</label>
+					<div class="body" ng-bind="datalist.WorkProgress"></div>
+				</li>
+				<li class="data-row">
+					<label>完成时间</label>
+					<div class="body" ng-bind="datalist.LastModifyDate"></div>
+				</li>
+				<li class="data-row">
+					<label>备注信息</label>
+					<div class="body" ng-bind="datalist.Remark"></div>
+				</li>
+			</ul>
+
+		</div>
+		<script type="text/javascript" src="../../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../../js/common.js"></script>
+		<script type="text/javascript" src="../../../js/utils.js"></script>
+		<script>
+			app.controller("productionLogInfoController",["$scope","ApiService","DataService",function($scope,ApiService,DataService){			
+				$scope.datalist=[];
+				var logId=query("orderLogId");
+				$scope.isLoad = false;
+				logId&&getLogInfo();
+				function getLogInfo(){
+					var url = ApiService.Api45+"/api/v1.1/Produce/GetOrderLogFirst/"+logId;
+					DataService.get(url).then(function(res) {
+						if(res){
+							$scope.isLoad = true;
+							$scope.datalist=res;
+						}
+					})
+					
+				}
+				
+			}])	
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

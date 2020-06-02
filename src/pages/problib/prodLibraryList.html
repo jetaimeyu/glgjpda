@@ -1,0 +1,126 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			/*.empty-list {
+				margin: 0px!important;
+				padding: 20.0vw 0 0;
+			}*/
+		</style>
+	</head>
+
+	<body ng-controller="productLibraryList">
+		<div id="pullrefresh" class="mui-scroll-wrapper" ng-class="{'mui-block':domShow}" style="display: none;">
+			<div class="mui-content">
+				<md-prod-lib-list ng-model="prodList" state="state" type="'normal'"></md-prod-lib-list>
+				<md-no-data ng-show="prodList && prodList.length==0">暂无数据</md-no-data>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script>
+			app.controller("productLibraryList", ["$scope", "ApiService", "DataService", "Loading", function($scope, ApiService, DataService, Loading) {
+				$scope.prodList = null;
+				$scope.domShow = false;
+				var pageIndex = 0;
+				var pageSize = 10;
+				var networkCanUse = true;
+				$scope.isall = query("isall");
+				$scope.state = query("state");
+				var Type = query("type");
+				setTimeout(function() {
+					mui.init({
+						pullRefresh: {
+							container: '#pullrefresh',
+							up: {
+								auto: true,
+								callback: pullupRefresh
+							},
+							down: {
+								callback: pulldownRefresh
+							}
+						}
+					});
+				})
+
+				Loading.show();
+
+				//下拉刷新
+				function pulldownRefresh() {
+					pageIndex = 1;
+					getProdLibraryList("down");
+				};
+				//上拉加载
+				function pullupRefresh() {
+					if(networkCanUse) {
+						pageIndex++;
+					}
+					//加载数据
+					getProdLibraryList();
+				}
+
+				function getProdLibraryList(type) {
+					var url = ApiService.Api50 + "/api/v1/Prod/GetMdtPagedPkgInfoList?pageIndex=" + pageIndex + "&pageSize=" + pageSize + "&type=" + Type;
+					DataService.get(url).then(function(res) {
+						Loading.hide();
+						$scope.domShow = true;
+						networkCanUse = true;
+						if(type == "down") {
+							$scope.prodList = null;
+						}
+						$scope.prodList == null && ($scope.prodList = []);
+						$scope.prodList = $scope.prodList.concat(res.DataRows);
+
+						var isEnd = $scope.prodList.length >= res.TotalCount;
+						if(mui("#pullrefresh").pullRefresh()) {
+							if(type == "down") {
+								mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
+								mui('#pullrefresh').pullRefresh().refresh(true);
+								mui("#pullrefresh").pullRefresh().endPullupToRefresh(isEnd);
+							} else {
+								mui("#pullrefresh").pullRefresh().endPullupToRefresh(isEnd);
+							}
+						}
+
+						var tip = document.querySelector('.mui-pull-bottom-pocket');
+						if(tip) {
+							if($scope.prodList.length == 0) {
+								tip.classList.contains('mui-visibility') && tip.classList.remove('mui-visibility');
+								tip.classList.contains('mui-block') && tip.classList.remove('mui-block');
+							} else {
+								!tip.classList.contains('mui-visibility') && tip.classList.add('mui-visibility');
+								!tip.classList.contains('mui-block') && tip.classList.add('mui-block');
+							}
+						}
+					}, function() {
+						$scope.domShow = true;
+						networkCanUse = false;
+						if(mui("#pullrefresh").pullRefresh()) {
+							setTimeout(function() {
+								if(type == "down") {
+									mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
+								} else {
+									mui("#pullrefresh").pullRefresh().endPullupToRefresh(false);
+								}
+							}, 800)
+						}
+					});
+				};
+			}]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

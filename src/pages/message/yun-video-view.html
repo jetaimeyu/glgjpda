@@ -1,0 +1,42 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link href="../../css/mui.min.css" rel="stylesheet" />
+	<link href="../../css/common.css" rel="stylesheet"/>
+	<link href="../../icon-font/iconfont.css" rel="stylesheet"/>
+	<link rel="stylesheet" href="../../js/chimee-mobile-player-master/lib/chimee-mobile-player.browser.css">
+</head>
+
+<body ng-controller="EquWarehouseListHeadController">
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left" id="title">预览</a>
+	</header>
+	<div id="wrapper" style="position:absolute;top:45px;left:0px;right:0px;bottom:0px;"></div>
+	<script type="text/javascript" src="../../js/mui.min.js"></script>
+	<script src="../../js/chimee-mobile-player-master/lib/chimee-mobile-player.browser.js"></script>
+	<script>
+		mui.plusReady(function () {
+			var view = plus.webview.currentWebview();
+			document.querySelector("#title").innerHTML = view.data.FileName;
+			new ChimeeMobilePlayer({
+				wrapper: '#wrapper', // video dom容器
+				src: view.data.FileUrl,
+				autoplay: true,
+				controls: true,
+				playsInline: true,
+				preload: 'auto',
+				x5VideoPlayerFullscreen: true,
+				x5VideoOrientation: 'landscape|portrait',
+				xWebkitAirplay: true,
+				muted: false,
+				// removeInnerPlugins: ['chimeeMobiControlbar', 'chimeeState'] // 需要移除的插件
+			});
+		});
+	</script>
+</body>
+
+</html>

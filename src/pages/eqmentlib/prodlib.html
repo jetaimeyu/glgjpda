@@ -1,0 +1,63 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.css" rel="stylesheet" />
+		<link href="../../css/common.css" rel="stylesheet" />
+		<link href="../../icon-font/iconfont.css" rel="stylesheet" />
+		<link href="prodlib.css" rel="stylesheet" />
+	</head>
+
+	<body ng-controller="CompProdLibController">
+		<div class="mui-off-canvas-wrap mui-slide-in">
+			<aside class="mui-off-canvas-right">
+				<div class="header-nav">
+					设备目录
+				
+				</div>
+				<div class="nav-body">
+					<md-tree data-load="loadDir" template="tpl"></md-tree>
+				</div>
+			</aside>
+			<div class="nav-dir" ng-show="prods" style="display: none;" ng-class="{'mui-block':isLoad}">
+				<i class="mui-icon icon-catalog"></i>
+				<span class="dir-name">目录</span>
+			</div>
+			<div class="mui-inner-wrap" ng-show="prods" style="display: none;" ng-class="{'mui-block':isLoad}">
+				<div id="pullrefresh" class="mui-content mui-scroll-wrapper">
+					<div class="mui-scroll">
+						<ul class="mui-table-view mui-grid-view" ng-if="prods&&prods.length>0">
+							<li class="mui-table-view-cell mui-media mui-col-xs-6" ng-repeat="prod in prods" ng-click="ProdDetails(prod.ID,compId)">
+								<div class="imgbox">
+									<img class="mui-media-object" ng-src="{{Api45+'/api/v1/Equipment/'+prod.LibraryID+'_0x0.png'}}" onerror="this.src='http://pic.maidiyun.com/cGtnL2xvZ28=_0_200x200.jpg'" ng-style="{'object-fit':pictureStyle==2?'cover':'contain','min-height':pictureStyle==2?'110%':'100%'}">
+								</div>
+								<div class="mui-media-body">
+									<div class="prod-name" ng-if="prod.EqCount==1" ng-bind="prod.EqName"></div>
+									<div class="prod-name" ng-if="prod.EqCount>1" ng-bind="prod.EqName+'('+prod.EqCount+'台)'"></div>
+									<div class="sku-name" ng-if="prod.SkuName" ng-bind="'型号:'+prod.SkuName"></div>
+									<!-- <div class="prod-price" ng-if="prod | getPrice">
+										<span class="icon">￥</span><span class="price" ng-bind="prod | getPrice"></span>
+									</div> -->
+									<!-- <div class="prod-price" ng-show="!(prod | getPrice)&&isShowInquiry==1">询价</div>
+									<div class="prod-price" ng-show="!(prod | getPrice)&&isShowInquiry!=1">暂无价格</div> -->
+								</div>
+							</li>
+						</ul>
+					</div>
+					<md-no-data ng-show="prods&&prods.length==0">暂无设备数据</md-no-data>
+				</div>
+				<div class="mui-off-canvas-backdrop"></div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/xss.min.js"></script>
+	<script type="text/javascript" src="prodlib.js"></script>
+
+</html>

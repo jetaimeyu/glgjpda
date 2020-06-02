@@ -1,0 +1,172 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link rel="stylesheet" href="../../css/mui.min.css">
+	<link rel="stylesheet" href="../../css/common.css">
+	<link rel="stylesheet" href="../../icon-font/iconfont.css">
+	<link rel="stylesheet" href="equ-common.css">
+	<link rel="stylesheet" href="equ-repair.css">
+	<style type="text/css">
+		.partDomHead {
+			color: #000;
+		}
+
+		.data-group .equ-fault:after {
+			height: 0px !important;
+		}
+
+		.partDomHead div {
+			font-weight: bold !important;
+			color: #323232 !important;
+		}
+	</style>
+</head>
+
+<body ng-controller="RepairEditController">
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left">设备维修</a>
+	</header>
+	<div class="mui-content" ng-class="{'mui-block':isLoad}" style="display: none;">
+		<ul class="data-group">
+			<p class="data-group-tip">相关设备</p>
+			<li class="data-row must equ-fault" ng-if="!EqFaultType">
+				<label>设备故障</label>
+				<i class="opt md-icon icon-right" ng-click="tap('faultSelect')"></i>
+				<div class="body" ng-click="tap('faultSelect')">
+					<span class="placeholder" ng-show="!faultInfo.content.ID">请选择设备故障</span>
+					<span ng-show="faultInfo.content.ID>0" ng-bind="faultInfo.content.IsHasAudio | formatDeviceFaultInfo:faultInfo.content.AudioLength:faultInfo.content.FaultDescription"></span>
+				</div>
+			</li>
+			<li class="data-row must" ng-if="EqFaultType" ng-class="{'equ-fault':!equRecord.ID}">
+				<label>设备故障</label>
+				<i class="opt md-icon icon-right" ng-click="tap('faultDetail')"></i>
+				<div class="body" ng-click="tap('faultDetail')">
+					<span class="placeholder" ng-show="!faultInfo.content.ID">请选择设备故障</span>
+					<span ng-show="faultInfo.content.ID>0" ng-bind="faultInfo.content.IsHasAudio | formatDeviceFaultInfo:faultInfo.content.AudioLength:faultInfo.content.FaultDescription"></span>
+				</div>
+			</li>
+			<li class="data-row" ng-if="!equRecord.ID" ng-click="tap('faultEdit')" style="min-height: auto;">
+				<div class="button">
+					填写设备故障信息
+				</div>
+			</li>
+			<!--<li class="mui-table-view-cell data-row">
+					<label>故障归类</label>
+					<i class="opt md-icon icon-right" ng-click="tap('faultClass')"></i>
+					<div class="body" ng-click="tap('faultClass')">
+						<span class="placeholder" ng-show="!faultInfo.classes.id">请选择故障归类</span>
+						<span ng-bind="faultInfo.classes.name" ng-show="faultInfo.classes.id"></span>
+					</div>
+				</li>-->
+			<li class="data-row">
+				<label>故障归类</label>
+				<p class="opt select-opt">
+					<md-custom-select data-options="customSelectOptions"></md-custom-select>
+				</p>
+				<div class="body">
+					<md-drop-down-list ng-model="faultInfo.classes" data-options="{url:url,labname:'请输入或选择故障归类'}"></md-drop-down-list>
+				</div>
+			</li>
+			<li class="mui-table-view-cell data-row must" ng-if="faultInfo.content.EquipmentID">
+				<label>设备信息</label>
+				<i class="opt md-icon icon-right" ng-click="tap('equDetails')"></i>
+				<div class="body" ng-click="tap('equDetails')">
+					<span ng-bind="faultInfo.content.EqIdentifier | formatEquInfo:faultInfo.content.EqName:faultInfo.content.SkuName"></span>
+				</div>
+			</li>
+		</ul>
+
+		<ul class="data-group">
+			<li class="data-row must">
+				<label>维修内容</label>
+				<div class="body">
+					<div class="edit">
+						<div ng-model-div-text="RepairDescription" class="needsclick" placeholder="请输入维修内容" lenlimit="400"></div>
+					</div>
+				</div>
+			</li>
+			<li class="data-row" ng-if="audio.FileSize&&audio.FileSize!=0">
+				<label>语音描述</label>
+				<div class="body">
+					<md-audio audio="audio"></md-audio>
+				</div>
+			</li>
+			<li class="data-row" ng-if="imageList.length!=0">
+				<label>现场照片</label>
+				<div class="body attach">
+					<md-image style="display: inline;float: left;" images="imageList" readonly="false"></md-image>
+				</div>
+			</li>
+			<li class="data-row" ng-if="videoList.length!=0">
+				<label>现场视频</label>
+				<div class="body attach">
+					<md-video style="display: inline;float: left;" videos="videoList" readonly="false"></md-video>
+				</div>
+			</li>
+			<li class="data-row must">
+				<label>维修结果</label>
+				<div class="body">
+					<div class="edit">
+						<div ng-model-div-text="RepairResult" class="needsclick" placeholder="请输入维修结果" lenlimit="300"></div>
+					</div>
+				</div>
+			</li>
+			<li class="mui-table-view-cell data-row must" ng-click="tap('selectUser')">
+				<label>维修人员</label>
+				<i class="opt md-icon icon-right" id="repair-personnel"></i>
+				<div class="body">
+					<span class="placeholder" ng-show="repairUsers.length==0">请选择维修人员</span>
+					<span ng-show="repairUsers.length>0" ng-repeat="user in repairUsers" ng-bind="$index==0?user.ViewName:'，'+user.ViewName"></span>
+				</div>
+			</li>			
+		</ul>
+		<md-part-replce-list ng-model="partListData" optant="'write'" style="display: none;" ng-class="{'mui-block':partListData.length!=0}"></md-part-replce-list>
+		<ul class="data-group part-group" style="padding-left: 6px;" ng-style="{'margin-top':partListData.length==0?'8px':'1px'}">
+			<li class="btn-group" ng-click="tap('part')">
+				<a id="addPart" class="btn-col">新增更换配件</a>
+			</li>
+		</ul>
+
+
+		<ul class="data-group">
+			<li class="data-row">
+				<i class="opt md-icon icon-position" style="color: #3296FA;"></i>
+				<label>维修定位地点</label>
+				<div class="body">
+					<span ng-bind="province | locationfilter:city:district:address:street"></span>
+				</div>
+			</li>
+			<li class="mui-table-view-cell data-row">
+				<label>抄送给</label>
+				<p class="opt md-icon font-15" ng-click="tap('selectCopyingUser')">
+					<span class="icon-right"></span>
+				</p>
+				<div class="body" ng-click="tap('selectCopyingUser')">
+					<span class="placeholder" ng-show="sendUsers.length==0">请选择抄送人</span>
+					<span ng-show="sendUsers.length>0" ng-repeat="user in sendUsers" ng-bind="$index==0?user.ViewName:'，'+user.ViewName"></span>
+				</div>
+			</li>
+		</ul>
+		<div class="mui-content-padded" style="margin-bottom: 80px;">
+			<button id="btnSave" class="mui-btn mui-btn-primary mui-btn-block" ng-click="save()">保存</button>
+		</div>
+	</div>
+	<footer ng-class="{'mui-block':isLoad}" style="display: none;">
+		<md-record-media videos="videoList" audio="audio" images="imageList" callback="getMediaRes"></md-record-media>
+	</footer>
+	<!--无网络或请求失败重试-->
+	<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+	<script src="../../js/mui.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/rpc.js"></script>
+	<script type="text/javascript" src="../message/transMessage.js"></script>
+	<script type="text/javascript" src="equ-repair.js"></script>
+</body>
+
+</html>

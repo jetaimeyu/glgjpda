@@ -1,0 +1,113 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>选择盘点设备</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.right-save {
+				font-size: 1.4rem;
+				line-height: 40px;
+				padding: 3px 2px;
+				float: right;
+				color: #3296FA;
+			}
+			
+			.mui-pull-bottom-pocket {
+				bottom: 40px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="ContactOrgController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">选择设备</a>
+			<a class="right-save" ng-click="selectAll()" ng-show="selectCatalogEquArr.length>0&&data.length>0" ng-bind="'全选('+selectEquArr.length+')'"></a>
+		</header>
+
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("ContactOrgController", ["$scope", "Loading", "UtilsService", "RPCObserver", "CacheService", "$filter", function($scope, Loading, UtilsService, RPCObserver, CacheService, $filter) {
+				$scope.multiselect = query('multiselect')||true
+				$scope.maintent = query("maintent")||false
+				//接受已选择的参数
+				$scope.selectEquArr = plus.webview.currentWebview().selectArr;
+				$scope.data=[];
+				//设备分类
+				$scope.selectCatalogEquArr=plus.webview.currentWebview().selectCatalogEquArr;
+//				console.log(JSON.stringify(selectCatalogEquArr))
+				if(!($scope.selectEquArr instanceof Array)) {
+					if($scope.selectEquArr.ID) {
+						$scope.selectEquArr = [$scope.selectEquArr];
+					} else {
+						$scope.selectEquArr = [];
+					}
+				}
+				RPCObserver.on("RPC_FaultEquSelectInfo", "faultEquSelectInfo");
+				window.faultEquSelectInfo = function(params) {
+					$scope.selectEquArr = params;
+					$scope.$apply();
+					return;
+				}
+				//获取数据数量
+				RPCObserver.on("RPC_InventoryEquNums", "InventoryEquNums");
+				window.InventoryEquNums = function(data){
+					$scope.data=data;
+					$scope.$apply();
+				}
+				RPCObserver.on("RPC_SelectInventoryEqu", "selectCallback");
+				window.selectCallback = function(){
+					var view = plus.webview.currentWebview();
+					var opener = view.opener();
+					if(view.callback) {
+						opener.evalJS(view.callback + "(" + JSON.stringify($scope.selectEquArr) + ")");
+					}
+					mui.back();
+				}
+				var isSelectAll=true;
+				$scope.selectAll=function(){
+					if(isSelectAll){
+						$scope.selectEquArr=$scope.data;
+					}else{
+						$scope.selectEquArr=[];
+					}
+					isSelectAll=!isSelectAll;
+					//更新选中设备
+					RPCObserver.broadcast("RPC_FaultEquSelectRefresh",$scope.selectEquArr)
+					RPCObserver.broadcast("RPC_FaultEquSelectInfo",$scope.selectEquArr)
+				}
+				mui.init({
+					subpages: [{
+						url: 'equ-inventory-equAll.html?action=select&multiselect='+$scope.multiselect+'&maintent='+$scope.maintent,
+						id: 'equ-inventory-equAll.html',
+						styles: {
+							top: "44px",
+							bottom: "0px",
+							popGesture: "none"
+						},
+						extras: {
+							selectArr: $scope.selectEquArr,
+							selectCatArr: $scope.selectCatArr,
+							selectCatalogEquArr:$scope.selectCatalogEquArr
+						}
+					}]
+				})
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

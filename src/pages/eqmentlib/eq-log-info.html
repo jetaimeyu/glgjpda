@@ -1,0 +1,82 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+	<link href="../../css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../css/mui.loading.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+</head>
+
+<body ng-controller="bodyCtl">
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left">日志详情</a>
+	</header>
+	<div class="mui-content">
+		<ul class="data-group">
+			<li class="data-row">
+				<label>状态</label>
+				<div class="body">
+					<span ng-bind="States[domData.info.State]"></span>
+				</div>
+			</li>
+			<li class="data-row" ng-if="domData.info.Description">
+				<label>文字描述</label>
+				<div class="body">
+					<span ng-bind="domData.info.Description"></span>
+				</div>
+			</li>
+			<li class="data-row" ng-if="audio.FileSize">
+				<label>语音描述</label>
+				<div class="body">
+					<md-audio audio="audio" readonly="true"></md-audio>
+				</div>
+			</li>
+			<li class="data-row" ng-if="imageList.length!=0||videoList.length!=0">
+				<div class="body attach" style="padding-left: 16px;">
+					<md-image ng-if="imageList.length!=0" images="imageList" readonly="true"></md-image>
+					<md-video ng-if="videoList.length!=0" videos="videoList" readonly="true"></md-video>
+				</div>
+			</li>
+		</ul>
+		<ul class="data-group">
+			<li class="data-row">
+				<label>记录人</label>
+				<p class="opt md-icon" ng-if="domData.info.CreateUserID!=curUser.ID" ng-click="sendMsg(domData.info.CreateUserID, domData.info.CreateUserName, domData.info.ULogoIsExist, domData.info.CreateUserCompID)">
+					<span class="icon-chat-single font-15 color-blue"></span>
+				</p>
+				<div class="body">
+					<span ng-bind="domData.info.CreateUserName"></span>
+				</div>
+			</li>
+			<li class="data-row">
+				<label>记录日期</label>
+				<div class="body">
+					<span ng-bind="domData.info.CreateDate"></span>
+				</div>
+			</li>
+
+			<li class="data-row">
+				<label>记录地址</label>
+				<div class="body">
+					<span ng-bind="domData.info.Province | locationfilter:domData.info.City:domData.info.District:domData.info.Address:domData.info.Street"></span>
+				</div>
+			</li>
+		</ul>
+		<div class="mui-content-padded">
+				<span class="mui-btn mui-btn-block" ng-click="event.back()">返回</span>
+			</div>
+	</div>
+	<script type="text/javascript" src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/rpc.js"></script>
+	<script type="text/javascript" src="../../js/mui.loading.js"></script>
+	<script type="text/javascript" src="eq-log-info.js"></script>
+</body>
+
+</html>

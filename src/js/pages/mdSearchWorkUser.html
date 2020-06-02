@@ -1,0 +1,47 @@
+<ul class="data-group data-title md-search-work-user">
+	<li class="data-row mui-table-view-cell searchlist" ng-repeat="item in model" ng-click="top(item)">
+		<p class="opt md-icon font-15">
+			<span class="icon-right"></span>
+		</p>
+		<div class="body">
+			<div class="mui-media-object mui-pull-left md-userCustomLogo ng-hide" ng-show="!item.ULogoIsExist" ng-bind="item.CreateUserName | getUserCustomLogo"></div>
+			<div class="avatar mui-media-object mui-pull-left" ng-style="{'background-image':'url('+ (item.CreateUserID|getUserLogo:48:0) +')'}" ng-class="item.ULogoIsExist?'':'ng-hide'"></div>
+			<div class="names mui-ellipsis" ng-bind="item.CreateUserName" style="margin-top: 12.5px;"></div>
+
+		</div>
+	</li>
+</ul>
+<style>
+	.md-search-work-user.data-group .data-row:after {
+		right: 0px;
+	}
+	
+	 .md-search-work-user .names {
+		font-size: 1.6rem;
+		color: #323232;
+		position: relative;
+		left: 15px;
+	
+	}
+	.md-search-work-user.data-group:first-child {
+		margin-top: 0px;
+	}
+	.md-search-work-user .CreateDate {
+		font-size: 1.3rem;
+		color: #999999;
+		position: relative;
+		left: 15px;
+		top: 5px;
+	}
+	
+	.md-search-work-user.data-group .data-row .body {
+		padding: 9px 10px 10px 16px;
+	}
+	
+	.md-search-work-user .avatar {
+		height: 48px;
+		width: 48px;
+		border-radius: 50%;
+		background-size: cover;
+	}
+</style>

@@ -1,0 +1,55 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/common.css">
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<style type="text/css">
+			.icon {
+				width: 16px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="PartInfolistController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">型号选择</a>
+		</header>
+		<script type="text/javascript" src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("PartInfolistController", ["$scope", "UtilsService", function($scope, UtilsService) {
+				$scope.prodId = query("prodId") || 0;
+				$scope.prodName = encodeURIComponent(query("prodName").replace(/\'/g, "@squotes@").replace(/\"/g, "@dquotes@"));
+				$scope.isall = query("isall");
+				$scope.skuid = query("skuid") || 0;
+				$scope.selProdID = query("selprodid");
+				//导航
+				setTimeout(function() {
+					mui.init({
+						subpages: [{
+							url: './sku.html?prodId=' + $scope.prodId + '&prodName=' + $scope.prodName + '&isall=' + $scope.isall + "&skuid=" + $scope.skuid + "&selprodid=" + $scope.selProdID,
+							id: 'sku.html',
+							styles: {
+								top: '44px', //mui标题栏默认高度为45px；
+								bottom: '0px' //默认为0px，可不定义；
+							}
+						}]
+					});
+				});
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

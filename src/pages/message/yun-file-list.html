@@ -1,0 +1,149 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<link rel="stylesheet" href="../../css/mui.min.css" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css">
+	<link rel="stylesheet" href="../eqmentlib/equ-common.css" />
+	<style>
+		.top44 {
+				margin-top: 44px
+			}
+			
+			.top35 {
+				margin-top: 35px
+			}
+			
+			.top79 {
+				margin-top: 79px
+			}
+			
+			.autoTop {
+				margin-top: 35px;
+			}
+			
+			.mui-android .autoTop {
+				margin-top: 0px;
+			}
+			
+			.prodLibUl.mui-table-view:after {
+		height: 0px!important;
+	}
+	
+	.imgslist {
+		float: left;
+		width: 56px;
+		height: 56px;
+		background-size: cover!important;
+		position: absolute;
+		top: 50%;
+		-webkit-transform: translateY(-50%);
+		transform: translateY(-50%);
+		overflow: hidden;
+		margin: 0;
+	}
+	
+	.prodLibUl .mui-table-view-cell {
+		padding: 8px 16px!important;
+	}
+	
+	.prodLibUl .mui-media-body {
+		position: relative;
+		left: 70px;
+	}
+	
+	.prodLibUl .productName {
+		font-size: 1.5rem;
+		color: #000;
+		margin-top: 2px;
+		margin-bottom: 10px;
+		line-height: initial;
+		max-width: 75%;
+	}
+	
+	.prodLibUl .productType {
+		font-size: 1.2rem;
+		color: #AAA;
+		max-width: 75%;
+	}
+	
+	.prodLibUl .opt {
+		color: #AEAEAE;
+		position: absolute;
+		top: 50%;
+		right: 10px;
+		-webkit-transform: translateY(-50%);
+		transform: translateY(-50%);
+		overflow: hidden;
+		margin: 0px;
+	}
+	
+	.mui-table-view-cell:after {
+		left: 0px;
+	}
+	.md-inline{
+		display:inline!important;
+	}
+		</style>
+</head>
+
+<body ng-controller="ContactOrgController">
+	<!--导航目录部分-->
+	<div id="res-slide" class="top-thin-line mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted nav-bar"
+	 ng-class="{'mui-block':isLoad}" ng-show="isLoad&&navDirData.length>1" style="display: none;">
+		<div class="mui-scroll" style="height: 35px;position: absolute;">
+			<a class="mui-control-item" ng-repeat="dir in navDirData" ng-class="{'mui-active':dir.ID==catalogID}"
+			 ng-attr-catalogid="{{dir.ID}}" ng-attr-index="{{$index}}" ng-attr-catalogname="{{dir.catalogname}}"
+			 ng-attr-pardirid="{{dir.ParDirID}}" ng-attr-path="{{dir.path}}">
+				<span class="icon iconfont icon-right color-gray-deep" style="margin-left: 2px;" ng-show="$index>0"></span>
+				<span class="group-name" ng-bind="dir.catalogname"></span>
+			</a>
+		</div>
+	</div>
+	<!--,'top35':navDirData.length>1-->
+	<div id="pullrefresh" class="mui-scroll-wrapper mui-content mui-fullscreen" style="display:none;padding-bottom: 45px;" ng-class="{'mui-block':isLoad,'autoTop':navDirData.length>1,'top44':data[catalogID].length==0}">
+		<div class="scroll-body">
+			<!--目录-->
+			<ul class="data-group" ng-show="dirData&&dirData[catalogID].length>0" ng-style="{'margin-top':navDirData.length>1?'8px':'0px'}">
+				<!--ng-click="clickDir(catalog.ID,catalog.DirName)"-->
+				<li class="mui-table-view-cell data-row dir-row" ng-repeat="catalog in dirData[catalogID]" ng-attr-catalogid="{{catalog.ID}}"
+				 ng-attr-catalogname="{{catalog.DirName}}" ng-attr-pardirid="{{catalog.PID}}" ng-attr-path="0">
+					<label style="width:85vw" class="mui-ellipsis">
+						<i class="icon-list"></i><span style="width:85vw;margin-left: 4px;" class="mui-ellipsis" ng-bind="' '+catalog.DirName"></span>
+					</label>
+					<p class="opt md-icon icon-right"></p>
+				</li>
+			</ul>
+			<ul class="data-group" ng-show="data && data.length>0">
+				<li class="data-row" ng-repeat="prodItem in data" ng-click="selectItem(prodItem)">
+					<i class="mui-pull-left font-18"  style="padding-left:15px;" ng-class="{'icon-round color-gray':selectedIds.indexOf(prodItem.ID)<0,'icon-roundcheckfill color-blue':selectedIds.indexOf(prodItem.ID)>=0}"></i>
+					<p class="opt md-icon font-15" ng-click="view(prodItem)">
+						<span class="color-blue font-12"  style="display:none" ng-class="{'md-inline':videoView.indexOf(prodItem.FileExt)>=0 || offcieView.indexOf(prodItem.FileExt)>=0} ">预览</span>
+						<!-- <span class="color-blue font-12" ng-click="send(prodItem)">发送</span> -->
+					</p> 
+					<div class="body" style="padding-left:5px;" ng-if="imgView.indexOf(prodItem.FileExt)<0" ng-style="{'margin-right':(videoView.indexOf(prodItem.FileExt)>=0 || offcieView.indexOf(prodItem.FileExt)>=0)?'45px':'45px'}" ng-bind="prodItem.FileName+prodItem.FileExt">
+					</div>
+					<div class="body" style="padding-left:5px;" ng-if="imgView.indexOf(prodItem.FileExt)>=0" >
+						<img class="imageview-native" style="max-height: 50px"; fullpath="{{ApiDown+prodItem.FilePath}}"  ng-src="{{ApiDown+prodItem.FilePath}}"/>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<md-no-data ng-show="dirData[catalogID].length==0 && data.length==0">暂无云文档数据</md-no-data>
+	</div>
+	<md-select-footer type="'file'" is-view="'true'" ng-model="selectObj" submit="save()"></md-select-footer>
+	<script type="text/javascript" src="../../js/mui.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/rpc.js"></script>
+	<script type="text/javascript" src="yun-file-list.js"></script>
+</body>
+
+</html>

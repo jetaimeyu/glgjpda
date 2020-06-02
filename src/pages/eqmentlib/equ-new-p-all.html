@@ -1,0 +1,268 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	</head>
+	<style type="text/css">
+		.icon {
+			width: 16px;
+		}
+		
+		.data-li-left {
+			display: flex;
+			align-items: center;
+		}
+		
+		.data-li-right {
+			float: right;
+			height: 100%;
+			line-height: 42px;
+			color: #0099ff;
+			position: relative;
+			box-sizing: border-box;
+			TEXT-ALIGN: CENTER;
+		}
+		
+		.data-li-right:after {
+			position: absolute;
+			top: 0;
+			height: 100%;
+			left: 0;
+			content: '';
+			background-color: #EAEAEA;
+			width: 1px;
+			-webkit-transform: scaleY(0.5);
+			transform: scaleY(0.5);
+		}
+		
+		span.status {
+			display: inline-block;
+			color: red;
+			border-radius: 18px;
+			width: 61px;
+			font-size: 1.4rem;
+			text-align: left;
+			padding: 0;
+			margin-top: 6px;
+		}
+		
+		p.number {
+			font-size: 1.5rem;
+			color: #333;
+			/*word-wrap: break-word;*/
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+		
+		.li-left-num {
+			width: 100%;
+			padding-right: 10px;
+		}
+		
+		.data-li-left {
+			display: flex;
+			align-items: center;
+			float: left;
+			width: calc(100% - 120px);
+			justify-content: space-between;
+		}
+		
+		.new-data-list-s {
+			position: relative;
+			overflow: hidden;
+			padding: 5px 15px;
+			-webkit-touch-callout: none;
+			display: flex;
+			align-items: center;
+		}
+		
+		.data-list .color_orange {
+			color: #FFA500;
+		}
+		
+		.data-list .color_red {
+			color: #FF0000;
+		}
+		
+		.data-list .color_green {
+			color: #008000;
+		}
+		
+		.date {
+			margin-top: 5px;
+		}
+	</style>
+
+	<body ng-controller="WorkAllController">
+		<div id="pullrefresh" ng-controller="pullrefreshController" class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<div class="mui-content">
+				<ul class="data-group" style="margin-top: 0px;">
+					<li class="mui-table-view-cell data-list new-data-list-s" ng-repeat="item in data" ng-click="tap($event,'maintenView',item.ID,item.IsSelfEqApply)">
+						<div class="data-li-left">
+							<div class="li-left-num">
+								<p class="number" ng-bind="item.Reason"></p>
+								<p class="date" ng-bind="'申请时间：'+item.ApplicationDate" ng-if="item.ApplicationDate"></p>
+								<span class="status {{roundColor[item.State]}}" ng-bind="datetype[item.State]"></span>
+							</div>
+
+						</div>
+						<div class="data-li-right" ng-click="equinfo($event,'maintenView',item.ID,item.State)" style="width:30vw;">
+							设备明细
+						</div>
+					</li>
+				</ul>
+				<md-no-data ng-show="data && data.length==0">暂无数据</md-no-data>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script>
+			app.controller("WorkAllController", ["$scope", "ApiService", "UtilsService", "RPCObserver", function($scope, ApiService, UtilsService, RPCObserver) {
+				$scope.pageIndex = 0;
+				$scope.pageSize = 10;
+				var type = query("type");
+				$scope.result = query('opration')
+				$scope.opType = {
+					newlybuild: 1,
+					waiting: 2,
+					agreed: 4,
+					rejected: 3,
+					all: 5,
+				};
+				$scope.datetype = {
+					1: "新建",
+					2: "待审核",
+					3: "已驳回",
+					4: "已同意",
+					5: "全部"
+				}
+				$scope.roundColor = {
+					1: 'color_orange',
+					2: 'color_orange',
+					3: 'color_red',
+					4: 'color_green',
+
+				};
+
+				function init() {
+
+					if($scope.result != 'all') {
+						var url = ApiService.Api52 + "/api/v1/EqApply/GetPagedEqApplyList?type=1&state=" + $scope.opType[$scope.result];
+					} else {
+						var url = ApiService.Api52 + "/api/v1/EqApply/GetPagedEqApplyList?type=1";
+					}
+					switch(type) {
+
+						case 'my':
+							url += "&pageIndex=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize + "&authType=1";
+							break;
+
+						case 'dept':
+						case 'depts':
+						case 'all':
+							var authType = {
+								dept: 2,
+								depts: 3,
+								all: 4
+							};
+							url += "&pageIndex=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize + "&authType=" + authType[type];
+							break;
+					}
+					$scope.url = url;
+				};
+
+				$scope.$on('refresh_pageindex', init);
+				$scope.tap = function(event, key, id, ismy) {
+					event.stopPropagation();
+					UtilsService.openWindow({
+						needLogin: true,
+						id: "equ-purchase-info.html",
+						url: "equ-purchase-info.html?id=" + id + "&ismy=" + ismy + "&type=" + $scope.result
+					});
+				}
+				$scope.add = function() {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: "equ-purchase-edit.html",
+						url: "equ-purchase-edit.html?type=" + $scope.result
+					});
+
+				}
+				$scope.selecttype = function() {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: "equ-purchase-typeselect.html",
+						url: "equ-purchase-typeselect.html",
+						extras: {
+
+							callback: 'selectCallback'
+
+						}
+					});
+				}
+				$scope.equinfo = function(event, key, id, state) {
+					event.stopPropagation();
+					UtilsService.openWindow({
+						needLogin: true,
+						id: "equ-purchase-eqinfolist.html",
+						url: "equ-purchase-eqinfolist.html?id=" + id + "&state=" + state
+					});
+				}
+				RpcServer.expose("RPC_refresh", function() {
+					$scope.$broadcast("md_pullrefresh");
+
+				});
+
+				RPCObserver.on('refresh_purchase_list', 'refresh_purchase_list')
+				window.refresh_purchase_list = function(opa) {
+					$scope.result = opa;
+					$scope.$broadcast("md_pullrefresh");
+				}
+				//				RPCObserver.on('md_pull','md_pull')
+				//				window.md_pull = function() {
+				//					alert(1)
+				//				}
+				//刷新关闭popover
+				RPCObserver.on('close_popover', 'close_popover');
+				window.close_popover = function() {
+					mui('#popover').popover('hide');
+				};
+				RpcServer.expose("RPC_equ_all", function(params) {
+					if(params) {
+						$scope.opration = params
+						$scope.$broadcast("md_pullrefresh");
+						$scope.$apply();
+					}
+				})
+				window.selectCallback = function(obj) {
+					$scope.opration = obj;
+					$scope.$broadcast("md_pullrefresh");
+					$scope.$apply();
+				}
+				//				if(type == "comment") {
+				//					
+				//					RPCObserver.on('refresh_mat_worklog_comment_list', 'refresh_mat_worklog_comment_list');
+				//					window.refresh_mat_worklog_comment_list = function() {
+				//						$scope.$broadcast('md_pullrefresh');
+				//					};
+				//				}
+
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

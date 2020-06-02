@@ -1,0 +1,255 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	</head>
+	<style type="text/css">
+		.icon {
+			width: 16px;
+		}
+		
+		.data-li-left {
+			display: flex;
+			align-items: center;
+		}
+		
+		.data-li-right {
+			float: right;
+			height: 100%;
+			color: #C7C7C7;
+			position: relative;
+			box-sizing: border-box;
+			text-align: center;
+		}
+		
+		span.status {
+			display: inline-block;
+			color: red;
+			border-radius: 18px;
+			width: 61px;
+			font-size: 1.4rem;
+			text-align: left;
+			padding: 0;
+			margin-top: 6px;
+		}
+		
+		p.plan-name {
+			font-size: 1.5rem;
+			color: #333;
+			word-wrap: break-word;
+		}
+		
+		.li-left-num {
+			width: 100%;
+			margin-right: 15px;
+		}
+		
+		.data-li-left {
+			display: flex;
+			align-items: center;
+			float: left;
+			width: calc(100% - 42px);
+			justify-content: space-between;
+		}
+		
+		.new-data-list-s {
+			position: relative;
+			overflow: hidden;
+			padding: 5px 15px;
+			-webkit-touch-callout: none;
+			display: flex;
+		}
+		
+		.equPatrolList .data-list .color_orange {
+			color: #FFA500;
+		}
+		
+		.equPatrolList .data-list .color_red {
+			color: #FF0000;
+		}
+		
+		.equPatrolList .data-list .color_green {
+			color: #008000;
+		}
+		
+		.equPatrolList .data-list .span_hide {
+			display: none;
+		}
+		
+		.equPatrolList .data-list .span_hide {
+			display: none;
+		}
+		
+		.equPatrolList .user-info {
+			color: #8f8f94;
+		}
+	</style>
+
+	<body ng-controller="equPatrolListController" class="equPatrolList">
+		<div id="pullrefresh" class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<div class="mui-content">
+				<ul class="data-group" style="margin-top: 0px;">
+					<li class="mui-table-view-cell data-list new-data-list-s" ng-repeat="item in patrolList" ng-click="tap(item.ID)">
+						<div class="data-li-left">
+							<div class="li-left-num">
+								<p class="plan-name" ng-bind="item.PlanName"></p>
+								<p ng-bind="'下次巡检时间：'+item.NextRepairDate"></p>
+								<p ng-bind="'巡检类型：'+item.TypeName" style="word-break: break-all;" class="mui-el<br />"></p>
+								<span class="user-info">巡检人：</span>
+								<span class="user-info color_red" ng-show="item.Users.length==0">巡检人不存在</span>
+								<span class="user-info" ng-repeat="user in item.Users" ng-show="item.Users.length>0" ng-bind="($index==0?user.Name:','+user.Name)"></span>
+								<p ng-bind="'巡检设备数：'+item.EqCount"></p>
+							</div>
+
+						</div>
+						<div class="data-li-right" ng-bind="changeState(item.State)" ng-class="{'color_green':item.State==0||item.State==1,'color_red':item.State==2}"></div>
+					</li>
+				</ul>
+				<md-no-data ng-show="patrolList && patrolList.length==0">暂无数据</md-no-data>
+			</div>
+		</div>
+
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script>
+			app.controller("equPatrolListController", ["$scope", "ApiService", "RPCObserver", "UtilsService", "Loading", "DataService", function($scope, ApiService, RPCObserver, UtilsService, Loading, DataService) {
+				$scope.pageIndex = 0;
+				$scope.pageSize = 10;
+				$scope.patrolList = [];
+				$scope.userList = [];
+				setTimeout(function() {
+					mui.init({
+						pullRefresh: {
+							container: '#pullrefresh',
+							up: {
+								auto: true,
+								callback: pullupRefresh
+							},
+							down: {
+								callback: pulldownRefresh
+							}
+						}
+					});
+				})
+
+				function pullupRefresh() {
+					$scope.pageIndex++;
+					init();
+				}
+				//下拉刷新
+				function pulldownRefresh() {
+					$scope.pageIndex = 1;
+					init("down");
+				};
+				var isEnd = false;
+				$scope.state = -1;
+
+				function init(type) {
+					var url = ApiService.Api52 + "/api/v1/EqPatrolPlan/GetPatrolPlanPageList?state=" + $scope.state + "&pageIndex=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize;
+					DataService.get(url).then(function(res) {
+						//console.log(JSON.stringify(res.DataRows[0]))
+						if(res) {
+							type == "down" && ($scope.patrolList = null);
+							$scope.patrolList == null && ($scope.patrolList = []);
+							res.DataRows.forEach(function(item) {
+								var length = item.Users.length -1;
+								for (var i = length ; i >= 0; i--) {
+									var user = item.Users[i];
+									user.State == "9" && item.Users.splice(i, 1);
+								}
+							})
+							//console.log(JSON.stringify(res.DataRows[0]))
+							$scope.patrolList = $scope.patrolList.concat(res.DataRows);
+							isEnd = $scope.patrolList.length ? $scope.patrolList.length >= (res.TotalCount) : true;
+							if(mui("#pullrefresh").pullRefresh()) {
+								if(type == "down") {
+									mui('#pullrefresh').pullRefresh().refresh(true);
+									mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
+								}
+								mui("#pullrefresh").pullRefresh().endPullupToRefresh(isEnd);
+							}
+						}
+						$scope.isLoad = true;
+						hideUpData();
+					}, function(error) {
+						$scope.isLoad = true;
+						$scope.patrolList == null && ($scope.patrolList = []);
+						mui("#pullrefresh").pullRefresh().endPullupToRefresh(true);
+						hideUpData();
+					});
+				}
+				//当数据为空时，隐藏上拉的提示
+				function hideUpData() {
+					var tip = document.querySelector('.mui-pull-bottom-pocket');
+					if(tip) {
+						if(!$scope.patrolList || $scope.patrolList.length == 0) {
+							tip.classList.contains('mui-visibility') && tip.classList.remove('mui-visibility');
+							tip.classList.contains('mui-block') && tip.classList.remove('mui-block');
+						} else {
+							!tip.classList.contains('mui-visibility') && tip.classList.add('mui-visibility');
+							!tip.classList.contains('mui-block') && tip.classList.add('mui-block');
+						}
+					}
+				}
+				//状态转换
+				$scope.changeState = function(key) {
+					if(key == '0' || key == '1') {
+						return "启用"
+					} else if(key == '2') {
+						return "停用"
+					} else if(key == '3') {
+						return "已结束"
+					}
+				}
+				$scope.$on("refresh_pageindex", init);
+				RpcServer.expose("RPC_equ_patrol", function(params) {
+					if(params) {
+						$scope.state = params.state;
+						$scope.isLoad = false;
+						$scope.pageIndex = 1;
+						$scope.patrolList = null;
+						mui("#pullrefresh").pullRefresh() && mui('#pullrefresh').pullRefresh().refresh(true);
+						//ios上拉加载后刷新，会出现界面无数据的情况，所以加上下面一句代码
+						mui.os.ios && mui("#pullrefresh").pullRefresh() && mui('#pullrefresh').pullRefresh().scrollTo(0, 0);
+						init();
+						$scope.$apply();
+					}
+				})
+				RPCObserver.on('refresh_equ_patrol_list', 'refresh_equ_patrol_list');
+				window.refresh_equ_patrol_list = function() {
+					mui("#pullrefresh").pullRefresh() && mui('#pullrefresh').pullRefresh().refresh(true);
+					//ios上拉加载后刷新，会出现界面无数据的情况，所以加上下面一句代码
+					mui.os.ios && mui("#pullrefresh").pullRefresh() && mui('#pullrefresh').pullRefresh().scrollTo(0, 0);
+					$scope.patrolList = null;
+					hideUpData();
+					$scope.pageIndex = 0;
+					pullupRefresh();
+
+				};
+
+				$scope.tap = function(id) {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'equ-patrol-info.html',
+						url: "equ-patrol-info.html?planId=" + id,
+					});
+				}
+
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

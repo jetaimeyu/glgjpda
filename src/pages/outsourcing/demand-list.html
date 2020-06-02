@@ -1,0 +1,209 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../js/mescroll/mescroll.min.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="demand-list.css" />
+	</head>
+
+	<body ms-controller="myCtl">
+		<header class="mui-bar mui-bar-nav " ms-if="isTitle!='false'" style="display:none;">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">我的需求</a>
+			<a class="mui-pull-right menu-add  mui-block" id="add"  >
+				<img class="icon" src="../../images/add.png">
+			</a>
+		</header>
+		<div class="mui-content ">
+			<div id="slider" class="mui-slider mui-fullscreen">
+				<div id="sliderSegmentedControl" class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted">
+					<a class="mui-control-item mui-active" href="#tabBody_0" sid="0">
+						全部
+					</a>
+					<a class="mui-control-item" href="#tabBody_1"  sid="1">
+						选标中
+					</a>
+					<a class="mui-control-item" href="#tabBody_2"  sid="2">
+						已选标
+					</a>
+					<a class="mui-control-item" href="#tabBody_3"  sid="3">
+						草稿箱
+					</a>
+					<a class="mui-control-item" href="#tabBody_4"  sid="4">
+						已取消
+					</a>
+				</div>
+				<div class="mui-slider-group">
+					<div id="tabBody_0" class="mescroll mui-slider-item mui-control-content mui-active">
+						<div class="item_box" ms-for="index,item in dataTab0" ms-attr="{'data-id':item.ID,'data-state':item.State}">
+							<div class="img_box">
+								<img ms-attr="{src:getLogo(item.LogoID,item.Ext)}" />
+								<div class="days" ms-visible="item.LeftTime>0">
+									剩余<span ms-text="item.LeftTime>99?'99+':item.LeftTime"></span>天
+								</div>
+								<div class="days" ms-visible="item.LeftTime<1">
+									已过期
+								</div>
+							</div>
+							<div class="info_box">
+								<div class="info_title" ms-text="item.DemandName">
+								</div>
+								<div class="info_bottom">
+									<!--<img src="../../images/industry/demand-comp.png" />-->
+									<span class="simple">已有  </span>
+									<span class="count" ms-text="item.JoinCount"></span>
+									<span class="simple">  家企业报价</span>
+									<span class="state " style="display:none" ms-visible="item.State==1">选标中</span>
+									<span class="state " style="display:none" ms-visible="item.State==2">已选标</span>
+									<span class="state draft" style="display:none" ms-visible="item.State==0">草稿箱</span>
+									<span class="state draft" style="display:none" ms-visible="item.State==3">已评价</span>
+									<span class="state  cancle" style="display:none" ms-visible="item.State==9">已取消</span>
+								</div>
+							</div>
+
+						</div>
+						<div class="mescroll-empty" id="mescroll-empty0">
+						</div>
+					</div>
+					<div id="tabBody_1" class="mescroll mui-slider-item mui-control-content">
+						<div class="item_box" ms-for="index,item in dataTab1" ms-attr="{'data-id':item.ID,'data-state':item.State}">
+							<div class="img_box">
+								<img ms-attr="{src:getLogo(item.LogoID,item.Ext)}" />
+								<div class="days" ms-visible="item.LeftTime>0">
+									剩余<span ms-text="item.LeftTime>99?'99+':item.LeftTime"></span>天
+								</div>
+								<div class="days" ms-visible="item.LeftTime<1">
+									已过期
+								</div>
+							</div>
+							<div class="info_box">
+								<div class="info_title" ms-text="item.DemandName">
+								</div>
+								<div class="info_bottom">
+									<!--<img src="../../images/industry/demand-comp.png" />-->
+									<span class="simple">已有 </span>
+									<span class="count" ms-text="item.JoinCount"></span>
+									<span class="simple"> 家企业报价 </span>
+									<span class="state " style="display:none" ms-visible="item.State==1">选标中</span>
+									<span class="state " style="display:none" ms-visible="item.State==2">已选标</span>
+									<span class="state draft" style="display:none" ms-visible="item.State==3">已评价</span>
+									<span class="state draft" style="display:none" ms-visible="item.State==0">草稿箱</span>
+									<span class="state  cancle" style="display:none" ms-visible="item.State==9">已取消</span>
+								</div>
+							</div>
+
+						</div>
+						<div class="mescroll-empty" id="mescroll-empty1">
+						</div>
+					</div>
+					<div id="tabBody_2" class=" mescroll mui-slider-item mui-control-content">
+						<div class="item_box" ms-for="index,item in dataTab2" ms-attr="{'data-id':item.ID,'data-state':item.State}">
+							<div class="img_box">
+								<img ms-attr="{src:getLogo(item.LogoID,item.Ext)}" />
+								<div class="days" ms-visible="item.LeftTime>0">
+									剩余<span ms-text="item.LeftTime>99?'99+':item.LeftTime"></span>天
+								</div>
+								<div class="days" ms-visible="item.LeftTime<1">
+									已过期
+								</div>
+							</div>
+							<div class="info_box">
+								<div class="info_title" ms-text="item.DemandName">
+								</div>
+								<div class="info_bottom">
+									<!--<img src="../../images/industry/demand-comp.png" />-->
+									<span class="simple">已有 </span>
+									<span class="count" ms-text="item.JoinCount"></span>
+									<span class="simple"> 家企业报价 </span>
+									<span class="state " style="display:none" ms-visible="item.State==1">选标中</span>
+									<span class="state " style="display:none" ms-visible="item.State==2">已选标</span>
+									<span class="state draft" style="display:none" ms-visible="item.State==3">已评价</span>
+									<span class="state draft" style="display:none" ms-visible="item.State==0">草稿箱</span>
+									<span class="state  cancle" style="display:none" ms-visible="item.State==9">已取消</span>
+								</div>
+							</div>
+
+						</div>
+						<div class="mescroll-empty" id="mescroll-empty2">
+						</div>
+					</div>
+					<div id="tabBody_3" class="mescroll mui-slider-item mui-control-content">
+						<div class="item_box" ms-for="index,item in dataTab3" ms-attr="{'data-id':item.ID,'data-state':item.State}">
+							<div class="img_box">
+								<img ms-attr="{src:getLogo(item.LogoID,item.Ext)}" />
+								<div class="days" ms-visible="item.LeftTime>0">
+									剩余<span ms-text="item.LeftTime>99?'99+':item.LeftTime"></span>天
+								</div>
+								<div class="days" ms-visible="item.LeftTime<1">
+									已过期
+								</div>
+							</div>
+							<div class="info_box">
+								<div class="info_title" ms-text="item.DemandName">
+								</div>
+								<div class="info_bottom">
+									<!--<img src="../../images/industry/demand-comp.png" />-->
+									<span class="simple">已有 </span>
+									<span class="count" ms-text="item.JoinCount"></span>
+									<span class="simple"> 家企业报价 </span>
+									<span class="state " style="display:none" ms-visible="item.State==1">选标中</span>
+									<span class="state " style="display:none" ms-visible="item.State==2">已选标</span>
+									<span class="state draft" style="display:none" ms-visible="item.State==3">已评价</span>
+									<span class="state draft" style="display:none" ms-visible="item.State==0">草稿箱</span>
+									<span class="state  cancle" style="display:none" ms-visible="item.State==9">已取消</span>
+								</div>
+							</div>
+
+						</div>
+						<div class="mescroll-empty" id="mescroll-empty3">
+						</div>
+					</div>
+					<div id="tabBody_4" class="mescroll mui-slider-item mui-control-content">
+						<div class="item_box" ms-for="index,item in dataTab4" ms-attr="{'data-id':item.ID,'data-state':item.State}">
+							<div class="img_box">
+								<img ms-attr="{src:getLogo(item.LogoID,item.Ext)}" />
+								<div class="days" ms-visible="item.LeftTime>0">
+									剩余<span ms-text="item.LeftTime>99?'99+':item.LeftTime"></span>天
+								</div>
+								<div class="days" ms-visible="item.LeftTime<1">
+									已过期
+								</div>
+							</div>
+							<div class="info_box">
+								<div class="info_title" ms-text="item.DemandName">
+								</div>
+								<div class="info_bottom">
+									<!--<img src="../../images/industry/demand-comp.png" />-->
+									<span class="simple">已有  </span>
+									<span class="count" ms-text="item.JoinCount"></span>
+									<span class="simple"> 家企业报价</span>
+									<span class="state " style="display:none" ms-visible="item.State==1">选标中</span>
+									<span class="state " style="display:none" ms-visible="item.State==2">已选标</span>
+									<span class="state draft" style="display:none" ms-visible="item.State==3">已评价</span>
+									<span class="state draft" style="display:none" ms-visible="item.State==0">草稿箱</span>
+									<span class="state  cancle" style="display:none" ms-visible="item.State==9">已取消</span>
+								</div>
+							</div>
+
+						</div>
+						<div class="mescroll-empty" id="mescroll-empty4">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/avalon.js"></script>
+		<script type="text/javascript" src="../../js/mescroll/mescroll.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="demand-list.js"></script>
+
+	</body>
+
+</html>

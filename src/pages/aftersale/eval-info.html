@@ -1,0 +1,287 @@
+<!--设备故障维护 scz-->
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>客户回访详情</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.data-group:first-child {
+				margin-top: 0;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="EvalInfoController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">客户回访详情</a>
+			<a class="menu-more icon-more right-menu-icon-detail" href="#popover" id="openPopover" style="display: none;" ng-class="{'mui-block':isLoad}" ng-if="'Q33' | hasAuth"></a>
+		</header>
+		<div class="mui-scroll-wrapper md-info-page" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<ul class="data-group">
+				<li class="data-row">
+					<label>评价结果</label>
+					<div class="body">
+						<span ng-bind="data.EvalContent"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="data.EvalDescription.length>0">
+					<label>评价内容</label>
+					<div class="body">
+						<span ng-bind="data.EvalDescription"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<li class="data-row">
+					<label>联系人</label>
+					<div class="body">
+						<span ng-bind="data.LinkName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>联系电话</label>
+					<i class="opt md-icon icon-tel" id="iphone" style="color: #3296FA;"></i>
+					<div class="body">
+						<span ng-bind="data.LinkPhone"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<li class="mui-table-view-cell data-row" ng-click="tap('fault')">
+					<label>故障描述</label>
+					<p class="opt md-icon icon-right"></p>
+					<div class="body">
+						<span ng-bind="data.FaultIsHasAudio | formatFaultInfo:data.FaultAudioLength:data.Description"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>客户名称</label>
+					<div class="body">
+						<span ng-bind="data.CustomerName||'个人'"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<li class="mui-table-view-cell data-row" ng-click="tap('repair')">
+					<label>维修内容</label>
+					<p class="opt md-icon icon-right"></p>
+					<div class="body">
+						<span ng-bind="data.IsHasAudio | formatRepairInfo:data.AudioLength:data.RepairDescription"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>维修日期</label>
+					<div class="body" data-options='{}'>
+						<span ng-bind="data.CreateDate"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>维修人员</label>
+					<div class="body">
+						<md-chat-user-list ng-model="data.RepairUsers"></md-chat-user-list>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<li class="data-row">
+					<label>记录人</label>
+					<p class="opt md-icon" ng-if="data.CreateUserID!=CurUserID" ng-click="sendMsg(data.CreateUserID, data.CreateUserName, data.ULogoIsExist, data.CreateUserCompID)">
+						<span class="icon-chat-single font-15 color-blue"></span>
+					</p>
+					<div class="body">
+						<span ng-bind="data.CreateUserName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>记录日期</label>
+					<div class="body">
+						<span ng-bind="data.CreateDate"></span>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<div id="popover" class="mui-popover menuDivModel">
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell" ng-click="popover('edit')">
+					<a class="mui-icon icon-edit">
+						<font>修改</font>
+					</a>
+				</li>
+				<li class="mui-table-view-cell" ng-click="popover('delete')">
+					<a class="mui-icon icon-dustbin">
+						<font>删除</font>
+					</a>
+				</li>
+			</ul>
+		</div>
+		<!--无网络或请求失败重试-->
+		<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("EvalInfoController", ["$scope", "AuthService", "ApiService", "DataService", "UtilsService", "ChatUserService", "Loading", "RPCObserver", "CacheService", function($scope, AuthService, ApiService, DataService, UtilsService, ChatUserService, Loading, RPCObserver, CacheService) {
+				$scope.data = null;
+
+				//维修
+				$scope.repairId = query("repairid");
+				//评价id
+				$scope.evalId = query("evalid") || "";
+
+				//无网络或请求失败重试
+				$scope.retryModal = {
+					msg: "客户回访",
+					retry: getServiceEvalInfo,
+					state: ''
+				};
+
+				Loading.show();
+				//发消息
+				var curUser = CacheService.get("user");
+				$scope.CurUserID = curUser.UserID;
+				$scope.sendMsg = function(userid, userName, hasLogo, compId) {
+					ChatUserService.tap({
+						chatId: userid,
+						chatName: userName,
+						hasLogo: hasLogo,
+						chatCompId: compId
+					});
+				};
+				getServiceEvalInfo();
+
+				//获取评价页面初始化信息
+				function getServiceEvalInfo() {
+					var url = ApiService.Api50 + "/api/v1/MatWorkOrder/GetServiceEvalInfo?repairId=" + $scope.repairId + "&evalId=" + $scope.evalId;
+					DataService.get(url).then(function(res) {
+						Loading.hide();
+						$scope.isLoad = true;
+						$scope.retryModal.state = '';
+						if(res) {
+							$scope.data = res;
+							getEvalContent(res.EvalResult);
+						}
+					}, function(error) {
+						$scope.isLoad = false;
+						$scope.retryModal.state = error.State;
+					})
+				}
+
+				//根据评价结果id获取评价结果
+				function getEvalContent(id) {
+					var content = $scope.evals.filter(function(item) {
+						return item.id == id;
+					})
+					$scope.data.EvalContent = content.length > 0 ? content[0].title : "";
+				}
+
+				//删除评价
+				function deleteEavl() {
+					mui.confirm("确认删除吗？", function(e) {
+						if(e.index == 0) {
+							var url = ApiService.Api50 + "/api/v1/MatWorkOrder/DeleteMatRepairServiceEvalById/" + $scope.evalId;
+							DataService.post(url).then(function(res) {
+								RPCObserver.broadcast('refresh_mat_eval_list');
+								// 客户信息刷新
+								RpcClient.invoke("customer-info.html", "RPC_BillViewRefresh", "customer");
+								//刷新客户详情-合计 列表
+								RPCObserver.broadcast("refresh_my_sxun");
+
+								//刷新待我处理
+								RpcClient.invoke("work.html","RefTodoCount");
+								
+								mui.back();
+							})
+						}
+					});
+				}
+
+				//评价列表
+				$scope.evals = [{
+					id: 1,
+					title: "非常满意"
+				}, {
+					id: 2,
+					title: "满意"
+				}, {
+					id: 3,
+					title: "一般"
+				}, {
+					id: 4,
+					title: "不满意"
+				}]
+
+				$scope.tap = function(type) {
+					switch(type) {
+						case "evalResult":
+							UtilsService.actionSheet("评价结果", $scope.evals).then(function(res) {
+								$scope.data.EvalResult = res.id;
+								getEvalContent($scope.data.EvalResult);
+							})
+							break;
+						case "fault":
+							UtilsService.openWindow({
+								needLogin: true,
+								id: "mat-fault-info.html",
+								url: "mat-fault-info.html?id=" + $scope.data.MatWordOrderFailureID
+							})
+							break;
+						case "repair":
+							UtilsService.openWindow({
+								needLogin: true,
+								id: "mat-repairView.html",
+								url: "mat-repairView.html?id=" + $scope.data.RepairID
+							})
+							break;
+						default:
+							break;
+					}
+				}
+
+				//rpc 刷新页面信息
+				RpcServer.expose("RPC_EvalInfoRefresh", function() {
+					getServiceEvalInfo();
+				})
+				//刷新关闭popover
+				RPCObserver.on('close_popover', 'close_popover');
+				window.close_popover = function() {
+					mui('#popover').popover('hide');
+				};
+				//popover跳转
+				$scope.popover = function(key) {
+					mui('#popover').popover('hide');
+					switch(key) {
+						case "edit":
+							UtilsService.openWindow({
+								needLogin: true,
+								id: 'eval-edit.html',
+								url: 'eval-edit.html?repairid=' + $scope.repairId + "&evalid=" + $scope.evalId
+							});
+							break;
+						case 'delete':
+							deleteEavl();
+							break;
+						default:
+							break;
+					}
+				};
+				//拨打电话
+				document.getElementById("iphone").addEventListener("tap", function() {
+					plus.device.dial($scope.data.LinkPhone, false);
+					return false;
+				});
+
+			}]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

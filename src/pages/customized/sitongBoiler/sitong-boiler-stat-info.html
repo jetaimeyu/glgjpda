@@ -1,0 +1,754 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../../css/mui.min.css">
+		<link rel="stylesheet" href="../../../css/common.css">
+		<link rel="stylesheet" href="../../../icon-font/iconfont.css">
+		<link rel="stylesheet" href="../../../css/mui.picker.min.css" />
+		<style type="text/css">
+			.md-boiler-stat-info .unit-title {
+				line-height: 45px;
+			}
+			
+			.md-boiler-stat-info .mui-content {
+				padding-top: 35px;
+			}
+			
+			.md-boiler-stat-info .data-group {
+				margin-bottom: 8px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="sitongBoilerStatInfoController" class="md-boiler-stat-info">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left" ng-bind="paramsName"></a>
+			<a class="unit-title mui-pull-right" ng-bind="'单位:'+unitType"></a>
+		</header>
+		<div class="mui-content" ng-class="{'mui-block':isLoad}" style="display: block;">
+			<ul class="data-group ">
+				<li class="data-row " ng-click="chooseDate(false)">
+					<label>开始时间</label>
+					<div class="body" data-options='{}'>
+						<span ng-if="!searchStartDate" class="placeholder">请选择开始时间</span>
+						<span ng-if="searchStartDate" ng-bind="searchStartDate"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-click="chooseDate(true)">
+					<label>结束时间</label>
+					<div class="body" data-options='{}'>
+						<span ng-if="!searchEndDate" class="placeholder">请选择结束时间</span>
+						<span ng-if="searchEndDate" ng-bind="searchEndDate"></span>
+					</div>
+				</li>
+			</ul>
+			<div style="background: #FFF;padding-bottom: 20px;">
+				<div class="chart" id="contentChart" style="height: 325px;"></div>
+			</div>
+		</div>
+		<!--无网络或请求失败重试-->
+		<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+		<script type="text/javascript" src="../../../js/mui.js"></script>
+		<script type="text/javascript" src="../../../js/jquery.min.js"></script>
+		<script type="text/javascript" src="../../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../../js/common.js"></script>
+		<script type="text/javascript" src="../../../js/utils.js"></script>
+		<script type="text/javascript" src="../../../js/echarts.min.js"></script>
+		<script type="text/javascript" src="../../../js/mui.picker.min.js"></script>
+		<script type="text/javascript">
+			app.controller("sitongBoilerStatInfoController", ["$scope", "ApiService", "DataService", "Loading", "$filter", function($scope, ApiService, DataService, Loading, $filter) {
+				user.ready();
+				$scope.code = query("code");
+				$scope.type = query("type");
+				$scope.isLoad = false;
+				var ws = plus.webview.currentWebview();
+				var dataObj = ws.obj;
+				$scope.paramsName = dataObj.name;
+				var dataName=dataObj.dataName;
+				//单位
+				$scope.unitType = dataObj.type;
+				var echartIndex = (ws.idx + 1) % 5 !== 0 ? (ws.idx + 1) % 5 : 5;
+				//当前时间
+				var curDate = new Date();
+				var min = curDate.getMinutes();
+				curDate.setMinutes(min - 1);
+				$scope.endDate = $filter("date")(curDate, "yyyy-MM-dd HH:mm:59");
+				min = curDate.getMinutes();
+				
+				curDate.setMinutes(min - 5);
+				
+				$scope.startDate = $filter("date")(curDate, "yyyy-MM-dd HH:mm:00");
+				//					$.ajax({
+				//						type:"OPTIONS",
+				//						url:"/",
+				//						complete:function(x){
+				//							var serviceTime=x.getResponseHeader("Date");
+				//							console.log(JSON.stringify(serviceTime))
+				//						}
+				//					});
+				$scope.searchStartDate = $scope.startDate.substr(0,16);
+				$scope.searchEndDate = $scope.endDate.substr(0,16);
+				$scope.chooseDate = function(isEnd) {
+					if(!$scope.searchStartDate && isEnd) {
+						mui.toast("请选择开始时间！");
+						return;
+					}
+					var datePicker = new mui.DtPicker({
+						"beginDate": isEnd && $scope.searchStartDate !== '' ? ($filter("dateParse")($scope.searchStartDate)) : new Date(1900, 01, 01),
+						"endDate": new Date(),
+						"value": isEnd ? $scope.searchEndDate : $scope.searchStartDate
+					});
+					datePicker.show(function(res) {
+						isEnd && ($scope.searchEndDate = res.text);
+						!isEnd && ($scope.searchStartDate = res.text);
+						if(isEnd) {
+							$scope.startDate = $scope.searchStartDate + ':00';
+							$scope.endDate = $scope.searchEndDate + ':59';
+							getBoilerStatInfo();
+						}
+						$scope.$apply();
+						datePicker.dispose();
+					});
+
+				}
+				$scope.retryModal = {
+					msg: "设备参数统计",
+					retry: getBoilerStatInfo,
+					state: ''
+				}
+				
+				//echarts设置
+				var contentChart = echarts.init(document.getElementById('contentChart'));
+				//根据类型配置不同的Echarts
+				var monitorOption = {};
+				if(echartIndex === 1) {
+					//线图
+					monitorOption = {
+						tooltip: {
+							trigger: 'axis',
+							axisPointer: {
+								type: 'cross',
+								label: {
+									backgroundColor: '#0F58BE'
+								}
+							},
+							formatter: '{b}<br>{a}:{c}' + dataObj.type,
+//							formatter: function(params){
+//								return '<div>'+params[0].name+'<br>'+params[0].marker+params[0].value+'</div>'
+//							}, //{a}（系列名称），{b}（类目值），{c}（数值）
+
+						},
+						textStyle: {
+							fontSize: 12,
+							color: '#86888A'
+						},
+						lineStyle: {
+							color: '#24DDFF',
+							width: 2,
+							type: 'solid'
+						},
+						grid: {
+							top: '15px',
+							left: '20px',
+							right: '20px',
+							bottom: '50px',
+							containLabel: true
+						},
+						xAxis: [{
+							type: 'category',
+							boundaryGap: false,
+							data: [],
+							axisLine: { //坐标 轴线
+								show: true, //是否显示坐标轴轴线
+								onZero: false, //X 轴或者 Y 轴的轴线是否在另一个轴的 0 刻度上，只有在另一个轴为数值轴且包含 0 刻度时有效
+								lineStyle: { //轴线颜色样式
+									color: "#3671AB",
+									type: 'solid',
+									width: 1
+								}
+							},
+							axisLabel: {
+								textStyle: {
+									color: '#B4F2FF', //坐标值得具体的颜色
+									fontSize: '15'
+								}
+							}
+						}],
+						dataZoom: [{
+							type: 'slider', //图表下方的伸缩条
+							show: true, //是否显示
+							textStyle: {
+								color: '#B4F2FF'
+							},
+							borderColor: "rgb(9, 72, 122)",
+							fillerColor: "#5ccbb1",
+							height: 25,
+							left: 'center', //组件离容器左侧的距离,'left', 'center', 'right','20%'
+							right: 'auto', //组件离容器右侧的距离,'20%'
+							bottom: 0,
+							realtime: true, //拖动时，是否实时更新系列的视图
+							start: 0, //伸缩条开始位置（1-100），可以随时更改
+							end: 100, //伸缩条结束位置（1-100），可以随时更改
+						}],
+						yAxis: [{
+							type: 'value',
+							lineStyle: {
+								color: "#B4F2FF",
+								type: 'solid',
+								width: 1
+							},
+							axisLine: { //坐标 轴线
+								show: false, //是否显示坐标轴轴线
+								onZero: false, //X 轴或者 Y 轴的轴线是否在另一个轴的 0 刻度上，只有在另一个轴为数值轴且包含 0 刻度时有效
+								lineStyle: { //轴线颜色样式
+									color: "#3671AB",
+									type: 'solid',
+									width: 1
+								}
+							},
+							splitLine: {
+								show: true,
+								lineStyle: {
+									color: "#3671AB",
+								}
+							},
+							axisLabel: {
+								textStyle: {
+									color: "#B4F2FF", //坐标值得具体的颜色
+									fontSize: '15'
+								}
+							}
+						}],
+						series: [{
+							name: '',
+							type: 'line',
+							stack: '总量',
+							data: [],
+							// smooth:true,//是否平滑处理值0-1,true相当于0.5
+							symbolSize: 6, //拐点大小
+							symbol: 'circle',
+							itemStyle: {
+								normal: {
+									color: '#24DDFF',
+									borderColor: '#24DDFF',
+									lineStyle: {
+										width: 2, //折线宽度
+									}
+								}
+							},
+						}],
+					};
+				} else if(echartIndex === 2) {
+					//纵向柱状图
+					monitorOption = {
+						tooltip: {
+							trigger: 'axis',
+							axisPointer: { // 坐标轴指示器，坐标轴触发有效
+								type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+							},
+							formatter: '{b}<br>{a}:{c}' + dataObj.type,
+						},
+						grid: {
+							top: '15px',
+							left: '20px',
+							right: '20px',
+							bottom: '50px',
+							containLabel: true
+						},
+						xAxis: [{
+							type: 'category',
+							//boundaryGap: false,
+							data: [],
+							axisTick: {
+								alignWithLabel: true
+							},
+							axisLabel: {
+								textStyle: {
+									color: ['linear-gradient(to bottom, #9F0C1F,#E55868)'], //坐标值得具体的颜色
+									fontSize: '15'
+								}
+							},
+							axisLine: { //坐标 轴线
+								show: true, //是否显示坐标轴轴线
+								onZero: false, //X 轴或者 Y 轴的轴线是否在另一个轴的 0 刻度上，只有在另一个轴为数值轴且包含 0 刻度时有效
+								lineStyle: { //轴线颜色样式
+									color: "#3671AB",
+									type: 'solid',
+									width: 1
+								}
+							},
+						}],
+						dataZoom: [{
+							type: 'slider', //图表下方的伸缩条
+							show: true, //是否显示
+							textStyle: {
+								color: '#B4F2FF'
+							},
+							borderColor: "rgb(9, 72, 122)",
+							fillerColor: "#5ccbb1",
+							height: 25,
+							left: 'center', //组件离容器左侧的距离,'left', 'center', 'right','20%'
+							right: 'auto', //组件离容器右侧的距离,'20%'
+							bottom: 0,
+							realtime: true, //拖动时，是否实时更新系列的视图
+							start: 0, //伸缩条开始位置（1-100），可以随时更改
+							end: 100, //伸缩条结束位置（1-100），可以随时更改
+						}],
+						yAxis: [{
+							type: 'value',
+							lineStyle: {
+								color: '#B4F2FF',
+								type: 'solid',
+								width: 1
+							},
+							axisLine: { //坐标 轴线
+								show: false, //是否显示坐标轴轴线
+								onZero: false, //X 轴或者 Y 轴的轴线是否在另一个轴的 0 刻度上，只有在另一个轴为数值轴且包含 0 刻度时有效
+								lineStyle: { //轴线颜色样式
+									color: "#3671AB",
+									type: 'solid',
+									width: 1
+								}
+							},
+							splitLine: {
+								show: true,
+								lineStyle: {
+									color: "#3671AB",
+								}
+							},
+							axisLabel: {
+								textStyle: {
+									color: '#B4F2FF', //坐标值得具体的颜色
+									fontSize: '15'
+								}
+							}
+						}],
+						series: [{
+							name: '',
+							type: 'bar',
+							barWidth: 10,
+							data: [],
+							itemStyle: {
+								normal: {
+									color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+										offset: 0,
+										color: '#C5EEFF'
+									}, {
+										offset: 1,
+										color: '#85F4FF'
+									}]),
+									shadowColor: 'rgba(0, 0, 0, 0.4)',
+									shadowBlur: 20,
+								}
+							}
+						}]
+					};
+				} else if(echartIndex === 3) {
+					//带背景色线图
+					monitorOption = {
+						tooltip: {
+							trigger: 'axis',
+							axisPointer: {
+								type: 'cross',
+								label: {
+									backgroundColor: '#0F58BE'
+								}
+							},
+						formatter: '{b}<br>{a}:{c}' + dataObj.type,
+						},
+						textStyle: {
+							fontSize: 12,
+							color: '#86888A'
+						},
+						lineStyle: {
+							color: '#24DDFF',
+							width: 2,
+							type: 'solid'
+						},
+						grid: {
+							top: '15px',
+							left: '20px',
+							right: '20px',
+							bottom: '50px',
+							containLabel: true
+						},
+						xAxis: [{
+							type: 'category',
+							boundaryGap: false,
+							data: [],
+							axisLine: { //坐标 轴线
+								show: true, //是否显示坐标轴轴线
+								onZero: true, //X 轴或者 Y 轴的轴线是否在另一个轴的 0 刻度上，只有在另一个轴为数值轴且包含 0 刻度时有效
+								lineStyle: { //轴线颜色样式
+									color: "#3671AB",
+									type: 'solid',
+									width: 1
+								}
+							},
+							axisLabel: {
+								textStyle: {
+									color: '#B4F2FF', //坐标值得具体的颜色
+									fontSize: '15'
+								}
+							}
+						}],
+						dataZoom: [{
+							type: 'slider', //图表下方的伸缩条
+							show: true, //是否显示
+							textStyle: {
+								color: '#B4F2FF'
+							},
+							borderColor: "rgb(9, 72, 122)",
+							fillerColor: "#5ccbb1",
+							height: 25,
+							left: 'center', //组件离容器左侧的距离,'left', 'center', 'right','20%'
+							right: 'auto', //组件离容器右侧的距离,'20%'
+							bottom: 0,
+							realtime: true, //拖动时，是否实时更新系列的视图
+							start: 0, //伸缩条开始位置（1-100），可以随时更改
+							end: 100, //伸缩条结束位置（1-100），可以随时更改
+						}],
+						yAxis: [{
+							type: 'value',
+							lineStyle: {
+								color: "#B4F2FF",
+								type: 'solid',
+								width: 1
+							},
+							axisLine: { //坐标 轴线
+								show: false, //是否显示坐标轴轴线
+								onZero: false, //X 轴或者 Y 轴的轴线是否在另一个轴的 0 刻度上，只有在另一个轴为数值轴且包含 0 刻度时有效
+								lineStyle: { //轴线颜色样式
+									color: "#3671AB",
+									type: 'solid',
+									width: 1
+								}
+							},
+							splitLine: {
+								show: true,
+								lineStyle: {
+									color: "#3671AB",
+								}
+							},
+							axisLabel: {
+								textStyle: {
+									color: "#B4F2FF", //坐标值得具体的颜色
+									fontSize: '15'
+								}
+							}
+						}],
+						series: [{
+							name: '',
+							type: 'line',
+							stack: '总量',
+							data: [],
+							smooth: true, //是否平滑处理值0-1,true相当于0.5
+							symbolSize: 6, //拐点大小
+							symbol: 'circle',
+							itemStyle: {
+								normal: {
+									color: '#24DDFF',
+									borderColor: '#24DDFF',
+									lineStyle: {
+										width: 2, //折线宽度
+									}
+								}
+							},
+							areaStyle: {
+								normal: {
+									color: new echarts.graphic.LinearGradient(
+										0, 0, 0, 1, [{
+												offset: 0.4,
+												color: '#3685D0'
+											},
+											{
+												offset: 1,
+												color: '#1C5AA7'
+											}
+										]
+									) //坐标值得具体的颜色
+								}
+							},
+						}],
+					};
+				} else if(echartIndex === 4) {
+					//横向柱状图
+					monitorOption = {
+						tooltip: {
+							trigger: 'axis',
+							axisPointer: {
+								type: 'shadow'
+							},
+						formatter: '{b}<br>{a}:{c}' + dataObj.type,
+						},
+
+						grid: {
+							top: '15px',
+							left: '20px',
+							right: '20px',
+							bottom: '50px',
+							containLabel: true
+						},
+						xAxis: {
+							type: 'value',
+							boundaryGap: [0, 0.01],
+							axisLine: { //坐标 轴线
+								show: true, //是否显示坐标轴轴线
+								onZero: false, //X 轴或者 Y 轴的轴线是否在另一个轴的 0 刻度上，只有在另一个轴为数值轴且包含 0 刻度时有效
+								lineStyle: { //轴线颜色样式
+									color: "#3671AB",
+									type: 'solid',
+									width: 1
+								}
+							},
+							splitLine: {
+								show: false,
+								lineStyle: {
+									color: "#3671AB",
+								}
+							},
+							axisLabel: {
+								textStyle: {
+									color: "#B4F2FF", //坐标值得具体的颜色
+									fontSize: '15'
+								}
+							},
+
+						},
+						yAxis: {
+							type: 'category',
+							axisLine: { //坐标 轴线
+								show: true, //是否显示坐标轴轴线
+								onZero: false, //X 轴或者 Y 轴的轴线是否在另一个轴的 0 刻度上，只有在另一个轴为数值轴且包含 0 刻度时有效
+								lineStyle: { //轴线颜色样式
+									color: "#3671AB",
+									type: 'solid',
+									width: 1
+								}
+							},
+							axisLabel: {
+								textStyle: {
+									color: "#B4F2FF", //坐标值得具体的颜色
+									fontSize: '15'
+								}
+							},
+							data: []
+						},
+						dataZoom: [{
+							type: 'slider', //图表下方的伸缩条
+							show: true, //是否显示
+							textStyle: {
+								color: '#B4F2FF'
+							},
+							borderColor: "rgb(9, 72, 122)",
+							fillerColor: "#5ccbb1",
+							height: 25,
+							left: 'center', //组件离容器左侧的距离,'left', 'center', 'right','20%'
+							right: 'auto', //组件离容器右侧的距离,'20%'
+							bottom: 0,
+							realtime: true, //拖动时，是否实时更新系列的视图
+							start: 0, //伸缩条开始位置（1-100），可以随时更改
+							end: 100, //伸缩条结束位置（1-100），可以随时更改
+						}],
+						series: [{
+								name: '',
+								type: 'bar',
+								barWidth: 10,
+								data: [],
+								itemStyle: {
+									normal: {
+										color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{
+											offset: 0,
+											color: '#49C1FE'
+										}, {
+											offset: 1,
+											color: '#4AE3FF'
+										}]),
+										shadowColor: 'rgba(0, 0, 0, 0.4)',
+										shadowBlur: 20,
+										// barBorderRadius:[8, 8, 0, 0],
+									}
+								}
+							},
+
+						]
+					};
+				} else {
+					//纵向圆柱状图
+					monitorOption = {
+						tooltip: {
+							trigger: 'axis',
+							axisPointer: { // 坐标轴指示器，坐标轴触发有效
+								type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+							},
+						formatter: '{b}<br>{a}:{c}' + dataObj.type,
+						},
+						grid: {
+							top: '15px',
+							left: '20px',
+							right: '20px',
+							bottom: '50px',
+							containLabel: true
+						},
+						xAxis: [{
+							type: 'category',
+							//boundaryGap: false,
+							data: [],
+							axisTick: {
+								alignWithLabel: true
+							},
+							axisLabel: {
+								textStyle: {
+									color: ['linear-gradient(to bottom, #9F0C1F,#E55868)'], //坐标值得具体的颜色
+									fontSize: '15'
+								}
+							},
+							axisLine: { //坐标 轴线
+								show: true, //是否显示坐标轴轴线
+								onZero: false, //X 轴或者 Y 轴的轴线是否在另一个轴的 0 刻度上，只有在另一个轴为数值轴且包含 0 刻度时有效
+								lineStyle: { //轴线颜色样式
+									color: "#3671AB",
+									type: 'solid',
+									width: 1
+								}
+							},
+						}],
+						dataZoom: [{
+							type: 'slider', //图表下方的伸缩条
+							show: true, //是否显示
+							textStyle: {
+								color: '#B4F2FF'
+							},
+							borderColor: "rgb(9, 72, 122)",
+							fillerColor: "#5ccbb1",
+							height: 25,
+							left: 'center', //组件离容器左侧的距离,'left', 'center', 'right','20%'
+							right: 'auto', //组件离容器右侧的距离,'20%'
+							bottom: 0,
+							realtime: true, //拖动时，是否实时更新系列的视图
+							start: 0, //伸缩条开始位置（1-100），可以随时更改
+							end: 100, //伸缩条结束位置（1-100），可以随时更改
+						}],
+						yAxis: [{
+							type: 'value',
+							lineStyle: {
+								color: '#B4F2FF',
+								type: 'solid',
+								width: 1
+							},
+							axisLine: { //坐标 轴线
+								show: false, //是否显示坐标轴轴线
+								onZero: false, //X 轴或者 Y 轴的轴线是否在另一个轴的 0 刻度上，只有在另一个轴为数值轴且包含 0 刻度时有效
+								lineStyle: { //轴线颜色样式
+									color: "#3671AB",
+									type: 'solid',
+									width: 1
+								}
+							},
+							splitLine: {
+								show: false,
+								lineStyle: {
+									color: "#3671AB",
+								}
+							},
+							axisLabel: {
+								textStyle: {
+									color: '#B4F2FF', //坐标值得具体的颜色
+									fontSize: '15'
+								}
+							}
+						}],
+						series: [{
+							name: '',
+							type: 'bar',
+							barWidth: 10,
+							data: [],
+							itemStyle: {
+								normal: {
+									color: '#3671AB',
+									barBorderRadius: [5, 5, 0, 0],
+								},
+							}
+						}]
+					};
+				}
+				var getBoilerStatInfo = function() {
+					var times=(Date.parse(new Date($scope.searchEndDate))/1000)-(Date.parse(new Date($scope.searchStartDate))/1000);
+					if(times>1800){
+						mui.toast("时间区间不能大于30分钟");
+						return;
+					}
+					Loading.show();
+					var url = ApiService.Boiler + "/count/countMinBoiler?code=" + $scope.code + "&type=" + $scope.type + "&startDate=" + $scope.startDate + "&endDate=" + $scope.endDate;
+					getAjaxData(url, function(data) {
+						 //console.log(url);
+					//console.log(JSON.stringify(data))
+						if(data.data) {
+							//{"keys":["201811130957","201811130958","201811130959","201811131000","201811131001","201811131002"],"values":[500,79,100,200,300,100]}
+							var eqEchartsTime;
+							eqEchartsTime = data.data.keys.map(function(item){
+								return item.slice(-4, -2) + ":" + item.slice(-2);
+							});
+							var eqEchartsValue = data.data.values;
+							var eqEchartsDatas=[];
+							eqEchartsValue.map(function(item) {	
+								//console.log(JSON.stringify(item))
+								if(item){
+									eqEchartsDatas.push(item[dataName] ? item[dataName] : 0)
+								}
+								
+							});
+							eqEchartsDatas=eqEchartsValue.map(function(item) {	
+								
+								if(dataObj.type === 'Mpa') {
+									return(item * 0.001).toFixed(2);
+								} else if(dataObj.type === '℃') {
+									return (item * 0.1).toFixed(2);								
+								} else {									
+									return item;
+								}
+							});
+						if(dataObj.type === 'Mpa') {
+								eqEchartsDatas=[(Math.floor(Math.random()*50)+50),(Math.floor(Math.random()*50)+50),(Math.floor(Math.random()*100)+50),(Math.floor(Math.random()*50)+50),(Math.floor(Math.random()*50)+50),(Math.floor(Math.random()*50)+50)];
+							} else if(dataObj.type === '℃') {
+								eqEchartsDatas=[(Math.floor(Math.random()*300)+200),(Math.floor(Math.random()*300)+200),(Math.floor(Math.random()*300)+200),(Math.floor(Math.random()*300)+200),(Math.floor(Math.random()*300)+200),(Math.floor(Math.random()*300)+200)];							
+							} else if(dataObj.type === '%'){	
+								eqEchartsDatas=[(Math.floor(Math.random()*100)),(Math.floor(Math.random()*100)),(Math.floor(Math.random()*100)),(Math.floor(Math.random()*100)),(Math.floor(Math.random()*100)),(Math.floor(Math.random()*100))];								
+							}else{
+								eqEchartsDatas=[(Math.floor(Math.random()*300)+300),(Math.floor(Math.random()*300)+300),(Math.floor(Math.random()*300)+300),(Math.floor(Math.random()*300)+300),(Math.floor(Math.random()*300)+300),(Math.floor(Math.random()*300)+300)];
+							}
+							if(echartIndex !== 4) {
+								monitorOption.xAxis[0].data = eqEchartsTime;
+							} else {
+								monitorOption.yAxis.data = eqEchartsTime;
+							}
+						 //eqEchartsValue=[10,20,30,40,530];
+							monitorOption.series[0].data = eqEchartsDatas;
+							monitorOption.series[0].name = dataObj.name;
+							contentChart.setOption(monitorOption);
+							Loading.hide();
+							$scope.isLoad = true;
+						} else {
+							Loading.hide();
+							$scope.isLoad = true;
+							mui.toast(JSON.stringify(ErrorMessage))
+						}
+						$scope.$apply();
+					}, true)
+				}
+				setTimeout(function() {
+					getBoilerStatInfo();
+				});
+
+			}]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

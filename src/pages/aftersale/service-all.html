@@ -1,0 +1,68 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	</head>
+
+	<body ng-controller="ServiceAllController">
+		<div id="pullrefresh" ng-controller="pullrefreshController" class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<div class="mui-content">
+				<md-service-list ng-model="data"></md-service-list>
+				<md-no-data ng-show="data && data.length==0">暂无数据</md-no-data>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script>
+			app.controller("ServiceAllController", ["$scope", "ApiService", "RPCObserver", function($scope, ApiService, RPCObserver) {
+				$scope.pageIndex = 0;
+				$scope.pageSize = 10;
+				var type = query("type");
+				var paramsID = query("id");
+
+				function init() {
+					var url = ApiService.Api50 + "/api/v2/Customer/";
+					switch(type) {
+						case 'at':
+							url += "GetCustomerServiceListSendForMe?page=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize + "&paramTypeId=" + paramsID;
+							break;
+						case 'my':
+							url += "GetMyCustomerServiceList?page=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize + "&paramTypeId=" + paramsID;
+							break;
+						case 'department':
+						case 'departments':
+						case 'all':
+							var authType = {
+								department: 2,
+								departments: 3,
+								all: 4
+							};
+							url += "GetCompCustomerServiceList?page=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize + "&authType=" + authType[type] + "&paramTypeId=" + paramsID;
+							break;
+					}
+					$scope.url = url;
+				};
+				
+				$scope.$on('refresh_pageindex', init);
+
+				RPCObserver.on('refresh_mat_service_list', 'refresh_mat_service_list');
+				window.refresh_mat_service_list = function(){
+					$scope.$broadcast('md_pullrefresh');
+				};
+			}]);
+			
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

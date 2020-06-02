@@ -1,0 +1,406 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	</head>
+
+	<body ng-controller="LinkmanEdit">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">联系人维护</a>
+		</header>
+		<div class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<ul class="data-group">
+				<p class="data-group-tip">基本信息</p>
+				<li class="data-row must">
+					<label>姓名</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="Linkman.LinkName" class="needsclick" placeholder="请输入姓名" lenlimit="20"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>部门</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="Linkman.DeptName" class="needsclick" placeholder="请输入联系人部门" lenlimit="20"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>职务</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="Linkman.LinkPost" class="needsclick" placeholder="请输入联系人职务" lenlimit="20"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row" ng-click="openActionSheet('IsMaster')">
+					<p class="opt md-icon icon-right"></p>
+					<label>关键决策人</label>
+					<div class="body">
+						<span ng-if="Linkman.IsMaster.id==0" class="placeholder">是否为关键决策人</span>
+						<span ng-if="Linkman.IsMaster.id!=0" ng-bind="Linkman.IsMaster.name"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<p class="data-group-tip">联系方式</p>
+				<li class="data-row must">
+					<label>手机</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="Linkman.LinkPhone" class="needsclick" placeholder="请输入手机" lenlimit="15"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>电话</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="Linkman.LinkTel" class="needsclick" placeholder="请输入电话" lenlimit="15"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>邮件</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="Linkman.LinkEmail" class="needsclick" placeholder="请输入邮件" lenlimit="50"></div>
+						</div>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<p class="data-group-tip">附加信息</p>
+				<li class="data-row" ng-click="chooseBirthday('')">
+					<p class="opt md-icon icon-right"></p>
+					<label>生日</label>
+					<div class="body">
+						<span ng-if="!Linkman.Birthday" class="placeholder">请选择生日</span>
+						<span ng-if="Linkman.Birthday" ng-bind="Linkman.Birthday"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-click="openActionSheet('LinkSex')">
+					<p class="opt md-icon icon-right"></p>
+					<label>性别</label>
+					<div class="body">
+						<span ng-if="Linkman.LinkSex.id==0" class="placeholder">请选择性别</span>
+						<span ng-if="Linkman.LinkSex.id!=0" ng-bind="Linkman.LinkSex.name"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-click="openActionSheet('RoleRelation')">
+					<p class="opt md-icon icon-right"></p>
+					<label>角色关系</label>
+					<div class="body">
+						<span ng-if="Linkman.RoleRelation.id==0" class="placeholder">请选择角色关系</span>
+						<span ng-if="Linkman.RoleRelation.id!=0" ng-bind="Linkman.RoleRelation.name"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-click="openActionSheet('Intimacy')">
+					<p class="opt md-icon icon-right"></p>
+					<label>亲密程度</label>
+					<div class="body">
+						<span ng-if="Linkman.Intimacy.id==0" class="placeholder">请选择亲密程度</span>
+						<span ng-if="Linkman.Intimacy.id!=0" ng-bind="Linkman.Intimacy.name"></span>
+					</div>
+				</li>
+			</ul>
+			<div class="mui-content-padded" ng-click="save()">
+				<span class="mui-btn mui-btn-block">保存</span>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+
+		<script>
+			app.controller("LinkmanEdit", ["$scope", "UtilsService", "ApiService", "DataService", "DatePickerService", "RPCObserver", "Loading",
+				function($scope, UtilsService, ApiService, DataService, DatePickerService, RPCObserver, Loading) {
+					$scope.Linkman = {
+						customerName: "",
+						LinkName: "",
+						LinkPhone: "",
+						LinkTel: "",
+						LinkMail: "",
+						Birthday: "",
+						DeptName: "",
+						LinkPost: "",
+						LinkEmail: "",
+						IsChief: 0, //是否是主联系人
+						IsMaster: {
+							id: 0,
+							name: ""
+						},
+						LinkSex: {
+							id: 0,
+							name: ""
+						},
+						RoleRelation: {
+							id: 0,
+							name: ""
+						},
+						Intimacy: {
+							id: 0,
+							name: ""
+						}
+					};
+
+					$scope.CustomerId = query("customerid") || 0;
+					$scope.Linkman.CustomerName = query("customerName") || "";
+					$scope.LinkmanId = query("linkmanid") || 0;
+					$scope.LinkmanIdx = query("index") || -1;
+
+					// 关键决策人
+					$scope.IsMaster = {
+						1: "是",
+						2: "否"
+					};
+					// 性别
+					$scope.LinkSex = {
+						1: "男",
+						2: "女"
+					};
+					// 角色关系
+					$scope.RoleRelation = {
+						1: "普通人",
+						2: "决策人",
+						3: "分项决策人",
+						4: "商务决策",
+						5: "技术决策",
+						6: "财务决策",
+						7: "使用人",
+						8: "意见影响人"
+					}
+					// 亲密程度
+					$scope.Intimacy = {
+						1: "初相识",
+						2: "一般关系",
+						3: "朋友关系",
+						4: "好友关系"
+					}
+
+					// 没传Linkmanid就是 新增
+					if($scope.LinkmanId) {
+						getCustLinkManInfo();
+					} else {
+						var data = plus.webview.currentWebview().editLinkMan;
+						data && setData(data);
+						$scope.isLoad = true;
+					}
+					var isSubmitting = false;
+					$scope.save = function() {
+						if(isSubmitting) return;
+						if($scope.Linkman.LinkName.trim().length === 0) {
+							mui.toast("请输入姓名");
+							return;
+						}
+						if($scope.Linkman.LinkPhone.trim().length === 0) {
+							mui.toast("请输入手机");
+							return;
+						}
+
+						//验证填字符长度
+						if(!checkLengthUtil.check()) {
+							return false;
+						}
+						var postData = {
+							"ID": $scope.LinkmanId,
+							"CustomerID": $scope.CustomerId,
+							"LinkName": $scope.Linkman.LinkName.trim(),
+							"LinkPhone": $scope.Linkman.LinkPhone.trim(),
+							"LinkTel": $scope.Linkman.LinkTel.trim(),
+							"DeptName": $scope.Linkman.DeptName.trim(),
+							"LinkPost": $scope.Linkman.LinkPost.trim(),
+							"IsMaster": $scope.Linkman.IsMaster.id,
+							"LinkEmail": $scope.Linkman.LinkEmail.trim(),
+							"Birthday": $scope.Linkman.Birthday,
+							"LinkSex": $scope.Linkman.LinkSex.id,
+							"IsChief": $scope.Linkman.IsChief,
+							"RoleRelation": $scope.Linkman.RoleRelation.id,
+							"Intimacy": $scope.Linkman.Intimacy.id,
+							"IsDelete": 0
+						}
+						if(plus.webview.currentWebview().editLinkMan || $scope.CustomerId == 0) {
+							postData.IsMasterName = $scope.Linkman.IsMaster.name;
+							postData.LinkSexName = $scope.Linkman.LinkSex.name;
+							postData.RoleRelationName = $scope.Linkman.RoleRelation.name;
+							postData.IntimacyName = $scope.Linkman.Intimacy.name;
+							var view = plus.webview.currentWebview();
+							var opener = view.opener();
+							if(view.callback) {
+								opener.evalJS(view.callback + "(" + JSON.stringify(postData) + "," + $scope.LinkmanIdx + ")");
+							}
+							mui.back();
+						} else {
+							Loading.show();
+							postData.Birthday && (postData.Birthday += " 00:00:00");
+							isSubmitting = true;
+							var url = ApiService.Api50 + "/api/v1/Customer/SaveCustLinkMan";
+							DataService.post(url, postData).then(function(res) {
+								Loading.hide()
+								UtilsService.saveModal(function() {
+									isSubmitting = false;
+									mui.back();
+								}, function() {
+									isSubmitting = false;
+									$scope.LinkmanId = res;
+								});
+								//刷新客户详情
+								RpcClient.invoke("customer-info.html", "RPC_BillViewRefresh", "linkman");
+								//刷新联系人详情
+								RPCObserver.broadcast("refresh_linkman_info");
+								//刷新联系人列表
+								RPCObserver.broadcast("refresh_my_sxun");
+							})
+						}
+
+					}
+
+					function setData(data) {
+						$scope.LinkmanId = data.ID;
+						data.CustomerName && ($scope.Linkman.CustomerName = data.CustomerName);
+						$scope.Linkman.LinkName = data.LinkName;
+						$scope.Linkman.LinkPhone = data.LinkPhone;
+						$scope.Linkman.LinkTel = data.LinkTel;
+						$scope.Linkman.LinkMail = data.LinkMail;
+						$scope.Linkman.Birthday = data.Birthday;
+						$scope.Linkman.DeptName = data.DeptName;
+						$scope.Linkman.LinkPost = data.LinkPost;
+						$scope.Linkman.LinkEmail = data.LinkEmail;
+						$scope.Linkman.IsChief = data.IsChief;
+
+						$scope.Linkman.IsMaster.id = data.IsMaster;
+						$scope.Linkman.IsMaster.name = $scope.IsMaster[data.IsMaster];
+						$scope.Linkman.LinkSex.id = data.LinkSex;
+						$scope.Linkman.LinkSex.name = $scope.LinkSex[data.LinkSex];
+						$scope.Linkman.RoleRelation.id = data.RoleRelation;
+						$scope.Linkman.RoleRelation.name = $scope.RoleRelation[data.RoleRelation];
+						$scope.Linkman.Intimacy.id = data.Intimacy;
+						$scope.Linkman.Intimacy.name = $scope.Intimacy[data.Intimacy];
+					}
+
+					//获取客户基本信息
+					function getCustLinkManInfo() {
+						var url = ApiService.Api50 + "/api/v2/Customer/GetCustLinkManInfo?linkManId=" + $scope.LinkmanId;
+						DataService.get(url).then(function(res) {
+							$scope.LinkmanId = res.ID;
+							setData(res);
+							$scope.isLoad = true;
+						})
+					}
+
+					$scope.openCustomerView = function() {
+						$scope.CustomerId > 0 && UtilsService.openWindow({
+							needLogin: true,
+							id: "customer-info.html",
+							url: "customer-info.html?customerid=" + $scope.CustomerId
+						})
+					}
+
+					//打开openActionSheet
+					$scope.openActionSheet = function(key) {
+						UtilsService.actionSheet("", actionSheetBtns[key]).then(function(res) {
+							$scope.Linkman[key].id = res.id;
+							$scope.Linkman[key].name = res.title;
+						})
+					}
+
+					//选择生日日期
+					$scope.chooseBirthday = function() {
+						DatePickerService.pickDate({
+							selected: $scope.Linkman.Birthday
+						}).then(function(res) {
+							$scope.Linkman.Birthday = res;
+						});
+					}
+
+					var actionSheetBtns = {
+						// 关键决策人
+						IsMaster: [{
+							id: 1,
+							title: "是"
+						}, {
+							id: 2,
+							title: "否"
+						}],
+						// 性别
+						LinkSex: [{
+							id: 1,
+							title: "男"
+						}, {
+							id: 2,
+							title: "女"
+						}],
+						// 角色关系
+						RoleRelation: [{
+								id: 1,
+								title: "普通人"
+							},
+							{
+								id: 2,
+								title: "决策人"
+							},
+							{
+								id: 3,
+								title: "分项决策人"
+							},
+							{
+								id: 4,
+								title: "商务决策"
+							},
+							{
+								id: 5,
+								title: "技术决策"
+							},
+							{
+								id: 6,
+								title: "财务决策"
+							},
+							{
+								id: 7,
+								title: "使用人"
+							},
+							{
+								id: 8,
+								title: "意见影响人"
+							}
+						],
+						// 亲密程度
+						Intimacy: [{
+								id: 1,
+								title: "初相识"
+							},
+							{
+								id: 2,
+								title: "一般关系"
+							},
+							{
+								id: 3,
+								title: "朋友关系"
+							},
+							{
+								id: 4,
+								title: "好友关系"
+							}
+						]
+					}
+				}
+			]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

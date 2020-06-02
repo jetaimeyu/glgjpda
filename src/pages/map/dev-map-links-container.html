@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link href="../../css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	<link rel="stylesheet" href="../../css/mui.loading.css" />
+	<title></title>
+	<style type="text/css">
+		#map_dev_links {
+			width: 100%;
+			position: fixed;
+			top: 0px;
+			bottom: 0px;
+			line-height: 200px;
+			text-align: center;
+			background: #FFFFFF;
+		}
+	</style>
+</head>
+
+<body ng-controller="bodyCtl">
+
+	<div id="map_dev_links">地图加载中...</div>
+	<script src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/angular.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/mui.loading.js"></script>
+	<script type="text/javascript">
+		app.controller("bodyCtl", ["$scope", "ApiService", "DataService", "DatePickerService", "UtilsService", "CacheService",
+			"$timeout",
+			function ($scope, ApiService, DataService, DatePickerService, UtilsService, CacheService, $timeout) {
+
+				var view = plus.webview.currentWebview();
+				$scope.domData = {
+					data: view.data,
+					province: view.province || "",
+					city: view.city || "",
+					activeMap: view.activeMap,
+					activeDate: view.activeDate,
+					startDate: view.startDate,
+					endDate: view.endDate,
+					noState: [],
+					stateColor: {
+						4: "3399FF",
+						7: "E60303",
+						3: "FFCC00",
+						11: "6699CC",
+						9: "999966"
+					},
+					citys: ["北京市", "天津市", "上海市", "重庆市", "台湾省", "香港特别行政区", "澳门特别行政区"]
+				};
+
+				var curData = {
+					load: function () {
+						view.opener().evalJS("showLoading()");
+
+						//var data = $scope.domData;
+						//var url = getUrl();
+						// DataService.get(url).then(function (res) {
+						// 	$scope.domData.data = res;
+						// 	map.renderPoint(true);
+						// }, function () {
+						// 	view.opener().evalJS("hideLoading()");
+						// 	mui.toast("加载数据失败!");
+						// });
+						setTimeout(function () {
+							map.renderPoint(true);
+						}, 500);
+					}
+				};
+
+				function getUrl() {
+
+					var data = $scope.domData;
+					var url = ApiService.Api50 + "/api/v1/Customer/GetCrmMap?map=" + data.activeMap + "&date=" + data.activeDate;
+
+					var listUrl = ApiService.Api50 + "/api/v1/Customer/GetCrmMapToPage?map=" + data.activeMap + "&date=" + data.activeDate;
+
+					data.province != "全国" && (url += "&province=" + data.province) && (listUrl += "&province=" + data.province);
+					data.city && data.city != "全国" && data.city != data.province && (url += "&city=" + data.city) && (listUrl +=
+						"&city=" + data.city);
+
+					url += "&startDate=" + new Date(data.startDate).Format("yyyy-MM-dd");
+					url += "&endDate=" + new Date(data.endDate).Format("yyyy-MM-dd");
+					listUrl += "&startDate=" + new Date(data.startDate).Format("yyyy-MM-dd");
+					listUrl += "&endDate=" + new Date(data.endDate).Format("yyyy-MM-dd");
+
+
+					var listView = plus.webview.getWebviewById("customer-map-list-sub.html");
+					if (listView) {
+						listView.evalJS("loadData('" + listUrl + "')")
+					}
+
+					return url;
+				}
+
+				window.refresh = function (data) {
+
+					var keys = Object.getOwnPropertyNames(data);
+					for (var i = 0; i < keys.length; i++) {
+						$scope.domData[keys[i]] = data[keys[i]];
+					}
+					$scope.$apply();
+
+					if ($scope.domData.province == '全国') {
+						var point = new plus.maps.Point(107.067577, 34.255615);
+						map.obj.setCenter(point);
+						map.obj.setZoom(5);
+					} else {
+						geoCode();
+					}
+					curData.load();
+
+				};
+
+				function geoCode() {
+					plus.maps.Map.geocode($scope.domData.province + ($scope.domData.city == $scope.domData.province ? "" : $scope.domData
+						.city), {
+						coordType: "bd09ll"
+					}, function (event) {
+						var point = event.coord; // 转换后的坐标信息)
+						map.obj.setCenter(point);
+						if ($scope.domData.province == $scope.domData.city && $scope.domData.citys.indexOf($scope.domData.province) <
+							0) {
+							map.obj.setZoom(8);
+						} else {
+							map.obj.setZoom(11);
+						}
+
+					}, function (e) {
+						geoCode()
+					});
+				}
+
+				window.chooseType = function (value, isHave) {
+					//					var idx = $scope.domData.noState.indexOf(value);
+					//					if(isHave && idx >= 0) {
+					//						$scope.domData.noState.splice(idx, 1);
+					//					} else if(!isHave && idx < 0) {
+					//						$scope.domData.noState.push(value);
+					//					}
+					$scope.domData.active = value;
+					if ($scope.domData.province == '全国') {
+						map.renderCount(false);
+					} else {
+						map.renderPoint(false);
+					}
+
+					getUrl();
+				};
+
+				$scope.event = {
+
+					openInfo: function (item) {
+						plus.maps.Map.calculateDistance(map.centerPoint, new plus.maps.Point(item.MapLng, item.MapLat), function (
+							juli) {
+							$scope.event.openWindow(item.ID, juli.distance.toFixed(0))
+						}, function () {
+							$scope.event.openWindow(item.ID, 0)
+						})
+					},
+					openWindow: function (data, juli) {
+						UtilsService.openWindow({
+							id: "dev-map-links-info.html",
+							url: "dev-map-links-info.html",
+							extras: {
+								data: data
+							}
+						})
+					}
+				};
+
+				var map = {
+					obj: "",
+					location: "",
+					data: [],
+					marks: [],
+					centerPoint: "",
+					init: function () {
+						this.obj = new plus.maps.Map("map_dev_links");
+						this.obj.showZoomControls(true);
+
+						this.obj.setCenter(new plus.maps.Point(103.94863, 36.775374));
+						this.obj.setZoom(5);
+						setTimeout(function () {
+							curData.load();
+						}, 1000)
+
+					},
+					clearOverlay: function (isLoad) {
+						map.data = [];
+						map.marks = [];
+						map.obj.clearOverlays();
+						var _this = this;
+					},
+					renderPoint: function (isTransData) {
+						view.opener().evalJS("showLoading()");
+						// if(isTransData) {
+						// 	view.opener().evalJS("setData(" + JSON.stringify($scope.domData.data) + ")");
+						// }
+
+						var _this = this;
+						this.clearOverlay(false);
+
+						$timeout(function () {
+							$scope.domData.data.forEach(function (item) {
+								_this.getPointMark(item, "point_1");
+							});
+
+							view.opener().evalJS("hideLoading()");
+
+							map.obj.setCenter(new plus.maps.Point(116.624062, 36.646194));
+							map.obj.setZoom(7);
+						}, 100)
+
+					},
+					getPointMark: function (data, imgKey) {
+						var marker = new plus.maps.Marker(new plus.maps.Point(data.lng, data.lat));
+						marker.setIcon("../../images/map/links_" + data.type + ".png");
+						marker.onclick = function (marker) {
+							$scope.event.openWindow(map.data[map.marks.indexOf(marker)]);
+						}
+						this.obj.addOverlay(marker);
+						this.data.push(data);
+						this.marks.push(marker);
+					},
+					renderCount: function (isTransData) {
+						view.opener().evalJS("showLoading()");
+						var _this = this;
+						this.clearOverlay(false);
+
+						$timeout(function () {
+							if (isTransData) {
+								$scope.domData.data = {};
+								$scope.domData.data.state3 = [];
+								$scope.domData.data.state4 = [];
+								$scope.domData.data.state7 = [];
+								$scope.domData.data.state9 = [];
+								$scope.domData.data.state11 = [];
+							}
+
+							$scope.domData.CountData.forEach(function (item) {
+
+								if (isTransData) {
+									$scope.domData.data.state3 = $scope.domData.data.state3.concat(item.state3);
+									$scope.domData.data.state4 = $scope.domData.data.state4.concat(item.state4);
+									$scope.domData.data.state7 = $scope.domData.data.state7.concat(item.state7);
+									$scope.domData.data.state9 = $scope.domData.data.state9.concat(item.state9);
+									$scope.domData.data.state11 = $scope.domData.data.state11.concat(item.state11);
+
+								}
+
+								_this.geoData(item)
+
+							});
+
+							view.opener().evalJS("setData(" + JSON.stringify($scope.domData.data) + ")");
+							view.opener().evalJS("hideLoading()");
+						}, 100);
+					},
+					geoData: function (data) {
+						var _this = this;
+						plus.maps.Map.geocode(data.Province + data.City, {
+							coordType: "bd09ll"
+						}, function (event) {
+
+							var point = event.coord; // 转换后的坐标信息
+							var count = 0;
+
+							var isoverlay = false;
+
+							var keys = Object.getOwnPropertyNames($scope.domData.data);
+
+							for (var i = 0; i < keys.length; i++) {
+								var state = parseInt(keys[i].replace("state", ''));
+								if (keys[i] != 'Province' && keys[i] != "City" && $scope.domData.active == state && data[keys[i]].length >
+									0) {
+									isoverlay = true;
+									count += data[keys[i]].length;
+								}
+							}
+
+							if (isoverlay) {
+								_this.getCountMark(data, point, count);
+							}
+						}, function (e) {
+							console.log((e))
+						});
+					},
+					getCountMark: function (data, point, imgKey) {
+
+						var marker = new plus.maps.Marker(point);
+						marker.setIcon("../../images/map/count/num_" + imgKey + "@3x.png");
+						marker.onclick = function (marker) {
+							var data = map.data[map.marks.indexOf(marker)];
+							view.opener().evalJS("setCitys('" + data.Province + "','" + data.City + "')")
+							plus.maps.Map.geocode(data.Province + data.City, {
+								coordType: "bd09ll"
+							}, function (event) {
+								var point = event.coord; // 转换后的坐标信息)
+								map.obj.setCenter(point);
+								map.obj.setZoom(8);
+
+								$scope.domData.province = data.Province;
+								$scope.domData.city = data.City;
+
+								curData.load();
+							}, function (e) {
+								console.info("Failed:" + JSON.stringify(e));
+							});
+						}
+						this.obj.addOverlay(marker);
+						this.data.push(data);
+						this.marks.push(marker);
+					},
+					createLocation(point) {
+						var marker = new plus.maps.Marker(point);
+						marker.setIcon("../../images/map/point_blue.png");
+						this.obj.addOverlay(marker);
+					},
+					createCircle: function (point, isInit) {
+						var radius = 1000;
+						var zoom = 12;
+						switch ($scope.domData.disValue) {
+							case 1:
+								radius = 1000;
+								zoom = 17;
+								break;
+							case 2:
+								radius = 2000;
+								zoom = 16;
+								break;
+							case 5:
+								radius = 5000;
+								zoom = 14;
+								break;
+							case 10:
+								radius = 10000;
+								zoom = 13;
+								break;
+							case 30:
+								radius = 30000;
+								zoom = 12;
+								break;
+							case 50:
+								radius = 50000;
+								zoom = 11;
+								break;
+						}
+
+						var circleObj = new plus.maps.Circle(point, radius);
+
+						circleObj.setCenter(point);
+						circleObj.setFillColor("#0066CC");
+						circleObj.setFillOpacity(0.2);
+						circleObj.setStrokeColor("#0033CC");
+						circleObj.setStrokeOpacity(0.2);
+						circleObj.setLineWidth(2);
+
+						this.obj.addOverlay(circleObj);
+						//this.obj.centerAndZoom(point,6);
+						this.obj.setZoom(zoom);
+						this.obj.setCenter(point);
+
+						if (isInit) {
+							$timeout(function () {
+								curData.load();
+							}, 1000)
+						}
+					}
+				};
+
+
+				//初始化地图
+				map.init();
+			}
+		]);
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+		});
+	</script>
+</body>
+
+</html>

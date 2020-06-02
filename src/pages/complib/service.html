@@ -1,0 +1,266 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.css" rel="stylesheet" />
+		<link href="../../css/common.css" rel="stylesheet" />
+		<link href="../../icon-font/iconfont.css" rel="stylesheet" />
+		<link href="prodlib.css" rel="stylesheet" />
+		<style type="text/css">
+			.data-group {
+				background: transparent;
+				margin-top: 0px;
+				margin: 16px 16px 0px 16px;
+			}
+			
+			#group_service li,
+			#comp_service li,
+			#person_service li {
+				background: #fff;
+				width: 50%;
+				height: 75px;
+				border-right: 1px solid #efeff4!important;
+				border-bottom: 1px solid #efeff4!important;
+				;
+			}
+			
+			#group_service li:nth-child(2n),
+			#comp_service li:nth-child(2n),
+			#person_service li:nth-child(2n) {
+				border-right: 0px;
+			}
+			
+			#group_service:after,
+			#comp_service:after,
+			#person_service:after {
+				content: "";
+				clear: both;
+				display: block;
+			}
+			
+			.data-group .data-row:after {
+				left: 0px;
+				right: 0px;
+			}
+			
+			.perinformation {
+				text-align: center;
+				margin-top: 11px;
+				margin-bottom: 5px;
+				line-height: normal;
+			}
+			
+			.perinformation img {
+				border-radius: 50%;
+			}
+			
+			.perinformation .div-img {
+				border-radius: 50%;
+				width: 31px;
+				height: 31px;
+				background-size: cover;
+				margin: 0 auto;
+			}
+			
+			.perinformation div.viewname {
+				margin-top: 8px;
+			}
+			
+			div.md-userCustomLogo {
+				line-height: 31px;
+				border-radius: 50%;
+				width: 31px;
+				height: 31px;
+				background-color: #3296FA !important;
+				background-size: cover;
+				color: #FFFFFF;
+				font-size: 1.4rem;
+				font-family: MicrosoftYaHei;
+				display: flex;
+				justify-content: center;
+				margin: 0 auto;
+			}
+			
+			.data-group .data-row:after {
+				height: 0px;
+			}
+			
+			.data-row.mui-table-view-cell {
+				padding: 0px;
+			}
+			
+			.mui-ellipsis-2 {
+				-webkit-line-clamp: 1;
+			}
+			
+			.data-group-tip {
+				padding-left: 0;
+				font-weight: normal;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="CustomerServiceController">
+		<div class="mui-scroll-wrapper" style="display: none;padding-bottom: 10px;" ng-class="{'mui-block':isLoad}">
+			<ul class="data-group" id="group_service" ng-if="data.length>0">
+				<p class="data-group-tip color-gray-deep">客服人员</p>
+				<li class="mui-table-view-cell data-row mui-block float-left" ng-class="{'border-right':$index!=data.length-1&&(($index+1)%2!=0),'border-bottom':$index!=data.length-1}" ng-repeat="item in data" ng-click="sendMsg(item.UserID,item.ViewName,item.ULogoIsExist,item.CompID)">
+					<div class="perinformation">
+						<div class="md-userCustomLogo ng-hide" ng-show="!item.ULogoIsExist"><span ng-bind="item.ViewName| getUserCustomLogo"></span></div>
+						<div class="md-userCustomLogo" ng-style="{'background-image':'url('+ (item.UserID|getUserLogo:50:0) +')'}" ng-class="item.ULogoIsExist?'':'ng-hide'"></div>
+						<div ng-bind="item.ViewName" class="viewname mui-ellipsis-2"></div>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group" id="comp_service" ng-if="CompLinkMan.length>0">
+				<p class="data-group-tip color-gray-deep">企业联系人
+					<!--<span class="mui-pull-right">全部
+						<span class="mui-pull-right icon-up" style="padding:0 10px;"></span>
+					</span>
+					<span class="mui-pull-right">收起
+						<span class="mui-pull-right icon-down" style="padding:0 10px;"></span>
+					</span>-->
+				</p>
+				<li class="mui-table-view-cell data-row mui-block float-left" ng-class="{'border-right':$index!=data.length-1&&(($index+1)%2!=0),'border-bottom':$index!=data.length-1}" ng-repeat="item in CompLinkMan" ng-click="showDetail(item.LinkUserID)">
+					<div class="perinformation">
+						<div class="md-userCustomLogo ng-hide" ng-show="!item.ULogoIsExist"><span ng-bind="item.LinkUserName| getUserCustomLogo"></span></div>
+						<div class="md-userCustomLogo" ng-style="{'background-image':'url('+ (item.LinkUserID|getUserLogo:50:0) +')'}" ng-class="item.ULogoIsExist?'':'ng-hide'"></div>
+						<div ng-bind="item.LinkUserName" class="viewname mui-ellipsis-2"></div>
+					</div>
+				</li>
+				<li class="mui-table-view-cell data-row mui-block float-left" ng-if="CompLinkMan.length<4&&AllCompLinkMan.length>3" ng-click="showAllComp()">
+					<div class="perinformation">
+						<div class="viewname mui-ellipsis-2 font-13 color-blue" style="margin-top: 28px;">查看全部...</div>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group" id="person_service" ng-if="UserLinkMan.length>0">
+				<p class="data-group-tip color-gray-deep">个人联系人</p>
+				<li class="mui-table-view-cell data-row mui-block float-left" ng-class="{'border-right':$index!=data.length-1&&(($index+1)%2!=0),'border-bottom':$index!=data.length-1}" ng-repeat="item in UserLinkMan" ng-click="showDetail(item.LinkUserID)">
+					<div class="perinformation">
+						<div class="md-userCustomLogo ng-hide" ng-show="!item.ULogoIsExist"><span ng-bind="item.LinkUserName| getUserCustomLogo"></span></div>
+						<div class="md-userCustomLogo" ng-style="{'background-image':'url('+ (item.LinkUserID|getUserLogo:31:0) +')'}" ng-class="item.ULogoIsExist?'':'ng-hide'"></div>
+						<div ng-bind="item.LinkUserName" class="viewname mui-ellipsis-2"></div>
+					</div>
+					<span ng-click="delFriend(item.ID,$event)" class="icon-topright-corner-delete color-gray font-24" style="position: absolute;top: 2px;right: 0;"></span>
+				</li>
+				<li class="mui-table-view-cell data-row mui-block float-left" ng-if="UserLinkMan.length<4&&AllUserLinkMan.length>3" ng-click="showAllPerson()">
+					<div class="perinformation">
+						<div class="viewname mui-ellipsis-2 font-13 color-blue" style="margin-top: 28px;">查看全部...</div>
+					</div>
+				</li>
+			</ul>
+			<md-no-data ng-show="data.length==0&&CompLinkMan.length==0&&UserLinkMan.length==0">暂无数据</md-no-data>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/rpc.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript">
+		app.controller("CustomerServiceController", ["$scope", "ApiService", "DataService", "Loading", "ChatUserService", "CacheService","UtilsService", function($scope, ApiService, DataService, Loading, ChatUserService, CacheService,UtilsService) {
+			$scope.compid = query("compid"); //企业ID
+			$scope.data = ""; //人员信息数据
+			var user = CacheService.get('user');
+			//获取客服服务人员列表
+			function CusStaffList() {
+				Loading.show();
+
+				var url = ApiService.Api50 + "/api/v1/CompCusStaff/CusStaffList?compId=" + $scope.compid;
+				DataService.get(url).then(function(res) {
+					if(res) {
+						Loading.hide();
+						$scope.isLoad = true;
+						$scope.data = res;
+					}
+				});
+
+			}
+			//获取企业，个人联系人
+			function getContact(isDel) {
+				Loading.show();
+				var url = ApiService.Api50 + "/api/v1/Comp/GetLinkman?linkCompId="+$scope.compid;
+				DataService.get(url).then(function(res) {
+					if(res) {
+						Loading.hide();
+						$scope.AllCompLinkMan = res.CompLinkMan;
+						if(res.CompLinkMan.length>3){
+							$scope.CompLinkMan = res.CompLinkMan.slice(0,3);
+						}else{
+							$scope.CompLinkMan = res.CompLinkMan;
+						}
+						if(isDel){
+							$scope.UserLinkMan = res.UserLinkMan;
+							$scope.AllUserLinkMan = res.UserLinkMan;
+						}else{
+							$scope.AllUserLinkMan = res.UserLinkMan;
+							if(res.UserLinkMan.length>3){
+								$scope.UserLinkMan = res.UserLinkMan.slice(0,3);
+							}else{
+								$scope.UserLinkMan = res.UserLinkMan;
+							}
+						}
+					}
+				});
+			};
+			CusStaffList();
+			getContact();
+			//发消息
+			$scope.sendMsg = function(userid, userName, hasLogo, compId) {
+
+				if(userid == user.UserID) {
+					mui.toast('不能与自己会话');
+					return;
+				};
+				ChatUserService.tap({
+					chatId: userid,
+					chatName: userName,
+					hasLogo: hasLogo,
+					chatCompId: compId
+				});
+			}
+			//删除联系人
+			$scope.delFriend = function(id, event) {
+				event && event.stopPropagation();
+				mui.confirm("确定删除该联系人？", "删除", ["确定", "取消"], function(e) {
+					if(e.index == 0) {
+						var url = ApiService.Api50 + "/api/v1/Comp/DelLinkMan?linkId=" + id;
+						DataService.get(url).then(function(res) {
+							if(res) {
+								mui.toast('联系人已删除');
+								getContact(true);
+							}
+						});
+					}
+				});
+			};
+			//跳转详情
+			$scope.showDetail = function(userid){
+				UtilsService.openWindow({
+						needLogin: true,
+						id: 'contact-info.html',
+						url: '../contact/contact-info.html?userid=' + userid+"&compid="+$scope.compId+"&source=true"
+					});
+			};
+			RpcServer.expose("RPC_RefreshFriends", function(param) {
+				//param 1企业、2个人
+				getContact();
+			});
+			$scope.showAllComp = function(){
+				$scope.CompLinkMan = $scope.AllCompLinkMan;
+			};
+			$scope.showAllPerson = function(){
+				$scope.UserLinkMan = $scope.AllUserLinkMan;
+			};
+			
+		}]);
+		mui.plusReady(function() {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+		});
+	</script>
+
+</html>

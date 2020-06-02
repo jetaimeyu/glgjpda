@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="add-addr.css" />
+	</head>
+
+	<body ms-controller="myCtl">
+
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left" ms-text="address.ID?'修改地址':'添加新地址'"></a>
+			<a class="right-save save-btn">保存</a>
+		</header>
+		<div class="mui-content">
+			<ul class="data-group mt0">
+				<li class="data-row must">
+					<label>收货人姓名</label>
+					<div class="body">
+						<input type="text" max-length="30" id="input_name" ms-duplex="address.RecvUserName" pattern="\w*" placeholder="请填写收货人姓名" />
+					</div>
+				</li>
+				<li class="data-row must">
+					<label>联系电话</label>
+					<div class="body">
+						<input type="number" max-length="20" ms-duplex="address.LinkPhone" placeholder="请填写联系电话"/>
+					</div>
+				</li>
+				<li class="data-row pick-addr must">
+					<label>所在地区</label>
+					<i class="opt md-icon icon-right"></i>
+					<div class="body select_body">
+						<div class="content" ms-text="contractAddress(address.Province,address.City,address.District)" >
+							
+						</div>
+					</div>
+				</li>
+				<li class="data-row ">
+					<div class="body mui-input-row">
+						<textarea id="input_address" ms-duplex="address.Address" maxlength="128" placeholder="请填写详细地址，不少于5字"></textarea>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group delete-addr" ms-visible="address.ID" style="display: none;">
+				<li class="data-row ">
+					<div class="body mui-text-center color-red-md">
+						删除地址
+					</div>
+				</li>
+			</ul>
+		</div>
+
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/avalon.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="add-addr.js"></script>
+	</body>
+
+</html>

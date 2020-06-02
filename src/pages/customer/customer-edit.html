@@ -1,0 +1,1086 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			/*新增配件更换样式*/
+			
+			.newadd {
+				width: 84px;
+				margin: 0 auto;
+				color: #3296FA;
+			}
+			.data-group .data-row .isedit{
+				color: #ddd;
+			}
+			.data-group .data-row .body>span.isedit{
+				color: #ddd;
+			}
+		</style>
+	</head>
+	<body ng-controller="customerEdit">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">客户维护</a>
+		</header>
+		<div class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<p class="data-group-tip" style="margin-top: 8px;">基本信息</p>
+			<ul class="data-group">
+				<li class="data-row" ng-click="openActionSheet('customerSource')">
+					<p class="opt md-icon icon-right"></p>
+					<label>资源渠道</label>
+					<div class="body">
+						<span ng-if="customer.customerSource.id==0" class="placeholder">请选择资源渠道</span>
+						<span ng-if="customer.customerSource.id>0" ng-bind="customer.customerSource.name"></span>
+					</div>
+				</li>
+				<li class="data-row must" ng-click="openActionSheet('customerFrome')">
+					<p class="opt md-icon icon-right"></p>
+					<label ng-class="{isedit:isedit}">客户来源</label>
+					<div class="body">
+						<span ng-if="customer.customerFrome.id==0" class="placeholder">请选择客户来源</span>
+						<span ng-if="customer.customerFrome.id>0" ng-bind="customer.customerFrome.name" ng-class="{isedit:isedit}"></span>
+					</div>
+				</li>
+				
+				<li class="data-row must" ng-if="showmdcode">
+					<label>迈迪通号</label>
+					<div class="body">
+						<input ng-model="customer.compMdt" placeholder="请输入迈迪通号" lenlimit="15" ng-blur="getcuinfo()"></input>
+					</div>
+				</li>
+				<li class="data-row must">
+					<label>客户名称</label>
+					<div class="body">
+						<div class="edit">
+							<div  ng-model-div-text="customer.CustomerName" class="needsclick" placeholder="请输入客户名称" lenlimit="50"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row" ng-click="openActionSheet('customerLevel')">
+					<p class="opt md-icon icon-right"></p>
+					<label>客户等级</label>
+					<div class="body">
+						<span ng-if="customer.customerLevel.id==0" class="placeholder">请选择客户等级</span>
+						<span ng-if="customer.customerLevel.id>0" ng-bind="customer.customerLevel.name"></span>
+					</div>
+				</li>
+
+				<li class="data-row" ng-click="openActionSheet('customerType')">
+					<p class="opt md-icon icon-right"></p>
+					<label>客户类别</label>
+					<div class="body">
+						<span ng-if="customer.customerType.id==0" class="placeholder">请选择客户类别</span>
+						<span ng-if="customer.customerType.id>0" ng-bind="customer.customerType.name"></span>
+					</div>
+				</li>
+				<li class="data-row must">
+					<label>电话</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="customer.Tel" class="needsclick" placeholder="请输入电话" lenlimit="15"></div>
+						</div>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<p class="data-group-tip">地区定位</p>
+				<li class="data-row must">
+					<label>客户位置</label>
+					<p class="opt md-icon" ng-click="addressSelect()">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="addressSelect()">
+						<span class="placeholder" ng-if="!customer.Province">请选择客户位置</span>
+						<span ng-bind="customer.Province| locationfilter:customer.City:customer.District"></span>
+					</div>
+				</li>
+				<li class="data-row must">
+					<label>详细地址</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="customer.Address" class="needsclick" placeholder="请输入详细地址" lenlimit="30"></div>
+						</div>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group">
+				<p class="data-group-tip">更多信息</p>
+				<li class="data-row">
+					<label>邮件</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="customer.Email" class="needsclick" placeholder="请输入邮件" lenlimit="150"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>传真</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="customer.Fax" class="needsclick" placeholder="请输入传真" lenlimit="20"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row" ng-click="openActionSheet('firstLevel')">
+					<p class="opt md-icon icon-right"></p>
+					<label>一级行业</label>
+					<div class="body">
+						<span ng-if="customer.firstLevel.id==0" class="placeholder">请选择一级行业</span>
+						<span ng-if="customer.firstLevel.id>0" ng-bind="customer.firstLevel.name"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-click="openActionSheet('secondLevel')">
+					<p class="opt md-icon icon-right"></p>
+					<label>二级行业</label>
+					<div class="body">
+						<span ng-if="customer.secondLevel.id==0" class="placeholder">请选择二级行业</span>
+						<span ng-if="customer.secondLevel.id>0" ng-bind="customer.secondLevel.name"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>备注</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="customer.Remark" class="needsclick" placeholder="请输入备注" lenlimit="500"></div>
+						</div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>网址</label>
+					<div class="body">
+						<div class="edit">
+							<div ng-model-div-text="customer.Url" class="needsclick" placeholder="请输入网址" lenlimit="30"></div>
+						</div>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group" ng-if="linkManNum>0">
+				<p class="data-group-tip">联系人</p>
+				<li class="data-row">
+					<label style="font-weight: bold;color: #323232;padding-right: 10px;">姓名</label>
+					<span style="font-weight: bold;color: #323232;">手机</span>
+				</li>
+				<li class="data-row mui-table-view-cell" ng-repeat="linkman in customer.LinkManList" ng-if="!linkman.IsDelete||linkman.IsDelete==0">
+					<i class="opt md-icon icon-delete" ng-click="del($index)" ng-if="linkman.IsChief==0"></i>
+					<label ng-bind="linkman.LinkName" style="padding-right: 10px;" ng-click="editLinkMan(linkman,$index)"></label>
+					<div class="body" ng-click="editLinkMan(linkman,$index)">
+						<span ng-bind="linkman.LinkPhone"></span>
+					</div>
+				</li>
+			</ul>
+			<ul class="data-group" ng-style="{'margin-top': linkManNum>0?'1px':'8px'}">
+				<li class="mui-table-view-cell data-row" ng-click="addLinkMan()">
+					<div class="newadd">新增联系人</div>
+				</li>
+			</ul>
+			<div class="mui-content-padded" ng-click="save()">
+				<span class="mui-btn mui-btn-block">保存</span>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+
+		<script>
+			app.controller("customerEdit", ["$scope", "UtilsService", "ApiService", "DataService", "MapService", "RPCObserver", "Loading", function($scope, UtilsService, ApiService, DataService, MapService, RPCObserver, Loading) {
+				$scope.customerId = query("customerid") || 0;
+				$scope.linkManNum = 0;
+				$scope.showmdcode = false;
+				$scope.isedit =query("isedit")|| false;
+				$scope.compMdt= "";
+				$scope.cutype =[];
+				$scope.culevel=[];
+				$scope.customer = {
+					ID: $scope.customerId,
+					customerLevel: {
+						id: 0,
+						name: ""
+					},
+					customerSource: {
+						id: 0,
+						name: ""
+					},
+					customerFrome:{
+						id:0,
+						name:""
+					},
+					customerType: {
+						id: 0,
+						name: ""
+					},
+					firstLevel: {
+						id: 0,
+						name: ""
+					},
+					secondLevel: {
+						id: 0,
+						name: ""
+					},
+					LinkManList: [],
+					
+					compMdt:"",
+					CustCompID:""
+				};
+                 
+				// 没传customerid就是 新增
+				if($scope.customerId) {
+					getCustomerInfoById();
+				} else {
+					UtilsService.getLocation(true).then(function(location) {
+						$scope.customer.MapLat = location.lat; //纬度
+						$scope.customer.MapLng = location.lng; //经度
+						$scope.customer.Address = location.address; //详细地址
+						$scope.customer.Province = location.province; //省
+						$scope.customer.City = location.city; //市
+						$scope.customer.District = location.district; //区
+					});
+					$scope.isLoad = true;
+				}
+				var isSubmitting = false;
+				$scope.save = function() {
+				
+					if(isSubmitting) return;
+					if($scope.customer.customerFrome.id == 0) {
+						mui.toast("请选择客户来源");
+						return;
+					}
+					if($scope.showmdcode&&$scope.customer.compMdt.trim()==""){
+						mui.toast("请输入迈迪通号");
+                		return;
+                	}
+					if($scope.customer.CustomerName.trim().length === 0) {
+						mui.toast("请输入客户名称");
+						return;
+					}
+					if($scope.customer.Tel.trim().length === 0) {
+						mui.toast("请输入电话");
+						return;
+					}
+					if(!$scope.customer.Province || $scope.customer.Province.length === 0) {
+						mui.toast("请选择客户位置");
+						return;
+					}
+					if(!$scope.customer.Address.trim() || $scope.customer.Address.trim().length === 0) {
+						mui.toast("请输入详细地址");
+						return;
+					}
+					//验证填字符长度
+					if(!checkLengthUtil.check()) {
+						return false;
+					}
+					if($scope.customer.LinkManList.length == 0) {
+						mui.toast("联系人不能为空");
+						return;
+					}
+					var address = encodeURIComponent($scope.customer.Province + $scope.customer.City + $scope.customer.District + $scope.customer.Address);
+					MapService.geoCoder(address).then(function(rs) {
+						$scope.customer.MapLat = rs.lat; //纬度
+						$scope.customer.MapLng = rs.lng; //经度
+						Loading.show();
+						isSubmitting = true;
+						
+						$scope.customer.CustLevel = $scope.customer.customerLevel.id;
+						if($scope.customer.customerFrome.id==1){
+							$scope.customer.CustCompID = 0
+						}
+						else{
+							$scope.customer.CustCompID = $scope.customerId
+						}
+						$scope.customer.CustType = $scope.customer.customerType.id;
+						$scope.customer.CustFrom = $scope.customer.customerSource.id;
+						$scope.customer.IndustryID1 = $scope.customer.firstLevel.id;
+						$scope.customer.IndustryID2 = $scope.customer.secondLevel.id;
+						if($scope.customer.LinkManList.length > 0){
+							var index=$scope.customer.LinkManList.findIndex(function(item){
+								return item.IsChief == 1
+							})
+							if(index==-1){
+								$scope.customer.LinkManList[0].IsChief = 1
+							}
+							
+						}
+						$scope.customer.LinkManList.forEach(function(item) {
+							item.Birthday && (item.Birthday += " 00:00:00");
+						});
+						var url = ApiService.Api50 + "/api/v2/Customer/SaveCustomerInfo";
+						DataService.post(url, $scope.customer).then(function(res) {
+							Loading.hide();
+							UtilsService.saveModal(function() {
+								isSubmitting = false;
+								mui.back();
+							}, function() {
+								isSubmitting = false;
+								$scope.customer.ID = res;
+								$scope.customerId = res;
+								getCustomerInfoById();
+							});
+							RPCObserver.broadcast('refresh_customer_info')
+							RPCObserver.broadcast('refresh_customer_list')
+							RpcClient.invoke("search.html", "RPC_SearchListRefresh");
+						}, function(err) {
+							isSubmitting = false;
+						})
+					}, function() {
+						mui.toast("请输入正确的详细地址");
+					});
+				}
+                $scope.getcuinfo = function(){
+                	if($scope.customer.compMdt.trim()==""){
+                		return;
+                	}
+                	var url = ApiService.Api43 + "/api/Customer/GetCustomerInfo?compMdt="+$scope.customer.compMdt;
+                	DataService.get(url).then(function(res) {
+                	$scope.customerId=res.ID;
+                	
+                	if(res.Province){
+                		$scope.customer.Province=res.Province;
+                	}
+                	if(res.City){
+                		$scope.customer.City=res.City;
+                	}
+                	$scope.customer.CustomerName=res.Name;
+                	if(res.District){
+                		
+                		$scope.customer.District=res.District;
+                	}
+                	else{
+                		$scope.customer.District=""
+                	}
+                	},function(e){
+					})
+                }
+				$scope.addressSelect = function() {
+					document.activeElement.blur();
+					var selected = {
+						"type": 1,
+						"province": $scope.customer.Province,
+						"city": $scope.customer.City,
+						"district": $scope.customer.District,
+						"address": $scope.customer.Address,
+						"lng": $scope.customer.MapLng,
+						"lat": $scope.customer.MapLat
+					};
+					UtilsService.selectArea(selected).then(function(res) {
+						$scope.customer.MapLat = res.lat; //纬度
+						$scope.customer.MapLng = res.lng; //经度
+						$scope.customer.Province = res.province; //省
+						$scope.customer.City = res.city; //市
+						$scope.customer.District = res.district; //区
+					});
+				}
+				//打开openActionSheet
+				$scope.openActionSheet = function(key) {
+					document.activeElement.blur();
+					var btns;
+
+					if(key == "secondLevel") {
+						if($scope.customer.firstLevel.id == 0) {
+							mui.toast("请先选择一级行业");
+							return;
+						} else {
+							actionSheetBtns.secondLevel.forEach(function(item) {
+								item.pid == $scope.customer.firstLevel.id && (btns = item.list);
+							})
+						}
+					} else {
+						btns = actionSheetBtns[key];
+					}
+					if(query('isedit')&&key=='customerFrome'){
+						return false;
+					}
+					(!btns || btns.length == 0) && mui.toast("暂无可选数据");
+					UtilsService.actionSheet("", btns).then(function(res) {
+						
+						if(key == "firstLevel" && $scope.customer.firstLevel.id != res.id) {
+							$scope.customer.secondLevel.id = 0;
+							$scope.customer.secondLevel.name = "";
+						}
+
+						$scope.customer[key].id = res.id;
+						$scope.customer[key].name = res.title;
+						
+						if($scope.customer.customerFrome.name == '迈迪网注册企业'&&!$scope.isedit) {
+							$scope.showmdcode = true;
+                        } else {
+							$scope.showmdcode = false;
+						}
+					})
+				}
+//               if($scope.isedit){
+//               	$scope.showmdcode=false;
+//               }
+				//新增联系人
+				$scope.addLinkMan = function() {
+					document.activeElement.blur();
+					UtilsService.openWindow({
+						needLogin: true,
+						id: "linkman-edit.html",
+						url: "linkman-edit.html?index=-1",
+						extras: {
+							LinkManList: $scope.customer.LinkManList,
+							callback: 'addLinkManCallback'
+						}
+					})
+				}
+
+				//新增联系人 返回
+				window.addLinkManCallback = function(obj, index) {
+					if(index == -1) {
+						$scope.customer.LinkManList.push(obj);
+						$scope.linkManNum++;
+					} else {
+						$scope.customer.LinkManList[index] = obj;
+					}
+					$scope.$apply();
+				}
+
+				//删除联系人
+				$scope.del = function(index) {
+					document.activeElement.blur();
+					mui.confirm("确认删该联系人吗？", function(e) {
+						if(e.index == 0) {
+							if($scope.customerId > 0) {
+								$scope.customer.LinkManList[index].IsDelete = 1;
+							} else {
+								$scope.customer.LinkManList.splice(index, 1);
+							}
+							$scope.linkManNum--;
+							$scope.$apply();
+						}
+					});
+				}
+
+				//编辑联系人
+				$scope.editLinkMan = function(linkman, index) {
+					document.activeElement.blur();
+					UtilsService.openWindow({
+						needLogin: true,
+						id: "linkman-edit.html",
+						url: "linkman-edit.html?index=" + index + "&customerid=" + $scope.customerId + "&customerName=" + $scope.customer.CustomerName,
+						extras: {
+							editLinkMan: linkman,
+							callback: 'addLinkManCallback'
+						}
+					})
+				}
+
+				//获取客户基本信息
+				function getCustomerInfoById() {
+					var url = ApiService.Api50 + "/api/v2/Customer/GetCustomerInfo?customerId=" + $scope.customerId;
+					DataService.get(url).then(function(res) {
+						
+						$scope.customerId = res.ID;
+						$scope.customer.CustomerName = res.CustomerName;
+						$scope.customer.Remark = res.Remark;
+						$scope.customer.Tel = res.Tel;
+						$scope.customer.Province = res.Province;
+						$scope.customer.City = res.City;
+						$scope.customer.District = res.District;
+						$scope.customer.Address = res.Address;
+						$scope.customer.MapLng = res.MapLng;
+						$scope.customer.MapLat = res.MapLat;
+						$scope.customer.Email = res.Email;
+						$scope.customer.Fax = res.Fax;
+						$scope.customer.Url = res.Url;
+						res.LinkManList.forEach(function(item) {
+							item.IsDelete = 0;
+						})
+						$scope.customer.LinkManList = res.LinkManList;
+						
+						$scope.linkManNum = $scope.customer.LinkManList.length;
+                        $scope.customer.customerLevel.id=res.CustLevelId;
+						$scope.customer.customerLevel.name = res.CustLevel;
+						
+					       if(res.CustCompID>0){
+					       	$scope.customer.customerFrome.name='迈迪网注册企业';
+					       	$scope.customer.customerFrome.id=res.CustCompID
+					       }
+					       else{
+					       	$scope.customer.customerFrome.name='自建';
+					       	$scope.customer.customerFrome.id = 1;
+					       }
+					       
+						$scope.customer.customerSource.id = res.CustFrom;
+						
+						$scope.customer.customerSource.name = $scope.customerSource[res.CustFrom];
+					
+						$scope.customer.customerType.name = res.CustType;
+						$scope.customer.customerType.id = res.CustTypeId;
+						
+						$scope.customer.firstLevel.id = res.IndustryID1;
+						$scope.customer.firstLevel.name = $scope.firstLevel[res.IndustryID1];
+						$scope.customer.secondLevel.id = res.IndustryID2;
+						$scope.customer.secondLevel.name = $scope.secondLevel[res.IndustryID2];
+						$scope.isLoad = true;
+					})
+				}
+
+				//客户等级
+//				$scope.customerLevel = {
+//					1: "重要客户",
+//					2: "普通客户",
+//					3: "一般客户"
+//				}
+				//客户来源
+//				$scope.customerFrome = {
+//					1: "自建",
+//					2: "迈迪网注册企业",
+//					
+//				}
+				//资源渠道
+				$scope.customerSource = {
+					1: "转介绍",
+					2: "线上注册",
+					3: "线上询价",
+					4: "预约上门",
+					5: "陌拜",
+					6: "招商资源",
+					7: "公司资源",
+					8: "展会资源",
+					9: "个人资源",
+					10: "电话咨询",
+					11: "邮件咨询"
+				}
+				// 客户类型
+//				$scope.customerType = {
+//					1: "客户"
+//				}
+				//一级行业
+				$scope.firstLevel = {
+					100: 'IT/通信/电子/互联网',
+					101: '金融业',
+					102: '房地产/建筑业',
+					103: '商业服务',
+					104: '贸易/批发/零售/租赁业',
+					105: '生产/加工/制造',
+					106: '交通/运输/物流/仓储',
+					107: '服务业',
+					108: '文化/传媒/娱乐/体育',
+					109: '能源/矿产/环保',
+					110: '政府/非盈利机构',
+					111: '农/林/牧/渔/其他',
+					112: '跨领域经营'
+				}
+				//二级行业
+				$scope.secondLevel = {
+					10001: '互联网/电子商务',
+					10002: 'IT服务（系统/数据/维护）',
+					10003: '计算机硬件',
+					10004: '电信运营/增值服务',
+					10005: '计算机软件',
+					10006: '电子技术/半导体/集成电路',
+					10007: '通信/电信/网络设备',
+					10008: '网络游戏',
+					10009: '其他',
+					10101: '基金/证券/期货/投资',
+					10102: '保险',
+					10103: '银行',
+					10104: '信托/担保/拍卖/典当',
+					10105: '其他',
+					10201: '房地产/建筑/建筑建材/建材/工程',
+					10202: '家具/室内设计/装饰装潢',
+					10203: '物业管理/商业中心',
+					10204: '其他',
+					10301: '专业服务/咨询(财会/法律人力资源等)',
+					10302: '广告',
+					10303: '展会',
+					10304: '公关',
+					10305: '中介服务',
+					10306: '检验/检测/认证',
+					10307: '外包服务',
+					10308: '其他',
+					10401: '快速消费品(饮料/烟酒)',
+					10402: '食品',
+					10403: '日化',
+					10404: '服饰',
+					10405: '纺织',
+					10406: '皮革',
+					10407: '家具',
+					10408: '家电',
+					10409: '贸易/进出口',
+					10410: '零售/批发',
+					10411: '租凭服务',
+					10412: '其他',
+					10501: '礼品/玩具/工艺美术/收藏品/奢侈品',
+					10502: '汽车/摩托车',
+					10503: '大型设备/机电设备/重工业',
+					10504: '加工制造(原料加工)',
+					10505: '加工制造(模具)',
+					10506: '仪器仪表及工业自动化',
+					10507: '医药/生物工程',
+					10508: '依赖设备/器械',
+					10509: '航空/航天研究与制造',
+					10510: '其他',
+					10601: '交通/运输',
+					10602: '物流/仓储',
+					10603: '其他',
+					10701: '医疗/医疗服务护理/美容/保健卫生服务',
+					10702: '酒店/餐饮',
+					10703: '旅游/度假',
+					10704: '其他',
+					10801: '教育/培训/院校',
+					10802: '媒体/出版/影视/文化传播',
+					10803: '娱乐/体育/休闲',
+					10804: '其他',
+					10901: '能源/矿产/采掘/冶炼',
+					10902: '石油/石化/化工',
+					10903: '电气/电力/水利',
+					10904: '环保',
+					10905: '其他',
+					11001: '政府/公共事业/非盈利机构',
+					11002: '学术/科研',
+					11003: '其他',
+					11101: '农',
+					11102: '林',
+					11103: '牧',
+					11104: '渔',
+					11105: '其他',
+					11201: '无'
+				}
+				function init(){
+					var url = ApiService.CRM + "/api/v1/Common/GetPagedPubDictionaryList?dicType=19&page=1&count=100";
+					DataService.get(url).then(function(res) {
+						$scope.culevel=res.List.map(function(item) {
+						
+							return {
+								id: item.ID,
+								title: item.DictName
+							}
+						});
+						actionSheetBtns.customerLevel=$scope.culevel
+					
+					});
+					var url2 = ApiService.CRM + "/api/v1/Common/GetPagedPubDictionaryList?dicType=6&page=1&count=100";
+					DataService.get(url2).then(function(res) {
+						
+						$scope.cutype=res.List.map(function(item) {
+						
+							return {
+								id: item.ID,
+								title: item.DictName
+							}
+						});
+						actionSheetBtns.customerType=$scope.cutype
+					
+					});
+					
+				}
+			init();
+				var actionSheetBtns = {
+					// 客户等级
+					customerLevel:[],
+					//客户来源
+					customerFrome:[
+					    {
+						    id: 1,
+							title: '自建'
+						},
+						{
+							id: 2,
+							title: '迈迪网注册企业'
+						}
+					
+					],
+					// 资源渠道
+					customerSource: [{
+							id: 1,
+							title: '转介绍'
+						},
+						{
+							id: 2,
+							title: '线上注册'
+						},
+						{
+							id: 3,
+							title: '线上询价'
+						},
+						{
+							id: 4,
+							title: '预约上门'
+						},
+						{
+							id: 5,
+							title: '陌拜'
+						},
+						{
+							id: 6,
+							title: '招商资源'
+						},
+						{
+							id: 7,
+							title: '公司资源'
+						},
+						{
+							id: 8,
+							title: '展会资源'
+						},
+						{
+							id: 9,
+							title: '个人资源'
+						},
+						{
+							id: 10,
+							title: '电话咨询'
+						},
+						{
+							id: 11,
+							title: '邮件咨询'
+						}
+					],
+					// 客户类型
+					customerType:[],
+					// 一级行业
+					firstLevel: [{
+							id: 100,
+							title: 'IT/通信/电子/互联网',
+						},
+						{
+							id: 101,
+							title: '金融业'
+						},
+						{
+							id: 102,
+							title: '房地产/建筑业'
+						},
+						{
+							id: 103,
+							title: '商业服务'
+						},
+						{
+							id: 104,
+							title: '贸易/批发/零售/租赁业'
+						},
+						{
+							id: 105,
+							title: '生产/加工/制造'
+						},
+						{
+							id: 106,
+							title: '交通/运输/物流/仓储'
+						},
+						{
+							id: 107,
+							title: '服务业'
+						},
+						{
+							id: 108,
+							title: '文化/传媒/娱乐/体育'
+						},
+						{
+							id: 109,
+							title: '能源/矿产/环保'
+						},
+						{
+							id: 110,
+							title: '政府/非盈利机构'
+						},
+						{
+							id: 111,
+							title: '农/林/牧/渔/其他'
+						},
+						{
+							id: 112,
+							title: '跨领域经营'
+						}
+					],
+					// 二级行业
+					secondLevel: [{
+							pid: 100,
+							list: [{
+									id: 10001,
+									title: '互联网/电子商务'
+								},
+								{
+									id: 10002,
+									title: 'IT服务（系统/数据/维护）'
+								},
+								{
+									id: 10003,
+									title: '计算机硬件'
+								},
+								{
+									id: 10004,
+									title: '电信运营/增值服务'
+								},
+								{
+									id: 10005,
+									title: '计算机软件'
+								},
+								{
+									id: 10006,
+									title: '电子技术/半导体/集成电路'
+								},
+								{
+									id: 10007,
+									title: '通信/电信/网络设备'
+								},
+								{
+									id: 10008,
+									title: '网络游戏'
+								},
+								{
+									id: 10009,
+									title: '其他'
+								}
+							]
+						},
+						{
+							pid: 101,
+							list: [{
+								id: 10101,
+								title: '基金/证券/期货/投资'
+							}, {
+								id: 10102,
+								title: '保险'
+							}, {
+								id: 10103,
+								title: '银行'
+							}, {
+								id: 10104,
+								title: '信托/担保/拍卖/典当'
+							}, {
+								id: 10105,
+								title: '其他'
+							}]
+						},
+						{
+							pid: 102,
+							list: [{
+								id: 10201,
+								title: '房地产/建筑/建筑建材/建材/工程'
+							}, {
+								id: 10202,
+								title: '家具/室内设计/装饰装潢'
+							}, {
+								id: 10203,
+								title: '物业管理/商业中心'
+							}, {
+								id: 10204,
+								title: '其他'
+							}]
+						},
+						{
+							pid: 103,
+							list: [{
+								id: 10301,
+								title: '专业服务/咨询(财会/法律人力资源等)'
+							}, {
+								id: 10302,
+								title: '广告'
+							}, {
+								id: 10303,
+								title: '展会'
+							}, {
+								id: 10304,
+								title: '公关'
+							}, {
+								id: 10305,
+								title: '中介服务'
+							}, {
+								id: 10306,
+								title: '检验/检测/认证'
+							}, {
+								id: 10307,
+								title: '外包服务'
+							}, {
+								id: 10308,
+								title: '其他'
+							}]
+						},
+						{
+							pid: 104,
+							list: [{
+								id: 10401,
+								title: '快速消费品(饮料/烟酒)'
+							}, {
+								id: 10402,
+								title: '食品'
+							}, {
+								id: 10403,
+								title: '日化'
+							}, {
+								id: 10404,
+								title: '服饰'
+							}, {
+								id: 10405,
+								title: '纺织'
+							}, {
+								id: 10406,
+								title: '皮革'
+							}, {
+								id: 10407,
+								title: '家具'
+							}, {
+								id: 10408,
+								title: '家电'
+							}, {
+								id: 10409,
+								title: '贸易/进出口'
+							}, {
+								id: 10410,
+								title: '零售/批发'
+							}, {
+								id: 10411,
+								title: '租凭服务'
+							}, {
+								id: 10412,
+								title: '其他'
+							}]
+						},
+						{
+							pid: 105,
+							list: [{
+								id: 10501,
+								title: '礼品/玩具/工艺美术/收藏品/奢侈品'
+							}, {
+								id: 10502,
+								title: '汽车/摩托车'
+							}, {
+								id: 10503,
+								title: '大型设备/机电设备/重工业'
+							}, {
+								id: 10504,
+								title: '加工制造(原料加工)'
+							}, {
+								id: 10505,
+								title: '加工制造(模具)'
+							}, {
+								id: 10506,
+								title: '仪器仪表及工业自动化'
+							}, {
+								id: 10507,
+								title: '医药/生物工程'
+							}, {
+								id: 10508,
+								title: '依赖设备/器械'
+							}, {
+								id: 10509,
+								title: '航空/航天研究与制造'
+							}, {
+								id: 10510,
+								title: '其他'
+							}]
+						},
+						{
+							pid: 106,
+							list: [{
+								id: 10601,
+								title: '交通/运输'
+							}, {
+								id: 10602,
+								title: '物流/仓储'
+							}, {
+								id: 10603,
+								title: '其他'
+							}]
+						},
+						{
+							pid: 107,
+							list: [{
+								id: 10701,
+								title: '医疗/医疗服务护理/美容/保健卫生服务'
+							}, {
+								id: 10702,
+								title: '酒店/餐饮'
+							}, {
+								id: 10703,
+								title: '旅游/度假'
+							}, {
+								id: 10704,
+								title: '其他'
+							}]
+						},
+						{
+							pid: 108,
+							list: [{
+								id: 10801,
+								title: '教育/培训/院校'
+							}, {
+								id: 10802,
+								title: '媒体/出版/影视/文化传播'
+							}, {
+								id: 10803,
+								title: '娱乐/体育/休闲'
+							}, {
+								id: 10804,
+								title: '其他'
+							}]
+						},
+						{
+							pid: 109,
+							list: [{
+								id: 10901,
+								title: '能源/矿产/采掘/冶炼'
+							}, {
+								id: 10902,
+								title: '石油/石化/化工'
+							}, {
+								id: 10903,
+								title: '电气/电力/水利'
+							}, {
+								id: 10904,
+								title: '环保'
+							}, {
+								id: 10905,
+								title: '其他'
+							}]
+						},
+						{
+							pid: 110,
+							list: [{
+								id: 11001,
+								title: '政府/公共事业/非盈利机构'
+							}, {
+								id: 11002,
+								title: '学术/科研'
+							}, {
+								id: 11003,
+								title: '其他'
+							}]
+						},
+						{
+							pid: 111,
+							list: [{
+								id: 11101,
+								title: '农'
+							}, {
+								id: 11102,
+								title: '林'
+							}, {
+								id: 11103,
+								title: '牧'
+							}, {
+								id: 11104,
+								title: '渔'
+							}, {
+								id: 11105,
+								title: '其他'
+							}]
+						},
+						{
+							pid: 112,
+							list: [{
+								id: 11201,
+								title: '无'
+							}]
+						}
+					]
+				}
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

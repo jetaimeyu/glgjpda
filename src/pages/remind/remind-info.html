@@ -1,0 +1,159 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>工作提醒</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	</head>
+
+	<body ng-controller="workremindinfo">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">日程详情</a>
+			<a class="menu-more icon-more right-menu-icon-detail" href="#popover"></a>
+		</header>
+		<div class="mui-scroll-wrapper md-info-page" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<ul class="data-group">
+				<li class="data-row">
+					<label>行程内容</label>
+					<div class="body">
+						<span ng-bind="data.Content"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>开始时间</label>
+					<div class="body">
+						<span ng-bind="data.BeginDate"></span>
+					</div>
+				</li>
+
+				<li class="data-row">
+					<label>结束时间</label>
+					<div class="body">
+						<span ng-bind="data.EndDate"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>提醒</label>
+					<div class="body">
+						<span ng-bind="reminds[data.Remind]"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>重复</label>
+					<div class="body">
+						<span ng-bind="repeats[data.RepeatID]"></span>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+		<div id="popover" class="mui-popover menuDivModel">
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell" ng-click="edit()">
+					<a class="mui-icon icon-edit">
+						<font>修改</font>
+					</a>
+				</li>
+				<li class="mui-table-view-cell">
+					<a class="mui-icon icon-dustbin" ng-click="del()">
+						<font>删除</font>
+					</a>
+				</li>
+			</ul>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script>
+			app.controller("workremindinfo", ["$scope", "RPCObserver", "ApiService", "DataService", "UtilsService", "Loading", function($scope, RPCObserver, ApiService, DataService, UtilsService, Loading) {
+				//提醒
+				$scope.reminds = {
+					1: '不提醒',
+					2: '正点提醒 ',
+					3: '提前5分钟',
+					4: '提前15分钟',
+					5: '提前30分钟',
+					6: '提前1小时',
+					7: '提前1天',
+					8: '提前2天',
+					9: '提前3天'
+				};
+
+				//重复
+				$scope.repeats = {
+					1: '不重复',
+					2: '每天',
+					3: '每月',
+					4: '每年',
+					5: '自定义'
+				};
+
+				//加载
+				function load() {
+					var url = ApiService.Api50 + "/api/v1/MatWork/GetMatWorkScheduleInfo/" + query('id');
+					
+					Loading.show();
+					DataService.get(url).then(function(res) {
+						$scope.data = res;
+						$scope.isLoad = true;
+						Loading.hide();
+					});
+				};
+
+				load();
+
+				//rpc
+				RPCObserver.on('refresh_mat_worklog_info', 'refresh_mat_worklog_info');
+				window.refresh_mat_worklog_info = load;
+
+				//修改
+				$scope.edit = function() {
+					mui('#popover').popover('hide');
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'remind-edit.html',
+						url: 'remind-edit.html?id=' + $scope.data.ID
+					});
+				};
+
+				//删除
+				$scope.del = function() {
+					mui('#popover').popover('hide');
+					mui.confirm("是此条日程？", "确认删除？", ["删除", "取消"], function(e) {
+						var url = ApiService.Api50 + "/api/v1/MatWork/DeleteMatWorkScheduleInfo?id=" + $scope.data.ID;
+						DataService.get(url).then(function(res) {
+							if(e.index == 0) {
+								if(res == true) {
+									mui.back()
+									RPCObserver.broadcast("refresh_mat_worklog_list");
+									mui.toast('删除成功');
+
+								     }
+							} 
+							else if(e.index == 1) {
+								
+
+							}
+
+						}, function() {
+							alert("error")
+
+						})
+
+					})
+					
+				};
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

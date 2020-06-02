@@ -1,0 +1,262 @@
+@font-face {
+	font-family: "iconfont";
+	src: url('../icon-font/iconfont.ttf?v=1.0') format('truetype')
+}
+
+
+.iconfont {
+  font-family:"iconfont" !important;
+  font-size:16px;
+  font-style:normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+[class^="icon-"],
+[class*=" icon-"] {
+	font-family: "iconfont" !important;
+	font-style: normal;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.icon-you:before { content: "\e636"; }
+
+.icon-zuo:before { content: "\e639"; }
+
+.icon-man:before { content: "\e637"; }
+
+.icon-woman:before { content: "\e63a"; }
+
+.icon-check:before { content: "\e646"; }
+
+.icon-close:before { content: "\e649"; }
+
+.icon-roundcheckfill:before { content: "\e656"; }
+
+.icon-roundclose:before { content: "\e659"; }
+
+.icon-round:before { content: "\e6d7"; }
+
+.icon-share:before { content: "\e642"; }
+
+.icon-up:before { content: "\e62e"; }
+
+.icon-location-2:before { content: "\e60a"; }
+
+.icon-chat-single:before { content: "\e601"; }
+
+.icon-personal:before { content: "\e609"; }
+
+.icon-repair:before { content: "\e60b"; }
+
+.icon-add:before { content: "\e848"; }
+
+.icon-down:before { content: "\e604"; }
+
+.icon-yonhu:before { content: "\e657"; }
+
+.icon-kefu:before { content: "\e741"; }
+
+.icon-zhuji:before { content: "\e69d"; }
+
+.icon-service:before { content: "\e784"; }
+
+.icon-list:before { content: "\e698"; }
+
+.icon-record:before { content: "\e63c"; }
+
+.icon-tongxunluchazhao:before { content: "\e645"; }
+
+.icon-bumenguanli:before { content: "\e667"; }
+
+.icon-position:before { content: "\e60d"; }
+
+.icon-zhangdan:before { content: "\e6b4"; }
+
+.icon-delete:before { content: "\e690"; }
+
+.icon-search-thin:before { content: "\e671"; }
+
+.icon-back:before { content: "\e66a"; }
+
+.icon-msg-all:before { content: "\e627"; }
+.icon-tel:before { content: "\e613"; }
+.icon-msg-unread:before { content: "\e697"; }
+
+.icon-more:before { content: "\e686"; }
+
+.icon-computer:before { content: "\e608"; }
+
+.icon-voice-right:before { content: "\e628"; }
+
+.icon-voice-left:before { content: "\e62b"; }
+
+.icon-building:before { content: "\e672"; }
+
+.icon-cus_service:before { content: "\e695"; }
+
+.icon-waixie:before { content: "\e69c"; }
+
+.icon-location:before { content: "\e62f"; }
+
+.icon-zujian:before { content: "\e648"; }
+
+.icon-search:before { content: "\e614"; }
+
+.icon-diannao:before { content: "\e71a"; }
+
+.icon-collapse:before { content: "\e65b"; }
+
+.icon-expand:before { content: "\e65a"; }
+
+.icon-qrcode:before { content: "\e6c8"; }
+
+.icon-fenxiang:before { content: "\e603"; }
+
+.icon-clock:before { content: "\e65f"; }
+
+.icon-voice:before { content: "\e643"; }
+
+.icon-register:before { content: "\e610"; }
+
+.icon-faxian:before { content: "\e746"; }
+
+.icon-agent:before { content: "\e679"; }
+
+.icon-chat:before { content: "\e64c"; }
+
+.icon-exchange:before { content: "\e66c"; }
+
+.icon-right:before { content: "\e65e"; }
+
+.icon-saoyisao:before { content: "\e7bb"; }
+
+.icon-dustbin:before { content: "\e7c7"; }
+
+.icon-wode:before { content: "\e8a0"; }
+
+.icon-edit:before { content: "\e8cf"; }
+
+.icon-friends:before { content: "\e666"; }
+
+.icon-catalog:before { content: "\e60e"; }
+
+.icon-goumaijilu:before { content: "\e64d"; }
+
+.icon-xiaoxi:before { content: "\e626"; }
+
+.icon-report:before { content: "\e658"; }
+
+.icon-remove:before { content: "\e606"; }
+
+.icon-corner-right:before { content: "\e630"; }
+
+.icon-corner-left:before { content: "\e631"; }
+
+.icon-addperson:before { content: "\e687"; }
+
+.icon-departmentset:before { content: "\e638"; }
+
+.icon-warning:before { content: "\e66e"; }
+
+.icon-home:before { content: "\e6a2"; }
+
+.icon-sort:before { content: "\e623"; }
+
+.icon-extension-service:before { content: "\e600"; }
+
+.icon-service-station:before { content: "\e611"; }
+
+.icon-service-advisor:before { content: "\e612"; }
+
+.icon-service-aftersale:before { content: "\e64a"; }
+/*扫码*/
+
+.icon-scan:before {
+	content: "\e60d";
+}
+.icon-saomiao:before { content: "\e6a3"; }
+
+.icon-shengyin:before { content: "\e6a4"; }
+.icon-jingyin:before { content: "\e7dc"; }
+
+.icon-statistics:before { content: "\e61f"; }
+
+.icon-calendar:before { content: "\e629"; }
+
+.icon-negative-comment:before { content: "\e6cb"; }
+
+.icon-favourable-comment:before { content: "\e6f6"; }
+
+.icon-answer:before { content: "\e6f3"; }
+
+.icon-reply:before { content: "\e69e"; }
+
+.icon-pen:before { content: "\e72e"; }
+
+.icon-comment-good:before { content: "\e61d"; }
+
+.icon-comment-bad:before { content: "\e618"; }
+
+.icon-concerned:before { content: "\e711"; }
+
+.icon-unconcerned:before { content: "\e82b"; }
+
+.icon-arrow-left-top:before { content: "\e644"; }
+
+.icon-call-repair:before { content: "\e62a"; }
+
+.icon-debugging:before { content: "\e63b"; }
+
+.icon-field-repairing:before { content: "\e7f1"; }
+
+.icon-friends:before { content: "\e666"; }
+
+.icon-chat-group:before { content: "\e607"; }
+
+.icon-resources:before { content: "\e60c"; }
+
+.icon-state-normal:before { content: "\e6a1"; }
+
+.icon-label:before { content: "\e615"; }
+
+.icon-state-free:before { content: "\e67a"; }
+
+.icon-state-second-hand:before { content: "\e605"; }
+
+.icon-label-2:before { content: "\e616"; }
+
+.icon-eq-state:before { content: "\e66f"; }
+
+.icon-Scrap:before { content: "\e633"; }
+
+.icon-eq-repire:before { content: "\e602"; }
+.icon-eq-maintain:before { content: "\e663"; }
+.icon-eq-stop:before { content: "\e755"; }
+.icon-eq-useless:before { content: "\e624"; }
+.icon-eq-zulin:before { content: "\e61e"; }
+
+.icon-topright-corner-delete:before { content: "\e617"; }
+.icon-circle-up:before { content: "\e619"; }
+.icon-circle-down:before { content: "\e625"; }
+
+.icon-add-active:before { content: "\e61a"; }
+.icon-delete-active:before { content: "\e63d"; }
+.icon-delete-active-2:before { content: "\e799"; }
+
+.icon-subcontract:before { content: "\e61b"; }
+.icon-advise:before { content: "\e62d"; }
+.icon-model:before { content: "\e632"; }
+.icon-questions:before { content: "\e752"; }
+.icon-scan-add:before { content: "\e61c"; }
+.icon-search-add:before { content: "\e63e"; }
+.icon-search-contacts:before { content: "\e758"; }
+.icon-scan-contacts:before { content: "\ea8f"; }
+.icon-in:before { content: "\e620"; }
+.icon-out2:before { content: "\e63f"; }
+
+.icon-in2:before { content: "\e641"; }
+.icon-out:before { content: "\e647"; }
+.icon-undo:before { content: "\e664"; }
+.icon-my-position:before { content: "\e621"; }

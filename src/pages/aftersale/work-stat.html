@@ -1,0 +1,337 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<link rel="stylesheet" href="../contact/contact-common.css" />
+		<link rel="stylesheet" href="../../css/selecttime.css" />
+		<style>
+			.icon {
+				width: 16px;
+			}
+			
+			.work-stat .top47 {
+				margin-top: 44px
+			}
+			
+			.work-stat .top88 {
+				margin-top: 88px
+			}
+			
+			.work-stat .top82 {
+				margin-top: 82px
+			}
+			
+			.work-stat .top8 {
+				margin-top: 8px
+			}
+			
+			.work-stat .menu-work-date {
+				padding: 9px 0;
+				position: absolute;
+				right: 16px;
+				text-align: right;
+			}
+			
+			.work-stat .dir_name {
+				max-width: 80vw;
+			}
+		</style>
+	</head>
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left">工作统计</a>
+		<!--选择时间-->
+		<div class="menu-work-date mui-pull-right">
+			<span class="color-black font-12" id="a_date_view" ng-click="chooseDate()" ng-bind="domData.curDate.view"></span>
+			<i class="icon-down font-12" ng-click="chooseDate()"></i>
+		</div>
+
+	</header>
+
+	<body ng-controller="workStatController" class="work-stat">
+		<!--导航目录部分-->
+		<div id="res-slide" class="top-thin-line mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted nav-bar" ng-class="{'mui-block':isLoad}" ng-show="isLoad&&navDirData.length>1" style="display: none;">
+			<div class="mui-scroll" style="height: 35px;text-align: left;position: absolute;">
+				<a class="mui-control-item" ng-repeat="dir in navDirData" ng-class="{'mui-active':dir.ID==OrgID}" ng-attr-orgid="{{dir.ID}}" ng-attr-index="{{$index}}">
+					<span class="icon iconfont icon-right color-gray-deep" style="margin-left: 2px;" ng-show="$index>0"></span>
+					<span class="group-name" ng-bind="dir.OrgName"></span>
+				</a>
+			</div>
+		</div>
+
+		<div id="slider" class="mui-scroll-wrapper" style="display:none;" ng-class="{'mui-block':isLoad,'top47':navDirData.length<2,'top8':navDirData.length>1&&(!ios),'top88':navDirData.length>1&&data[OrgID].deps.length!=0&&ios,'top82':navDirData.length>1&&ios&&(data[OrgID].deps.length==0||!data[OrgID].deps)}">
+			<!--目录部分-->
+			<ul class="data-group" ng-show="data[OrgID] && data[OrgID].deps.length>0" style="margin-top: 0;">
+				<li class="mui-table-view-cell data-row  dir-row" ng-repeat="dept in data[OrgID].deps" ng-click="clickDir(dept.ID,dept.OrgName,dept.OrgPersonNums)">
+
+					<label style="width: auto;line-height: 27px;" class="mui-ellipsis">
+						<i class="icon-bumenguanli">
+							<span ng-style="{'top':ios?0:'5px'}" class="dir_name mui-ellipsis" ng-bind="' '+dept.OrgName"></span>
+						</i>					
+					</label>
+
+					<p class="opt md-icon icon-right" ng-show="dept.OrgPersonNums>0"></p>
+				</li>
+			</ul>
+
+			<!--联系人部分-->
+			<div id="refreshWork" ng-show="data[OrgID] && data[OrgID].users.length>0" ng-style="{'margin-top':data[OrgID].deps.length==0?'0px':'8px'}">
+				<md-work-user-list ng-model="data[OrgID].users"></md-work-user-list>
+			</div>	
+			<md-no-data ng-show="(data[OrgID].deps.length==0 && data[OrgID].users.length==0)||(!data[OrgID].deps&&data[OrgID].users.length==0) || !data">暂无数据</md-no-data>
+		</div>
+		<!--无网络或请求失败重试-->
+		<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("workStatController", ["$scope", "ApiService", "DataService", "UtilsService", "Loading", "DatePickerService", "AuthService", "RPCObserver", "$filter", "$Modal",function($scope, ApiService, DataService, UtilsService, Loading, DatePickerService, AuthService, RPCObserver, $filter,$Modal) {
+				//部门id
+				//	$scope.OrgID = 0;
+				//页面数据
+				$scope.data = {};
+				//目录
+				//				$scope.navDirData = [{
+				//					ID: 0,
+				//					OrgName: "组织架构"
+				//				}];
+				$scope.retryModal = {
+					msg: "组织架构",
+					retry: loadData,
+					state: ''
+				}
+				$scope.ios = !mui.os.android;
+				init();
+
+				function init() {
+					AuthService.getAuth().then(function(user) {
+						$scope.data = {};
+						//设置组织机构id 为当前登录人的id
+						//Q0,Q41,Q43
+						var isShow = $filter("hasAuth")(['Q0','40','Q41', 'Q43']);
+						$scope.OrgID = isShow ? 0 : user.OrgID;
+						$scope.navDirData = [{
+							ID: $scope.OrgID,
+							OrgName: $scope.OrgID ? user.OrgName : "组织架构"
+						}];
+						user.CompID > 0 && loadData();
+						if(user.CompID == 0) {
+							$scope.data = null;
+							$scope.isLoad = true;
+						}
+
+					});
+				};
+				//Android返回键返回上级目录
+				var mui_back = mui.back;
+				mui.back = function() {
+					if($scope.navDirData.length > 1) {
+						$scope.navDirData.splice($scope.navDirData.length - 1, 1);
+						$scope.OrgID = $scope.navDirData[$scope.navDirData.length - 1].ID;
+						$scope.$apply();
+						resScroll();
+						loadData();
+					} else {
+						mui_back();
+					}
+					$Modal.close();
+				};
+				var c_date = new Date();
+				var filter_date = $filter("getCustomDate")(c_date.getFullYear(), "", c_date.getMonth() + 1);
+
+				function loadData() {
+
+					//if(!$scope.data.hasOwnProperty($scope.OrgID)) {
+
+					//OrgID=0
+					$scope.data[$scope.OrgID] = {
+						deps: null,
+						users: null
+					};
+					Loading.show();
+					$scope.pageIndex = 1;
+					//获取企业组织架构
+					if($filter("hasAuth")(['Q0', 'Q40', 'Q41', 'Q43'])) {
+						getOrgList();
+					}
+					//默认一开始执通过下拉调用人员查询 数据加载时不调用
+					if(mui("#refreshWork").pullRefresh()) {
+						mui('#refreshWork').pullRefresh().refresh(true); //重置上拉		
+						//根据组织机构获取用户						
+						getPagedUserWorkLogCountByOrgId();
+					}
+					//}
+				};
+				//获取企业组织架构
+				function getOrgList() {
+					var url = ApiService.Api50 + "/api/v1/Org/GetOrgList?parentId=" + $scope.OrgID;
+					DataService.get(url).then(function(res) {
+						if(res) {
+							//Loading.hide();
+
+							$scope.isLoad = true;
+							$scope.data[$scope.OrgID].deps = res;
+						}
+					})
+				};
+				var isEnd = false;
+				//根据组织机构获取用户
+				setTimeout(function() {
+					mui.init({
+						pullRefresh: {
+							container: "#refreshWork",
+							up: {
+								callback: pullupRefresh,
+								auto: true
+							}
+						}
+					});
+				})
+
+				$scope.pageIndex = 1;
+				$scope.pageSize = 20;
+  				var isAddPage=false;
+				function pullupRefresh() {					
+					isAddPage&&$scope.pageIndex++;		
+					getPagedUserWorkLogCountByOrgId()
+				}
+
+				function getPagedUserWorkLogCountByOrgId() {
+
+					var url = ApiService.Api50 + "/api/v1/MatWorkOrder/GetPagedUserWorkLogCountByOrgId?orgId=" + $scope.OrgID + "&pageIndex=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize + "&beginDate=" + (filter_date.start || "") + "&endDate=" + (filter_date.end || "");
+					DataService.get(url).then(function(res) {
+						if(res) {
+							
+							$scope.retryModal.state = '';
+
+							Loading.hide();
+							$scope.isLoad = true;
+							isAddPage=true;
+							$scope.data[$scope.OrgID].users == null && ($scope.data[$scope.OrgID].users = []);
+							$scope.data[$scope.OrgID].users = $scope.data[$scope.OrgID].users.concat(res.DataRows);
+							isEnd = $scope.data[$scope.OrgID].users.length >= res.TotalCount;
+							if(mui("#refreshWork").pullRefresh()) {
+								//mui('#refreshWork').pullRefresh().refresh(true);//重置上拉
+								mui("#refreshWork").pullRefresh().endPullupToRefresh(isEnd);
+
+							}
+
+							RPCObserver.broadcast("sync_work_date", filter_date);
+
+						}
+					}, function(error) {
+						$scope.isLoad = true;
+						$scope.retryModal.state = error.State;
+
+						mui("#refreshWork").pullRefresh().endPullupToRefresh(true);
+					})
+				}
+				//点击导航目录
+				mui("#res-slide").on("tap", ".mui-control-item", function() {
+					var orgid = this.getAttribute("orgid");
+					var index = this.getAttribute("index");
+
+					//if(orgid == $scope.OrgID) return;
+					$scope.OrgID = orgid;
+					$scope.navDirData = $scope.navDirData.filter(function(_item, _index) {
+						return _index <= parseInt(index);
+					});
+
+					$scope.$apply();
+					resScroll();
+					loadData();
+				});
+				//导航栏滚动事件
+				function resScroll() {
+					setTimeout(function() {
+						var width = mui("#res-slide")[0].clientWidth;
+						var scrollWidth = mui("#res-slide .mui-scroll")[0].clientWidth;
+						scrollto = 0;
+						if((scrollWidth + 35) < width || width == 0) {
+							scrollto = 0;
+						} else {
+							scrollto = width - scrollWidth - 24;
+						}
+						mui('#res-slide').scroll().scrollTo(scrollto, 0, 0);
+					}, 100);
+				};
+				//点击目录
+				$scope.clickDir = function(orgId, orgName, orgPersonNums) {
+					if(orgPersonNums > 0) {
+
+						$scope.OrgID = orgId;
+						var selectedOrg = {
+							"ID": orgId,
+							"OrgName": orgName
+						}
+						$scope.navDirData.push(selectedOrg);
+						resScroll();
+						loadData();
+					} else {
+						mui.toast("本部门下暂无人员")
+					}
+				};
+				//日期选择
+				var _curDate = new Date();
+				var curDate = {
+					quarter: {
+						"1": "一季度",
+						"2": "二季度",
+						"3": "三季度",
+						"4": "四季度"
+					},
+					curYear: _curDate.getFullYear(),
+					curValue: _curDate.getMonth(),
+					curType: "month",
+					view: _curDate.getFullYear() + "年" + (_curDate.getMonth() + 1) + "月"
+				};
+				$scope.domData = {
+					curDate: curDate,
+				};
+				$scope.chooseDate = function() {
+					var _date = $scope.domData.curDate;
+					DatePickerService.getTime(_date.curYear, _date.curValue, _date.curType).then(function(data) {
+
+						_date.curYear = data.year;
+						_date.curType = data.type;
+						_date.curValue = data.value;
+						_date.startDate = data.startDate;
+						_date.endDate = data.endDate;
+						_date.view = data.view;
+						var startDate = data.startDate.Format("yyyy-MM-dd 00:00:00");
+						var endDate = data.endDate.Format("yyyy-MM-dd 00:00:00");
+						filter_date.start = startDate;
+						filter_date.end = endDate;
+
+						$scope.data[$scope.OrgID].users = []
+						$scope.pageIndex = 1;
+						mui("#refreshWork").pullRefresh().refresh(true)
+						$scope.isLoad = false;
+						Loading.show();
+						getPagedUserWorkLogCountByOrgId();
+					});
+				}
+				RpcServer.expose("RPC_RefreshWorkStatistics", function() {
+					$scope.data[$scope.OrgID].users = [];
+					$scope.pageIndex =1;
+					getPagedUserWorkLogCountByOrgId();
+					$scope.$apply();
+				});
+			}]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

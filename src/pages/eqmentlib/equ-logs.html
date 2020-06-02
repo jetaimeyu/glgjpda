@@ -1,0 +1,60 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<link rel="stylesheet" href="../../css/mui.pullrefresh.css" />
+		<link rel="stylesheet" href="../../css/mui.loading.css" />
+		<link rel="stylesheet" href="../common/share-log.css" />
+	</head>
+
+	<body ng-controller="bodyCtl">
+
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">操作日志</a>
+			<a class="right-menu-words" id="save" ng-click="event.history()">历史日志</a>
+		</header>
+		<div class="mui-content prodInfo" style="display:none" ng-class="{'mui-block':domData.info.length==1}">
+			<md-device-list ng-model="domData.info"></md-device-list>
+
+			<div class="log" ng-repeat="item in domData.list">
+				<div class="date color-gray-dark" ng-bind="item.CreateDate"></div>
+				<div class="list">
+					<div class="line"></div>
+					<div class="row" ng-repeat="row in item.DataRow" ng-click="event.openLogInfo(row.ID)">
+
+						<div class="time">
+							<span ng-bind="row.CreateTime"></span>
+							<span ng-bind="row.CreateUserName || curUser.RealName"></span>
+						</div>
+						<div class="round {{roundColor[row.State]}}">
+						</div>
+						<div class="event">
+							<span class="title" ng-bind="States[row.State]"></span>
+							<span class="desc" ng-bind="row.Description"></span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="mui-content-padded">
+				<span class="mui-btn mui-btn-block" ng-click="event.add()">新增</span>
+			</div>
+		</div>
+
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../../js/angular.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/mui.pullToRefresh.js"></script>
+		<script type="text/javascript" src="../../js/mui.loading.js"></script>
+		<script type="text/javascript" src="equ-log.js"></script>
+	</body>
+
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	</head>
+<style type="text/css">
+	.icon {
+			width: 16px;
+		}
+</style>
+	<body ng-controller="pullrefreshController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">购置列表</a>
+			<a class="mui-pull-right menu-add" id="add" ng-click="add()">
+				<img class="icon" src="../../images/add.png" />
+			</a>
+	        <a class="mui-pull-right menu-search" id="search" ng-click="selecttype()">
+				<img class="icon" src="../../images/search.png" />
+			</a>
+		</header>
+
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("pullrefreshController", ["$scope", "UtilsService", function($scope, UtilsService) {
+				$scope.nowdata = "全部";
+				var clicke = false;
+				var type = query("type");
+				$scope.opType = {
+					newlybuild: 1,
+					waiting: 2,
+					agreed: 4,
+					rejected: 3,
+					all: 5,
+				};
+				$scope.datetype = {
+					1: "新建",
+					2: "待审核",
+					3: "已驳回",
+					4: "已同意",
+					5: "全部"
+				}
+				$scope.roundColor = {
+					1: 'color_orange',
+					2: 'color_orange',
+					3: 'color_red',
+					4: 'color_green',
+
+				};
+				$scope.selecttype = function() {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: "equ-purchase-typeselect.html",
+						url: "equ-purchase-typeselect.html",
+                        extras: {
+		                type:$scope.opration,
+		                callback:'selectCallback'
+										
+                        }
+					});
+				}
+			      RpcServer.expose("RPC_equ", function(params) {
+						if(params) {
+							$scope.opration=params;
+							
+							
+						}
+						})
+				window.selectCallback = function(obj) {
+					
+					$scope.opration=obj 
+					
+				}
+				mui.init({
+					subpages: [{
+						url: 'equ-purchase-list.html',
+						id: 'equ-purchase-list.html',
+						styles: {
+							top: '45px',
+							bottom: 0
+						}
+					}]
+				})
+				$scope.add = function() {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: "equ-purchase-edit.html",
+						url: "equ-purchase-edit.html"
+					});
+
+				}
+			}]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

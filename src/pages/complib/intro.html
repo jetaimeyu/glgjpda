@@ -1,0 +1,82 @@
+<!--企业简介 scz-->
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>企业简介</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<style type="text/css">
+			.mui-content {
+				background-color: #FFFFFF;
+				padding: 10px;
+				word-break: break-all;
+			}
+			
+			img {
+				max-width: 100%!important;
+			}
+			
+			md-compile ul {
+				padding-left: 40px;
+				list-style: disc;
+			}
+			
+			.empty-list-tips p {
+				font-size: 1.0rem;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="CompIntroController" style="background: #FFFFFF;">
+		<div class="mui-content" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<md-compile data-template="compIntrHtml"></md-compile>
+			<md-no-data ng-show="!compIntrHtml || compIntrHtml == ''">暂无企业介绍</md-no-data>
+		</div>
+
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/xss.min.js"></script>
+		<script type="text/javascript">
+			app.controller("CompIntroController", ["$scope", "ApiService", "DataService", "UtilsService", "Loading", function($scope, ApiService, DataService, UtilsService, Loading) {
+				$scope.compIntrHtml = '';
+				//初始化
+				function init() {
+					Loading.show();
+					var url = ApiService.Api50 + "/api/v1/Comp/GetCompIntroByCompId?compId=" + query('compid');
+					DataService.get(url).then(function(res) {
+						$scope.compIntrHtml = res.replace(/http:\/\/api3.maidiyun.com/g, ApiService.Api30).replace(/\/\/mdcloud.maidiyun.com\/50/g, ApiService.Api50);
+						Loading.hide();
+						$scope.isLoad = true;
+					})
+				}
+				init();
+				mui('body').on('tap', 'a', function() {
+					var url = this.getAttribute('href');
+					var title = this.getAttribute("title") || "";
+					if(url) {
+						UtilsService.openWindow({
+							needLogin: false,
+							id: 'hyperlink',
+							url: '../common/hyperlink.html',
+							extras: {
+								hyperlink: {
+									title: title,
+									url: url
+								}
+							}
+						});
+					}
+				});
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

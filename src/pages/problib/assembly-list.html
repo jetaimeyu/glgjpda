@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>装配关系检索</title>
+    <link href="../../css/mui.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../../css/common.css" />
+    <link rel="stylesheet" href="../../icon-font/iconfont.css">
+    <style type="text/css">
+        .text-dot {
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+
+        .data-wrap {
+            background-color: #fff;
+        }
+
+        .data-item {
+            padding: 14px 16px 10px;
+            font-size: 1.5rem;
+            line-height: 17px;
+            position: relative;
+        }
+
+
+        .data-item::after {
+            position: absolute;
+            left: 10px;
+            right: 10px;
+            bottom: 0;
+            height: 1px;
+            content: '';
+            -webkit-transform: scaleY(0.5);
+            transform: scaleY(0.5);
+            background-color: #EAEAEA;
+        }
+
+        .catalog-title {
+            margin: 0;
+            font-size: 1.5rem;
+            line-height: 17px;
+            color: #888888;
+            padding: 13px 16px;
+            background-color: #f1f1f1;
+        }
+
+        .product {
+            /*为定位数量位置*/
+            position: relative;
+            background-color: #F7F7F7;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .product-avatar {
+            height: 40px;
+            width: 40px;
+            background-color: #FFF;
+            background-repeat: no-repeat;
+            background-size: cover;
+            float: left;
+        }
+
+        .product-info {
+            margin-left: 50px;
+            color: #AAAAAA;
+        }
+
+        .product-name {
+            margin-top: 0;
+            font-size: 1.5rem;
+            line-height: 17px;
+            margin-bottom: 10px;
+            margin-right: 60px;
+        }
+
+        .product-type-wrap {
+            font-size: 1.2rem;
+            line-height: 14px;
+            color: #8f8f94;
+        }
+
+        .product-type-item {
+            display: inline-block;
+            max-width: 30vw;
+            margin-right: 10px;
+            vertical-align: top;
+        }
+
+        .operte-item {
+            display: inline-block;
+            font-size: 1.2rem;
+            line-height: 14px;
+            max-width: 30%;
+            margin-right: 10px;
+            color: #AAAAAA;
+        }
+
+        .operate-info .mark {
+            padding: 2px 4px;
+            background-color: deepskyblue;
+            color: #FFF;
+            font-size: 1.2rem;
+            line-height: 17px;
+            float: right;
+        }
+
+        .operate-info .active-mark {
+            background-color: rgb(57, 175, 57);
+        }
+    </style>
+</head>
+
+<body ng-controller="searchMatPart">
+    <header class="mui-bar mui-bar-nav">
+        <a class="mui-action-back mui-icon icon-back">装配检索</a>
+    </header>
+    <!-- 列表页 -->
+    <div class="mui-content" ng-class="{'mui-block':domShow}" style="display: none;">
+        <ul class="data-wrap" ng-if="data.parent">
+            <h1 class="catalog-title text-dot">主机</h1>
+            <li class="data-item mui-table-view-cell" ng-click="toDetailPage(1)">
+                <div class="product">
+                    <img class="product-avatar" src="../../images/imgPre.png" ng-style="{'background-image':'url('+ (data.parent | getProdLogo:56:56) +')'}"
+                    />
+                    <div class="product-info">
+                        <h5 class="product-name text-dot" ng-bind="data.parent.HostProdName"></h5>
+                        <div class="product-type-wrap">
+                            <span class="product-type-item text-dot" ng-bind="data.parent.HostSkuName"></span>
+                            <span class="product-type-item">/</span>
+                            <span class="product-type-item text-dot" ng-bind="data.parent.HostProdInnerCode"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="operate-info">
+                    <span class="operte-item text-dot" ng-bind="data.parent.AssembledGroup"></span>
+                    <span class="operte-item text-dot" ng-bind="data.parent.AssembledUserName"></span>
+                    <span class="operte-item text-dot" ng-bind="data.parent.AssembleDate"></span>
+                    <!-- <span class="mark" ng-class="{'active-mark':item.isChange}" ng-bind="item.isChange?'正常组装':'已经更换'"></span> -->
+                </div>
+            </li>
+        </ul>
+
+
+        <ul class="data-wrap" ng-if="data.childrren">
+            <h1 class="catalog-title text-dot">配件</h1>
+            <li ng-repeat="item in data.childrren" class="data-item mui-table-view-cell" ng-click="toDetailPage(2,item)">
+                <div class="product">
+                    <img class="product-avatar" src="../../images/imgPre.png" ng-style="{'background-image':'url('+ (item | getProdLogo:56:56) +')'}"
+                    />
+                    <div class="product-info">
+                        <h5 class="product-name text-dot" ng-bind="item.PartProdName"></h5>
+                        <div class="product-type-wrap">
+                            <span class="product-type-item text-dot" ng-bind="item.PartSkuName"></span>
+                            <span class="product-type-item">/</span>
+                            <span class="product-type-item text-dot" ng-bind="item.PartProdInnerCode"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="operate-info">
+                    <span class="operte-item text-dot" ng-bind="item.AssembledGroup" ng-style="{'margin-right':item.AssembledGroup==''?'0px':'10px'}"></span>
+                    <span class="operte-item text-dot" ng-bind="item.AssembledUserName"></span>
+                    <span class="operte-item text-dot" ng-bind="item.AssembleDate"></span>
+                    <!-- <span class="mark" ng-class="{'active-mark':item.isChange}" ng-bind="item.isChange?'正常组装':'已经更换'"></span> -->
+                </div>
+            </li>
+        </ul>
+        <md-no-data ng-show="!domShow && !data.childrren && !data.parent" data-options="{type:'search'}">暂无数据</md-no-data>
+    </div>
+    <script src="../../js/angular.min.js"></script>
+    <script src="../../js/mui.min.js"></script>
+    <script src="../../js/common.js"></script>
+    <script type="text/javascript" src="../../js/utils.js"></script>
+    <script type="text/javascript" src="../../js/rpc.js"></script>
+    <script type="text/javascript">
+        app.controller("searchMatPart", ["$scope", "ApiService", "AuthService", "CacheService", "DataService",
+            "UtilsService", "Loading", "$timeout",
+            function ($scope, ApiService, AuthService, CacheService, DataService, UtilsService, Loading,
+                $timeout) {
+                $scope.domShow = true; // 初始化之完成之后才显示dom 需要等待一段时间
+                $scope.data = {}
+                Loading.show();
+
+                getData()
+
+                function getData() {
+                    var url = ApiService.Api50 +
+                        "/api/v1//Assemble/GetAssemblesByMdCode?mdCode=" + query('mdcode');
+                    DataService.get(url).then(function (res) {
+                        $scope.data = res;
+                        Loading.hide();
+                    });
+                };
+
+                // RpcServer.expose("RPC_MatPartSearchRefresh", function () {
+                //     getData();
+                // })
+                // 跳转详情
+                $scope.toDetailPage = function (type, item) {
+                    switch (type) {
+                        case 1:
+                            // alert("父级主机" + JSON.stringify($scope.data.parent))
+                            return
+                            break;
+                        case 2:
+                            // alert("子级配件" + JSON.stringify(item))
+                            return
+
+                            if (item.AssembleType == 2) {
+                                UtilsService.openWindow({
+                                    needLogin: true,
+                                    id: 'mat-part-info.html',
+                                    url: 'mat-part-info.html?id=' + LinkID
+                                });
+                            }
+                            if (item.AssembleType == 1) {
+                                UtilsService.openWindow({
+                                    needLogin: true,
+                                    id: 'assemble-info.html',
+                                    url: 'assemble-info.html?id=' + ID
+                                });
+                            }
+                            break;
+
+                        default:
+                            break;
+                    }
+                };
+            }
+        ]);
+
+        mui.plusReady(function () {
+            angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+            var style = {
+                scrollIndicator: 'none'
+            };
+            mui.os.android && (style.softinputMode = 'adjustResize');
+            plus.webview.currentWebview().setStyle(style);
+        });
+    </script>
+</body>
+
+</html>

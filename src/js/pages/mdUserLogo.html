@@ -1,0 +1,12 @@
+<div class="userLogo" ng-if="model.ULogoIsExist" ng-style="{'background-image':'url('+ (model.UserID | getUserLogo:width:0) +')','width':width+'px','height':height+'px'}"></div>
+<div class="md-userCustomLogo" ng-style="{'width':width+'px','height':height+'px','line-height':height+'px'}" ng-if="!model.ULogoIsExist" ng-bind="model.ViewName | getUserCustomLogo"></div>
+
+<style type="text/css">
+	.userLogo {
+		line-height: 36px;
+		max-width: 50px;
+		border-radius: 50%;
+		background-color: #FFFFFF;
+		background-size: cover;
+	}
+</style>

@@ -1,0 +1,267 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link href="../../css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	<style type="text/css">
+		html {
+			font-size: 62.5%;
+		}
+
+		.mui-table-view-cell img {
+			margin-top: 2px;
+		}
+
+		.mui-grid-view.mui-grid-9 .mui-table-view-cell>a:not(.mui-btn) {
+			margin: 0 0 5px 0;
+			/*margin: 0;*/
+			padding: 0;
+		}
+
+		.mui-media-body {
+			line-height: 16px !important;
+			font-size: 13px !important;
+			margin-top: 5px !important;
+		}
+
+		.cmd-container {
+			position: relative;
+		}
+
+		.mui-grid-view.mui-grid-9 .mui-table-view-cell {
+			padding: 3px 0px;
+			background-color: white;
+		}
+
+		.mui-grid-view.mui-grid-9 {
+			background-color: #fff;
+			/*padding: 10px 0 ;*/
+			padding: 10px 0 5px 0;
+		}
+
+		.mui-grid-view.mui-grid-9:after {
+			position: absolute;
+		}
+
+		.mui-grid-9.bg {
+			position: absolute;
+			bottom: 0;
+			right: 0;
+			z-index: -1;
+		}
+
+		.mui-grid-view.mui-grid-9 .mui-table-view-cell {
+			border: none;
+		}
+
+		.imgslist {
+			float: left;
+			width: 62px;
+			height: 62px;
+			background-size: cover !important;
+		}
+
+		.group-title {
+			padding: 5px 16px 12px;
+			font-size: 17px;
+			color: #323232;
+			margin: 0;
+			background-color: #fff;
+		}
+	</style>
+</head>
+
+<body ng-controller="ProdInfoCtl">
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon icon-back" ng-bind="title"></a>
+	</header>
+	<div class="mui-content" ng-if="ProdInfo.ProdID" style="display: none;" ng-class="{'mui-block':isLoad}">
+		<ul class="data-group">
+			<li class="data-row mui-table-view-cell" ng-click="tap('detail')">
+				<p class="opt md-icon">
+					<span class="icon-right"></span>
+				</p>
+				<div class="body" style="padding: 10px 5px 11px 16px;">
+					<!--<img class="float-left size70 bg-f2 border-f2 mr10" ms-attr="{src:ImgUrl+'/prod/logo/'+Prod.ID+'_100x100.jpg'}" />-->
+					<div class="float-left imgslist bg-f2 border-f2 mr10" src="../../images/imgPre.png"
+						ng-style="{'background-image':'url('+ (ProdInfo | getProdLogo:62:62) +')'}"></div>
+					<div style="margin-left: 72px;">
+						<div class="title font-16 mui-ellipsis" ng-bind="ProdInfo.ProdName"></div>
+						<p class="color-gray-deep font-13 mui-ellipsis" style="margin-bottom: 0" ng-if="ProdInfo.SkuName"
+							ng-bind="'型号：'+ProdInfo.SkuName"></p>
+						<p ng-if="ProdInfo.ProdInnerCode" class="color-gray-deep font-13 mui-ellipsis" style="margin-bottom: 0"
+							ng-bind="ProdInfo.InnerCodeName+'：'+ProdInfo.ProdInnerCode"></p>
+					</div>
+				</div>
+			</li>
+		</ul>
+		<div class="cmd-container" style="display: none;" ng-class="{'mui-block':isLoad}" ng-if="handleMenus.length>0">
+			<ul class="mui-table-view mui-grid-view mui-grid-9">
+				<h1 class="group-title">业务处理</h1>
+				<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3" ng-click="tap(list.action)"
+					ng-repeat="list in handleMenus">
+					<a>
+						<img ng-src="{{list.icon}}" width="45" />
+						<div class="mui-media-body" ng-bind="list.title"></div>
+					</a>
+				</li>
+			</ul>
+		</div>
+		<div class="cmd-container" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<ul class="mui-table-view mui-grid-view mui-grid-9">
+				<h1 class="group-title">信息查询</h1>
+				<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3" ng-click="tap(list.action)"
+					ng-repeat="list in queryMenus">
+					<a>
+						<img ng-src="{{list.icon}}" width="45" />
+						<div class="mui-media-body" ng-bind="list.title"></div>
+					</a>
+				</li>
+			</ul>
+		</div>
+		<ul class="data-group" ng-if="FacInstall.Name||(Fac.ID==user.CompID&&ProdInfo.ProdInnerCode)">
+			<li class="data-row" ng-click="compIndexView(FacInstall.ID)">
+				<p class="opt md-icon">
+					<span class="icon-right"></span>
+				</p>
+				<label>生产厂家</label>
+				<div class="body">
+					<span ng-bind="FacInstall.Name"></span>
+				</div>
+			</li>
+			<li class="data-row" ms-if="ProdInfo.ProdInnerCode">
+				<label>{{ProdInfo.InnerCodeName}}</label>
+				<div class="body">
+					<span ng-bind="ProdInfo.ProdInnerCode"></span>
+				</div>
+			</li>
+			<li class="data-row">
+				<label>绑定人</label>
+				<div class="body">
+					<span ng-bind="CodeCreateUserName"></span>
+				</div>
+			</li>
+		</ul>
+		<ul class="data-group">
+			<!--如果是厂家，则显示第一次出库信息和最后一次出库信息-->
+			<li class="data-row" ng-if="OutCust.FirstCust">
+				<label ng-if="!OutCust.LastCust">已出库给</label>
+				<label ng-if="OutCust.LastCust">首次出库给</label>
+				<p ng-if="OutCust.FirstCust.LinkPhone" class="opt md-icon icon-tel color-blue font-18"
+					ng-click="tap('phone',OutCust.FirstCust.LinkPhone)"></p>
+				<!--企业或者经销商客户-->
+				<div class="body" style="margin-right: 30px;" ng-if="OutCust.FirstCust.CustomerType!=3">
+					{{OutCust.FirstCust.CustomerName}}
+					<p>
+						{{OutCust.FirstCust.LinkName+' '+OutCust.FirstCust.LinkPhone}}
+					</p>
+					<p>
+						{{OutCust.FirstCust.OutDate}}
+					</p>
+				</div>
+				<!--个人客户-->
+				<div class="body" ng-if="OutCust.FirstCust.CustomerType==3">
+					{{OutCust.FirstCust.LinkName+' '+OutCust.FirstCust.LinkPhone}}
+					<p>
+						{{OutCust.FirstCust.OutDate}}
+					</p>
+				</div>
+			</li>
+			<li class="data-row" ng-if="OutCust.LastCust">
+				<label>最后出库给</label>
+				<p ng-if="OutCust.LastCust.LinkPhone" class="opt md-icon icon-tel color-blue font-18"
+					ng-click="tap('phone',OutCust.LastCust.LinkPhone)"></p>
+				<!--企业或者经销商客户-->
+				<div class="body" style="margin-right: 30px;" ng-if="OutCust.LastCust.CustomerType!=3">
+					{{OutCust.LastCust.CustomerName}}
+					<p>
+						{{OutCust.LastCust.LinkName+' '+OutCust.LastCust.LinkPhone}}
+					</p>
+					<p>
+						{{OutCust.LastCust.OutDate}}
+					</p>
+				</div>
+				<!--个人客户-->
+				<div class="body" ng-if="OutCust.LastCust.CustomerType==3">
+					{{OutCust.LastCust.LinkName+' '+OutCust.LastCust.LinkPhone}}
+					<p>
+						{{OutCust.LastCust.OutDate}}
+					</p>
+				</div>
+			</li>
+		</ul>
+		<p class="data-group-tip bold"
+			ng-if="Scan&&(Scan.avgDayScanNum!=0||Scan.count!=0||Scan.thirtyDayScanNum!=0||Scan.lat!=0||Scan.lng!=0)">
+			迈迪国标通用物联码动态扫描记录
+			<!--该产品被扫码次数-->
+		</p>
+		<ul class="data-group"
+			ng-if="Scan&&(Scan.avgDayScanNum!=0||Scan.count!=0||Scan.thirtyDayScanNum!=0||Scan.lat!=0||Scan.lng!=0)">
+			<li class="data-row click-gray" id="scanRecord">
+				<label>扫描总计</label>
+				<!--<p class="opt md-icon">
+						<span class="icon-right"></span>
+					</p>-->
+				<div class="body">
+					{{Scan.count||0}}次
+				</div>
+			</li>
+			<li class="data-row click-gray">
+				<label>30天内总计</label>
+				<div class="body">
+					{{Scan.thirtyDayScanNum||0}}次，平均每天{{Scan.avgDayScanNum||0}}次
+				</div>
+			</li>
+			<li class="data-row click-gray" ng-show="Scan.date">
+				<label>上次扫描时间 </label>
+				<div class="body">
+					<span ng-bind="Scan.date | getScanTime"></span>
+				</div>
+			</li>
+			<li class="data-row click-gray" ng-show="Scan.province">
+				<label>上次扫描地点</label>
+				<div class="body">
+					<span ng-bind="Scan.province | locationfilter:Scan.city:Scan.district:Scan.address:Scan.street"></span>
+				</div>
+			</li>
+			<li class="data-row click-gray">
+				<label>扫描状态</label>
+				<div class="body">
+					<span ng-if="Status==1" class="color-green-light">正常</span>
+					<span ng-if="Status==2" class="color-red-md">异常</span>
+				</div>
+			</li>
+		</ul>
+	</div>
+	<!--空码-->
+	<div class="mui-content" ng-if="!ProdInfo.ProdID" style="display: none;" ng-class="{'mui-block':isLoad}">
+		<div class="code center" style="margin-top: 18vh;">
+			<span class="bold" ms-text="code"></span>
+		</div>
+		<div class="tip" style="margin-top: 15vh; color: #3296FA;">
+			<span>该迈迪国标通用物联码尚未绑定任何产品或设备</span>
+			<p style="font-size: 1.3rem; color: #3296FA;">点击绑定产品或设备按钮，进行绑定</p>
+		</div>
+		<div class="mui-content-padded" ng-click="bindingProd()">
+			<button class="mui-btn mui-btn-primary mui-btn-block">绑定产品</button>
+		</div>
+		<div class="mui-content-padded" ng-click="bindingEq()">
+			<button class="mui-btn mui-btn-primary mui-btn-block">绑定新建设备</button>
+		</div>
+		<div class="mui-content-padded" ng-click="bindingReadyEq()">
+			<button class="mui-btn mui-btn-primary mui-btn-block">绑定已有设备</button>
+		</div>
+	</div>
+	<script src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="scanDetails.js"></script>
+</body>
+
+</html>

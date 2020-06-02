@@ -1,0 +1,108 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/common.css">
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+	</head>
+
+	<body ng-controller="addResCtrl">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">添加资源</a>
+		</header>
+		<div class="mui-content" style="height: 100%;">
+			<ul class="data-group">
+				<li class="data-row must" ng-click="selectGroup()">
+					<label>分组</label>
+					<i class="opt md-icon icon-right"></i>
+					<div class="body">
+						<span class="placeholder" ng-show="!resource.GroupName">请选择分组</span>
+						<span ng-bind="resource.GroupName"></span>
+					</div>
+				</li>
+			</ul>
+			<div style="padding: 10px;">
+				<a type="button" class="font-15 mui-btn mui-btn-block" ng-click="add()">确认</a>
+			</div>
+		</div>
+		<script src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script>
+			app.controller("addResCtrl", ["$scope", "ApiService","RPCObserver", "DataService", "Loading", "UtilsService", function($scope, ApiService,RPCObserver,DataService, Loading, UtilsService) {
+				$scope.resource = {
+					GroupID: "",
+					GroupName: ""
+				}
+
+				$scope.selectGroup = function() {
+					UtilsService.openWindow({
+						id: 'maintenanceRes.html',
+						url: '../complib/maintenanceRes.html?ismust=1&type=1',
+						extras: {
+							selectObj: {
+								id: $scope.resource.GroupID,
+								name: $scope.resource.GroupName
+							},
+							callback: 'getGroup'
+						}
+					});
+				}
+
+				$scope.add = function() {
+					if(!$scope.resource.GroupID) {
+						mui.toast("请选择分组！");
+						return;
+					}
+					var url = ApiService.Api50 + "/api/v1/Resource/ResourceAddComp?resCompId=" + query('compid') + "&groupId=" + $scope.resource.GroupID;
+					DataService.post(url).then(function(res) {
+						if(res) {
+							mui.toast("添加成功！");
+
+							var view = plus.webview.currentWebview();
+							var opener = view.opener();
+							if(view.callback) {
+								var temp = {
+									resId: res.ResID,
+									groupId: $scope.resource.GroupID
+								}
+								opener.evalJS(view.callback + "(" + JSON.stringify(temp) + ")");
+							}
+							RPCObserver.broadcast('refresh_Assist_detail');
+							RpcClient.invoke("ing-all.html-sub6", "RPC_RefreshLogin");
+							RpcClient.invoke("compShow.html", "RPC_CompShowReload");
+							RpcClient.invoke("sourceWind", "RPC_RefreshResource", $scope.resource.GroupID);
+							RpcClient.invoke("compWind", "RPC_RefreshResource", "-1");
+							RpcClient.invoke("friendWind", "RPC_RefreshResource", "-1");
+
+							mui.back();
+						}
+					})
+				}
+
+				$scope.close = function() {
+					mui.back();
+				}
+			}]);
+
+			function getGroup(res) {
+				var appElement = document.querySelector('[ng-controller=addResCtrl]');
+				var $scope = angular.element(appElement).scope();
+				$scope.resource.GroupID = res.ID;
+				$scope.resource.GroupName = res.GroupName||res.DirName;
+				$scope.$apply();
+			}
+		
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			})
+		</script>
+	</body>
+
+</html>

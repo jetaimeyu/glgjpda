@@ -1,0 +1,103 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.icon {
+				width: 16px;
+			}
+			
+			.mui-bar-nav~.mui-content .mui-pull-top-pocket {
+				top: 44px!important;
+			}
+			
+			.mui-bar-nav~.has-tab .mui-pull-top-pocket {
+				top: 84px!important;
+			}
+			
+			.mui-table {
+				display: table!important;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="inspListController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">设备巡检</a>
+			<!--<a class="mui-pull-right menu-add" id="add" ng-click="add()" ng-if="'Q14' | hasAuth" style="display: none;" ng-class="{'mui-block':showadd}">
+				<img class="icon" src="../../images/add.png" />
+			</a>-->
+			<a class="mui-pull-right menu-search" id="search" ng-click="search()">
+				<img class="icon" src="../../images/search.png" />
+			</a>
+		</header>
+		<div class="mui-content" ng-class="{'has-tab':isLoad}">
+			<ul class="md-tab" top="84" ng-if="!(['Q13','Q15']|hasAuth)" style="display: none;" ng-class="{'mui-block':isLoad}">
+				<li class="md-tab-item md-active" href="insp-all.html?type=my" winid="insp-my.html">我提交的</li>
+				<li class="md-tab-item " href="insp-all.html?type=at" winid="insp-at.html">发给我的</li>
+				
+				<li class="md-tab-item" href="insp-all.html?type=dept" winid="insp-dept.html" ng-if="['Q11','Q12','Q13','Q15'] | hasAuth">本部门的</li>
+				<li class="md-tab-item" href="insp-all.html?type=depts" winid="insp-depts.html" ng-if="['Q12','Q13','Q15'] | hasAuth">下级部门</li>
+			</ul>
+			<div id="slider" class="mui-slider mui-fullscreen" ng-if="['Q13','Q15']|hasAuth">
+				<div id="sliderSegmentedControl" class="mui-scroll-wrapper  mui-slider-indicator mui-segmented-control mui-segmented-control-inverted  " style="background: #fff; display: none;" ng-class="{'mui-block':isLoad}">
+					<div class="mui-scroll md-tab md-tab-block" top="84">
+						<a class="md-tab-item md-active" href="insp-all.html?type=my" winid="insp-my.html">我提交的</a>
+						<a class="md-tab-item " href="insp-all.html?type=at" winid="insp-at.html">发给我的</a>
+						
+						<a class="md-tab-item" href="insp-all.html?type=dept" winid="insp-dept.html" ng-if="['Q11','Q12','Q13','Q15'] | hasAuth">本部门的</a>
+						<a class="md-tab-item" href="insp-all.html?type=depts" winid="insp-depts.html" ng-if="['Q12','Q13','Q15'] | hasAuth">下级部门</a>
+						<a class="md-tab-item" href="insp-all.html?type=all" winid="insp-all.html" ng-if="['Q13','Q15'] | hasAuth">所有巡检</a>
+					</div>
+				</div>
+				<div class="md-tab-block-line">
+					
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript">
+			app.controller("inspListController", ["$scope", "UtilsService", "$filter",function($scope, UtilsService,$filter) {
+				setTimeout(function() {
+					$scope.showadd = true;
+					$scope.isLoad = $filter("hasAuth")('Q12') ? $filter("hasAuth")(['Q11', 'Q12', 'Q13', 'Q15']) : true;
+					$scope.$apply();
+				}, 100);
+				setTimeout(function() {
+					MdConfig.StartUsingTab();
+				}, 200);
+				//新增页面跳转
+				$scope.add = function() {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'equ-maintenance.html',
+						url: 'equ-maintenance.html'
+					});
+				};
+				//跳转搜索页
+				$scope.search = function() {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'insp-search.html',
+						url: 'insp-search.html?equid=' + $scope.equId
+					});
+				};
+			}]);
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

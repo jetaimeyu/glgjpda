@@ -1,0 +1,139 @@
+/*第一个data-row高度，行高 左 上内边距 */
+
+.data-avatar .data-row .body {
+	padding: 8px 16px;
+}
+
+
+/*更改头像span样式 */
+
+.data-group:first-child label.modified {
+	padding-left: 120px;
+	width: auto;
+	color: #3296FA;
+	font-size: 1.4rem;
+}
+
+.data-group .data-row .body>span,
+.data-group .data-row .body input {
+	color: #323223;
+}
+
+
+/*按钮*/
+
+.btn-submit {
+	margin: 40px 16px 0 16px;
+}
+
+.btn-submit span {
+	background-color: #3296FA;
+	border-color: #3296FA;
+	color: #fff;
+	font-size: 1.6rem;
+}
+
+.data-group:after,
+.data-group .data-row:last-child:after {
+	content: none;
+}
+
+.data-group .data-row label {
+	left: 16px;
+	right: 16px;
+}
+
+.data-group:before,
+.data-group:after,
+.data-group .data-row:after {
+	background-color: #EAEAEA;
+}
+
+.data-group .data-row:after {
+	left: 10px;
+	right: 10px;
+}
+
+.mui-table-view .mui-media-object {
+	border: none;
+}
+
+.mui-table-view:before,
+.mui-table-view:after {
+	content: none;
+}
+
+.mui-table-view .mui-table-view-cell {
+	padding: 8px 16px;
+	height: 71px;
+}
+
+.mui-table-view .mui-table-view-cell .mui-media-object {
+	line-height: 71px;
+	background-color: #FFFFFF;
+	width: 55px;
+	height: 55px;
+	max-width: 55px;
+	background-size: 50px;
+}
+
+.mui-ellipsis {
+	white-space: nowrap!important;
+}
+
+.equ-title {
+	/*line-height: 48px;*/
+	font-size: 1.5rem;
+	color: #000000;
+}
+
+.equ-sub {
+	line-height: 16px;
+	font-size: 1.2rem;
+	color: #AAAAAA;
+	font-family: MicrosoftYaHei;
+}
+
+.mui-table-view .mui-table-view-cell label,
+.mui-table-view .mui-table-view-cell .opt {
+	position: absolute;
+	top: 50%;
+	-webkit-transform: translateY(-50%);
+	transform: translateY(-50%);
+	overflow: hidden;
+	margin: 0;
+}
+
+.mui-table-view .mui-table-view-cell .opt,
+.data-group .data-row .opt {
+	color: #AEAEAE;
+	top: 50%;
+}
+
+.mui-table-view .mui-table-view-cell .opt:active {
+	color: #169BD5;
+}
+
+.mui-table-view .mui-table-view-cell .opt,
+.mui-table-view .mui-table-view-cell .body.arrow:after {
+	font-size: 1.7rem;
+	right: 0;
+	padding: 10px 14px 11px 10px;
+}
+
+.mui-table-view-cell:after {
+	background-color: #ECECEC;
+}
+
+.mui-table-view .mui-table-view-cell:after {
+	left: 10px;
+	right: 10px;
+}
+
+.imgslist {
+	float: left;
+	width: 55px;
+	height: 55px;
+	margin-right: 10px;
+	background-size: cover!important;
+}

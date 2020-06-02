@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<title></title>
+	<link href="../../css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css">
+	<style type="text/css">
+		.mui-icon-back {
+			line-height: 44px;
+			margin-left: -17px !important;
+			color: #323232;
+			font-size: 2.7rem !important;
+		}
+
+		.mui-bar .mui-title {
+			left: 19px;
+			color: #323232;
+			font-weight: 420;
+			line-height: 46px;
+		}
+
+		.md-modal-content {
+			background-color: #EAEAEA !important;
+			padding: 10px 0px !important;
+		}
+
+		/*伪元素(底线)控制*/
+		/*去掉ul上下边线*/
+
+		.data-group:before,
+		.data-group:after {
+			height: 0;
+		}
+
+		/*li边线离左右距离、边线颜色*/
+
+		.data-group .data-row:after {
+			left: 0px;
+			right: 0px;
+			background-color: #EAEAEA;
+		}
+
+		/*ul上下间距*/
+
+		.data-group {
+			margin-top: 0px;
+		}
+
+		.data-group .data-row {}
+
+		.data-group .data-row .icon-right {
+			position: absolute;
+			right: 0px;
+			padding: 7px 10px;
+			top: 50%;
+			transform: translateY(-50%);
+			font-size: 1.5rem;
+		}
+
+		.data-group .data-row .name {
+			margin-left: 35px;
+			font-size: 1.5rem;
+			line-height: 40px;
+			max-width: calc(80vw - 20px);
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			-o-text-overflow: ellipsis;
+			overflow: hidden;
+			display: block;
+		}
+
+		.data-group .data-row .left-10 {
+			position: absolute;
+			left: 5px;
+			padding: 5px;
+			top: 50%;
+			transform: translateY(-50%);
+			font-size: 1.8rem;
+		}
+
+		.data-group .data-row .opt,
+		.data-group .data-row .body.arrow:after {
+			padding: 10px 16px 11px 10px;
+			color: #AEAEAE !important;
+		}
+
+		#res-slide {
+			background: #fff;
+			overflow: hidden;
+			height: 40px;
+			position: fixed;
+			margin-top: 54px;
+		}
+
+		.top-thin-line:before {
+			background-color: #ECECEC;
+		}
+
+		.mui-segmented-control.mui-segmented-control-inverted .item {
+			color: #169BD5;
+			z-index: 999;
+		}
+
+		.mui-segmented-control.mui-segmented-control-inverted .item.mui-active {
+			color: #9A9A9C;
+			background: none;
+			border: none;
+		}
+
+		.mui-segmented-control .item {
+			padding: 0px !important;
+			line-height: 40px;
+		}
+
+		.mui-slider .mui-segmented-control.mui-segmented-control-inverted~.mui-slider-group .item {
+			border-top: none;
+		}
+
+		.mui-slider-indicator {
+			border-bottom: 1px solid #c8c7cc;
+		}
+
+		.mui-segmented-control .item>span {
+			font-size: 14px;
+		}
+
+		.mui-segmented-control .item .group-name {
+		/*	margin-left: 10px;
+			 margin-right: 10px; */
+		}
+
+		#slider .data-group .data-row .body {
+			padding-left: 10px;
+		}
+		#res-slide .mui-scroll{
+			padding-left: 10px;
+		}
+
+		.dir_btns {
+			position: fixed;
+			left: 0;
+			right: 0;
+			height: 40px;
+			bottom: 0px;
+		}
+
+		.dir_btns span {
+			line-height: 40px;
+			width: 50%;
+			font-size: 1.4rem;
+			text-align: center;
+			display: inline-block;
+			float: left;
+			position: relative;
+			border-top: 1px solid #eee;
+			background-color: #fff;
+		}
+
+		.dir_btns .cancel {
+			color: #B1B1B1;
+		}
+
+		.dir_btns .cancel:after {
+			content: '';
+			position: absolute;
+			right: 0;
+			width: 1px;
+			line-height: 50%;
+			background-color: #eee;
+			height: 100%;
+		}
+
+		.dir_btns .select {
+			color: #0ae;
+		}
+
+		.menu-more {
+			z-index: 20;
+			padding: 13px 6px 13px 10px;
+		}
+
+		#aepopover {
+			/*min-width: 260px;*/
+			/*height: 370px;*/
+			top: 65% !important;
+			margin-top: -150px;
+			left: 50% !important;
+			margin-left: -141px;
+			border-radius: 3px;
+			background-color: #fff;
+		}
+
+		#aepopover .mui-popover .mui-popover-arrow {
+			display: none !important;
+		}
+
+		#aepopover .data-group:before {
+			height: 0;
+		}
+
+
+		#aepopover .data-group .data-row .body {
+			padding: 10px 5px 11px 10px;
+		}
+
+		#aepopover .data-group .data-row:after {
+			left: 10px;
+			right: 10px;
+			background-color: #E5E5E5;
+			height: 1px;
+		}
+
+		#aepopover .data-group .data-row.first:after {
+			left: 5px;
+			right: 5px;
+			background-color: #E5E5E5;
+		}
+
+		#aepopover .data-group .data-row.first {
+			min-height: 38px
+		}
+
+		#add_div {
+			margin: 12px 20px 12px 20px;
+		}
+
+		#add_div a {
+			background-color: #3296FA;
+			color: #fff;
+			padding: 5px 0;
+			border: 1px solid #3296FA;
+		}
+
+		.data-group .data-row .label-gray {
+			color: #333333;
+		}
+
+		.info-title {
+			margin-left: 10px;
+			line-height: 1;
+			color: #1f1f1f;
+		}
+
+		.title {
+			color: #1f1f1f;
+		}
+
+		.mdt_leftline {
+			width: 3px;
+			height: 14px;
+			background: #169BD5;
+			margin-top: -13px;
+			margin-left: -3px;
+		}
+
+		.data-group .data-row label {
+			width: 70px;
+		}
+	</style>
+</head>
+
+<body ng-controller="selclsCtrl">
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left" ng-bind="title" ng-click="old_back()"></a>
+		<a class="mui-pull-right menu-more" href="#popover" id="openPopover" ng-if="['Q4','Q5'] | hasAuth" style="display:none;">
+			<span class="icon-more"></span>
+		</a>
+	</header>
+	<div class="mui-content" style="display: none;" ng-class="{'mui-block':isLoad}">
+		<!--导航目录部分-->
+		<div id="res-slide" class="top-thin-line mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted nav-bar"
+		 ng-show="navDirData.length>1">
+			<div class="mui-scroll">
+				<a class="item" ng-class="{'mui-active':$index==navDirData.length-1}" ng-repeat="dir in navDirData" ng-click="loadDirList(dir,$index)">
+					<span class="icon iconfont icon-right color-gray-deep" ng-show="$index>0"></span>
+					<span class="group-name" ng-bind="dir.CName"></span>
+				</a>
+			</div>
+		</div>
+		<div id="slider" class="mui-scroll-wrapper" ng-style="{'position': 'initial','margin-top': navDirData.length>1?'54px':'10px'}"
+		 style="margin-bottom: 50px;">
+			<ul class="data-group" ng-if="dirList.length">
+				<li class="mui-table-view-cell data-row" ng-repeat="dir in dirList" ng-click="choose(dir)">
+					<i class="icon-roundcheckfill color-blue left-10" ng-if="dir.CID==selectedDir.CID"></i>
+					<i class="icon-round color-gray left-10" ng-if="dir.CID!=selectedDir.CID"></i>
+					<span class="name">{{dir.CName}}</span>
+					<p id="next" class="opt" ng-if="dir.IsHasSon==1" ng-click="loadDirList(dir);$event.stopPropagation();">
+						<span style="color: #666;">下级</span>
+					</p>
+					<!--<i class="icon-right color-gray-dark" ></i>-->
+				</li>
+			</ul>
+		</div>
+		<div class="dir_btns" id="bottomx">
+			<span class="cancel" ng-click="callBack(0)">取消</span>
+			<span class="select" ng-click="callBack(1)">确定</span>
+		</div>
+		<md-no-data ng-show="loaded&&!dirList.length">暂无数据</md-no-data>
+	</div>
+	<div id="popover" class="mui-popover menuDivModel">
+		<ul class="mui-table-view">
+			<li class="mui-table-view-cell delLiAfter" ng-click="tap('add')" ng-if="'Q4' | hasAuth">
+				<a class="mui-icon icon-add">
+					<font>新增</font>
+				</a>
+			</li>
+			<li ng-show="IshowNext&&('Q4' | hasAuth)" class="mui-table-view-cell delLiAfter" ng-click="tap('addnext')">
+				<a class="mui-icon icon-bumenguanli">
+					<font>新增子级</font>
+				</a>
+			</li>
+			<li ng-show="IshowNext&&('Q5' | hasAuth)" class="mui-table-view-cell" ng-click="tap('edit')">
+				<a class="mui-icon icon-edit">
+					<font>修改</font>
+				</a>
+			</li>
+			<li ng-show="IshowNext&&selectedDir.IsChildDirs!=1&&('Q5' | hasAuth)" class="mui-table-view-cell" ng-click="del()">
+				<a class="mui-icon icon-dustbin">
+					<font>删除</font>
+				</a>
+			</li>
+		</ul>
+	</div>
+	<!--新增、修改-->
+	<div id="aepopover" class="mui-popover" style="padding: 0 0px;">
+		<ul class="data-group" style="margin-top: 3px;">
+			<li class="data-row first">
+				<a class="opt md-icon icon-close" href="#aepopover">
+				</a>
+				<div class="body">
+					<div class="pdLeft100 mui-ellipsis info-title" ng-switch="EidtType">
+						<span class="color-gray-dark font-14" ng-switch-when="1">新增</span>
+						<span class="color-gray-dark font-14" ng-switch-when="2">新增子级</span>
+						<span class="color-gray-dark font-14" ng-switch-when="3">修改</span>
+					</div>
+					<div class="mdt_leftline mui-pull-left"></div>
+				</div>
+			</li>
+			<li class="data-row must">
+				<label class="label-gray">归类名称</label>
+				<div class="body">
+					<div class="edit" style="margin: 0px 10px;border: 1px solid #f0f0f0;border-radius: 3px;">
+						<div class="needsclick" id="CName" lenlimit='50' ng-bind="CName" contenteditable="true" placeholder="请输入归类名称"></div>
+					</div>
+				</div>
+			</li>
+			<!--<li class="data-row">
+					<label class="label-gray">子部门名称</label>
+					<div class="body">
+						<div class="edit" style="margin: 0px 10px;border: 1px solid #f0f0f0;border-radius: 3px;">
+							<div id="deptname" lenlimit="20" ng-bind="" contenteditable="true" placeholder="请输入子部门名称"></div>
+						</div>
+					</div>
+				</li>-->
+		</ul>
+		<div id="add_div">
+			<a type="button" class="font-15 mui-btn mui-btn-block" ng-click="confirmChange()">确认</a>
+		</div>
+	</div>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/rpc.js"></script>
+	<script type="text/javascript" charset="utf-8">
+		app.controller("selclsCtrl", ["$scope", "UtilsService", "BillService", "ApiService", "DataService", "Loading",
+			"RPCObserver",
+			function ($scope, UtilsService, BillService, ApiService, DataService, Loading, RPCObserver) {
+				$scope.isLoad = false;
+				//1、新增 2、新增子级 3、修改
+				$scope.EidtType = 1;
+				//是否显示新增子级、修改、删除（仅当目录被选中，并且选中目录在当前页面，才显示这三个菜单）
+				$scope.IshowNext = false;
+				$scope.CName = "";
+				$scope.DirID = 0;
+				$scope.ParDirID = 0;
+				$scope.Path = "";
+				var saving = false; //保存状态
+				var ws = plus.webview.currentWebview();
+				$scope.selectedDir = {
+					CID: ws.selected.id,
+					CName: ws.selected.name,
+					CPath: ws.selected.spath
+				};
+
+				$scope.title = '选择目录';
+
+				//跳转
+				$scope.tap = function (key) {
+					mui('#popover').popover('hide');
+					switch (key) {
+						case 'add':
+							$scope.EidtType = 1;
+							$scope.CName = "";
+							$scope.DirID = 0;
+							$scope.Path = "";
+							mui("#aepopover").popover("toggle");
+							document.getElementById("CName").focus();
+							break;
+						case 'addnext':
+							$scope.EidtType = 2;
+							$scope.CName = "";
+							$scope.DirID = 0;
+							$scope.Path = "";
+							//当前目录是否有选中的目录
+							if ($scope.navDirData.length > 0 && $scope.navDirData[$scope.navDirData.length - 1].ID == $scope.selectedDir.ParDirID) {
+								$scope.ParDirID = $scope.selectedDir.ID
+							} else {
+								$scope.ParDirID = $scope.navDirData.length > 0 ? $scope.navDirData[$scope.navDirData.length - 1].ID : 0;
+							}
+							mui("#aepopover").popover("toggle");
+							document.getElementById("CName").focus();
+							break;
+						case 'edit':
+							$scope.EidtType = 3;
+							$scope.CName = $scope.selectedDir.CName;
+							$scope.DirID = $scope.selectedDir.ID;
+							$scope.ParDirID = $scope.selectedDir.ParDirID || 0;
+							$scope.Path = $scope.selectedDir.Path || "";
+							mui("#aepopover").popover("toggle");
+							msgTextFocus(document.getElementById("CName"));
+							setTimeout(function () {
+								msgTextLastPos(document.getElementById("CName"));
+							}, 50)
+							break;
+						default:
+							break;
+					}
+				};
+				// 获得输入框键盘焦点
+				var msgTextFocus = function (obj) {
+					obj.focus();
+					setTimeout(function () {
+						obj.focus();
+					}, 150);
+				}
+
+				// 光标移动到最后
+				function msgTextLastPos(obj) {
+					if (window.getSelection) { //ie11 10 9 ff safari
+						obj.focus(); //解决ff不获取焦点无法定位问题
+						var range = window.getSelection(); //创建range
+						range.selectAllChildren(obj); //range 选择obj下所有子内容
+						range.collapseToEnd(); //光标移至最后
+					} else if (document.selection) { //ie10 9 8 7 6 5
+						var range = document.selection.createRange(); //创建选择对象
+						//var range = document.body.createTextRange();
+						range.moveToElementText(obj); //range定位到obj
+						range.collapse(false); //光标移至最后
+						range.select();
+					}
+				}
+				//确认添加、修改
+				$scope.confirmChange = function () {
+					if (saving) {
+						return;
+					};
+					$scope.CName = document.getElementById("CName").innerText.trim();
+					if (!$scope.CName) {
+						mui.toast("归类名称不能为空");
+						return;
+					}
+					//验证填字符长度
+					if (!checkLengthUtil.check()) {
+						return false;
+					}
+					mui("#aepopover").popover("hide");
+					var postdata = {
+						"ID": $scope.DirID,
+						"ParDirID": $scope.ParDirID,
+						"Path": $scope.Path,
+						"CName": $scope.CName,
+						"ChildDirs": []
+					}
+					//经测试popover关闭需要时间，防止多次点击，所以延迟一秒
+					saving = true;
+					setTimeout(function () {
+						saving = false;
+					}, 1000)
+					var url = ApiService.Api47 + "/api/v1.0/Data/DataDirSave?pId=" + $scope.ParDirID + "&billKey=" + $scope.billKey;
+					DataService.post(url, postdata).then(function (res) {
+						if ($scope.EidtType == 1) {
+							//新增
+							var obj = {
+								"ID": res,
+								"ParDirID": $scope.ParDirID,
+								"Path": $scope.Path,
+								"CName": $scope.CName,
+								"IsChildDirs": 0
+							}
+							$scope.dirList.push(obj);
+							mui.toast("归类已新增");
+							RPCObserver.broadcast('refresh_equ_dir');
+						} else if ($scope.EidtType == 2) {
+							//新增子级
+							var obj = {
+								"ID": res,
+								"ParDirID": $scope.ParDirID,
+								"Path": $scope.Path,
+								"CName": $scope.CName,
+								"IsChildDirs": 0
+							}
+							$scope.dirList.forEach(function (item) {
+								if (item.ID == $scope.ParDirID) {
+									item.IsChildDirs = 1;
+								}
+							});
+							mui.toast("子级归类已新增");
+							RPCObserver.broadcast('refresh_equ_dir');
+						} else {
+							//修改
+							$scope.dirList.forEach(function (item, i) {
+								if (item.ID == res) {
+									item.CName = $scope.CName;
+								}
+							});
+							//如果之前已经选择的被修改，还要修改前面页面的归类
+							if (ws.selected.id == $scope.selectedDir.ID) {
+								$scope.selectedDir.ID = ws.selected.id;
+								$scope.selectedDir.CName = $scope.CName;
+								ws.opener().evalJS(ws.callback + "(" + JSON.stringify($scope.selectedDir) + ")");
+							}
+							mui.toast("归类已修改");
+							RPCObserver.broadcast('refresh_equ_dir_edit', {
+								name: $scope.CName,
+								pid: $scope.ParDirID,
+								id: $scope.selectedDir.ID
+							});
+						}
+						document.getElementById("CName").blur();
+						mui('#popover').popover('hide');
+					});
+				};
+				//删除
+				$scope.del = function () {
+					mui('#popover').popover('hide');
+					mui.confirm("确认删除吗？", function (e) {
+						if (e.index == 0) {
+							var url = ApiService.Api50 + "/api/v1/Equipment/DeleteEqInfoDir?catalogId=" + $scope.selectedDir.ID;
+							DataService.get(url).then(function (res) {
+								$scope.dirList = $scope.dirList.filter(function (item) {
+									return item.ID != $scope.selectedDir.ID;
+								});
+								//Rpc服务更新所有设备
+								RPCObserver.broadcast('refresh_equ_dir_del', {
+									id: $scope.selectedDir.ID
+								});
+								//如果之前已经选择的被删除，还要删除前面页面的归类
+								if (ws.selected.id == $scope.selectedDir.ID) {
+									$scope.selectedDir = {};
+									ws.opener().evalJS(ws.callback + "(" + JSON.stringify($scope.selectedDir) + ")");
+								}
+								//清空以选择的
+								$scope.selectedDir = {};
+								$scope.IshowNext = false;
+								mui.toast("归类已删除");
+							}, function (error) {});
+						}
+					});
+				};
+
+				$scope.callBack = function (res) {
+					if (res) {
+						if (!$scope.selectedDir.CID) {
+							mui.toast("请选择目录！");
+							return;
+						}
+						ws.opener().evalJS(ws.callback + "(" + JSON.stringify($scope.selectedDir) + ")");
+						mui.back(true);
+					} else {
+						mui.back(true);
+					}
+				};
+				$scope.old_back = mui.back;
+				mui.back = function (flag) {
+					if (flag)
+						$scope.old_back();
+					else
+						$scope.$broadcast("back_dir");
+
+				};
+				$scope.$on("back_page", function (e, m) {
+					mui.back(true);
+				})
+
+				$scope.back = function () {
+					mui.back(true);
+				}
+
+				$scope.dirList = [];
+				$scope.loaded = false;
+				//目录导航
+				$scope.navDirData = [];
+				$scope.$on("back_dir", function (e, m) {
+					mui('#popover').popover('hide');
+					mui("#aepopover").popover("hide");
+					if ($scope.navDirData.length > 1) {
+						$scope.loadDirList($scope.navDirData[$scope.navDirData.length - 2], $scope.navDirData.length - 2);
+					} else {
+						$scope.$emit("back_page");
+					}
+				})
+
+				$scope.loadDirList = function (dir, navIdx) {
+					Loading.show();
+					$scope.loaded = false;
+
+					if (navIdx) {
+						//如果是最后一项，直接退出
+						if (navIdx == $scope.navDirData.length - 1) {
+							Loading.hide();
+							return;
+						}
+
+						//移除后续项
+						$scope.navDirData.splice(navIdx + 1, $scope.navDirData.length - navIdx - 1);
+					} else {
+						//如果是点击的第一项，清空导航
+						if (navIdx == 0)
+							$scope.navDirData.length = 0;
+
+						$scope.navDirData.push({
+							CID: dir.CID,
+							CName: dir.CName
+						});
+					}
+
+					if ($scope.dirList.length)
+						$scope.dirList.length = 0;
+
+					resScroll();
+					var url = ApiService.Api52 + "/api/v1/prod/GetProdClass?clsID=" + dir.CID;
+					DataService.get(url).then(function (list) {
+						list = list.ChildCls;
+						$scope.ParDirID = list.length > 0 ? list[0].ParDirID : 0;
+						$scope.dirList = list;
+						$scope.loaded = true;
+						Loading.hide();
+						$scope.isLoad = true;
+						if ($scope.selectedDir.ID && $scope.dirList.some(function (item) {
+								return item.ID == $scope.selectedDir.ID;
+							})) {
+							$scope.IshowNext = true;
+						} else {
+							$scope.IshowNext = false;
+						}
+					}, function () {
+						Loading.hide();
+						$scope.isLoad = true;
+					});
+				};
+				//导航栏滚动事件
+				function resScroll() {
+					setTimeout(function () {
+						if (mui("#res-slide")[0]) {
+							var width = mui("#res-slide")[0].clientWidth;
+							var scrollWidth = mui("#res-slide .mui-scroll")[0].clientWidth;
+							scrollto = 0;
+							if ((scrollWidth + 35) < width || width == 0) {
+								scrollto = 0;
+							} else {
+								scrollto = width - scrollWidth - 5;
+							}
+							mui('#res-slide').scroll().scrollTo(scrollto, 0, 0);
+						}
+					}, 100);
+				}
+				$scope.loadDirList({
+					CID: 2,
+					CName: "目录"
+				});
+
+				$scope.choose = function (dir) {
+					if ($scope.selectedDir.CID == 0 || $scope.selectedDir.CID != dir.CID) {
+						$scope.selectedDir = dir;
+					} else {
+						$scope.selectedDir = {
+							CID: 0
+						};
+					}
+					if ($scope.selectedDir.CID && $scope.dirList.some(function (item) {
+							return item.CID == $scope.selectedDir.CID;
+						})) {
+						$scope.IshowNext = true;
+					} else {
+						$scope.IshowNext = false;
+					}
+				};
+				//当popover关闭的时候，清空已经填入的数据
+				mui('body').on('shown', '.mui-popover', function (e) {
+					//detail为当前popover元素
+					if (e.detail.id == 'aepopover' && $scope.EidtType != 3) {
+						document.getElementById("CName").innerText = "";
+					}
+				});
+			}
+		]);
+		mui.plusReady(function () {
+			document.getElementById('bottomx').style.top = (plus.display.resolutionHeight - 40) + "px";
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			plus.webview.currentWebview().setStyle({
+				scrollIndicator: 'none'
+			});
+		});
+	</script>
+</body>
+
+</html>

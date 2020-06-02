@@ -1,0 +1,578 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.data-group.hastitle .data-row:after {
+				position: absolute;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				height: 1px;
+				content: '';
+				-webkit-transform: scaleY(0.5);
+				transform: scaleY(0.5);
+				background-color: #ccc;
+			}
+			
+			.infoTab .infos:first-child .hastitle {
+				margin-top: 0;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="CustomerInfoController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">客户详情</a>
+			<a class="menu-more icon-more right-menu-icon-detail" href="#popover" id="openPopover" ng-if="'Q56' | hasAuth:customerInfo.CreateUserID:customerInfo.CompID" style="display: none;" ng-class="{'mui-block':isLoad}"></a>
+			<i class="mui-pull-right menu-more-share-mat icon-share" ng-click="goCustomerShare()" style="display: none;" ng-class="{'mui-block':isLoad}"></i>
+		</header>
+		<div class="mui-scroll-wrapper md-info-page" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<ul class="data-group mt0">
+				<li class="data-row">
+					<label>客户名称</label>
+					<div class="body">
+						<span ng-bind="customerInfo.CustomerName"></span>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>详细地址</label>
+					<div class="body">
+						<span ng-bind="customerInfo.Province | locationfilter:customerInfo.City:customerInfo.District:customerInfo.Address"></span>
+					</div>
+				</li>
+			</ul>
+			<ul id="tab-type" class="md-tab data-group">
+				<li class="md-tab-item" ng-class="{'md-active':TabType==1}" href="#tab1">相关数据</li>
+				<li class="md-tab-item" ng-class="{'md-active':TabType==2}" href="#tab2">详细信息</li>
+			</ul>
+			<div class="infoTab" id="tab1" ng-show="TabType==1">
+				<!-- 信息列表  -->
+				<div class="infos" ng-repeat="(index,item) in Datas" ng-if="(item.data.TotalCount&&item.data.TotalCount>0)||item.type=='linkman'">
+					<ul class="data-group hastitle">
+						<li class="data-row">
+							<i class="opt icon-add md-icon font-15" ng-click="addLinkMan()" ng-if="('Q56' | hasAuth:customerInfo.CreateUserID:customerInfo.CompID)&&item.type=='linkman'"></i>
+							<label class="title" ng-bind="item.name"></label>
+						</li>
+					</ul>
+					<customer-info-list ng-model="item"></customer-info-list>
+				</div>
+			</div>
+			<!--<md-no-data ng-if="total==0&&TabType!=2">暂无数据</md-no-data>-->
+			<div id="tab2" ng-show="TabType==2">
+				<ul class="data-group">
+					<p class="data-group-tip">基本信息</p>
+					<li class="data-row">
+						<label>客户等级</label>
+						<div class="body">
+							<span ng-bind="customerLevel"></span>
+						</div>
+					</li>
+					<li class="data-row">
+						<label>资源渠道</label>
+						<div class="body">
+							<span ng-bind="customerSource[customerInfo.CustFrom]"></span>
+						</div>
+					</li>
+					<li class="data-row">
+						<label>客户来源</label>
+						<div class="body">
+							<span ng-bind="CustFrom"></span>
+						</div>
+					</li>
+					<li class="data-row">
+						<label>客户类别</label>
+						<div class="body">
+							<span ng-bind="customerType"></span>
+						</div>
+					</li>
+					<li class="data-row">
+						<i class="md-icon icon-tel opt" style="color: #3296FA;" ng-if="customerInfo.LinkPhone" ng-click="call(customerInfo.LinkPhone)"></i>
+						<label>电话</label>
+						<div class="body">
+							<span ng-bind="customerInfo.Tel"></span>
+						</div>
+					</li>
+				</ul>
+				<ul class="data-group">
+					<p class="data-group-tip">更多信息</p>
+					<li class="data-row">
+						<label>邮件</label>
+						<div class="body">
+							<span ng-bind="customerInfo.Email"></span>
+						</div>
+					</li>
+					<li class="data-row">
+						<label>传真</label>
+						<div class="body">
+							<span ng-bind="customerInfo.Fax"></span>
+						</div>
+					</li>
+					<li class="data-row">
+						<label>一级行业</label>
+						<div class="body">
+							<span ng-bind="firstLevel[customerInfo.IndustryID1]"></span>
+						</div>
+					</li>
+					<li class="data-row">
+						<label>二级行业</label>
+						<div class="body">
+							<span ng-bind="secondLevel[customerInfo.IndustryID2]"></span>
+						</div>
+					</li>
+					<li class="data-row">
+						<label>备注</label>
+						<div class="body">
+							<span ng-bind="customerInfo.Remark"></span>
+						</div>
+					</li>
+					<li class="data-row">
+						<label>网址</label>
+						<div class="body">
+							<span ng-bind="customerInfo.Url"></span>
+						</div>
+					</li>
+				</ul>
+				<ul class="data-group">
+				 <li class="data-row">
+					<label>记录人</label>
+					<p class="opt md-icon" ng-if="customerInfo.CreateUserID!=CurUserID" ng-click="sendMsg(customerInfo.CreateUserID, customerInfo.CreateUserName, customerInfo.ULogoIsExist)">
+						<span class="icon-chat-single font-15 color-blue"></span>
+					</p>
+					<div class="body">
+						<span ng-bind="customerInfo.CreateUserName"></span>
+					</div>
+				</li>
+					<li class="data-row">
+						<label>记录日期</label>
+						<div class="body">
+							<span ng-bind="customerInfo.CreateDate"></span>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div id="popover" class="mui-popover menuDivModel">
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell" ng-click="edit()">
+					<a class="mui-icon icon-edit">
+						<font>修改</font>
+					</a>
+				</li>
+				<li class="mui-table-view-cell" ng-click="delete()">
+					<a class="mui-icon icon-dustbin">
+						<font>删除</font>
+					</a>
+				</li>
+			</ul>
+		</div>
+		<!--无网络或请求失败重试-->
+		<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../message/transMessage.js"></script>
+		<script>
+			app.controller("CustomerInfoController", ["$scope", "AuthService", "UtilsService", "ApiService", "DataService", "Loading", "ChatUserService", "CacheService", "RPCObserver", "$filter", "$timeout",
+				function($scope, AuthService, UtilsService, ApiService, DataService, Loading, ChatUserService, CacheService, RPCObserver, $filter, $timeout) {
+					//相关和详细信息tab
+					$scope.TabType = 1;
+					$scope.customerId = query("customerid");
+					var curUser = CacheService.get("user");
+					$scope.CurUserID = curUser.UserID;
+					//客户相关信息数量统计
+					$scope.total = 0;
+					//客户基本信息
+					$scope.customerInfo = {};
+					//客户相关信息
+					$scope.Datas = [{
+							href: "linkman-info.html",
+							data: [],
+							name: "联系人",
+							type: "linkman",
+							unit: "个联系人",
+							url: "/api/v1/Customer/GetCustLinkMenList"
+						}, {
+							href: "debug-info.html",
+							data: [],
+							name: "安装调试",
+							type: "debug",
+							unit: "次调试",
+							url: "/api/v1/ProdDebug/GetProdDebugLastOneByCustomerID"
+						},
+						{
+							href: "mat-fault-info.html", // 当前list item 点击跳转的页面
+							data: [],
+							name: "产品故障",
+							type: "failure",
+							unit: "次故障",
+							url: "/api/v1/MatWorkOrder/GetMatWorkOrderFailureLastOneByCustomerID" // 获取当前list的接口
+						},
+						{
+							href: "mat-repairView.html",
+							data: [],
+							name: "故障维修",
+							type: "repair",
+							unit: "次维修",
+							url: "/api/v1/MatWorkOrder/GetMatRepairRecordsLastOneByCustomerId"
+						},
+						{
+							href: "eval-info.html",
+							data: [],
+							name: "客户回访",
+							type: "service",
+							unit: "条回访",
+							url: "/api/v1/MatWorkOrder/GetPagedMatRepairServiceEvalByCustomerId"
+						},
+						{
+							href: "mat-repairView.html", // ?id
+							data: [],
+							name: "零配件更换",
+							type: "parts",
+							unit: "个配件",
+							url: "/api/v1/MatWorkOrder/GetCustomerPartsRecordLastOne"
+						},
+						{
+							href: "../problib/securing-services-info.html", // ?id
+							data: [],
+							name: "延保记录",
+							type: "delay",
+							unit: "次延保",
+							url: "/api/v2/Prod/GetPkgWarrantyDelayLogLastOneByCustomerId"
+						},
+						{
+							href: "service-info.html",
+							data: [],
+							name: "其他服务",
+							type: "other",
+							unit: "次服务",
+							url: "/api/v2/Customer/GetCustomerLastOneByCustomerID"
+						},
+						{
+							href: "work-info.html",
+							data: [],
+							name: "工作日志",
+							type: "repair-log",
+							unit: "条日志",
+							url: "/api/v1/MatWorkOrder/GetWorkLogLastOneByCustomerId"
+						}
+					];
+
+					//无网络或请求失败重试
+					$scope.retryModal = {
+						msg: "客户详情",
+						retry: init,
+						state: ''
+					}
+                    
+					$scope.edit = function() {
+						UtilsService.openWindow({
+							id: "customer-edit.html",
+							url: "customer-edit.html?customerid=" + $scope.customerId+'&isedit=true'
+						});
+						mui('#popover').popover('hide');
+					}
+					$scope.delete = function() {
+						mui.confirm("确认删除吗？", function(e) {
+							if(e.index == 0) {
+								var url = ApiService.Api50 + "/api/v1/Customer/DelCustomerInfo?customerId=" + $scope.customerId;
+								DataService.get(url).then(function(res) {
+									//刷新故障工单列表
+									RPCObserver.broadcast('refresh_customer_list');
+									RpcClient.invoke("search.html", "RPC_SearchListRefresh");
+									mui('#popover').popover('hide');
+									mui.back();
+								}, function(error) {
+									mui('#popover').popover('hide');
+								});
+							} else {
+								mui('#popover').popover('hide');
+							}
+						});
+					}
+					init();
+
+					//页面初始化
+					function init() {
+						getCustomerInfoById();
+						cicleGetData();
+						mui("#tab-type").on("tap", ".md-tab-item", function() {
+							var tabvalue = this.getAttribute("href");
+							tabvalue == "#tab1" && ($scope.TabType = 1);
+							tabvalue == "#tab2" && ($scope.TabType = 2);
+							$scope.$apply();
+						});
+					}
+					//获取客户基本信息
+					function getCustomerInfoById() {
+						var url = ApiService.Api50 + "/api/v2/Customer/GetCustomerInfo?customerId=" + $scope.customerId;
+						DataService.get(url).then(function(res) {
+							$scope.customerInfo = res;
+							$scope.customerLevel=res.CustLevel;
+							$scope.customerType = res.CustType;
+							
+							
+							if(res.CustCompID!=0){
+								$scope.CustFrom="迈迪网注册企业"
+							}
+							else{
+								$scope.CustFrom="自建"
+							}
+							$scope.isLoad = true;
+							$scope.retryModal.state = "";
+						}, function(error) {
+							$scope.retryModal.state = error.State;
+						});
+					}
+
+					//获取客户相关信息
+					function cicleGetData() {
+						for(var i = 0; i < $scope.Datas.length; i++) {
+							var item = $scope.Datas[i];
+							var url = ApiService.Api50 + item.url + "?customerId=" + $scope.customerId; // 2092 
+							["service", "linkman"].indexOf(item.type) >= 0 && (url += "&pageIndex=1&pageSize=1");
+							item.type == "linkman" && (url += "&sortType=5");
+							// 获取数据
+							getCustomerInfo(url, i);
+						}
+					}
+
+					function getCustomerInfo(url, i) {
+						DataService.get(url).then(function(res) {
+							if(["service", "linkman"].indexOf($scope.Datas[i].type) >= 0) {
+								$scope.Datas[i].data = res;
+							} else {
+								$scope.Datas[i].data.Data = [res.Data];
+								$scope.Datas[i].data.TotalCount = res.TotalCount;
+							};
+							res.TotalCount && ($scope.total += res.TotalCount);
+						});
+					}
+
+					$scope.addLinkMan = function() {
+						UtilsService.openWindow({
+							id: "linkman-edit.html",
+							url: "linkman-edit.html?customerid=" + $scope.customerId + "&customerName=" + encodeURIComponent($scope.customerInfo.CustomerName)
+						});
+					}
+
+					$scope.call = function(phone) {
+						plus.device.dial(phone, false);
+						return false;
+					}
+
+					RPCObserver.on('refresh_customer_info', 'refresh_customer_info');
+					window.refresh_customer_info = function() {
+						getCustomerInfoById();
+						cicleGetData();
+					};
+					//刷新
+					RpcServer.expose("RPC_BillViewRefresh", function(type) {
+						type && cicleGetData();
+					})
+					//发消息
+					$scope.sendMsg = function(userid, userName, hasLogo, compId) {
+						ChatUserService.tap({
+							chatId: userid,
+							chatName: userName,
+							hasLogo: hasLogo,
+							chatCompId: compId
+						});
+					}
+					//详情分享
+					$scope.goCustomerShare = function() {
+						UtilsService.openWindow({
+							needLogin: true,
+							id: "contact-select.html",
+							url: "../common/contact-select.html?action=select&must=true&multiselect=true&hideself=true&type=org",
+							extras: {
+								selectObj: [],
+								callback: 'shareCustomer'
+							}
+						});
+					};
+					$scope.doPickShare = function(sltUsers) {
+						var obj = {
+							id: query("customerid"),
+							img: ApiService.Down + "/chat/custom.png",
+							title: $scope.customerInfo.CustomerName,
+							desc: $scope.customerInfo.Province
+						}
+						UtilsService.shareMsg(obj, sltUsers).then(function() {
+							var url = ApiService.Api50 + '/api/v1/Common/SaveShare';
+							var sharePostData = {
+								"DataFrom": shareLog['custom'],
+								"DataID": query("customerid"),
+								"Operate": "分享给",
+								"Content": "",
+								"SendUsers": sltUsers.map(function(item) {
+									return item.UserID;
+								}).join('/')
+							}
+							DataService.post(url, sharePostData).then(function(res) {
+								var userNames = [];
+								sltUsers.forEach(function(user) {
+
+									userNames.push(user.ViewName);
+
+									ChatUserService.send({
+										chatId: user.UserID,
+										chatName: user.ViewName,
+										chatCompId: user.EquipmentID,
+										hasLogo: curUser.ULogoIsExist,
+										chatLogo: user.ULogoIsExist,
+										type: 7,
+										content: {
+											eventName: "custom",
+											logo: ApiService.Down + "/chat/custom.png",
+											title: $scope.customerInfo.CustomerName,
+											desc: $scope.customerInfo.Province,
+											params: [query("customerid"), res]
+										}
+									});
+								})
+								mui.toast("成功分享给：" + userNames.join("，"));
+							})
+						});
+					}
+					//客户级别
+//					$scope.customerLevel = {
+//						1: "重要客户",
+//						2: "普通客户",
+//						3: "一般客户"
+//					}
+					//客户来源
+					$scope.customerSource = {
+						1: "转介绍",
+						2: "线上注册",
+						3: "线上询价",
+						4: "预约上门",
+						5: "陌拜",
+						6: "招商资源",
+						7: "公司资源",
+						8: "展会资源",
+						9: "个人资源",
+						10: "电话咨询",
+						11: "邮件咨询"
+					}
+					// 客户类别
+					$scope.customerType = {
+						1: "客户"
+					}
+					//一级行业
+					$scope.firstLevel = {
+						100: 'IT/通信/电子/互联网',
+						101: '金融业',
+						102: '房地产/建筑业',
+						103: '商业服务',
+						104: '贸易/批发/零售/租赁业',
+						105: '生产/加工/制造',
+						106: '交通/运输/物流/仓储',
+						107: '服务业',
+						108: '文化/传媒/娱乐/体育',
+						109: '能源/矿产/环保',
+						110: '政府/非盈利机构',
+						111: '农/林/牧/渔/其他',
+						112: '跨领域经营'
+					}
+					//二级行业
+					$scope.secondLevel = {
+						10001: '互联网/电子商务',
+						10002: 'IT服务（系统/数据/维护）',
+						10003: '计算机硬件',
+						10004: '电信运营/增值服务',
+						10005: '计算机软件',
+						10006: '电子技术/半导体/集成电路',
+						10007: '通信/电信/网络设备',
+						10008: '网络游戏',
+						10009: '其他',
+						10101: '基金/证券/期货/投资',
+						10102: '保险',
+						10103: '银行',
+						10104: '信托/担保/拍卖/典当',
+						10105: '其他',
+						10201: '房地产/建筑/建筑建材/建材/工程',
+						10202: '家具/室内设计/装饰装潢',
+						10203: '物业管理/商业中心',
+						10204: '其他',
+						10301: '专业服务/咨询(财会/法律人力资源等)',
+						10302: '广告',
+						10303: '展会',
+						10304: '公关',
+						10305: '中介服务',
+						10306: '检验/检测/认证',
+						10307: '外包服务',
+						10308: '其他',
+						10401: '快速消费品(饮料/烟酒)',
+						10402: '食品',
+						10403: '日化',
+						10404: '服饰',
+						10405: '纺织',
+						10406: '皮革',
+						10407: '家具',
+						10408: '家电',
+						10409: '贸易/进出口',
+						10410: '零售/批发',
+						10411: '租凭服务',
+						10412: '其他',
+						10501: '礼品/玩具/工艺美术/收藏品/奢侈品',
+						10502: '汽车/摩托车',
+						10503: '大型设备/机电设备/重工业',
+						10504: '加工制造(原料加工)',
+						10505: '加工制造(模具)',
+						10506: '仪器仪表及工业自动化',
+						10507: '医药/生物工程',
+						10508: '依赖设备/器械',
+						10509: '航空/航天研究与制造',
+						10510: '其他',
+						10601: '交通/运输',
+						10602: '物流/仓储',
+						10603: '其他',
+						10701: '医疗/医疗服务护理/美容/保健卫生服务',
+						10702: '酒店/餐饮',
+						10703: '旅游/度假',
+						10704: '其他',
+						10801: '教育/培训/院校',
+						10802: '媒体/出版/影视/文化传播',
+						10803: '娱乐/体育/休闲',
+						10804: '其他',
+						10901: '能源/矿产/采掘/冶炼',
+						10902: '石油/石化/化工',
+						10903: '电气/电力/水利',
+						10904: '环保',
+						10905: '其他',
+						11001: '政府/公共事业/非盈利机构',
+						11002: '学术/科研',
+						11003: '其他',
+						11101: '农',
+						11102: '林',
+						11103: '牧',
+						11104: '渔',
+						11105: '其他',
+						11201: '无'
+					}
+				}
+				
+			]);
+
+			function shareCustomer(sltObjs) {
+				var appElement = document.querySelector('[ng-controller=CustomerInfoController]');
+				var $scope = angular.element(appElement).scope();
+				//console.log(JSON.stringify(sltObjs))
+				$scope.doPickShare(angular.copy(sltObjs));
+			}
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

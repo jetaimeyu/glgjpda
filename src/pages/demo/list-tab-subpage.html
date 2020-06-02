@@ -1,0 +1,52 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+	</head>
+
+	<body ng-controller="ParentPageController">
+		<div id="pullrefresh" ng-controller="pullrefreshController" class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<div class="mui-content">
+				<md-device-fault-list ng-model="data"></md-device-fault-list>
+				<md-no-data ng-show="data && data.length==0">暂无数据</md-no-data>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script>
+			app.controller("ParentPageController", ["$scope", "ApiService", "DataService", function($scope, ApiService, DataService) {
+				$scope.type = query("type");
+				var url = ApiService.Api50 + "/api/v1/Equipment/";
+				var pageIndex = 1;
+				var pageSize = 10;
+				switch($scope.type) {
+					case 'at':
+						url += "GetPagedEqWorkOrderFailureListForMe";
+						break;
+					case 'my':
+						url += "GetPagedMyEqWorkOrderFailureList";
+						break;
+					case 'dept':
+					case 'depts':
+					case 'all':
+						url += "GetPagedCompEqWorkOrderFailureList";
+						break;
+				}
+				$scope.url = url + "?page=" + pageIndex + "&pageSize=" + pageSize;
+			}])
+
+	//		mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+//			});
+		</script>
+	</body>
+
+</html>

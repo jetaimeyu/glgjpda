@@ -1,0 +1,127 @@
+<ul class="partDomUl data-group">
+	<li class="data-row partDomHead" ng-if="model.length!=0 && NumsLi!=0">
+		<p class="opt md-icon font-15 close">
+			<!--<span class="icon-delete partDomIcon" ng-click="delpartListItem(index)"></span>-->
+		</p>
+		<div class="body mui-grid-view mui-row" style="color: #666!important">
+			<div class="mui-media mui-col-xs-5 mui-col-sm-5 width50">配件名称</div>
+			<div class="mui-media mui-col-xs-2 mui-col-sm-2 width20">数量</div>
+			<div class="mui-media mui-col-xs-3 mui-col-sm-3 width30">备注</div>
+		</div>
+	</li>
+	<li class="data-row mui-table-view-cell partDomList" ng-repeat="(index,item) in model" ng-if="item.IsDelete!=1">
+		<p class="opt md-icon font-15 close" ng-if="optant == 'read'" style="right: 3px" ng-click="tap(item.ID)">
+			<span class="icon-right partDomIcon"></span>
+		</p>
+		<div class="body mui-grid-view mui-row" ng-if="optant == 'read'" ng-click="tap(item.ID)">
+			<div class=" mui-media mui-col-xs-5 mui-col-sm-5 width50 mui-ellipsis remarkscontent">
+				<span ng-bind="item.ProdName"></span>
+				<p class="mui-ellipsis font-13 sku-name" ng-bind="'型号：' + item.SkuName"></p>
+			</div>
+			<div class=" mui-media mui-col-xs-2 mui-col-sm-2 width20 mui-ellipsis-2 remarkscontent" ng-bind="item.Nums"></div>
+			<div class=" mui-media mui-col-xs-3 mui-col-sm-3 width30 mui-ellipsis-2 remarkscontent" ng-bind="item.Remark"></div>
+		</div>
+		<!--只读和编写的分界-->
+		<p class="opt md-icon font-15 close" ng-if="optant == 'write'" style="right: 3px" ng-click="delpartListItem(index)">
+			<span class="icon-delete partDomIcon"></span>
+		</p>
+		<div class="body mui-grid-view mui-row" ng-if="optant == 'write'" ng-click="tap(index)">
+			<div class=" mui-media mui-col-xs-5 mui-col-sm-5 width50 mui-ellipsis remarkscontent">
+				<span ng-bind="item.ProdName"></span>
+				<p class="mui-ellipsis font-13 sku-name" ng-bind="'型号：' + item.SkuName"></p>
+			</div>
+			<div class=" mui-media mui-col-xs-2 mui-col-sm-2 width20 mui-ellipsis-2 remarkscontent" ng-bind="item.Nums"></div>
+			<div class=" mui-media mui-col-xs-3 mui-col-sm-3 width30 mui-ellipsis-2 remarkscontent" ng-bind="item.Remark"></div>
+		</div>
+	</li>
+</ul>
+<style>
+	.partDomUl.data-group .data-row .body {
+		padding: 10px 0 9px 16px;
+		/*CSS3弹性盒子*/
+		display: -ms-flex;
+		display: -webkit-flex;
+		display: flex;
+		-webkit-flex-direction: row;
+		-ms-flex-direction: row;
+		flex-direction: row;
+		-ms-flex-align: center;
+		-webkit-align-items: center;
+		-webkit-box-align: center;
+		align-items: center;
+	}
+	
+	.partDomUl.data-group {
+		margin-top: 8px;
+	}
+	
+	.sku-name {
+		line-height: 15px;
+		color: #AAAAAA!important;
+	}
+	/*新增配件列表样式*/
+	
+	div.remarkscontent {
+		color: #323232;
+		font-size: 1.4rem;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		vertical-align: middle;
+	}
+	/*删除按钮*/
+	
+	.partDomList .icon-right,
+	.partDomList .icon-delete {
+		color: #AEAEAE!important;
+		padding-left: 10px;
+		margin-right: 12px!important;
+	}
+	
+	.mui-row:after {
+		display: block;
+		position: absolute;
+		left: 0px;
+		right: 0px;
+		top: 0;
+		height: 1px;
+		content: '';
+		-webkit-transform: scaleY(0.5);
+		transform: scaleY(0.5);
+		background-color: #EAEAEA;
+	}
+	
+	.close {
+		padding: 0px!important;
+	}
+	/*配件列表栅格样式*/
+	.partDomUl .data-row:after {
+		background: #EAEAEA!important;
+	}
+	
+	.mui-table-view-cell {
+		padding: 0px;
+	}
+	
+	.partDomUl.data-group .data-row:after {
+		left: 0!important;
+		right: 0!important;
+	}
+	
+	.width50 {
+		width: 50%;
+	}
+	
+	.width30 {
+		width: 30%;
+	}
+	
+	.width20 {
+		width: 20%;
+		text-align: center;
+	}
+	
+	.mui-row:after {
+		height: 0;
+	}
+</style>

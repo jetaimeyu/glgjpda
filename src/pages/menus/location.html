@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<link rel="stylesheet" href="../../css/mui.css" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	<title></title>
+	<style type="text/css">
+		html {
+			width: 100%;
+			height: 100%;
+		}
+
+		body {
+			height: 100%;
+			background-color: transparent;
+		}
+
+		.mui-table-view-cell:after {
+			position: absolute;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			height: 1px;
+			content: '';
+			-webkit-transform: scaleY(.5);
+			transform: scaleY(.5);
+			background-color: #ccc;
+		}
+
+		.mui-fullscreen {
+			position: absolute;
+			top: 80px;
+			right: 0;
+			bottom: 50%;
+			left: 0;
+			background: #fff;
+		}
+
+		.mask {
+			position: fixed;
+			top: 0px;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			height: 100%;
+		}
+
+		.mask .body {
+			position: absolute;
+			top: 80px;
+			left: 0px;
+			right: 0px;
+			bottom: 0px;
+			background: url(../../images/mask.png);
+		}
+
+		.mui-col-xs-3,
+		.mui-col-xs-9 {
+			height: 100%;
+			overflow-y: scroll;
+		}
+
+		.item-link {}
+
+		.mui-col-xs-3 {
+			background: #efeff4;
+		}
+
+		.item-link.active {
+			background: #fff;
+		}
+
+		.item-link {
+			border-bottom: 1px solid #c8c7cc;
+			display: block;
+			font-size: 12px;
+			text-align: center;
+			line-height: 13px;
+			padding: 10px 0px;
+		}
+
+		.mui-table-view .mui-table-view-cell {
+			font-size: 12px;
+		}
+
+		.mgr-5 {
+			margin-right: 5px;
+		}
+	</style>
+</head>
+
+<body ng-controller="bodyCtl">
+	<a class="mask">
+		<div class="body">
+
+		</div>
+	</a>
+	<div class="mui-content mui-row mui-fullscreen" ng-if="isLoad">
+		<div class="mui-col-xs-3">
+			<a class="item-link " ng-class="{'active':domData.active=='fujin'}" href="div_fujin" ng-click="event.choose('fujin','fujin')" ng-show="isFujin">附近</a>
+			<a class="item-link" ng-class="{'active':domData.active==item.value}" href="div_{{$index}}" ng-click="event.choose($index,item.value)"
+			 ng-repeat="item in domData.cityData" ng-bind="item.value"></a>
+		</div>
+		<div class="mui-col-xs-9" style="border-left: 1px solid #c8c7cc;">
+			<div id="div_fujin" ng-show="domData.active=='fujin'">
+				<ul class="mui-table-view">
+					<li class="mui-table-view-cell" ng-click="event.chooseValue(1)">
+						<i style="color:#F27800" class="icon-roundcheckfill mgr-5 font-15" ng-if="domData.value==1"></i>1公里
+					</li>
+					<li class="mui-table-view-cell" ng-click="event.chooseValue(2)">
+						<i style="color:#F27800" class="icon-roundcheckfill mgr-5 font-15" ng-if="domData.value==2"></i>2公里
+					</li>
+					<li class="mui-table-view-cell" ng-click="event.chooseValue(5)">
+						<i style="color:#F27800" class="icon-roundcheckfill mgr-5 font-15" ng-if="domData.value==5"></i>5公里
+					</li>
+					<li class="mui-table-view-cell" ng-click="event.chooseValue(10)">
+						<i style="color:#F27800" class="icon-roundcheckfill mgr-5 font-15" ng-if="domData.value==10"></i>10公里
+					</li>
+					<li class="mui-table-view-cell" ng-click="event.chooseValue(30)">
+						<i style="color:#F27800" class="icon-roundcheckfill mgr-5 font-15" ng-if="domData.value==30"></i>30公里
+					</li>
+					<li class="mui-table-view-cell" ng-click="event.chooseValue(50)">
+						<i style="color:#F27800" class="icon-roundcheckfill mgr-5 font-15" ng-if="domData.value==50"></i>50公里
+					</li>
+				</ul>
+			</div>
+			<div id="div_{{$index}}" ng-show="domData.active==item.value" ng-repeat="item in domData.cityData">
+				<ul class="mui-table-view">
+					<li class="mui-table-view-cell" ng-if="item.children" ng-repeat="cItem in item.children" ng-click="event.chooseValue(item.children.length>1 && $index==0?item.value:cItem.value)">
+						<i style="color:#F27800" class="icon-roundcheckfill mgr-5 font-15" ng-if="(domData.value==cItem.value) || (item.value==domData.value && item.children.length>1 && $index==0)"></i><span
+						 ng-bind="cItem.value"></span>
+					</li>
+					<li class="mui-table-view-cell" ng-if="!item.children" ng-click="event.chooseValue(item.value)">
+						<i style="color:#F27800" class="icon-roundcheckfill mgr-5 font-15" ng-if="domData.value==item.value"></i><span
+						 ng-bind="item.value"></span>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<script src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/angular.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/city2017.js"></script>
+	<script type="text/javascript">
+		var ws;
+		app.controller("bodyCtl", ["$scope", "ApiService", "DataService", "DatePickerService", "UtilsService", "CacheService",
+			function ($scope, ApiService, DataService, DatePickerService, UtilsService, CacheService) {
+				$scope.isLoad = false;
+				$scope.isFujin = query("isfujin") == "false" ? false : true;
+				$scope.domData = {
+					value: $scope.isFujin?5:"全国",
+					cityData: cityData,
+					active: $scope.isFujin?"fujin":"全国",
+					province: $scope.isFujin?"":"全国"
+				};
+				$scope.event = {
+					choose: function (value, province) {
+						$scope.domData.active = province;
+						$scope.domData.province = province || "";
+					},
+					chooseValue: function (value) {
+
+						$scope.domData.value = value;
+
+						if (ws.callback) {
+							var _data = $scope.domData;
+							var data = {
+								disValue: _data.active != 'fujin' ? 0 : _data.value,
+								province: _data.province,
+								city: _data.active != 'fujin' ? _data.value : ""
+							};
+							ws.opener().evalJS(ws.callback + "(" + JSON.stringify(data) + ")");
+						}
+
+						ws.hide();
+					}
+				};
+
+				window.setCitys = function (province, city) {
+					$scope.domData.province = province;
+					$scope.domData.value = city;
+
+					$scope.$apply();
+				};
+
+				$scope.isLoad = true;
+			}
+		]);
+
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			ws = plus.webview.currentWebview();
+			ws.setStyle({
+				mask: "none"
+			});
+			document.querySelector(".mask").addEventListener("tap", function () {
+				ws.hide();
+			});
+			//				window.addEventListener("dragstart", function() {
+			//					ws.hide();
+			//				})
+		});
+	</script>
+</body>
+
+</html>

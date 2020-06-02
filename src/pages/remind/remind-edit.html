@@ -1,0 +1,312 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>工作提醒</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	</head>
+
+	<body ng-controller="workremindedit">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">新增日程</a>
+		</header>
+		<div class="mui-content" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<ul class="data-group">
+				<li class="data-row must">
+					<label>日程内容</label>
+					<div class="body">
+						<div class="edit">
+							<div class="needsclick" placeholder="请输入日程内容" lenlimit="300" ng-model-div-text="data.Content"></div>
+						</div>
+					</div>
+				</li>
+				<li class="mui-table-view-cell data-row must">
+					<label>开始日期</label>
+					<p class="opt md-icon font-15" ng-click="chooseDate('BeginDate')">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="chooseDate('BeginDate')">
+						<span ng-if="!data.BeginDate" class="placeholder">请选择开始日期</span>
+						<span ng-if="data.BeginDate" ng-bind="data.BeginDate"></span>
+					</div>
+				</li>
+				<li class="mui-table-view-cell data-row must">
+					<label>开始时间</label>
+					<p class="opt md-icon font-15" ng-click="chooseTime('BeginTime')">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="chooseTime('BeginTime')">
+						<span ng-if="!data.BeginTime" class="placeholder">请选择开始时间</span>
+						<span ng-if="data.BeginTime" ng-bind="data.BeginTime"></span>
+
+					</div>
+				</li>
+				<li class="mui-table-view-cell data-row must">
+					<label>结束日期</label>
+					<p class="opt md-icon font-15" ng-click="chooseDate('EndDate')">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="chooseDate('EndDate')">
+						<span ng-if="!data.EndDate" class="placeholder">请选择结束日期</span>
+						<span ng-if="data.EndDate" ng-bind="data.EndDate"></span>
+					</div>
+				</li>
+				<li class="mui-table-view-cell data-row must">
+					<label>结束时间</label>
+					<p class="opt md-icon font-15" ng-click="chooseTime('EndTime')">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="chooseTime('EndTime')">
+						<span ng-if="!data.EndTime" class="placeholder">请选择结束时间</span>
+						<span ng-if="data.EndTime" ng-bind="data.EndTime"></span>
+					</div>
+				</li>
+				<li class="mui-table-view-cell data-row must">
+					<label>提醒</label>
+					<p class="opt md-icon font-15" ng-click="chooseType('Remind')">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="chooseType('Remind')">
+						<span ng-bind="reminds[data.Remind]" ng-if="data.Remind"></span>
+						<span class="placeholder" ng-if="!data.Remind">请选择提醒</span>
+					</div>
+				</li>
+				<li class="mui-table-view-cell data-row must">
+					<label>重复</label>
+					<p class="opt md-icon font-15" ng-click="chooseType('Repeat')">
+						<span class="icon-right"></span>
+					</p>
+					<div class="body" ng-click="chooseType('Repeat')">
+						<span ng-bind="repeats[data.Repeat]" ng-if="data.Repeat"></span>
+						<span class="placeholder" ng-if="!data.Repeat">请选择重复</span>
+					</div>
+				</li>
+			</ul>
+			<div class="mui-content-padded">
+				<button class="mui-btn mui-btn-primary mui-btn-block" ng-click="save()">保存</button>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script>
+			app.controller("workremindedit", ["$scope", "DatePickerService", "ApiService", "DataService", "RPCObserver", "UtilsService", "Loading", function($scope, DatePickerService, ApiService, DataService, RPCObserver, UtilsService, Loading) {
+				var saveing = false;
+				
+				//数据
+				$scope.data = {
+					ID: query('id') || 0,
+					Content: '',
+					BeginDate: '',
+					BeginTime: '',
+					EndDate: '',
+					EndTime: '',
+					Remind: '',
+					Repeat: ''
+				};
+
+				//提醒
+				$scope.reminds = {
+					1: '不提醒',
+					2: '正点提醒 ',
+					3: '提前5分钟',
+					4: '提前15分钟',
+					5: '提前30分钟',
+					6: '提前1小时',
+					7: '提前1天',
+					8: '提前2天',
+					9: '提前3天'
+				};
+
+				//重复
+				$scope.repeats = {
+					1: '不重复',
+					2: '每天',
+					3: '每月',
+					4: '每年',
+					5: '自定义'
+				};
+
+				//选择日期
+				$scope.chooseDate = function(field) {
+					DatePickerService.pickDate({
+						selected: $scope.data[field],
+					}).then(function(res) {
+						$scope.data[field] = res;
+					});
+				};
+
+				//选择时间
+				$scope.chooseTime = function(field) {
+					DatePickerService.pickTime({
+						selected: $scope.data[field]
+					}).then(function(res) {
+						$scope.data[field] = res;
+					});
+				};
+
+				//选择类型
+				$scope.chooseType = function(field) {
+					var options = {
+						Remind: {
+							title: '提醒',
+							items: [{
+								title: "不提醒",
+								value: 1
+							}, {
+								title: "正点提醒",
+								value: 2
+							}, {
+								title: "提前5分钟",
+								value: 3
+							}, {
+								title: "提前15分钟",
+								value: 4
+							}, {
+								title: "提前30分钟",
+								value: 5
+							}, {
+								title: "提前1小时",
+								value: 6
+							}, {
+								title: "提前1天",
+								value: 7
+							}, {
+								title: "提前2天",
+								value: 8
+							}, {
+								title: "提前3天",
+								value: 9
+							}]
+						},
+						Repeat: {
+							title: '重复',
+							items: [{
+								title: "不重复",
+								value: 1
+							}, {
+								title: "每天",
+								value: 2
+							}, {
+								title: "每月",
+								value: 3
+							}, {
+								title: "每年",
+								value: 4
+							}, {
+								title: "自定义",
+								value: 5
+							}]
+						}
+					};
+					UtilsService.actionSheet(options[field].title, options[field].items).then(function(res) {
+						$scope.data[field] = res.value;
+					});
+				};
+
+				//保存
+				$scope.save = function() {
+					document.activeElement.blur();
+					if($scope.data.Content.trim() == '') {
+						mui.toast("请输入日程内容");
+						return;
+					}
+					if(!($scope.data.BeginDate && $scope.data.BeginTime)) {
+						mui.toast("请选择开始时间");
+						return;
+					}
+					if(!($scope.data.EndDate && $scope.data.EndTime)) {
+						mui.toast("请选择结束时间");
+						return;
+					}
+					if(!$scope.data.Remind) {
+						mui.toast("请选择提醒");
+						return;
+					}
+					if(!$scope.data.Repeat) {
+						mui.toast("请选择重复");
+						return;
+					}
+					//验证填字符长度
+					if(!checkLengthUtil.check()) {
+						return false;
+					}
+					if(saveing) {
+						return;
+					}
+					saving = true;
+					submit()
+				};
+				//提交数据
+				function submit() {
+					var postdata = {
+						ID: $scope.data.ID,
+						Content: $scope.data.Content,
+						BeginDate: $scope.data.BeginDate + " " + $scope.data.BeginTime + ":00",
+						EndDate: $scope.data.EndDate + " " + $scope.data.EndTime + ":00",
+						Remind: $scope.data.Remind,
+						RepeatID: $scope.data.Repeat
+					};
+					if(postdata.BeginDate > postdata.EndDate) {
+						mui.toast("开始时间不能大于结束时间");
+						return;
+					}
+					var url = ApiService.Api50 + "/api/v1/MatWork/SaveMatWorkSchedule";
+					DataService.post(url, postdata).then(function(res) {
+						
+						saving = false;
+						Loading.hide();
+						if(res) {
+							UtilsService.saveModal(function() {
+
+								saving = false;
+								mui.back();
+							}, function() {
+								saving = false;
+								$scope.data.ID=res;
+							});
+							RPCObserver.broadcast('refresh_mat_worklog_list');
+							RPCObserver.broadcast('refresh_mat_worklog_info');
+						}
+					}, function(res) {
+						saving = false;
+					});
+				}
+
+				//加载
+				function load() {
+					var url = ApiService.Api50 + "/api/v1/MatWork/GetMatWorkScheduleInfo/?id=" + $scope.data.ID;
+					Loading.show();
+					DataService.get(url).then(function(res) {
+						$scope.data.Content = res.Content;
+						$scope.data.BeginDate = (res.BeginDate).slice(0, 10);
+						$scope.data.BeginTime = (res.BeginDate).slice(11, 16);
+						$scope.data.EndDate = (res.EndDate).slice(0, 10);
+						$scope.data.EndTime = (res.EndDate).slice(11, 16);
+						$scope.data.Remind = res.Remind;
+						$scope.data.Repeat = res.RepeatID;
+						$scope.isLoad = true;
+						Loading.hide();
+					});
+				}
+
+				if($scope.data.ID) {
+					
+					load();
+				} else {
+					$scope.isLoad = true;
+				}
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

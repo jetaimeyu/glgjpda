@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style>
+			.mui-pull-bottom-pocket,
+			.mui-pull-top-pocket {
+				left: 50px;
+			}
+			
+			.mui-pull-bottom-pocket {
+				bottom: 40px;
+			}
+			
+			.menu-classify {
+				margin-top: 12px;
+				margin-right: 10px;
+			}
+			
+			.menu-classify span {
+				font-size: 1.2rem;
+				color: #333333;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">待我处理</a>
+		</header>
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/rpc.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			var winwidth = document.body.clientWidth;
+			var width = winwidth - 100;
+			mui.init({
+				subpages: [{
+					url: 'msg-list.html',
+					id: 'msg-list.html',
+					styles: {
+						left: 0,
+						width: '100px',
+						top: "44px",
+						popGesture: "none"
+					}
+				}, {
+					url: 'msg-all.html',
+					id: 'msg-all.html',
+					styles: {
+						left: "100px",
+						width: width + 'px',
+						top: "44px",
+						bottom: "0",
+						popGesture: "none"
+					}
+				}]
+			});
+
+			mui.plusReady(function() {
+				var cur_win = plus.webview.currentWebview();
+				cur_win.addEventListener("close", function() {
+
+					if(cur_win.opener().id == "work.html") {
+						cur_win.opener().evalJS("TodoBack()");
+					}
+
+				});
+			})
+		</script>
+	</body>
+
+</html>

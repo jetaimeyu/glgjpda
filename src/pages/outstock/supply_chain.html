@@ -1,0 +1,119 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.title{
+				line-height: 40px;
+				font-size: 1.6rem;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="OutStockController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">产品出库</a>
+		</header>
+		<div class="mui-scroll-wrapper md-info-page" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<div class="mui-content">
+				<ul class="data-group" style="margin-top: 0;">
+					<li class="mui-table-view-cell mui-media" ng-click="tap('comp')">
+						<div>
+							<img class="mui-pull-left" style="margin-right: 15px;" src="../../images/outstock.png" width="40" height="40" />
+							<div class="title">
+								出库给企业
+							</div>
+						</div>
+					</li>
+					<li class="mui-table-view-cell mui-media" ng-click="tap('dealer')">
+						<div>
+							<img class="mui-pull-left" style="margin-right: 15px;" src="../../images/outstock.png" width="40" height="40" />
+							<div class="title">
+								出库给经销商
+							</div>
+						</div>
+					</li>
+					<li class="mui-table-view-cell mui-media" ng-click="tap('personal')">
+						<div>
+							<img class="mui-pull-left" style="margin-right: 15px;" src="../../images/outstock.png" width="40" height="40" />
+							<div class="title">
+								出库给个人
+							</div>
+						</div>
+					</li>
+				</ul>
+				<ul class="data-group">
+					<li class="mui-table-view-cell mui-media" ng-click="tap('record')">
+						<div>
+							<img class="mui-pull-left" style="margin-right: 15px;" src="../../images/outstock-record.png" width="40" height="40" />
+							<div class="title">
+								查看出库记录
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiService", "DataService",
+				"UtilsService", "ChatUserService", "Loading", "RPCObserver", "ShareLogService", "CacheService",
+				function($scope, $filter, AuthService, ApiService, DataService, UtilsService, ChatUserService, Loading,
+					RPCObserver, ShareLogService, CacheService) {
+					var curUser = CacheService.get("user");
+					$scope.isLoad = true;
+					$scope.tap = function(key) {
+						switch(key) {
+							case "comp":
+								UtilsService.openWindow({
+									needLogin: true,
+									id: 'order-save.html',
+									url: 'order-save.html?customertype=1',
+								});
+								break;
+							case "dealer":
+								UtilsService.openWindow({
+									needLogin: true,
+									id: 'order-save.html',
+									url: 'order-save.html?customertype=2',
+								});
+								break;
+							case "personal":
+								UtilsService.openWindow({
+									needLogin: true,
+									id: 'order-save.html',
+									url: 'order-save.html?customertype=3',
+								});
+								break;
+							case "record":
+								UtilsService.openWindow({
+									needLogin: true,
+									id: 'order-list-main.html',
+									url: 'order-list-main.html',
+								});
+								break;
+							default:
+								break;
+						}
+					};
+				}
+			]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

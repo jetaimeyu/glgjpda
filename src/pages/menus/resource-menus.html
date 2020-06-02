@@ -1,0 +1,211 @@
+<!DOCTYPE HTML>
+<html id="MdTong">
+
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title></title>
+		<link rel="stylesheet" href="../../css/mui.min.css" type="text/css" charset="utf-8" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			html {
+				width: 100%;
+				height: 100%;
+			}
+			
+			body {
+				height: 100%;
+				background-color: transparent;
+			}
+			
+			.mui-table-view-cell:after {
+				position: absolute;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				height: 1px;
+				content: '';
+				-webkit-transform: scaleY(.5);
+				transform: scaleY(.5);
+				background-color: #ccc;
+			}
+			/*.menu a {
+				margin-left: 15px !important;
+				line-height: 40px;
+				height: 40px;
+				display: initial
+			}*/
+		</style>
+	</head>
+
+	<body ng-controller="ResourceMenuController">
+		<a style="display: block;height: 100%; background:url(../../images/mask.png);"></a>
+		<div id="topPopover" class="mui-popover pop-menu" style="position:fixed ;top: 55px;right:5px;">
+			<div class="mui-popover-arrow" style="top: -26px;"></div>
+			<ul class="mui-table-view" style="color: #fff;right: 0;">
+
+				<li id="scanadd" class="mui-table-view-cell popover" style="text-align: left;">
+					<a class="mui-icon icon-scan-contacts">
+						<font>扫码添加联系人</font>
+					</a>
+				</li>
+				<li id="searchadd" class="mui-table-view-cell popover" style="text-align: left;">
+					<a class="mui-icon icon-search-contacts">
+						<font>搜索添加联系人</font>
+					</a>
+				</li>
+				<li id="sendToUser" class="mui-table-view-cell popover" style="text-align: left;display: none;" ng-class="{'mui-block':userCompId!=compId&&resId!=0}">
+					<a class="mui-icon mui-icon-paperplane">
+						<font>推荐给...</font>
+					</a>
+				</li>
+				<li id="addRes" class="mui-table-view-cell popover" ng-class="{'mui-block':userCompId!=compId&&resId==0}" style="display: none;text-align: left;" ng-show="userCompId!=compId&&resId==0">
+					<a class="mui-icon icon-add" nl="1" open-type="common" winid="">
+						<font>加为资源</font>
+					</a>
+				</li>
+				<li id="delRes" class="mui-table-view-cell popover" ng-class="{'mui-block':userCompId!=compId&&resId!=0}" style="display: none;text-align: left;" ng-show="userCompId!=compId&&resId!=0">
+					<a class="mui-icon icon-remove" nl="1" open-type="common" winid="">
+						<font>移除资源</font>
+					</a>
+				</li>
+			</ul>
+		</div>
+	</body>
+	<script src="../../js/mui.min.js"></script>
+	<script src="../../js/angular.min.js"></script>
+	<script src="../../js/common.js"></script>
+	<script src="../../js/rpc.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript">
+		app.controller("ResourceMenuController", ["$scope", "ApiService", "DataService", "AuthService", "UtilsService", "Loading", function($scope, ApiService, DataService, AuthService, UtilsService, Loading) {
+			$scope.resId = query('resid');
+			$scope.compId = query('compid');
+			$scope.userCompId = "";
+			AuthService.getAuth().then(function(user) {
+				$scope.userCompId = user.CompID;
+			});
+
+			var wp = null;
+			//加为资源
+			document.getElementById("addRes").addEventListener("tap", function() {
+				$scope.addRes();
+			});
+			$scope.addRes = function() {
+				var styles = {
+					scrollIndicator: 'none',
+					scalable: false,
+					popGesture: 'none'
+				};
+				if(mui.os.android && ["5.0", "5.1"].indexOf(mui.os.version) >= 0) {
+					styles.hardwareAccelerated = false;
+				}
+				wp || (wp = plus.webview.create('../complib/addRes.html?compId=' + $scope.compId, 'addRes.html', styles, {
+					callback: 'addResCB'
+				}));
+				wp.show('slide-in-right');
+
+				wp.addEventListener('close', function() { //页面关闭后可再次打开
+					wp = null;
+				}, false);
+			};
+
+			//移除资源
+			document.getElementById("delRes").addEventListener("tap", function() {
+				$scope.deleteRes();
+			});
+			$scope.deleteRes = function() {
+				mui.confirm("确定要删除此资源吗", "确认", ["取消", "确定"], function(res) {
+					if(res.index == 1) {
+						Loading.show();
+						var url = ApiService.Api50 + "/api/v1/Resource/ResourceDel?resourceId=" + $scope.resId;
+						DataService.post(url).then(function(res) {
+							if(res) {
+								$scope.resId = 0;
+								var view = plus.webview.currentWebview();
+								var opener = view.opener();
+								if(view.callback) {
+									var temp = {
+										resId: "",
+										groupId: ""
+									}
+									opener.evalJS(view.callback + "(" + JSON.stringify(temp) + ")");
+								}
+								RpcClient.invoke("compShow.html", "RPC_CompShowReload");
+							}
+							Loading.hide();
+						}, function() {
+							$scope.resId = 0;
+						})
+					}
+				})
+			}
+			//扫码
+			document.getElementById("scanadd").addEventListener("tap", function() {
+				UtilsService.openWindow({
+					needLogin: true,
+					id: "scan.html",
+					url: "../scan/scan.html",
+					extras: {
+						callback: "ScanBack",
+						type: "scan_addfriend"
+					}
+				});
+			});
+			document.querySelector("#sendToUser").addEventListener("tap",function(){
+				plus.webview.currentWebview().opener().evalJS("sendToUser()");
+			});
+			//扫码添加好友返回
+			window.ScanBack = function(userid) {
+				setTimeout(function(){
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'contact-info.html',
+						url: '../contact/contact-info.html?userid=' + userid+"&compid="+$scope.compId
+					});
+				},300)
+			};
+			//搜索
+			document.getElementById("searchadd").addEventListener("tap", function() {
+				UtilsService.openWindow({
+					needLogin: true,
+					id: "contact-search.html",
+					url: "../search/contact-search.html?compid="+$scope.compId
+				});
+			});
+		}]);
+
+		function addResCB(res) {
+			var appElement = document.querySelector('[ng-controller=ResourceMenuController]');
+			var $scope = angular.element(appElement).scope();
+			$scope.resId = res.resId;
+			$scope.$apply();
+
+			var view = plus.webview.currentWebview();
+			var opener = view.opener();
+			if(view.callback) {
+				opener.evalJS(view.callback + "(" + JSON.stringify(res) + ")");
+			}
+			ws.hide();
+		}
+
+		mui.plusReady(function() {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			ws = plus.webview.currentWebview();
+			ws.setStyle({
+				mask: "none"
+			});
+			window.addEventListener("tap", function() {
+				ws.hide();
+			})
+			window.addEventListener("dragstart", function() {
+				ws.hide();
+			})
+			mui.back = function() {
+				ws.hide();
+			};
+		});
+	</script>
+
+</html>

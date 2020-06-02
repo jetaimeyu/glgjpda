@@ -1,0 +1,96 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<style type="text/css">
+			.mui-table-view-chevron .mui-table-view-cell {
+				padding-right: 15px;
+			}
+			
+			.mui-table-view .mui-table-view-cell label,
+			.mui-table-view .mui-table-view-cell .opt {
+				position: absolute;
+				top: 50%;
+				-webkit-transform: translateY(-50%);
+				transform: translateY(-50%);
+				overflow: hidden;
+				margin: 0;
+			}
+			
+			.mui-table-view .mui-table-view-cell .opt,
+			.data-group .data-row .opt {
+				color: #AEAEAE;
+				top: 50%;
+			}
+			
+			.mui-table-view .mui-table-view-cell .opt:active {
+				color: #169BD5;
+			}
+			
+			.mui-table-view .mui-table-view-cell .opt,
+			.mui-table-view .mui-table-view-cell .body.arrow:after {
+				font-size: 1.7rem;
+				right: 0;
+				padding: 10px 14px 11px 10px;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="EquWarehouseRecordController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">出入库记录</a>
+		</header>
+		<div id="pullrefresh" ng-controller="pullrefreshController" class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<div class="mui-content" ng-show="data.length>0">
+				<ul class="mui-table-view mui-table-view-chevron" style="margin-top: 8px;">
+					<li class="mui-table-view-cell mui-media" ng-repeat="item in data">
+						<p class="opt md-icon icon-in2" style="color: #29CC00;" ng-if="item.Type==1"></p>
+						<p class="opt md-icon icon-out2" style="color: #FFCF11;" ng-if="item.Type==2"></p>
+						<div class="mui-clearfix" style="width: 80vw;">
+							<div class="mui-ellipsis equ-title" ng-bind="'操作人：'+item.CreateUserName"></div>
+							<p class="mui-ellipsis equ-sub" ng-bind="'操作时间：'+item.OperationDate"></p>
+							<p class="mui-ellipsis equ-sub" ng-bind="'操作数量：'+item.Num"></p>
+						</div>
+					</li>
+				</ul>
+			</div>
+			<md-no-data ng-show="data.length==0">暂无出入库记录</md-no-data>
+		</div>
+		<script type="text/javascript" src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("EquWarehouseRecordController", ["$scope", "ApiService", "DataService", "Loading", "RPCObserver", function($scope, ApiService, DataService, Loading, RPCObserver) {
+				$scope.pageIndex = 0;
+				$scope.pageSize = 10;
+				$scope.epId = query("id");
+
+				function init() {
+					$scope.url = ApiService.Api52 + "/api/v1/EqApply/GetOutGoingRecordListByEpID?epId=" + $scope.epId + "&pageIndex=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize;
+				};
+
+				$scope.$on('refresh_pageindex', init);
+
+				RPCObserver.on('refresh_equ_fault_list', 'refresh_equ_fault_list');
+				window.refresh_equ_fault_list = function() {
+					$scope.$broadcast('md_pullrefresh');
+				};
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

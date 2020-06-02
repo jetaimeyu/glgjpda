@@ -1,0 +1,174 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style>
+			.icon-saoyisao {
+				color: #AEAEAE;
+			}
+			
+			.icon-right {
+				color: #AEAEAE;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="InspPlanEquController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">选择巡检设备</a>
+		</header>
+
+		<div class="mui-content" ng-class="{'mui-block':curData.isLoad}" style="display: none;">
+			<ul class="data-group">
+
+				<li class="mui-table-view-cell data-row must">
+					<label>设备名称</label>
+					<p class="opt md-icon-more" ng-if="!curData.equRecord">
+						<i class="icon-saoyisao" ng-click="Event.Scantap()"></i>
+						<i class="icon-right" ng-click="Event.faultSelect()"></i>
+					</p>
+				 
+					<div class="body"  ng-click="Event.faultSelect()">
+						<span class="placeholder" ng-show="!curData.eqInfo.EqID">请选择设备</span>
+						<span ng-bind="curData.eqInfo.EqName" ng-show="curData.eqInfo.EqID"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="curData.eqInfo.EqID">
+					<label>设备型号</label>
+					<div class="body">
+						<span ng-bind="curData.eqInfo.EqSkuName"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="curData.eqInfo.EqID">
+					<label>设备编号</label>
+					<div class="body">
+						<span ng-bind="curData.eqInfo.EqIdentifier"></span>
+
+					</div>
+				</li>
+				<li class="data-row" ng-if="curData.eqInfo.EqID">
+					<label>分类</label>
+					<div class="body">
+						<span></span>
+					</div>
+				</li>
+			</ul>
+
+			<div class="mui-content-padded" ng-click="Event.save()">
+				<span class="mui-btn mui-btn-block">保存</span>
+			</div>
+		</div>
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+
+		<script type="text/javascript">
+			mui.init();
+
+			app.controller("InspPlanEquController", ["$scope", "ApiService", "DataService", "UtilsService", "DatePickerService", "CacheService", "Loading", "$Modal", "RPCObserver", function($scope, ApiService, DataService, UtilsService, DatePickerService, CacheService, Loading, $Modal, RPCObserver) {
+				var cur_view = plus.webview.currentWebview();
+
+				//当前数据
+				$scope.curData = {
+					isLoad: true,
+					equRecord: "",
+					eqInfo: {
+						EqName: "",
+						EqID: "",
+						EqCode: "",
+						EqIdentifier: "",
+						CatalogName:""
+					}
+				};
+
+				//初始化数据
+				$scope.curData.equRecord = cur_view.addEquRecord || "";
+				var _equRecord = $scope.curData.equRecord;
+				$scope.curData.equRecord && ($scope.curData.eqInfo.EqName = _equRecord.EqName) && ($scope.curData.eqInfo.EqID = _equRecord.EqID) && ($scope.curData.eqInfo.EqCode = _equRecord.EqCode) && ($scope.curData.eqInfo.EqIdentifier = _equRecord.EqIdentifier);
+				//事件列表
+				$scope.Event = {
+					//扫码
+					Scantap: function() {
+						UtilsService.openWindow({
+							needLogin: true,
+							id: 'scan.html',
+							url: '../scan/scan.html',
+							extras: {
+								callback: "ScanBack"
+							}
+						});
+					},
+					//选择故障设备
+					faultSelect: function() {
+						UtilsService.openWindow({
+							needLogin: true,
+							id: "select-equ-list.html",
+							url: "equ-list.html?action=select&must=true",
+							extras: {
+								selectObj: {
+									ID: $scope.curData.eqInfo.EqID,
+									EqIdentifier: $scope.curData.eqInfo.EqIdentifier,
+									EqName: $scope.curData.eqInfo.EqCode,
+									SkuName: $scope.curData.eqInfo.EqSkuName
+								},
+								callback: "faultEquCallback"
+							}
+						});
+					},
+					//查看设备详情
+					equDetails: function() {
+						UtilsService.openWindow({
+							needLogin: true,
+							id: "equ-details.html",
+							url: "equ-details.html?equid=" + $scope.curData.equRecord.EquipmentID
+						});
+					},
+					//保存
+					save: function() {
+						if(cur_view.callback) {
+							cur_view.opener().evalJS(cur_view.callback + "(" + JSON.stringify($scope.curData.eqInfo) + ")");
+							mui.back();
+						}
+					}
+				};
+
+				//扫码回调事件
+				window.ScanBack = function(obj) {
+					obj = JSON.parse(obj);
+					if(obj.resType == 2) {
+						$scope.EqName = obj.resInfo.EqName;
+						$scope.EqID = obj.resInfo.ID;
+						$scope.EqCode = obj.resInfo.EqIdentifier;
+						$scope.EqSkuName = obj.resInfo.SkuName;
+						$scope.EqIdentifier = obj.resInfo.EqIdentifier;
+						$scope.CatalogName = obj.resInfo.CatalogName;
+						$scope.$apply();
+					}
+				};
+
+				window.faultEquCallback = function(obj) {
+					console.log(JSON.stringify(obj))
+					$scope.curData.eqInfo.EqName = obj.EqName;
+					$scope.curData.eqInfo.EqID = obj.ID;
+					$scope.curData.eqInfo.EqCode = obj.EqIdentifier;
+					$scope.curData.eqInfo.EqSkuName = obj.SkuName;
+					$scope.curData.eqInfo.EqIdentifier = obj.EqIdentifier;
+					$scope.$apply();
+				}
+
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

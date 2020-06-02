@@ -1,0 +1,215 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<link rel="stylesheet" href="equ-common.css" />
+		<style>
+			.top44 {
+				margin-top: 44px
+			}
+			
+			.top35 {
+				margin-top: 35px
+			}
+			
+			.top79 {
+				margin-top: 79px
+			}
+			
+			.autoTop {
+				margin-top: 35px;
+			}
+			
+			.mui-android .autoTop {
+				margin-top: 0px;
+			}
+			
+			#aepopover {
+				/*min-width: 260px;*/
+				/*height: 370px;*/
+				top: 65% !important;
+				margin-top: -150px;
+				left: 50% !important;
+				margin-left: -141px;
+				border-radius: 3px;
+				background-color: #fff;
+			}
+			
+			#aepopover .mui-popover .mui-popover-arrow {
+				display: none !important;
+			}
+			
+			#aepopover .data-group:before {
+				height: 0;
+			}
+			
+			#aepopover .data-group .data-row label~.body {
+				margin-left: 80px;
+			}
+			
+			#aepopover .data-group .data-row .body {
+				padding: 10px 5px 11px 10px;
+			}
+			
+			#aepopover .data-group .data-row:after {
+				left: 10px;
+				background-color: #E5E5E5;
+			}
+			
+			#aepopover .data-group .data-row.first:after {
+				left: 5px;
+				right: 5px;
+				background-color: #E5E5E5;
+			}
+			
+			#aepopover .data-group .data-row.first {
+				min-height: 38px
+			}
+			
+			#add_div {
+				margin: 12px 20px 12px 20px;
+			}
+			
+			#add_div a {
+				background-color: #3296FA;
+				color: #fff;
+				padding: 5px 0;
+				border: 1px solid #3296FA;
+			}
+			
+			.data-group .data-row .label-gray {
+				color: #333333;
+			}
+			
+			.info-title {
+				margin-left: 10px;
+				line-height: 1;
+				color: #1f1f1f;
+			}
+			
+			.title {
+				color: #1f1f1f;
+			}
+			
+			.mdt_leftline {
+				width: 3px;
+				height: 14px;
+				background: #169BD5;
+				margin-top: -13px;
+				margin-left: -3px;
+			}
+			/*.empty-list{
+				margin-top: 30vw!important;
+			}*/
+			
+			.data-group .data-row .left-10 {
+				position: absolute;
+				left: 5px;
+				padding: 5px;
+				top: 50%;
+				transform: translateY(-50%);
+				font-size: 1.8rem;
+			}
+			
+			.data-group .data-row .name {
+				margin-left: 35px;
+				font-size: 1.5rem;
+				line-height: 40px;
+				max-width: calc(80vw - 20px);
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				-o-text-overflow: ellipsis;
+				overflow: hidden;
+				display: block;
+			}
+			.spanchoose{
+				display: inline-block;
+				width: 90%!important;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="ContactOrgController">
+		<!--导航目录部分-->
+		<div id="res-slide" class="top-thin-line mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted nav-bar" ng-class="{'mui-block':isLoad}" ng-show="isLoad&&navDirData.length>1" style="display: none;">
+			<div class="mui-scroll" style="height: 35px;position: absolute;">
+				<a class="mui-control-item" ng-repeat="dir in navDirData" ng-class="{'mui-active':dir.ID==catalogID}" ng-attr-catalogid="{{dir.ID}}" ng-attr-index="{{$index}}" ng-attr-catalogname="{{dir.catalogname}}" ng-attr-pardirid="{{dir.ParDirID}}">
+					<span class="icon iconfont icon-right color-gray-deep" style="margin-left: 2px;" ng-show="$index>0"></span>
+					<span class="group-name" ng-bind="dir.catalogname"></span>
+				</a>
+			</div>
+		</div>
+		<!--,'top35':navDirData.length>1-->
+		<div id="pullrefresh" class="mui-scroll-wrapper mui-content mui-fullscreen" style="display:none;" ng-class="{'mui-block':isLoad,'autoTop':navDirData.length>1,'top44':data[catalogID].length==0}">
+			<div class="scroll-body">
+				<!--目录-->
+				<ul class="data-group" ng-show="dirData&&dirData[catalogID].length>0&&selectCatalog=='false'" ng-style="{'margin-top':navDirData.length>1?'8px':'0px'}">
+					<!--ng-click="clickDir(catalog.ID,catalog.DirName)"-->
+					<li class="mui-table-view-cell data-row dir-row" ng-repeat="catalog in dirData[catalogID]" ng-attr-catalogid="{{catalog.ID}}" ng-attr-catalogname="{{catalog.DirName}}" ng-attr-pardirid="{{catalog.ParDirID}}">
+						<label style="width:85vw" class="mui-ellipsis">
+						<i class="icon-list"></i><span style="width:85vw;margin-left: 4px;" class="mui-ellipsis" ng-bind="' '+catalog.DirName"></span>
+					</label>
+						<p class="opt md-icon icon-right"></p>
+					</li>
+				</ul>
+				<!--可选目录-->
+				<ul class="data-group" ng-show="dirData&&dirData[catalogID].length>0&&selectCatalog=='true'" ng-style="{'margin-top':navDirData.length>1?'8px':'0px'}">
+					<li class="mui-table-view-cell data-row" ng-repeat="dir in dirData[catalogID]" >
+						<span ng-attr-index="{{$index}}" class="spanchoose">
+						<i class="icon-roundcheckfill color-blue left-10" ng-if="selectedDirIds.indexOf(dir.ID)>=0"></i>
+						<i class="icon-round color-gray left-10" ng-if="selectedDirIds.indexOf(dir.ID)<0"></i>
+						<span class="name" ng-bind="dir.DirName"></span>
+						</span>
+						<p id="next" class="opt dir-row" ng-attr-catalogid="{{dir.ID}}" ng-attr-catalogname="{{dir.DirName}}" ng-attr-pardirid="{{dir.ParDirID}}">
+							<span ng-class="selectedDirIds.indexOf(dir.ID)>=0?'color-gray':'color-gray-dark'">下级</span>
+						</p>
+					</li>
+				</ul>
+				<!--设备列表-->
+				<md-device-list ng-model="data" action="action" selected-id="selectedId"></md-device-list>
+			</div>
+			<md-no-data ng-show="dirData[catalogID].length==0 && data.length==0">暂无设备数据</md-no-data>
+		</div>
+		<!--新增、修改-->
+		<div id="aepopover" class="mui-popover" style="padding: 0 0px;">
+			<ul class="data-group" style="margin-top: 3px;">
+				<li class="data-row first">
+					<a class="opt md-icon icon-close" href="#aepopover">
+					</a>
+					<div class="body">
+						<div class="pdLeft100 mui-ellipsis info-title">
+							<span class="color-gray-dark font-14">新增</span>
+						</div>
+						<div class="mdt_leftline mui-pull-left"></div>
+					</div>
+				</li>
+				<li class="data-row must">
+					<label class="label-gray">归类名称</label>
+					<div class="body">
+						<div class="edit" style="margin-right: -5px;">
+							<div class="needsclick" id="dirName" ng-bind="DirName" contenteditable="true" placeholder="请输入归类名称"></div>
+						</div>
+					</div>
+				</li>
+			</ul>
+			<div id="add_div">
+				<a type="button" class="font-15 mui-btn mui-btn-block" ng-click="confirmChange()">确认</a>
+			</div>
+		</div>
+		<script src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="equ-all.js"></script>
+	</body>
+
+</html>

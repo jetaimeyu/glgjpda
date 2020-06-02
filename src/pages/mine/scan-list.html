@@ -1,0 +1,121 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style>
+			.mgt0 {
+				margin-top: 0px;
+			}
+			
+			.data-group .data-row {
+				padding: 0px 16px;
+				display: flex;
+				align-items: center;
+			}
+			
+			.data-group .data-row .opt:not(.md-icon):after {
+				width: 0;
+			}
+			
+			.pull-info {
+				text-align: center;
+				font-size: 15px;
+				margin-top: 5px;
+				color: #999999;
+				background-color: #E2E2EC;
+			}
+			
+			.comp-logo {
+				width: 50px;
+				height: 50px;
+				border-radius: 50px;
+				float: left;
+				border: 1px solid #F2F2F2;
+				margin-right: 10px;
+			}
+			
+			.prod-list-empty {
+				padding: 10px 16px;
+				height: 130px;
+			}
+			
+			.prod-list-empty .empty-logo {
+				background-image: url("../../images/complib/empty.png");
+				width: 80px;
+				height: 80px;
+				display: block;
+				background-size: cover;
+				/*text-align: center;*/
+			}
+		</style>
+	</head>
+
+	<body ms-controller="appController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">扫码记录</a>
+		</header>
+		<div id="pullrefresh" class="mui-scroll-wrapper mt44">
+			<div class="mui-scroll">
+				<ul class="data-group" ms-if="OrderList.length>0&&Viewpermission">
+					<li class="data-row click-gray" ms-for="row in OrderList" ms-attr="{href:row}|jumpUrl(row.type,row.isView)" open-type="common" ms-if="row.Name!='无'">
+						<div ms-if="row.type==1" class="body" style="margin-right: 20px;">
+							<!--<img class="comp-logo" ms-attr="{src:ImgSrc+'_501_100x100.jpg'}">-->
+							<span>产品扫码</span>
+							<p style="margin-top: 5px;">
+								<span class="mui-pull-left" style="width: 70px;">产品名称：</span><span ms-text="row.Name"></span>
+							</p>
+							<p style="margin-top: 5px;">
+								<span class="mui-pull-left" style="width: 70px;">扫码时间：</span><span ms-text="row.scanTime"></span>
+							</p>
+							<p style="margin-top: 5px;">
+								<span class="mui-pull-left" style="width: 70px;">产品型号：</span><span ms-text="row.SkuName"></span>
+							</p>
+							<p style="margin-top: 5px;">
+								<span class="mui-pull-left" ms-text="row.InnerCodeName+'：'"></span><span ms-text="row.InnerCode"></span>
+							</p>
+
+						</div>
+						<div ms-if="row.type==2" class="body" style="margin-right: 20px;">
+							<span>设备扫码</span>
+							<p style="margin-top: 5px;">
+								<span class="mui-pull-left" style="width: 70px;">设备名称：</span><span ms-text="row.Name"></span>
+							</p>
+							<p style="margin-top: 5px;">
+								<span class="mui-pull-left" style="width: 70px;">扫码时间：</span><span ms-text="row.scanTime"></span>
+							</p>
+							<p style="margin-top: 5px;">
+								<span class="mui-pull-left" style="width: 70px;">设备型号：</span><span ms-text="row.SkuName"></span>
+							</p>
+							<p style="margin-top: 5px;">
+								<span class="mui-pull-left">设备编号：</span><span ms-text="row.EqIdentifier"></span>
+							</p>
+						</div>
+						<p class="opt md-icon">
+							<span class="icon-right"></span>
+						</p>
+					</li>
+				</ul>
+
+			</div>
+			<center ms-visible="OrderList&&OrderList.length==0" style="display: none; margin-top: 45%;">
+				<div class="prod-list-empty">
+					<span class="empty-logo"></span>
+					<p class="mt10">暂无扫码记录</p>
+				</div>
+			</center>
+		</div>
+		<script src="../../js/mui.min.js"></script>
+		<!--<script type="text/javascript" src="../../js/common.js"></script>-->
+		<script type="text/javascript" src="../../js/avalon.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/mui.pullToRefresh.js"></script>
+		<script type="text/javascript" src="scan-list.js"></script>
+	</body>
+
+</html>

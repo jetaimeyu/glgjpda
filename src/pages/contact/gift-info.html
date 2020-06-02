@@ -1,0 +1,143 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/common.css">
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+		<link rel="stylesheet" type="text/css" href="gift-info.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/swiper-4.2.2.min.css" />
+		<style>
+			.icon {
+				width: 16px;
+			}
+			
+			.swiper-slide img {
+				height: 90%;
+				width: 90%;
+			}
+			.swiper-slide{
+				text-align: center;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="GiftInfoController">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">礼品详情</a>
+		</header>
+		<div class="mui-content" style="padding-bottom: 47px;display: none;" ng-class="{'mui-block':isLoad}">
+			<div class="swiper-container">
+				<div class="swiper-wrapper">
+					<div class="swiper-slide" ng-repeat="item in goods.Files">
+						<img ng-src="{{imgurl+'/'+item.FilePath}}" />
+					</div>
+				</div>
+				<!--分页器 -->
+				<div class="swiper-pagination"></div>
+			</div>
+			<div class="fn_wrap">
+				<div class="module-price">
+					<div class="real-price">
+						<span class="ui-yen ">
+            		       <i class="price-symbol">¥</i>
+            		       <span class="price" ng-bind="goods.Price"></span>
+						</span>
+					</div>
+				</div>
+				<div class="module-wrap">
+					<div class="module-title">
+						<div class="share-warp mui-flex">
+							<div class="main cell" ng-bind="goods.Name"></div>
+							<span class="share-div mui-flex share-hidden">
+						</span>
+						</div>
+					</div>
+				</div>
+				<div class="module-wrap">
+					<div class="module-adds">
+						<span class="postage">快递: 免费</span>
+						<span class="sales" ng-bind="'月销量'+goods.SalesNum+'件'"></span>
+						<span class="delivery" ng-bind="goods.Source"></span></div>
+				</div>
+			</div>
+			<div class="module-wrap" ng-if="goods.Description">
+				<div class="module-props">
+					<div class="props-content clearfix">
+						<div class="hr_bar_box">
+							<div class="l">礼品描述</div>
+						</div>
+						<div class="r" ng-bind-html="transContent(goods.Description)"></div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+		<div id="s-actionBar-container">
+			<div class="action-bar-wrap j-bottom-bar">
+				<a class="buy" role="button">立即购买</a>
+			</div>
+		</div>
+		</div>
+		<script src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script src="../../libs/swiper-4.2.2.min.js" type="text/javascript" charset="utf-8"></script>
+		<script>
+			app.controller("GiftInfoController", ["$scope","$sce", "ApiService", "DataService", "UtilsService", "Loading", "ChatUserService", function($scope,$sce, ApiService, DataService, UtilsService, Loading, ChatUserService) {
+				var ws = plus.webview.currentWebview();
+				$scope.imgurl = ApiService.Api50 + "/api/v1/File/DownLoadPic?filePath=";
+				$scope.transContent = function(content) {
+					return $sce.trustAsHtml(content);
+				};
+				$scope.goods = ws.giftInfo;
+				if(MdConfig.TestMode){
+					$scope.goods.Description = $scope.goods.Description.replace(/admin.maidiyun.com/g,"222.175.121.187:8084/admin_page/")
+				}
+				$scope.uid = ws.uid;
+				$scope.isLoad = true;
+				//getPartInfo();
+				function getPartInfo() {
+					Loading.show();
+					var url = ApiService.Api50 + "/api/v1/MdtMicroMart/GetCommodityInfo/" + $scope.goods.ID;
+					DataService.get(url).then(function(res) {
+						Loading.hide();
+						$scope.isLoad = true;
+						if(res) {
+							$scope.goods = res;
+						}
+					}, function(error) {
+
+					});
+				}
+
+				setTimeout(function() {
+					var mySwiper = new Swiper('.swiper-container', {
+						autoplay: true,
+						loop: true, // 循环模式选项
+						// 如果需要分页器
+						pagination: {
+							el: '.swiper-pagination',
+							type: 'fraction'
+						},
+					})
+				}, 400)
+				document.getElementById("s-actionBar-container").addEventListener("tap", function() {
+					UtilsService.openWindow({
+						id: "pay.html",
+						url: "pay.html?price=" + $scope.goods.Price+"&uid="+$scope.uid+"&goodid="+$scope.goods.ID
+					})
+				});
+			}])
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

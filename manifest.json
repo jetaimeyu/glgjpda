@@ -1,0 +1,4344 @@
+{
+	"@platforms": [
+		"android",
+		"iPhone",
+		"iPad"
+	],
+	"id": "H51842402",
+	"name": "迈迪通",
+	"version": {
+		"name": "1.0.0",
+		"code": "1"
+	},
+	"description": "",
+	"icons": {
+		"72": "icon.png"
+	},
+	"launch_path": "src/launch.html",
+	"developer": {
+		"name": "",
+		"email": "",
+		"url": "http://www.maidiyun.com"
+	},
+	"permissions": {
+		"Accelerometer": {
+			"description": "访问加速度感应器"
+		},
+		"Audio": {
+			"description": "访问麦克风"
+		},
+		"Cache": {
+			"description": "管理应用缓存"
+		},
+		"Camera": {},
+		"Console": {
+			"description": "跟踪调试输出日志"
+		},
+		"Contacts": {
+			"description": "访问系统联系人信息"
+		},
+		"Device": {
+			"description": "访问设备信息"
+		},
+		"Downloader": {
+			"description": "文件下载管理"
+		},
+		"Events": {
+			"description": "应用扩展事件"
+		},
+		"File": {
+			"description": "访问本地文件系统"
+		},
+		"Gallery": {
+			"description": "访问系统相册"
+		},
+		"Geolocation": {
+			"description": "访问位置信息"
+		},
+		"Invocation": {
+			"description": "使用Native.js能力"
+		},
+
+		"Orientation": {
+			"description": "访问方向感应器"
+		},
+		"Proximity": {
+			"description": "访问距离感应器"
+		},
+		"Storage": {
+			"description": "管理应用本地数据"
+		},
+
+		"Uploader": {
+			"description": "管理文件上传任务"
+		},
+		"Runtime": {
+			"description": "访问运行期环境"
+		},
+		"XMLHttpRequest": {
+			"description": "跨域网络访问"
+		},
+		"Zip": {
+			"description": "文件压缩与解压缩"
+		},
+		"Barcode": {},
+		"Maps": {
+			"description": "管理地图插件"
+		},
+		"Speech": {},
+		"Webview": {
+			"description": "窗口管理"
+		},
+		"NativeUI": {
+			"description": "原生UI控件"
+		},
+		"Navigator": {
+			"description": "浏览器信息"
+		},
+		"NativeObj": {
+			"description": "原生对象"
+		},
+		"Share": {},
+		"Push": {},
+		"Payment": {},
+		"Statistic": {}
+	},
+	"plus": {
+		"splashscreen": {
+			"autoclose": true,
+			"waiting": false,
+			"delay": "0"
+		},
+		"statusbar": {
+			"immersed": "none|suggestedDevice|supportedDevice",
+			"style": "dark|light",
+			"background": "#3296FA"
+		},
+		"runmode": "normal",
+		"signature": "Sk9JTiBVUyBtYWlsdG86aHIyMDEzQGRjbG91ZC5pbw==",
+		"distribute": {
+			"plugins": {
+				"statics": {
+					"umeng": {
+						"appkey_ios": "59477ad95312ddbdb9000509",
+						"channelid_ios": "maidiyun",
+						"appkey_android": "59477aa74544cb550200128d",
+						"channelid_android": "maidiyun"
+					}
+				},
+				"payment": {
+					"alipay": {
+						"description": "阿里支付",
+						"scheme": ""
+					},
+					"weixin": {
+						"description": "微信支付",
+						"appid": "wxd5c8239c4c15c0a3"
+					}
+				},
+				"push": {
+					"igexin": {
+						"appid": "4D6U0VrpvO7D08ih6BtThA",
+						"appkey": "WsgUJtlXB876wQTVH1yrm4",
+						"appsecret": "6VkYuVrsDxA5QTMlvurHa6"
+					}
+				},
+				"share": {
+					"qq": {
+						"appid": "101380647",
+						"description": "QQ分享"
+					},
+					"weixin": {
+						"appid": "wx7f22fa052d80788b",
+						"appsecret": "9a79638cac131f048dbe1bffac51513e",
+						"description": "可选，微信分享"
+					}
+				},
+				"maps": {
+					"baidu": {
+						"appkey_ios": "EVtwijjy4KyZFFS8iV8KEimGqjDy0BZz",
+						"appkey_android": "fVMy9cBBHqeD1vnbwlBB0u0wgWSXtT89",
+						"appkey": "",
+						"description": ""
+					}
+				}
+			},
+			"apple": {
+				"appid": "",
+				"mobileprovision": "",
+				"password": "",
+				"p12": "",
+				"devices": "universal",
+				"frameworks": []
+			},
+			"google": {
+				"packagename": "",
+				"keystore": "",
+				"password": "",
+				"aliasname": "",
+				"schemes": [
+					"mdt"
+				],
+				"permissions": ["<uses-permission android:name=\"android.permission.CHANGE_NETWORK_STATE\"/>","<uses-permission android:name=\"android.permission.READ_CONTACTS\"/>","<uses-permission android:name=\"android.permission.MOUNT_UNMOUNT_FILESYSTEMS\"/>","<uses-permission android:name=\"android.permission.GET_TASKS\"/>","<uses-permission android:name=\"android.permission.VIBRATE\"/>","<uses-permission android:name=\"android.permission.READ_LOGS\"/>","<uses-permission android:name=\"android.permission.ACCESS_WIFI_STATE\"/>","<uses-feature android:name=\"android.hardware.camera.autofocus\"/>","<uses-permission  android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\"/>","<uses-permission android:name=\"android.permission.SYSTEM_ALERT_WINDOW\"/>","<uses-permission android:name=\"android.permission.WRITE_CONTACTS\"/>","<uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\"/>","<uses-permission android:name=\"android.permission.READ_EXTERNAL_STORAGE\"/>","<uses-permission android:name=\"android.permission.RECEIVE_BOOT_COMPLETED\"/>","<uses-permission android:name=\"android.permission.CAMERA\"/>","<uses-permission android:name=\"android.permission.GET_ACCOUNTS\"/>","<uses-permission android:name=\"android.permission.RECORD_AUDIO\"/>","<uses-permission android:name=\"android.permission.MODIFY_AUDIO_SETTINGS\"/>","<uses-permission android:name=\"android.permission.INTERNET\"/>","<uses-permission android:name=\"android.permission.CHANGE_WIFI_STATE\"/>","<uses-permission android:name=\"android.permission.READ_PHONE_STATE\"/>","<uses-permission android:name=\"android.permission.WAKE_LOCK\"/>","<uses-permission android:name=\"android.permission.FLASHLIGHT\"/>","<uses-permission android:name=\"android.permission.CALL_PHONE\"/>","<uses-permission android:name=\"android.permission.ACCESS_COARSE_LOCATION\"/>","<uses-feature android:name=\"android.hardware.camera\"/>","<uses-permission android:name=\"android.permission.ACCESS_FINE_LOCATION\"/>","<uses-permission android:name=\"android.permission.RECEIVE_USER_PRESENT\"/>","<uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\"/>","<uses-permission android:name=\"android.permission.WRITE_SETTINGS\"/>"]
+			},
+			"orientation": [
+				"portrait-primary"
+			],
+			"icons": {
+				"ios": {
+					"prerendered": true,
+					"auto": "",
+					"iphone": {
+						"normal": "unpackage/res/icons/57x57.png",
+						"retina": "unpackage/res/icons/114x114.png",
+						"retina7": "unpackage/res/icons/120x120.png",
+						"spotlight-normal": "unpackage/res/icons/29x29.png",
+						"spotlight-retina": "unpackage/res/icons/58x58.png",
+						"spotlight-retina7": "unpackage/res/icons/80x80.png",
+						"settings-normal": "unpackage/res/icons/29x29.png",
+						"settings-retina": "unpackage/res/icons/58x58.png",
+						"retina8": "unpackage/res/icons/180x180.png",
+						"settings-retina8": "unpackage/res/icons/87x87.png"
+					},
+					"ipad": {
+						"normal": "unpackage/res/icons/72x72.png",
+						"retina": "unpackage/res/icons/144x144.png",
+						"normal7": "unpackage/res/icons/76x76.png",
+						"retina7": "unpackage/res/icons/152x152.png",
+						"spotlight-normal": "unpackage/res/icons/50x50.png",
+						"spotlight-retina": "unpackage/res/icons/100x100.png",
+						"spotlight-normal7": "unpackage/res/icons/40x40.png",
+						"spotlight-retina7": "unpackage/res/icons/80x80.png",
+						"settings-normal": "unpackage/res/icons/29x29.png",
+						"settings-retina": "unpackage/res/icons/58x58.png"
+					}
+				},
+				"android": {
+					"mdpi": "unpackage/res/icons/48x48.png",
+					"ldpi": "unpackage/res/icons/48x48.png",
+					"hdpi": "unpackage/res/icons/72x72.png",
+					"xhdpi": "unpackage/res/icons/96x96.png",
+					"xxhdpi": "unpackage/res/icons/144x144.png",
+					"xxxhdpi": "unpackage/res/icons/192x192.png"
+				}
+			},
+			"splashscreen": {
+				"ios": {
+					"iphone": {
+						"default": "",
+						"retina55": "C:/Users/gjs/Desktop/手机启动界面/1242x2208.png",
+						"retina47": "C:/Users/gjs/Desktop/手机启动界面/750x1334.png",
+						"retina40": "C:/Users/gjs/Desktop/手机启动界面/640x1136.png",
+						"retina35": "C:/Users/gjs/Desktop/手机启动界面/640x960.png",
+						"retina55l": "C:/Users/gjs/Desktop/手机启动界面/2208x1242.png"
+					},
+					"ipad": {}
+				},
+				"android": {
+					"mdpi": "",
+					"ldpi": "",
+					"hdpi": "C:/Users/gjs/Desktop/splash/480-762.png",
+					"xhdpi": "C:/Users/gjs/Desktop/splash/720-1242.png",
+					"xxhdpi": "C:/Users/gjs/Desktop/splash/1080-1882.png"
+				}
+			},
+			"debug": true
+		}
+	},
+	"dependencies": {
+		"pages": {
+			"launch.html": {
+				"resources": [
+					"js/mui.min.js",
+					"css/mui.min.css",
+					null,
+					"js/common.js"
+				],
+				"refer": [
+					"tab.html",
+					"guide.html",
+					"zipupdate.html"
+				],
+				"priority": 0
+			},
+			"tab.html": {
+				"resources": [
+					"css/mui.min.css",
+					"js/mui.min.js",
+					"fonts/mui.ttf",
+					"pages/tab/index.html",
+					"css/common.css",
+					"fonts/iconfont.ttf",
+					"js/rpc-client.js",
+					"js/YunIM.js",
+					"js/rpc-server.js",
+					"js/data.js",
+					"js/common.js",
+					"pages/tab/resource.html",
+					"pages/tab/my.html"
+				],
+				"refer": [
+					"tab-im.html",
+					"zipupdate.html",
+					"pages/tab/oem.html",
+					"pages/scan/scanDetails.html"
+				],
+				"priority": 0
+			},
+			"guide.html": {
+				"resources": [
+					"js/common.js",
+					"images/splash/03.jpg",
+					"images/splash/01.jpg",
+					"images/splash/04.jpg",
+					"images/splash/02.jpg",
+					"css/mui.min.css"
+				],
+				"refer": [
+					"tab.html"
+				],
+				"priority": 0
+			},
+			"pages/tab/index.html": {
+				"resources": [
+					"css/common.css",
+					"fonts/mui.ttf",
+					"css/mui.min.css",
+					"images/con_02.png",
+					"images/f02.png",
+					"images/f01.png",
+					"images/f05.png",
+					"images/f04.png",
+					"images/f03.png",
+					"js/common.js",
+					"images/con_04.png",
+					"images/con_03.png",
+					"images/con_05.png",
+					"images/con_06.png",
+					"images/con_09.png",
+					"images/con_08.png",
+					"images/con_07.png",
+					"pages/tab/index.css",
+					"images/con_10.png",
+					"js/mui.min.js",
+					"fonts/iconfont.ttf",
+					"pages/tab/index.js",
+					"js/avalon.js",
+					"js/data.js",
+					"js/rpc-server.js",
+					"images/con_13.png",
+					"images/con_14.png",
+					"js/rpc-client.js",
+					"images/con_15.png",
+					"images/con_16.png",
+					"images/index/sbgl.png",
+					"images/index/zwx.png",
+					"pages/tab/css/iconfont.css",
+					"images/index/default_bg.png",
+					"images/mdempty1.png",
+					"images/index/shfw.png",
+					"pages/tab/index2.js",
+					"images/index/news.png",
+					"js/mescroll/mescroll.js",
+					"images/index/gzt.png",
+					"js/mescroll/mescroll.min.css",
+					"pages/tab/css/index2.css",
+					"images/index/gyl.png"
+				],
+				"refer": [
+					"pages/news/news-main.html",
+					"template.html",
+					"pages/aftersale/aftersale.html",
+					"pages/scan/scan.html",
+					"pages/worktask/worktask.html",
+					"pages/worktask/notice.html",
+					"pages/shop/shop.html",
+					"pages/service/service.html",
+					"pages/aftersale/fault-repair.html",
+					"pages/aftersale/fault-submit.html",
+					"pages/new-friends/new-friends.html",
+					"pages/aftersale/fault-submit-r.html",
+					"pages/aftersale/work-record.html",
+					"pages/out-stock/order-list-main.html",
+					"pages/new-friends/find-friends.html",
+					"pages/login/login.html",
+					"pages/worktask/draft.html",
+					"pages/join/login.html",
+					"pages/aftersale/after-sale.html",
+					"pages/aftersale/after-sale-main.html",
+					"pages/prod-parts/part-list.html",
+					"pages/out-stock/order-main.html",
+					"zipupdate.html",
+					"pages/industry-service/machining-map.html",
+					"pages/news/news-template.html",
+					"pages/tab/industry-center.html",
+					"pages/tab/work-center.html",
+					"pages/equ-manage/equ-list.html",
+					"pages/scan/barcode_scan.html",
+					"pages/industry/comp-map-template.html",
+					"pages/industry/comp-map.html",
+					"pages/shipment-packing/shipping-list.html",
+					"pages/shipment-packing/scan-encasement.html",
+					"pages/worklist/aftersale.html"
+				],
+				"priority": 0
+			},
+			"pages/tab/resource.html": {
+				"resources": [
+					"css/mui.min.css",
+					"pages/resource/resource.css",
+					"pages/resource/recent.html",
+					"pages/tab/resource.js",
+					"js/mui.js",
+					"css/mui.css",
+					"images/error.png",
+					"js/rpc-client.js",
+					"js/common.js",
+					"js/avalon.js",
+					"css/common.css",
+					"js/rpc-server.js",
+					"fonts/iconfont.ttf",
+					"images/no-login.png"
+				],
+				"refer": [
+					"pages/resource/my-res.html",
+					"pages/resource/my-comp.html",
+					"pages/login/login.html"
+				],
+				"priority": 0
+			},
+			"pages/tab/my.html": {
+				"resources": [
+					"css/mui.min.css",
+					"pages/tab/my.js",
+					"css/mdui.css",
+					"pages/tab/my.css",
+					"css/mui.css",
+					"css/common.css",
+					"js/mui.min.js",
+					"js/rpc-client.js",
+					"js/common.js",
+					"js/avalon.js",
+					"fonts/iconfont.ttf",
+					"images/error.png",
+					"js/rpc-server.js",
+					"images/my/cart.png",
+					"images/my/ewm.png",
+					"images/my/tousu.png",
+					"images/my/history.png",
+					"images/my/set.png",
+					"images/my/search.png",
+					"images/my/collection.png",
+					"images/my/cpy.png",
+					"images/my/order.png",
+					"images/no-login.png"
+				],
+				"refer": [
+					"pages/my/qr-code.html",
+					"pages/my/setting.html",
+					"pages/statistics/aftersale-main.html",
+					"pages/login/login.html",
+					"pages/my/my-details.html",
+					"pages/shop/my-order-main.html",
+					"pages/shop/cart-list.html",
+					"pages/company/myInfo.html",
+					"pages/my/scan-list.html",
+					"pages/news/news-template.html",
+					"pages/my/my-collect-comp.html"
+				],
+				"priority": 0
+			},
+			"pages/news/news-all.html": {
+				"resources": [
+					"js/avalon.js",
+					"css/common.css",
+					"css/mui.min.css",
+					"pages/news/news-all.js",
+					"css/mui.css",
+					"pages/news/news.css",
+					"js/common.js",
+					"pages/news/news-all.css",
+					"images/error.png",
+					"js/mui.min.js",
+					"fonts/iconfont.ttf",
+					"fonts/mui.ttf"
+				],
+				"refer": [
+					"template.html"
+				],
+				"priority": 0
+			},
+			"pages/news/news-main.html": {
+				"resources": [
+					"pages/news/news-main.js",
+					"js/mui.min.js",
+					"fonts/mui.ttf",
+					"css/mui.min.css",
+					"pages/news/news-all.html",
+					"pages/news/news.css",
+					"css/common.css",
+					"pages/news/news-main.css",
+					"fonts/iconfont.ttf",
+					"js/rpc-server.js"
+				],
+				"refer": [
+					"pages/news/pullrefresh_sub.html"
+				],
+				"priority": 0
+			},
+			"template.html": {
+				"resources": [
+					"template.js",
+					"css/mui.min.css",
+					"js/mui.min.js",
+					"fonts/mui.ttf",
+					"css/common.css",
+					"fonts/iconfont.ttf",
+					"js/common.js"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/news/pullrefresh_sub.html": {
+				"resources": [
+					"css/mui.min.css"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/aftersale/aftersale.html": {
+				"resources": [
+					"pages/aftersale/aftersale.css",
+					"css/common.css",
+					"css/mdui.css",
+					"css/mui.min.css",
+					"pages/aftersale/aftersale.js",
+					"js/common.js",
+					"js/mui.min.js",
+					"fonts/mui.ttf",
+					"fonts/iconfont.ttf",
+					"js/avalon.js"
+				],
+				"refer": [
+					"pages/aftersale/fault-list.html",
+					"pages/aftersale/fault-submit.html",
+					"pages/aftersale/debugging-list.html",
+					"pages/aftersale/repair-list.html"
+				],
+				"priority": 0
+			},
+			"pages/scan/scan.html": {
+				"resources": [
+					"pages/scan/scan.js",
+					"css/mui.min.css",
+					"js/common.js",
+					"js/mui.min.js",
+					"fonts/mui.ttf",
+					"images/light.png",
+					"images/light1.png",
+					"images/light2.png"
+				],
+				"refer": [
+					"pages/scan/scanDetails.html",
+					"pages/my/add-friend.html",
+					"template.html",
+					"pages/company/enterprisescard.html",
+					"pages/industry-service/equipment-detail.html",
+					"pages/binding-code/binding-prod.html"
+				],
+				"priority": 0
+			},
+			"pages/worktask/worktask.html": {
+				"resources": [
+					"js/mui.min.js",
+					"css/mui.min.css",
+					"js/common.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"pages/worktask/worktask-sub.html",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [
+					"pages/worktask/worktask_sub.html"
+				],
+				"priority": 0
+			},
+			"pages/worktask/notice.html": {
+				"resources": [
+					"js/mui.min.js",
+					"css/mui.min.css",
+					"js/common.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"pages/worktask/worktask.css",
+					"pages/worktask/notice-sub.html",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/shop/shop.html": {
+				"resources": [
+					"images/shop.jpg",
+					"css/common.css",
+					"css/mui.min.css",
+					"js/mui.js",
+					"fonts/mui.ttf"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/service/service.html": {
+				"resources": [
+					"js/mui.min.js",
+					"css/mui.min.css",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"images/service.png"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/scan/scanDetails.html": {
+				"resources": [
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"css/mui.min.css",
+					"fonts/iconfont.ttf",
+					"images/ecode.png",
+					"js/avalon.js",
+					"js/common.js",
+					"images/error.png",
+					"images/con_03.png",
+					"images/con_13.png",
+					"images/ninebox/03.png",
+					"images/ninebox/04.png",
+					"images/ninebox/05.png",
+					"images/ninebox/01.png",
+					"images/ninebox/02.png",
+					"pages/scan/scanDetails.js",
+					"images/ninebox/06.png",
+					"images/ninebox/07.png",
+					"images/ninebox/16.png",
+					"images/ninebox/12.png",
+					"images/ninebox/10.png",
+					"images/ninebox/17.png",
+					"images/ninebox/11.png",
+					"images/ninebox/08.png",
+					"images/ninebox/13.png",
+					"images/ninebox/09.png",
+					"images/ninebox/14.png",
+					"images/ninebox/18.png",
+					"images/ninebox/15.png",
+					"images/ninebox/20.png",
+					"js/jquery.min.js",
+					"images/ninebox/21.png",
+					"images/ninebox/22.png"
+				],
+				"refer": [
+					"pages/company/comp-focus.html",
+					"pages/product/prod-info.html",
+					"pages/company/enterprisescard.html",
+					"pages/product/product.html",
+					"pages/prod-parts/part-list.html",
+					"pages/aftersale/fault-submit.html",
+					"pages/out-stock/prod-out-record.html",
+					"pages/aftersale/work-record.html",
+					"pages/aftersale/aftersale.html",
+					"pages/out-stock/save-order.html",
+					"pages/scan/scanRecord.html",
+					"pages/product/prod-info-new.html",
+					"pages/prod-parts/part-list-view.html",
+					"pages/login/login.html",
+					"pages/product/prodParams.html",
+					"pages/company/compconsulting.html",
+					"pages/aftersale/fault-list-sub.html",
+					"pages/aftersale/fault-list.html",
+					"pages/product/informationTracing.html",
+					"pages/out-stock/order-main.html",
+					"pages/prod-parts/product-part.html",
+					"pages/product/warranty-service.html",
+					"pages/product/prod-customer.html",
+					"pages/product/inspection-report.html"
+				],
+				"priority": 0
+			},
+			"pages/aftersale/fault-repair.html": {
+				"resources": [
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"css/mui.min.css",
+					"pages/aftersale/fault-repair-sub.html"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/aftersale/fault-repair-sub.html": {
+				"resources": [
+					"images/con_12.png",
+					"images/con_11.png",
+					"js/common.js",
+					"js/avalon.js",
+					"images/error.png",
+					"images/splash/02.jpg",
+					"images/mdempty.png"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/company/comp-focus.html": {
+				"resources": [
+					"js/mui.min.js",
+					"css/mui.min.css"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/product/prod-info.html": {
+				"resources": [
+					"js/mui.min.js",
+					"css/mui.min.css"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/aftersale/fault-submit.html": {
+				"resources": [
+					"css/mui.min.css",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"fonts/iconfont.ttf",
+					"js/common.js",
+					"js/avalon.js",
+					"images/pho.png",
+					"images/con_02.png",
+					"images/service.png",
+					null,
+					"js/mui.zoom.js",
+					"pages/aftersale/fault-submit.js",
+					"js/mui.previewimage.js",
+					"images/voice.png",
+					"js/audio.js",
+					"images/voice-play.gif",
+					"js/rpc-server.js",
+					"js/rpc-client.js",
+					"images/video2.png",
+					"images/video.png",
+					"images/addvideo.png",
+					"js/video.js"
+				],
+				"refer": [
+					"pages/scan/scan.html",
+					"pages/chat/chatSingle.html",
+					"pages/common/pickcomps.html",
+					"pages/company/enterprisescard.html",
+					"pages/common/pickaddress.html",
+					"pages/product/prod-info-new.html"
+				],
+				"priority": 0
+			},
+			"pages/my/qr-code.html": {
+				"resources": [
+					"js/jquery.min.js",
+					"pages/my/qr-code.css",
+					"js/qrcode.js",
+					"pages/my/qr-code.js",
+					"js/jquery.qrcode.js",
+					"js/mui.js",
+					"js/common.js",
+					"js/avalon.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"fonts/iconfont.ttf",
+					"css/mui.css"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/chat/pop_face.html": {
+				"resources": [
+					"images/Emotion/Thumb/258.png",
+					"images/Emotion/Thumb/214.png",
+					"images/Emotion/Thumb/225.png",
+					"images/Emotion/Thumb/205.png",
+					"images/Emotion/Thumb/261.png",
+					"images/Emotion/Thumb/259.png",
+					"images/Emotion/Thumb/129.png",
+					"images/Emotion/Thumb/256.png",
+					"images/Emotion/Thumb/248.png",
+					"images/Emotion/Thumb/212.png",
+					"images/Emotion/Thumb/241.png",
+					"images/Emotion/Thumb/239.png",
+					"images/Emotion/Thumb/128.png",
+					"images/Emotion/Thumb/250.png",
+					"images/Emotion/Thumb/219.png",
+					"images/Emotion/Thumb/209.png",
+					"images/Emotion/Thumb/211.png",
+					"images/Emotion/Thumb/227.png",
+					"images/Emotion/Thumb/235.png",
+					"images/Emotion/Thumb/245.png",
+					"images/Emotion/Thumb/210.png",
+					"images/Emotion/Thumb/224.png",
+					"images/Emotion/Thumb/208.png",
+					"images/Emotion/Thumb/127.png",
+					"images/Emotion/Thumb/226.png",
+					"images/Emotion/Thumb/215.png",
+					"images/Emotion/Thumb/207.png",
+					"images/Emotion/Thumb/131.png",
+					"images/Emotion/Thumb/255.png",
+					"images/Emotion/Thumb/233.png",
+					"images/Emotion/Thumb/254.png",
+					"images/Emotion/Thumb/132.png",
+					"images/Emotion/Thumb/228.png",
+					"images/Emotion/Thumb/213.png",
+					"images/Emotion/Thumb/221.png",
+					"images/Emotion/Thumb/236.png",
+					"images/Emotion/Thumb/222.png",
+					"images/Emotion/Thumb/231.png",
+					"images/Emotion/Thumb/249.png",
+					"images/Emotion/Thumb/240.png",
+					"images/Emotion/Thumb/125.png",
+					"images/Emotion/Thumb/232.png",
+					"images/Emotion/Thumb/122.png",
+					"images/Emotion/Thumb/253.png",
+					"images/Emotion/Thumb/206.png",
+					"images/Emotion/Thumb/252.png",
+					"images/Emotion/Thumb/203.png",
+					"images/Emotion/Thumb/238.png",
+					"images/Emotion/Thumb/223.png",
+					"images/Emotion/Thumb/243.png",
+					"images/Emotion/Thumb/237.png",
+					"images/Emotion/Thumb/123.png",
+					"images/Emotion/Thumb/204.png",
+					"images/Emotion/Thumb/202.png",
+					"images/Emotion/Thumb/257.png",
+					"images/Emotion/Thumb/242.png",
+					"images/Emotion/Thumb/216.png",
+					"images/Emotion/Thumb/130.png",
+					"images/Emotion/Thumb/230.png",
+					"images/Emotion/Thumb/244.png",
+					"images/Emotion/Thumb/126.png",
+					"images/Emotion/Thumb/260.png",
+					"images/Emotion/Thumb/133.png",
+					"images/Emotion/Thumb/246.png",
+					"images/Emotion/Thumb/229.png",
+					"images/Emotion/Thumb/234.png",
+					"images/Emotion/Thumb/247.png",
+					"images/Emotion/Thumb/124.png",
+					"images/Emotion/Thumb/251.png",
+					"images/Emotion/Thumb/218.png",
+					"images/Emotion/Thumb/201.png",
+					"images/Emotion/Thumb/220.png",
+					"images/Emotion/Thumb/217.png",
+					"images/Emotion/Thumb/103.png",
+					"images/Emotion/Thumb/117.png",
+					"images/Emotion/Thumb/116.png",
+					"images/Emotion/Thumb/111.png",
+					"images/Emotion/Thumb/112.png",
+					"images/Emotion/Thumb/118.png",
+					"images/Emotion/Thumb/115.png",
+					"images/Emotion/Thumb/101.png",
+					"images/Emotion/Thumb/105.png",
+					"images/Emotion/Thumb/108.png",
+					"images/Emotion/Thumb/106.png",
+					"images/Emotion/Thumb/104.png",
+					"images/Emotion/Thumb/119.png",
+					"images/Emotion/Thumb/114.png",
+					"images/Emotion/Thumb/102.png",
+					"images/Emotion/Thumb/120.png",
+					"images/Emotion/Thumb/107.png",
+					"images/Emotion/Thumb/121.png",
+					"images/Emotion/Thumb/110.png",
+					"css/mui.min.css",
+					"images/Emotion/Thumb/109.png",
+					"images/Emotion/Thumb/113.png",
+					"js/mui.min.js"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/resource/recent.html": {
+				"resources": [
+					"images/login/icon_logo.png",
+					"pages/resource/recent.js",
+					"pages/resource/resource.css",
+					"css/mui.css",
+					"js/data.js",
+					"js/mui.js",
+					"images/error.png",
+					"js/rpc-client.js",
+					"js/rpc-server.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"fonts/iconfont.ttf",
+					"js/common.js",
+					"js/avalon.js",
+					"images/mdicon180.png",
+					"images/def_user_gray.png"
+				],
+				"refer": [
+					"pages/chat/chatSingle.html",
+					"pages/company/comp-site.html"
+				],
+				"priority": 0
+			},
+			"pages/chat/chat-exption.html": {
+				"resources": [
+					"images/Emotion/takepic.png",
+					"images/Emotion/photos.png",
+					"css/mui.min.css",
+					"js/mui.min.js"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/chat/chatSingle.html": {
+				"resources": [
+					"images/Emotion/face1.png",
+					"images/voice-record.png",
+					"images/icon_azts.png",
+					"pages/chat/pop_face.html",
+					"images/Emotion/play-voice-white.gif",
+					"images/Emotion/play-voice-green.gif",
+					"pages/chat/chatSingle.css",
+					"images/Emotion/reSend.png",
+					"images/Emotion/voice-gray.png",
+					"js/mui.zoom.js",
+					"pages/chat/chatSingle.js",
+					"css/mui.previewimage.css",
+					"images/Emotion/voice-green.png",
+					"js/mui.previewimage.js",
+					"images/Emotion/loadding.gif",
+					"images/Emotion/voice.png",
+					"images/Emotion/exptions.png",
+					"images/icon_gzwx.png",
+					"css/mui.css",
+					"css/common.css",
+					"js/rpc-server.js",
+					"js/common.js",
+					"js/mui.min.js",
+					"js/data.js",
+					"fonts/iconfont.ttf",
+					"js/avalon.js",
+					"fonts/mui.ttf",
+					"js/rpc-client.js",
+					"images/Emotion/keyboard.png",
+					"images/Emotion/104.gif",
+					"images/Emotion/103.gif",
+					"images/Emotion/117.gif",
+					"images/Emotion/106.gif",
+					"images/Emotion/112.gif",
+					"images/Emotion/105.gif",
+					"images/Emotion/115.gif",
+					"images/Emotion/110.gif",
+					"images/Emotion/119.gif",
+					"images/Emotion/109.gif",
+					"images/Emotion/116.gif",
+					"images/Emotion/123.gif",
+					"images/Emotion/111.gif",
+					"images/Emotion/113.gif",
+					"images/Emotion/118.gif",
+					"images/Emotion/243.gif",
+					"images/Emotion/240.gif",
+					"images/Emotion/244.gif",
+					"images/Emotion/239.gif",
+					"images/Emotion/107.gif",
+					"images/Emotion/249.gif",
+					"images/Emotion/122.gif",
+					"images/Emotion/125.gif",
+					"images/Emotion/102.gif",
+					"images/Emotion/120.gif",
+					"images/Emotion/114.gif",
+					"images/Emotion/101.gif",
+					"images/Emotion/201.gif",
+					"images/Emotion/121.gif",
+					"images/def_user_gray.png"
+				],
+				"refer": [
+					"pages/chat/chat-exption.html",
+					"pages/my/add-friend.html"
+				],
+				"priority": 0
+			},
+			"pages/worktask/notice-sub.html": {
+				"resources": [
+					"js/avalon.js",
+					"css/common.css",
+					"css/mui.min.css",
+					"js/data.js",
+					"fonts/iconfont.ttf",
+					"images/voice.png",
+					"js/audio.js",
+					"images/voice-play.gif",
+					"images/error.png",
+					"js/common.js",
+					"js/rpc-client.js",
+					"js/mui.min.js",
+					"images/notice/empty-notice.png"
+				],
+				"refer": [
+					"pages/aftersale/taskdetails.html"
+				],
+				"priority": 0
+			},
+			"pages/company/enterprisescard.html": {
+				"resources": [
+					"pages/product/main.css",
+					"js/common.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"css/mui.min.css",
+					"fonts/iconfont.ttf",
+					"images/ninebox/10.png",
+					"images/ninebox/17.png",
+					"images/ninebox/08.png",
+					"images/ninebox/06.png",
+					"images/ninebox/20.png",
+					"images/star_uncollection.png",
+					"images/star_collection.png",
+					"js/rpc-client.js",
+					"images/company/01.png",
+					"images/company/02.png",
+					"images/company/03.png"
+				],
+				"refer": [
+					"pages/company/entermain.html",
+					"pages/company/compconsulting.html",
+					"template.html",
+					"pages/industry-service/tab-webview-main.html",
+					"pages/industry-service/external-process-main.html",
+					"pages/industry-service/industry-info.html",
+					"pages/industry-service/industry_main.html",
+					"pages/login/login.html"
+				],
+				"priority": 0
+			},
+			"pages/product/product.html": {
+				"resources": [
+					"images/adds.png",
+					"js/mui.pullToRefresh.js",
+					"pages/product/arttemplate.js",
+					"pages/product/main.css",
+					"js/common.js",
+					"js/mui.zoom.js",
+					"images/enterlicense.png",
+					"js/mui.min.js",
+					"images/mdt.png",
+					"fonts/mui.ttf",
+					"images/topbar.png",
+					"js/mui.previewimage.js",
+					"images/call.png",
+					"css/mui.css",
+					"images/defImg300.png"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/new-friends/new-friends.html": {
+				"resources": [
+					"pages/new-friends/new-friends.js",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"pages/new-friends/new-friends.css",
+					"fonts/mui.ttf",
+					"images/error.png",
+					"css/mui.css",
+					"js/rpc-client.js",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [
+					"pages/my/add-friend.html"
+				],
+				"priority": 0
+			},
+			"pages/resource/my-res.html": {
+				"resources": [
+					"pages/resource/my-res.js",
+					"images/login/icon_logo.png",
+					"js/mui.pullToRefresh.js",
+					"images/defImg70.png",
+					"css/mui.css",
+					"js/common.js",
+					"js/avalon.js",
+					"css/common.css",
+					"pages/resource/resource.css",
+					"fonts/iconfont.ttf",
+					"js/mui.js",
+					"js/rpc-server.js"
+				],
+				"refer": [
+					"pages/chat/chatSingle.html",
+					"pages/my/set-group.html"
+				],
+				"priority": 0
+			},
+			"pages/aftersale/fault-submit-r.html": {
+				"resources": [
+					"js/avalon.js",
+					"fonts/mui.ttf",
+					"images/voice.png",
+					"js/rpc-server.js",
+					"js/common.js",
+					"js/mui.zoom.js",
+					"css/common.css",
+					"js/mui.min.js",
+					"pages/aftersale/fault-submit-r.js",
+					"css/mui.min.css",
+					"css/mui.previewimage.css",
+					"js/mui.previewimage.js",
+					"images/pho.png",
+					"fonts/iconfont.ttf",
+					"js/rpc-client.js",
+					"js/audio.js",
+					"images/addvideo.png",
+					"images/video.png",
+					"js/video.js"
+				],
+				"refer": [
+					"pages/common/pickcustomer.html",
+					"pages/common/pickaddress.html",
+					"pages/common/pickusers.html",
+					"pages/customer/select-customer.html"
+				],
+				"priority": 0
+			},
+			"pages/aftersale/work-record.html": {
+				"resources": [
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"css/mui.min.css",
+					"js/data.js",
+					"fonts/iconfont.ttf",
+					"pages/aftersale/work-record.js",
+					"js/rpc-client.js",
+					"js/rpc-server.js",
+					"js/mui.picker.js",
+					"css/mui.picker.css",
+					"js/mui.poppicker.js",
+					"css/mui.poppicker.css",
+					"js/div.editable.js",
+					"js/mui.zoom.js",
+					"js/mui.previewimage.js",
+					"images/pho.png",
+					"images/addvideo.png",
+					"images/voice.png",
+					"images/video.png",
+					"js/video.js",
+					"js/audio.js",
+					"images/voice-play.gif"
+				],
+				"refer": [
+					"pages/chat/chatSingle.html",
+					"pages/common/pickusers.html",
+					"pages/scan/scan.html",
+					"pages/common/pickcustomer.html",
+					"pages/aftersale/part-details.html",
+					"pages/common/pickaddress.html",
+					"pages/product/product.html",
+					"pages/common/pickdraft.html",
+					"pages/product/prod-info-new.html",
+					"pages/customer/select-customer.html"
+				],
+				"priority": 0
+			},
+			"pages/common/pickusers.html": {
+				"resources": [
+					"pages/common/pickusers.js",
+					"js/common.js",
+					"pages/common/pickusers.css",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"fonts/iconfont.ttf",
+					"css/mui.css"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/common/pickcustomer.html": {
+				"resources": [
+					"js/mui.pullToRefresh.js",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"js/mui.pullToRefresh.material.js",
+					"fonts/mui.ttf",
+					"css/mui.css"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/aftersale/part-details.html": {
+				"resources": [
+					"pages/aftersale/part-details.js",
+					"pages/aftersale/part-details.css",
+					"css/mui.css",
+					"css/common.css",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"fonts/mui.ttf"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/aftersale/fault-list.html": {
+				"resources": [
+					"css/worktask.css",
+					"css/common.css",
+					"pages/aftersale/fault-list.js",
+					"css/mui.min.css",
+					"images/voice.png",
+					"js/audio.js",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"fonts/mui.ttf",
+					"images/voice-play.gif",
+					"fonts/iconfont.ttf",
+					"pages/aftersale/fault-list-sub.html"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"tab-im.html": {
+				"resources": [
+					"js/YunIM.js",
+					"js/rpc-client.js",
+					"js/data.js",
+					"js/common.js",
+					"js/mui.min.js",
+					"js/rpc-server.js",
+					"js/ytx-web-im-new.js"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/worktask/worktask-sub.html": {
+				"resources": [
+					"pages/worktask/worktask-sub.js",
+					"js/avalon.js",
+					"pages/worktask/worktask.css",
+					"images/voice.png",
+					"js/audio.js",
+					"css/mui.min.css",
+					"css/common.css",
+					"js/mui.pullToRefresh.js",
+					"js/mui.pullToRefresh.material.js",
+					"css/worktask.css",
+					"fonts/iconfont.ttf",
+					"js/common.js",
+					"js/mui.min.js",
+					"images/voice-play.gif",
+					"js/rpc-client.js",
+					"fonts/mui.ttf"
+				],
+				"refer": [
+					"pages/aftersale/taskdetails.html",
+					"pages/aftersale/work-record.html",
+					"pages/worktask/sendjob.html",
+					"pages/aftersale/custom-eval.html"
+				],
+				"priority": 0
+			},
+			"pages/worktask/worktask_sub.html": {
+				"resources": [
+					"pages/worktask/worktask-sub.js",
+					"js/avalon.js",
+					"css/common.css",
+					"css/mui.min.css",
+					"pages/worktask/worktask.css",
+					"images/voice.png",
+					"js/audio.js"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/out-stock/order-list.html": {
+				"resources": [
+					"css/mui.min.css",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/iconfont.ttf",
+					"images/error.png",
+					"pages/out-stock/order-list.js",
+					"images/bg-outstock.png",
+					"images/out-stock/empty-list.png"
+				],
+				"refer": [
+					"pages/out-stock/order-details.html",
+					"pages/out-stock/save-order.html",
+					"pages/out-stock/order-save.html"
+				],
+				"priority": 0
+			},
+			"pages/out-stock/order-details.html": {
+				"resources": [
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"css/mui.min.css",
+					"fonts/iconfont.ttf",
+					"pages/out-stock/order-details.js"
+				],
+				"refer": [
+					"pages/out-stock/add-order.html",
+					"pages/product/product.html",
+					"pages/out-stock/save-order.html"
+				],
+				"priority": 0
+			},
+			"pages/out-stock/order-list-main.html": {
+				"resources": [
+					"pages/out-stock/order-list.html",
+					"css/mui.min.css",
+					"js/common.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [
+					"pages/scan/scan.html",
+					"pages/out-stock/add-order.html",
+					"pages/out-stock/save-order.html"
+				],
+				"priority": 0
+			},
+			"pages/out-stock/add-order.html": {
+				"resources": [
+					"js/mui.picker.min.js",
+					"js/avalon.js",
+					"css/common.css",
+					"css/mui.min.css",
+					"fonts/iconfont.ttf",
+					"css/mui.picker.min.css",
+					"js/common.js",
+					"js/mui.min.js",
+					"fonts/mui.ttf",
+					"images/con_11.png"
+				],
+				"refer": [
+					"pages/common/pickcustomer.html"
+				],
+				"priority": 0
+			},
+			"pages/resource/my-comp.html": {
+				"resources": [
+					"pages/resource/my-comp.js",
+					"css/mui.css",
+					"images/login/icon_logo.png",
+					"css/common.css",
+					"pages/resource/resource.css",
+					"js/mui.pullToRefresh.js",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.js",
+					"fonts/iconfont.ttf",
+					"js/rpc-client.js",
+					"js/rpc-server.js"
+				],
+				"refer": [
+					"pages/chat/chatSingle.html"
+				],
+				"priority": 0
+			},
+			"pages/out-stock/save-order.html": {
+				"resources": [
+					"pages/out-stock/save-order.js",
+					"js/mui.picker.min.js",
+					"pages/out-stock/save-order.css",
+					"css/mui.min.css",
+					"css/mui.picker.min.css",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"images/icon-collapse.png",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [
+					"pages/scan/scan.html",
+					"pages/product/product.html",
+					"pages/common/pickdealer.html",
+					"pages/common/pickcustomer.html",
+					"pages/common/pickaddress.html"
+				],
+				"priority": 0
+			},
+			"pages/common/pickdealer.html": {
+				"resources": [
+					"js/mui.pullToRefresh.js",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"js/mui.pullToRefresh.material.js",
+					"fonts/mui.ttf",
+					"css/mui.css"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/new-friends/find-friends.html": {
+				"resources": [
+					"images/sao_icon.png",
+					"css/mui.min.css",
+					"images/sjlx_icon.png",
+					"images/seach_icon.png",
+					"images/my_icon_ewm.png",
+					"js/common.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [
+					"pages/new-friends/search-friends.html",
+					"pages/scan/scan.html",
+					"pages/new-friends/new-friends.html",
+					"pages/new-friends/mycode.html"
+				],
+				"priority": 0
+			},
+			"pages/new-friends/search-friends.html": {
+				"resources": [
+					"images/sou_icon.png",
+					"css/mui.min.css",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"pages/new-friends/search-friends.css"
+				],
+				"refer": [
+					"pages/my/add-friend.html"
+				],
+				"priority": 0
+			},
+			"pages/new-friends/mycode.html": {
+				"resources": [
+					"js/common.js",
+					"js/jquery.min.js",
+					"js/avalon.js",
+					"css/common.css",
+					"js/qrcode.js",
+					"css/mui.min.css",
+					"js/jquery.qrcode.js",
+					"fonts/iconfont.ttf",
+					"js/mui.js"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/my/setting.html": {
+				"resources": [
+					"css/common.css",
+					"css/mdui.css",
+					"js/mui.js",
+					"css/mui.css",
+					"js/common.js",
+					"fonts/mui.ttf",
+					"fonts/iconfont.ttf",
+					"js/rpc-client.js",
+					"js/rpc-server.js"
+				],
+				"refer": [
+					"pages/my/resetpw.html",
+					"pages/my/manage-address.html",
+					"pages/my/about.html"
+				],
+				"priority": 0
+			},
+			"pages/my/resetpw.html": {
+				"resources": [
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/mui.css",
+					"css/mdui.css"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/common/pickcomps.html": {
+				"resources": [
+					"js/mui.pullToRefresh.js",
+					"pages/common/pickcomps.css",
+					"css/common.css",
+					"css/mdui.css",
+					"css/mui.min.css",
+					"pages/common/pickcokmps.js",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"fonts/mui.ttf",
+					"pages/common/pickcomps.js"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/statistics/aftersale-main.html": {
+				"resources": [
+					"pages/statistics/aftersale-main.css",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"pages/statistics/aftersale-main.js",
+					"fonts/mui.ttf",
+					"css/mui.css",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [
+					"pages/statistics/count-area/count-area.html",
+					"pages/statistics/count-department/count-department.html",
+					"pages/statistics/count-month/count-month.html",
+					"pages/statistics/customer/reviews.html",
+					"pages/statistics/search/result.html",
+					"pages/statistics/judge/list.html"
+				],
+				"priority": 0
+			},
+			"pages/login/login.html": {
+				"resources": [
+					"images/login/icon_logo.png",
+					"images/login/icon_forget.png",
+					"images/login/icon_pwd.png",
+					"pages/login/login.js",
+					"pages/login/login.css",
+					"css/common.css",
+					"css/mui.min.css",
+					"images/login/icon_back.png",
+					"images/login/icon_acc.png",
+					"images/login/login_bg.png",
+					"js/avalon.js",
+					"js/common.js",
+					"js/mui.min.js",
+					"js/rpc-client.js",
+					"fonts/mui.ttf"
+				],
+				"refer": [
+					"pages/login/register.html",
+					"pages/login/forgetpw.html"
+				],
+				"priority": 0
+			},
+			"pages/aftersale/taskdetails.html": {
+				"resources": [
+					"js/mui.zoom.js",
+					"pages/aftersale/taskdetails.css",
+					"css/mui.previewimage.css",
+					"css/mui.min.css",
+					"js/mui.previewimage.js",
+					"pages/aftersale/taskdetails.js",
+					"images/voice-play.gif",
+					"css/common.css",
+					"css/worktask.css",
+					"images/defImg300.png",
+					"js/avalon.js",
+					"fonts/mui.ttf",
+					"images/voice.png",
+					"js/common.js",
+					"js/mui.min.js",
+					"fonts/iconfont.ttf",
+					"js/rpc-client.js",
+					"js/audio.js",
+					"images/video.png",
+					"js/video.js"
+				],
+				"refer": [
+					"pages/product/product.html",
+					"pages/aftersale/fault-repair.html",
+					"pages/company/enterprisescard.html",
+					"pages/worktask/sendjob.html",
+					"pages/aftersale/work-record.html",
+					"pages/aftersale/custom-eval.html",
+					"pages/product/prod-info-new.html",
+					"pages/chat/chatSingle.html"
+				],
+				"priority": 0
+			},
+			"pages/aftersale/fault-list-sub.html": {
+				"resources": [
+					"pages/aftersale/fault-list-sub.js",
+					"css/worktask.css",
+					"images/voice.png",
+					"js/audio.js",
+					"js/common.js",
+					"js/avalon.js",
+					"css/mui.min.css",
+					"css/common.css",
+					"fonts/iconfont.ttf",
+					"images/defImg300.png",
+					"js/mui.min.js",
+					"images/voice-play.gif"
+				],
+				"refer": [
+					"pages/aftersale/fault-detail.html"
+				],
+				"priority": 0
+			},
+			"pages/aftersale/fault-detail.html": {
+				"resources": [
+					"js/mui.zoom.js",
+					"css/mdui.css",
+					"css/mui.previewimage.css",
+					"js/mui.previewimage.js",
+					"css/mui.min.css",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"fonts/iconfont.ttf",
+					"images/voice.png",
+					"js/audio.js",
+					"images/defImg300.png",
+					"images/voice-play.gif",
+					"images/video.png",
+					"js/video.js"
+				],
+				"refer": [
+					"pages/company/enterprisescard.html",
+					"pages/aftersale/custom-eval.html",
+					"pages/product/prod-info-new.html"
+				],
+				"priority": 0
+			},
+			"pages/statistics/count-area/count-area.html": {
+				"resources": [
+					"pages/statistics/count-area/count-area.js",
+					"js/echarts-all.js",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"images/error.png",
+					"css/mui.css",
+					"pages/statistics/count-area/count-area.css",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [
+					"pages/statistics/count-area/count-area-city.html"
+				],
+				"priority": 0
+			},
+			"pages/statistics/count-department/count-department.html": {
+				"resources": [
+					"pages/statistics/count-department/count-department.css",
+					"images/error.png",
+					"pages/statistics/count-department/count-department.js",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"css/mui.css",
+					"js/echarts-all.js",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [
+					"pages/statistics/count-department/count-user.html"
+				],
+				"priority": 0
+			},
+			"pages/statistics/count-month/count-month.html": {
+				"resources": [
+					"js/echarts-all.js",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"pages/statistics/count-month/count-month.js",
+					"fonts/mui.ttf",
+					"images/error.png",
+					"pages/statistics/count-month/count-month.css",
+					"css/mui.css",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [
+					"pages/statistics/detail.html"
+				],
+				"priority": 0
+			},
+			"pages/statistics/customer/reviews.html": {
+				"resources": [
+					"pages/statistics/customer/reviews.js",
+					"js/echarts-all.js",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"pages/statistics/customer/customer.css",
+					"images/error.png",
+					"css/mui.css"
+				],
+				"refer": [
+					"pages/statistics/detail.html"
+				],
+				"priority": 0
+			},
+			"pages/company/entermain.html": {
+				"resources": [
+					"images/phone.png",
+					"js/mui.pullToRefresh.js",
+					"pages/product/arttemplate.js",
+					"images/enterlicense.png",
+					"pages/company/entermain.js",
+					"images/address.png",
+					"css/mui.css",
+					"pages/product/main.css",
+					"fonts/mui.ttf",
+					"js/common.js",
+					"css/common.css",
+					"js/mui.min.js",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [
+					"pages/company/compnewsinfo.html",
+					"pages/product/prod-info-new.html"
+				],
+				"priority": 0
+			},
+			"pages/statistics/detail.html": {
+				"resources": [
+					"js/mui.pullToRefresh.js",
+					"js/mui.pullToRefresh.material.js",
+					"pages/statistics/customer/customer.css",
+					"css/mui.pullrefresh.css",
+					"pages/statistics/detail.js",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"images/error.png",
+					"css/mui.css",
+					"images/Emotion/voice-gray.png",
+					"pages/statistics/detail.css",
+					"images/Emotion/play-voice-white.gif",
+					"js/audio.js",
+					"images/voice.png",
+					"images/voice-play.gif",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [
+					"pages/aftersale/fault-detail.html",
+					"pages/statistics/order-view.html"
+				],
+				"priority": 0
+			},
+			"pages/statistics/count-area/count-area-city.html": {
+				"resources": [
+					"css/common.css",
+					"pages/statistics/count-area/count-area-city.css",
+					"css/mui.css",
+					"pages/statistics/count-area/count-area-city.js",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"fonts/mui.ttf"
+				],
+				"refer": [
+					"pages/statistics/detail.html"
+				],
+				"priority": 0
+			},
+			"pages/statistics/search/result.html": {
+				"resources": [
+					"js/mui.pullToRefresh.js",
+					"js/mui.pullToRefresh.material.js",
+					"pages/statistics/search/result.js",
+					"images/error.png",
+					"pages/statistics/search/result.css",
+					"css/mui.pullrefresh.css",
+					"js/avalon.js",
+					"fonts/mui.ttf",
+					"css/mui.css",
+					"js/common.js",
+					"css/common.css",
+					"js/mui.min.js",
+					"images/icon-collapse.png",
+					"fonts/iconfont.ttf",
+					"images/Emotion/voice-gray.png"
+				],
+				"refer": [
+					"pages/aftersale/fault-detail.html",
+					"pages/statistics/order-view.html"
+				],
+				"priority": 0
+			},
+			"pages/my/add-friend.html": {
+				"resources": [
+					"pages/my/add-friend.js",
+					"css/mdui.css",
+					"pages/my/add-friend.css",
+					"js/avalon.js",
+					"css/common.css",
+					"fonts/iconfont.ttf",
+					"images/error.png",
+					"css/mui.css",
+					"js/common.js",
+					"js/mui.min.js"
+				],
+				"refer": [
+					"pages/my/add-remarks.html",
+					"pages/chat/chatSingle.html"
+				],
+				"priority": 0
+			},
+			"pages/common/pickaddress.html": {
+				"resources": [
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"pages/common/pickaddress.css",
+					"fonts/iconfont.ttf",
+					"pages/common/pickaddress.js",
+					"css/mui.css",
+					"js/div.editable.js",
+					"pages/common/pickaddress-gaode.js",
+					"css/mui.min.css",
+					"js/transCoord.js",
+					"images/pin-red.png",
+					"css/animate.min.css",
+					"pages/common/pickaddress-baidu.js"
+				],
+				"refer": [
+					"pages/common/pickarea.html",
+					"pages/common/pickareas.html",
+					"pages/common/pickareas-old.html"
+				],
+				"priority": 0
+			},
+			"pages/company/compconsulting.html": {
+				"resources": [
+					"images/phone.png",
+					"pages/product/arttemplate.js",
+					"images/enterlicense.png",
+					"images/contrack_phone.png",
+					"images/address.png",
+					"pages/product/main.css",
+					"js/common.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"css/mui.min.css",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [
+					"pages/chat/chatSingle.html",
+					"pages/company/entermain.html"
+				],
+				"priority": 0
+			},
+			"pages/install-parts/pullrefresh_sub.html": {
+				"resources": [
+					"js/mui.min.js",
+					"fonts/mui.ttf",
+					"css/mui.css",
+					"css/common.css"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/install-parts/pickcomps.html": {
+				"resources": [
+					"js/mui.pullToRefresh.js",
+					"js/common.js",
+					"pages/install-parts/pickcomps.css",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"pages/install-parts/pickcokmps.js",
+					"css/mdui.css",
+					"css/mui.min.css",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/install-parts/install-prods.html": {
+				"resources": [
+					"js/mui.pullToRefresh.js",
+					"js/common.js",
+					"pages/install-parts/install-prods.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"css/mui.min.css",
+					"fonts/iconfont.ttf",
+					"pages/install-parts/install-prods.css"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/prod-parts/part-list.html": {
+				"resources": [
+					"js/mui.pullToRefresh.js",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"css/mui.min.css",
+					"pages/prod-parts/part-list.js",
+					"fonts/iconfont.ttf",
+					"pages/prod-parts/part-list.css",
+					"images/defImg70.png",
+					"images/bg-partlist.png",
+					"images/prod-parts/scan-part.png"
+				],
+				"refer": [
+					"pages/product/product.html",
+					"pages/prod-parts/install-details.html",
+					"pages/scan/scan.html",
+					"pages/product/prod-info-new.html"
+				],
+				"priority": 0
+			},
+			"pages/prod-parts/install-details.html": {
+				"resources": [
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"css/mui.min.css",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/common/pickarea.html": {
+				"resources": [
+					"js/cityDataPicker.js",
+					"pages/common/pickarea.js",
+					"pages/common/pickarea.css"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/out-stock/prod-out-record.html": {
+				"resources": [
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"css/mui.min.css",
+					"fonts/iconfont.ttf",
+					"pages/out-stock/prod-out-record.js",
+					"pages/out-stock/prod-out-record.css",
+					"images/arrow.png"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/my/my-details.html": {
+				"resources": [
+					"pages/my/my-details.css",
+					"css/mdui.css",
+					"css/mui.css",
+					"pages/my/my-details.js",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/worktask/sendjob.html": {
+				"resources": [
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"css/mui.min.css",
+					"pages/worktask/sendjob.js",
+					"js/rpc-client.js",
+					"images/voice.png",
+					"js/audio.js",
+					"js/rpc-server.js",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [
+					"pages/common/pickusers.html"
+				],
+				"priority": 0
+			},
+			"pages/worktask/draft.html": {
+				"resources": [
+					"css/worktask.css",
+					"css/mui.min.css",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"js/data.js",
+					"js/rpc-client.js",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [
+					"pages/aftersale/work-record.html"
+				],
+				"priority": 0
+			},
+			"pages/common/pickdraft.html": {
+				"resources": [
+					"css/worktask.css",
+					"css/common.css",
+					"css/mui.min.css",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"fonts/mui.ttf",
+					"js/data.js",
+					"fonts/iconfont.ttf",
+					"js/rpc-client.js"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/scan/scanRecord.html": {
+				"resources": [
+					"js/common.js",
+					"css/worktask.css",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"css/mui.min.css",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/product/chooseParams.html": {
+				"resources": [
+					"pages/product/chooseParams.css",
+					"css/common.css",
+					"pages/product/chooseParams.js",
+					"css/mui.min.css",
+					"images/defImg70.png",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/product/prod-info-new.html": {
+				"resources": [
+					"js/avalon.js",
+					"fonts/mui.ttf",
+					"pages/product/prod-info-new.css",
+					"js/mui.zoom.js",
+					"js/common.js",
+					"images/defImg300.png",
+					"css/common.css",
+					"js/mui.min.js",
+					"css/mui.min.css",
+					"css/mui.previewimage.css",
+					"js/mui.previewimage.js",
+					"fonts/iconfont.ttf",
+					"pages/product/prod-info-new.js",
+					"images/enterlicense.png",
+					"images/defImg70.png",
+					"js/rpc-server.js"
+				],
+				"refer": [
+					"pages/product/chooseParams.html",
+					"pages/shop/cart-list.html",
+					"pages/company/entermain.html",
+					"pages/shop/submit-order.html",
+					"pages/login/login.html",
+					"pages/chat/chatSingle.html",
+					"pages/product/chooseParam.html"
+				],
+				"priority": 0
+			},
+			"pages/shop/cart-list.html": {
+				"resources": [
+					"js/common.js",
+					"images/mdicon180.png",
+					"pages/shop/cart-list.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"pages/shop/cart-list.css",
+					"css/mui.min.css",
+					"js/rpc-client.js",
+					"js/rpc-server.js",
+					"images/shop/empty-cart.png"
+				],
+				"refer": [
+					"pages/shop/pay.html",
+					"pages/product/prod-info-new.html",
+					"pages/shop/submit-order.html"
+				],
+				"priority": 0
+			},
+			"pages/prod-parts/part-list-view.html": {
+				"resources": [
+					"pages/prod-parts/part-list-view.css",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"css/mui.min.css",
+					"fonts/iconfont.ttf",
+					"pages/prod-parts/part-list-view.js"
+				],
+				"refer": [
+					"pages/product/prod-info-new.html"
+				],
+				"priority": 0
+			},
+			"pages/aftersale/custom-eval.html": {
+				"resources": [
+					"pages/aftersale/custom-eval.css",
+					"pages/aftersale/custom-eval.js",
+					"css/mui.css",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"js/rpc-client.js"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/my/add-remarks.html": {
+				"resources": [
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"css/mdui.css",
+					"pages/my/add-remarks.js",
+					"fonts/iconfont.ttf",
+					"css/mui.css",
+					"js/rpc-client.js",
+					"pages/my/add-friend.css"
+				],
+				"refer": [
+					"pages/my/my-group.html"
+				],
+				"priority": 0
+			},
+			"pages/my/my-group.html": {
+				"resources": [
+					"css/common.css",
+					"css/mui.css"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/join/login.html": {
+				"resources": [
+					"js/mui.min.js",
+					"css/mui.min.css"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/map/map.html": {
+				"resources": [
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"css/mui.min.css"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/aftersale/after-sale.html": {
+				"resources": [
+					"pages/aftersale/aftersale.html",
+					"css/mui.min.css"
+				],
+				"refer": [
+					"pages/statistics/aftersale-main.html"
+				],
+				"priority": 0
+			},
+			"pages/aftersale/after-sale-main.html": {
+				"resources": [
+					"pages/aftersale/aftersale.html",
+					"css/mui.min.css",
+					"css/common.css",
+					"js/common.js",
+					"js/mui.min.js",
+					"fonts/mui.ttf"
+				],
+				"refer": [
+					"pages/statistics/aftersale-main.html"
+				],
+				"priority": 0
+			},
+			"pages/statistics/judge/list.html": {
+				"resources": [
+					"js/echarts-all.js",
+					"pages/statistics/judge/list.js",
+					"pages/statistics/judge/list.css"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/statistics/count-department/count-user.html": {
+				"resources": [
+					"pages/statistics/count-department/count-user.js",
+					"pages/statistics/count-department/count-user.css",
+					"css/mui.css",
+					"js/echarts-all.js",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf"
+				],
+				"refer": [
+					"pages/statistics/detail.html"
+				],
+				"priority": 0
+			},
+			"pages/login/register.html": {
+				"resources": [
+					"js/common.js",
+					"pages/login/register.js",
+					"pages/login/register.css",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/mdui.css",
+					"css/mui.min.css",
+					"js/rpc-client.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [
+					"pages/common/pickaddress.html"
+				],
+				"priority": 0
+			},
+			"zipupdate.html": {
+				"resources": [
+					"css/mui.css",
+					"js/common.js",
+					"js/mui.min.js"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/tab/oem.html": {
+				"resources": [
+					"images/oem-help.png",
+					"css/mui.min.css",
+					"css/common.css",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"js/rpc-server.js",
+					"images/error.png",
+					"images/no-login.png",
+					"images/con_10.png",
+					"fonts/iconfont.ttf",
+					"/autol/icon/progress-rate.png",
+					"autol/icon/progress-rate.png"
+				],
+				"refer": [
+					"template.html",
+					"pages/login/login.html",
+					"autol/index.html"
+				],
+				"priority": 0
+			},
+			"pages/product/prodParams.html": {
+				"resources": [
+					"css/mui.min.css",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/aftersale/debugging-list.html": {
+				"resources": [
+					"css/mui.min.css",
+					"pages/aftersale/debugging-list-sub.html"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/aftersale/repair-list.html": {
+				"resources": [
+					"css/mui.min.css",
+					"pages/aftersale/repair-list-sub.html",
+					"js/mui.min.js"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/statistics/order-view.html": {
+				"resources": [
+					"js/mui.picker.js",
+					"images/Emotion/voice-gray.png",
+					"js/mui.zoom.js",
+					"pages/statistics/order-view.css",
+					"js/mui.poppicker.js",
+					"css/mdui.css",
+					"js/mui.previewimage.js",
+					"images/gdck_icon_hui.png",
+					"pages/statistics/order-view.js",
+					"css/mui.poppicker.css",
+					"css/mui.picker.css",
+					"css/mui.css",
+					"images/gdck_icon_blue.png",
+					"images/Emotion/play-voice-white.gif",
+					"js/avalon.js",
+					"js/common.js",
+					"js/mui.min.js",
+					"images/defImg300.png",
+					"images/voice-play.gif",
+					"fonts/mui.ttf",
+					"images/video.png",
+					"css/common.css",
+					"js/audio.js",
+					"images/voice.png",
+					"fonts/iconfont.ttf",
+					"js/video.js"
+				],
+				"refer": [
+					"pages/aftersale/part-details.html"
+				],
+				"priority": 0
+			},
+			"pages/aftersale/repair-list-sub.html": {
+				"resources": [
+					"css/mui.min.css",
+					"images/voice-play.gif",
+					"pages/aftersale/fault-list-sub.js",
+					"css/worktask.css",
+					"images/defImg300.png",
+					"images/voice.png",
+					"js/audio.js",
+					"pages/aftersale/repair-list-sub.js",
+					"js/common.js",
+					"js/avalon.js"
+				],
+				"refer": [
+					"pages/statistics/order-view.html"
+				],
+				"priority": 0
+			},
+			"pages/aftersale/debugging-list-sub.html": {
+				"resources": [
+					"pages/aftersale/fault-list-sub.js",
+					"css/worktask.css",
+					"images/defImg300.png",
+					"css/mui.min.css",
+					"images/voice.png",
+					"js/audio.js",
+					"pages/aftersale/debugging-list-sub.js",
+					"js/common.js",
+					"js/avalon.js"
+				],
+				"refer": [
+					"pages/statistics/order-view.html"
+				],
+				"priority": 0
+			},
+			"pages/out-stock/order-main.html": {
+				"resources": [
+					"images/out-stock/os_04.png",
+					"images/out-stock/os_01.png",
+					"images/out-stock/os_03.png",
+					"images/out-stock/os_02.png",
+					"css/mui.min.css",
+					"images/bg-outstock.png",
+					"js/common.js",
+					"js/mui.min.js",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [
+					"pages/out-stock/order-list-main.html",
+					"pages/out-stock/order-save.html"
+				],
+				"priority": 0
+			},
+			"pages/out-stock/order-save.html": {
+				"resources": [
+					"pages/out-stock/order-save.css",
+					"js/mui.picker.min.js",
+					"css/mui.min.css",
+					"pages/out-stock/order-save.js",
+					"css/mui.picker.min.css",
+					"images/icon-collapse.png",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"js/common.js",
+					"css/common.css"
+				],
+				"refer": [
+					"pages/common/pickcustomer.html",
+					"pages/scan/scan.html",
+					"pages/common/pickdealer.html",
+					"pages/common/pickaddress.html",
+					"pages/product/prod-info-new.html",
+					"pages/customer/select-customer.html"
+				],
+				"priority": 0
+			},
+			"pages/common/pickareas.html": {
+				"resources": [
+					"pages/common/cityData.js",
+					"pages/common/pickareas.js",
+					"pages/common/pickareas.css",
+					"js/avalon.js",
+					"css/mui.min.css",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/product/informationTracing.html": {
+				"resources": [
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"css/mui.min.css",
+					"fonts/iconfont.ttf",
+					"pages/product/informationTracing.css",
+					"images/timeline/扫码.png",
+					"images/timeline/scan.png",
+					"images/timeline/time.png",
+					"images/timeline/canshu.png",
+					"images/timeline/weixiu.png",
+					"images/timeline/chuku.png",
+					"images/timeline/zhuangpei.png",
+					"images/timeline/dama.png",
+					"images/timeline/anzhuang.png",
+					"images/timeline/productdate.png"
+				],
+				"refer": [
+					"pages/scan/scanRecord.html",
+					"pages/product/prodParams.html",
+					"pages/out-stock/order-list-main.html",
+					"pages/statistics/order-view.html",
+					"pages/prod-parts/part-list-view.html",
+					"pages/out-stock/order-save.html"
+				],
+				"priority": 0
+			},
+			"pages/shop/pay.html": {
+				"resources": [
+					"images/wxpay.png",
+					"js/avalon.js",
+					"css/mui.min.css",
+					"images/alipay.png",
+					"images/pay/alipay.png",
+					"js/common.js",
+					"pages/shop/pay.js",
+					"js/mui.min.js",
+					"images/pay/wxpay.png",
+					"css/common.css"
+				],
+				"refer": [
+					"pages/shop/payFailure.html"
+				],
+				"priority": 0
+			},
+			"pages/shop/my-order-main.html": {
+				"resources": [
+					"pages/shop/my-order-main.js",
+					"css/mui.min.css",
+					"pages/shop/my-order-all.html",
+					"js/mui.min.js",
+					"js/common.js"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/shop/my-order-all.html": {
+				"resources": [
+					"js/mui.pullToRefresh.js",
+					"pages/shop/my-order-all.js",
+					"pages/shop/my-order-all.css",
+					"css/mui.min.css",
+					"js/rpc-client.js",
+					"js/rpc-server.js",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"images/shop/empty-order.png"
+				],
+				"refer": [
+					"pages/shop/pay.html",
+					"pages/shop/order-detail.html",
+					"pages/company/entermain.html",
+					"pages/shop/cart-list.html",
+					"pages/shop/order-evaluate.html"
+				],
+				"priority": 0
+			},
+			"pages/shop/select-address.html": {
+				"resources": [
+					"css/mui.previewimage.css",
+					"css/mui.min.css",
+					"pages/shop/select-address.css",
+					"pages/shop/select-address.js",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js"
+				],
+				"refer": [
+					"pages/my/save-address.html"
+				],
+				"priority": 0
+			},
+			"pages/shop/submit-order.html": {
+				"resources": [
+					"images/submit_order_line.png",
+					"pages/shop/submit-order.css",
+					"pages/shop/submit-order.js",
+					"css/mui.previewimage.css",
+					"css/mui.min.css",
+					"js/rpc-client.js",
+					"js/rpc-server.js",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css"
+				],
+				"refer": [
+					"pages/shop/select-address.html",
+					"pages/shop/pay.html"
+				],
+				"priority": 0
+			},
+			"pages/my/save-address.html": {
+				"resources": [
+					"css/mdui.css",
+					"pages/my/save-address.js",
+					"pages/my/save-address.css",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/mui.min.css",
+					"css/common.css",
+					"fonts/mui.ttf"
+				],
+				"refer": [
+					"pages/common/pickaddress.html"
+				],
+				"priority": 0
+			},
+			"pages/shop/payFailure.html": {
+				"resources": [
+					"images/pay/error.png",
+					"css/mui.min.css",
+					"js/avalon.js"
+				],
+				"refer": [
+					"pages/shop/my-order-main.html"
+				],
+				"priority": 0
+			},
+			"pages/shop/order-detail.html": {
+				"resources": [
+					"pages/shop/order-detail.js",
+					"pages/shop/order-detail.css",
+					"css/mui.min.css",
+					"js/avalon.js",
+					"js/common.js",
+					"js/mui.min.js",
+					"js/rpc-client.js",
+					"js/rpc-server.js"
+				],
+				"refer": [
+					"pages/product/prod-info-new.html",
+					"pages/shop/pay.html",
+					"pages/shop/cart-list.html"
+				],
+				"priority": 0
+			},
+			"pages/shop/order-evaluate.html": {
+				"resources": [
+					"pages/shop/order-evaluate.css",
+					"js/avalon.js",
+					"css/mui.min.css",
+					"pages/shop/order-evaluate.js"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/prod-parts/product-part.html": {
+				"resources": [
+					"pages/prod-parts/product-part.css",
+					"pages/prod-parts/product-part.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/mui.min.css"
+				],
+				"refer": [
+					"pages/product/prod-info-new.html"
+				],
+				"priority": 0
+			},
+			"pages/login/forgetpw.html": {
+				"resources": [
+					"js/mui.min.js",
+					"css/mui.min.css",
+					"js/avalon.js"
+				],
+				"refer": [
+					"pages/login/register.html",
+					"pages/login/forgetpw-next.html"
+				],
+				"priority": 0
+			},
+			"pages/login/forgetpw-next.html": {
+				"resources": [
+					"js/avalon.js",
+					"css/mui.min.css",
+					"js/common.js",
+					"js/mui.min.js"
+				],
+				"refer": [
+					"pages/login/forgetpw-last.html"
+				],
+				"priority": 0
+			},
+			"pages/login/forgetpw-last.html": {
+				"resources": [
+					"css/mdui.css",
+					"css/mui.css",
+					"js/avalon.js"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/service/machining_sub.html": {
+				"resources": [
+					"fonts/mui.ttf",
+					"css/mui.min.css",
+					"css/common.css"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/service/machining_main.html": {
+				"resources": [
+					"pages/service/machining_sub.html",
+					"js/mui.min.js",
+					"css/mui.min.css",
+					"css/common.css"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/service/fault-list.html": {
+				"resources": [
+					"css/common.css",
+					"css/mui.min.css",
+					"pages/service/fault-list-sub.html",
+					"fonts/iconfont.ttf",
+					"js/mui.min.js",
+					"fonts/mui.ttf"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/service/fault-list-sub.html": {
+				"resources": [
+					"js/common.js",
+					"css/worktask.css",
+					"images/defImg300.png",
+					"pages/service/fault-list-sub.js",
+					"js/avalon.js",
+					"images/voice.png",
+					"js/audio.js",
+					"css/mui.min.css"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/service/machining-list-sub.html": {
+				"resources": [
+					"pages/service/machining-list-sub.js",
+					"css/mui.min.css",
+					"pages/service/machining-list-sub.css",
+					"js/common.js",
+					"images/defImg300.png",
+					"js/avalon.js",
+					"css/common.css",
+					"fonts/iconfont.ttf",
+					"images/voice.png",
+					"js/audio.js"
+				],
+				"refer": [
+					"pages/service/service.html"
+				],
+				"priority": 0
+			},
+			"pages/service/machining-list.html": {
+				"resources": [
+					"pages/service/machining-list-sub.html",
+					"css/mui.min.css",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/service/business-list-sub.html": {
+				"resources": [
+					"pages/service/business-list-sub.css",
+					"pages/service/business-list-sub.js"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/service/business-list.html": {
+				"resources": [
+					"pages/service/business-list-sub.html",
+					"css/mui.min.css"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/Industry-service/business-list.html": {
+				"resources": [
+					"pages/Industry-service/business-list-sub.html",
+					"css/mui.min.css",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/Industry-service/business-list-sub.html": {
+				"resources": [
+					"pages/Industry-service/business-list-sub.css",
+					"pages/Industry-service/business-list-sub.js",
+					"css/mui.min.css",
+					"js/common.js",
+					"js/avalon.js"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/Industry-service/machining-list.html": {
+				"resources": [
+					"css/mui.min.css",
+					"pages/Industry-service/machining-list-sub.html"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/Industry-service/machining-list-sub.html": {
+				"resources": [
+					"pages/Industry-service/machining-list-sub.js",
+					"pages/Industry-service/machining-list-sub.css",
+					"css/mui.min.css"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/Industry-service/tab-webview-main.html": {
+				"resources": [
+					"css/mui.min.css",
+					"pages/Industry-service/tab-webview-subpage-about.html",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/iconfont.ttf",
+					"js/common.js",
+					"pages/Industry-service/outsourcing-list.html",
+					"fonts/mui.ttf"
+				],
+				"refer": [
+					"pages/Industry-service/tab-webview-subpage-contact.html",
+					"pages/Industry-service/tab-webview-subpage-chat.html",
+					"pages/Industry-service/tab-webview-subpage-setting.html",
+					"pages/Industry-service/outsourcing-ability.html"
+				],
+				"priority": 0
+			},
+			"pages/Industry-service/tab-webview-subpage-setting.html": {
+				"resources": [
+					"fonts/mui.ttf"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/Industry-service/tab-webview-subpage-chat.html": {
+				"resources": [
+					"fonts/mui.ttf"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/Industry-service/outsourcing-list.html": {
+				"resources": [
+					"pages/Industry-service/outsourcing-list-sub.html",
+					"css/mui.min.css",
+					"fonts/mui.ttf"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/Industry-service/outsourcing-list-sub.html": {
+				"resources": [
+					"pages/Industry-service/outsourcing-list-sub.css",
+					"js/common.js",
+					"js/avalon.js",
+					"pages/Industry-service/outsourcing-list-sub.js",
+					"css/mui.min.css"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/Industry-service/outsourcing-ability.html": {
+				"resources": [
+					"pages/Industry-service/outsourcing-list-sub.html",
+					"fonts/mui.ttf",
+					"css/mui.min.css"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/industry-service/outsourcing-ability.html": {
+				"resources": [
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"css/mui.min.css",
+					"fonts/mui.ttf",
+					"images/right_1.png",
+					"images/uncheck.png",
+					"images/checked.png"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/industry-service/outsourcing-list-sub.html": {
+				"resources": [
+					"pages/industry-service/outsourcing-list-sub.js",
+					"pages/industry-service/outsourcing-list-sub.css",
+					"js/avalon.js",
+					"css/mui.min.css",
+					"js/common.js",
+					"images/defImg300.png",
+					"js/mui.min.js"
+				],
+				"refer": [
+					"pages/industry-service/outsourcing-details.html"
+				],
+				"priority": 0
+			},
+			"pages/industry-service/tab-webview-main.html": {
+				"resources": [
+					"css/mui.min.css",
+					"pages/industry-service/outsourcing-list.html",
+					"js/common.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"fonts/iconfont.ttf",
+					"images/star_uncollection.png",
+					"images/phone.png",
+					"pages/product/main.css",
+					"images/enterlicense.png",
+					"images/address.png",
+					"js/avalon.js",
+					"pages/industry-service/tab-webview-main.css"
+				],
+				"refer": [
+					"pages/industry-service/outsourcing-ability.html",
+					"pages/industry-service/business-list-sub.html",
+					"pages/industry-service/customer-evaluation.html",
+					"pages/industry-service/customer-evaluation-list.html"
+				],
+				"priority": 0
+			},
+			"pages/industry-service/outsourcing-list.html": {
+				"resources": [
+					"pages/industry-service/outsourcing-list-sub.html",
+					"css/mui.min.css",
+					"js/mui.min.js",
+					"js/common.js"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/industry-service/business-list-sub.html": {
+				"resources": [
+					"pages/industry-service/business-list-sub.css",
+					"css/mui.min.css",
+					"pages/industry-service/business-list-sub.js",
+					"js/common.js",
+					"js/avalon.js",
+					"images/on_1.png",
+					"css/common.css",
+					"fonts/iconfont.ttf",
+					"js/mui.min.js",
+					"fonts/mui.ttf"
+				],
+				"refer": [
+					"pages/industry-service/business-detail.html"
+				],
+				"priority": 0
+			},
+			"pages/industry-service/customer-evaluation.html": {
+				"resources": [
+					"pages/industry-service/business-list-sub.css",
+					"pages/industry-service/business-list-sub.js",
+					"css/mui.min.css",
+					"pages/industry-service/customer-evaluation.js",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"images/defImg300.png"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/industry-service/enterprise-station.html": {
+				"resources": [
+					"css/mui.min.css"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/industry-service/machining-list-sub.html": {
+				"resources": [
+					"pages/industry-service/machining-list-sub.js",
+					"pages/industry-service/machining-list-sub.css",
+					"css/mui.min.css",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [
+					"pages/company/enterprisescard.html"
+				],
+				"priority": 0
+			},
+			"pages/industry-service/machining-list.html": {
+				"resources": [
+					"pages/industry-service/machining-list-sub.html",
+					"css/mui.min.css",
+					"pages/industry-service/machining-map.css",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"pages/industry-service/map.js",
+					"pages/industry-service/business-list-area.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [
+					"pages/industry-service/business-list-sub.html",
+					"pages/industry-service/service-pickareas.html",
+					"pages/industry-service/search-condition.html",
+					"pages/common/pickareas.html"
+				],
+				"priority": 0
+			},
+			"pages/industry-service/business-list.html": {
+				"resources": [
+					"pages/industry-service/business-list-sub.html",
+					"css/mui.min.css",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"fonts/iconfont.ttf",
+					"pages/industry-service/machining-map.css",
+					"pages/industry-service/machining-map.js",
+					"images/on_1.png",
+					"js/common.js",
+					"js/avalon.js",
+					"pages/industry-service/map.js",
+					"pages/industry-service/business-list-area.js"
+				],
+				"refer": [
+					"pages/industry-service/service-pickareas.html",
+					"pages/industry-service/search-condition.html",
+					"pages/common/pickareas.html"
+				],
+				"priority": 0
+			},
+			"pages/industry-service/customer-evaluation-list.html": {
+				"resources": [
+					"pages/industry-service/customer-evaluation.html",
+					"css/mui.min.css",
+					"js/mui.min.js"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/industry-service/business-detail.html": {
+				"resources": [
+					"js/mui.zoom.js",
+					"css/mdui.css",
+					"css/mui.previewimage.css",
+					"css/mui.min.css",
+					"js/mui.previewimage.js",
+					"images/voice.png",
+					"js/audio.js",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"fonts/iconfont.ttf",
+					"js/div.editable.js",
+					"pages/industry-service/business-detail.js",
+					"css/animate.min.css",
+					"pages/industry-service/business-detail.css"
+				],
+				"refer": [
+					"pages/login/login.html"
+				],
+				"priority": 0
+			},
+			"pages/industry-service/service-pickareas.html": {
+				"resources": [
+					"css/mui.min.css",
+					"pages/industry-service/service-pickareas.js",
+					"pages/common/pickareas.css",
+					"css/common.css",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"pages/industry-service/service-pickareas.css",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/industry-service/search-condition.html": {
+				"resources": [
+					"pages/industry-service/search-condition.js",
+					"css/mui.min.css",
+					"pages/industry-service/search-condition.css",
+					"js/avalon.js",
+					"js/common.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/industry-service/machining-map.html": {
+				"resources": [
+					"pages/industry-service/machining-map.css",
+					"images/location-new.png",
+					"images/point.png",
+					"css/mui.min.css",
+					"pages/industry-service/machining-map.js",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"images/point-red.png",
+					"images/point-green.png",
+					"css/common.css",
+					"images/close.png",
+					"fonts/mui.ttf",
+					"fonts/iconfont.ttf",
+					"images/label.png"
+				],
+				"refer": [
+					"pages/industry-service/business-list.html",
+					"pages/industry-service/machining-list.html",
+					"pages/industry-service/service-pickareas.html",
+					"pages/industry-service/search-condition.html",
+					"pages/industry-service/business-detail.html",
+					"pages/company/compconsulting.html",
+					"pages/industry-service/external-process-main.html",
+					"pages/company/enterprisescard.html",
+					"pages/common/pickareas.html",
+					"pages/industry-service/equipment-list.html",
+					"pages/industry-service/equipment-detail.html"
+				],
+				"priority": 0
+			},
+			"pages/industry-service/external-process-main.html": {
+				"resources": [
+					"images/phone.png",
+					"pages/product/main.css",
+					"js/common.js",
+					"pages/industry-service/tab-webview-main.css",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"images/enterlicense.png",
+					"images/address.png",
+					"css/mui.min.css",
+					"pages/industry-service/outsourcing-list.html",
+					"pages/industry-service/external-process-main.css",
+					"pages/industry-service/customer-evaluation-list.html"
+				],
+				"refer": [
+					"pages/industry-service/outsourcing-ability.html"
+				],
+				"priority": 0
+			},
+			"pages/industry-service/outsourcing-details.html": {
+				"resources": [
+					"js/avalon.js",
+					"css/mui.min.css",
+					"js/mui.zoom.js",
+					"js/common.js",
+					"js/mui.min.js",
+					"css/mui.previewimage.css",
+					"js/mui.previewimage.js"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/industry-service/equipment-list-sub.html": {
+				"resources": [
+					"pages/industry-service/equipment-list-sub.js",
+					"pages/industry-service/machining-list-sub.css",
+					"js/avalon.js",
+					"css/mui.min.css",
+					"images/defImg300.png",
+					"js/common.js",
+					"js/mui.min.js",
+					"pages/industry-service/equipment-list-sub.css",
+					"fonts/iconfont.ttf",
+					"css/common.css"
+				],
+				"refer": [
+					"pages/company/enterprisescard.html",
+					"pages/industry-service/equipment-detail.html"
+				],
+				"priority": 0
+			},
+			"pages/industry-service/equipment-list.html": {
+				"resources": [
+					"pages/industry-service/machining-map.css",
+					"js/common.js",
+					"js/avalon.js",
+					"css/mui.min.css",
+					"pages/industry-service/equipment-list-sub.html",
+					"pages/industry-service/business-list-area.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [
+					"pages/industry-service/search-condition.html",
+					"pages/common/pickareas.html",
+					"pages/industry-service/service-pickareas.html"
+				],
+				"priority": 0
+			},
+			"pages/industry-service/equipment-detail.html": {
+				"resources": [
+					"js/common.js",
+					"pages/industry-service/equipment-detail.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/mui.min.css",
+					"js/mui.zoom.js",
+					"images/defImg300.png",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"css/mui.previewimage.css",
+					"js/mui.previewimage.js",
+					"images/defImg70.png",
+					"images/picEmpty.png",
+					"images/con_03.png",
+					"pages/industry-service/equipment-detail.css",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [
+					"pages/company/enterprisescard.html"
+				],
+				"priority": 0
+			},
+			"pages/industry-service/industry-info.html": {
+				"resources": [
+					"js/mui.pullToRefresh.js",
+					"js/common.js",
+					"images/checked.png",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"images/enterlicense.png",
+					"css/mui.min.css",
+					"pages/industry-service/industry-info.js",
+					"pages/industry-service/industry-info.css"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/industry-service/industry_sub.html": {
+				"resources": [
+					"images/checked.png",
+					"js/avalon.js",
+					"images/enterlicense.png",
+					"pages/industry-service/industry-info.css",
+					"pages/industry-service/industry_sub.js",
+					"js/common.js",
+					"js/mui.min.js",
+					"css/mui.min.css"
+				],
+				"refer": [
+					"pages/industry-service/equipment-detail.html",
+					"pages/industry-service/outsourcing-details.html"
+				],
+				"priority": 0
+			},
+			"pages/industry-service/industry_main.html": {
+				"resources": [
+					"js/common.js",
+					"pages/industry-service/industry_sub.html",
+					"js/mui.min.js",
+					"css/mui.min.css"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/news/news-template.html": {
+				"resources": [
+					"js/common.js",
+					"js/mui.min.js",
+					"pages/news/news-template.js",
+					"css/mui.min.css",
+					"fonts/mui.ttf",
+					"css/common.css",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [
+					"pages/news/share.html"
+				],
+				"priority": 0
+			},
+			"pages/news/share.html": {
+				"resources": [
+					"js/common.js",
+					"images/shoucang.png",
+					"js/mui.min.js",
+					"pages/news/share.js",
+					"css/mui.min.css",
+					"images/weixin.png",
+					"images/pengyouquan.png",
+					"images/qq.png"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/common/pickareas-old.html": {
+				"resources": [
+					"js/avalon.js",
+					"css/common.css",
+					"pages/common/cityData.js",
+					"css/mui.min.css",
+					"pages/common/pickareas.js",
+					"pages/common/pickareas.css",
+					"fonts/iconfont.ttf",
+					"js/mui.min.js"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/equipment/equipment-new.html": {
+				"resources": [
+					"js/mui.zoom.js",
+					"js/common.js",
+					"pages/equipment/equipment-new.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"css/mui.min.css",
+					"js/mui.previewimage.js",
+					"images/pho.png",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [
+					"pages/equipment/select-address.html"
+				],
+				"priority": 0
+			},
+			"pages/equipment/select-address.html": {
+				"resources": [
+					"css/common.css",
+					"css/mui.previewimage.css",
+					"css/mui.min.css",
+					"pages/equipment/select-address.js",
+					"pages/equipment/select-address.css"
+				],
+				"refer": [
+					"pages/my/save-address.html"
+				],
+				"priority": 0
+			},
+			"pages/equ-manage/equ-list.html": {
+				"resources": [
+					"js/common.js",
+					"pages/equ-manage/equ-list.js",
+					"js/avalon.js",
+					"fonts/mui.ttf",
+					"css/mui.min.css",
+					"pages/equ-manage/equ-list.css",
+					"images/con_07.png",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/iconfont.ttf",
+					"js/mui.pullToRefresh.js",
+					"css/animate.min.css",
+					"images/defImg300.png",
+					"js/rpc-server.js",
+					"images/equ/equ-empty.png"
+				],
+				"refer": [
+					"pages/equ-manage/class-manage.html",
+					"pages/equ-manage/equipment-new.html",
+					"pages/equ-manage/equ-view.html",
+					"pages/equ-manage/equ-save.html",
+					"pages/scan/scan.html",
+					"pages/equ-manage/catalog-manage.html",
+					"pages/equ-manage/catalog-manager.html"
+				],
+				"priority": 0
+			},
+			"pages/equ-manage/class-manage.html": {
+				"resources": [
+					"pages/equ-manage/class-manage.js",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"css/mui.min.css",
+					"fonts/iconfont.ttf",
+					"pages/equ-manage/class-manage.css"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/equ-manage/equipment-new.html": {
+				"resources": [
+					"js/mui.zoom.js",
+					"css/common.css",
+					"css/mui.min.css",
+					"js/mui.previewimage.js",
+					"images/pho.png",
+					"pages/equ-manage/equipment-new.js"
+				],
+				"refer": [
+					"pages/equ-manage/select-address.html"
+				],
+				"priority": 0
+			},
+			"pages/equ-manage/select-address.html": {
+				"resources": [
+					"pages/equ-manage/select-address.css",
+					"css/common.css",
+					"css/mui.previewimage.css",
+					"css/mui.min.css",
+					"pages/equ-manage/select-address.js",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"fonts/mui.ttf",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/equ-manage/material-input.html": {
+				"resources": [
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"css/mui.min.css",
+					"fonts/iconfont.ttf",
+					"images/con_07.png",
+					"images/con_08.png",
+					"pages/equ-manage/material-input.js",
+					"pages/equ-manage/material-input.css"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/company/comp-site.html": {
+				"resources": [
+					"pages/company/comp-site.js",
+					"css/mui.min.css",
+					"pages/company/comp-site.css"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/equ-manage/equ-info.html": {
+				"resources": [
+					"js/mui.zoom.js",
+					"css/common.css",
+					"css/mui.min.css",
+					"js/mui.previewimage.js",
+					"pages/equ-manage/equ-info.js",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"js/rpc-server.js",
+					"js/rpc-client.js",
+					"pages/equ-manage/equ-info.css",
+					"images/picEmpty.png"
+				],
+				"refer": [
+					"pages/chat/chatSingle.html"
+				],
+				"priority": 0
+			},
+			"pages/equ-manage/equ-view.html": {
+				"resources": [
+					"js/common.js",
+					"pages/equ-manage/equ-info.html",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"css/mui.min.css",
+					"fonts/iconfont.ttf",
+					"pages/equ-manage/equ-view.js",
+					"pages/equ-manage/equ-view.css",
+					"js/rpc-server.js"
+				],
+				"refer": [
+					"pages/equ-manage/equ-save.html",
+					"pages/equ-manage/inspection-list.html",
+					"pages/equ-manage/alteration-list.html",
+					"pages/equ-manage/equ-popover.html"
+				],
+				"priority": 0
+			},
+			"pages/equ-manage/equ-save.html": {
+				"resources": [
+					"pages/equ-manage/equ-save.css",
+					"css/common.css",
+					"css/mui.min.css",
+					"images/pho.png",
+					"pages/equ-manage/equ-save.js",
+					"js/mui.zoom.js",
+					"js/common.js",
+					"js/avalon.js",
+					"fonts/mui.ttf",
+					"js/mui.previewimage.js",
+					"fonts/iconfont.ttf",
+					"js/mui.min.js",
+					"js/rpc-client.js",
+					"js/rpc-server.js"
+				],
+				"refer": [
+					"pages/equ-manage/select-address.html",
+					"pages/equ-manage/select-catalog.html",
+					"pages/equ-manage/select-class.html",
+					"pages/common/pickusers.html",
+					"pages/common/pickcomps.html",
+					"pages/equ-manage/equ-param.html",
+					"pages/common/pickdealer.html",
+					"pages/common/pickusers-mycomp.html",
+					"pages/equ-manage/select-supplier.html",
+					"pages/scan/scan.html",
+					"pages/common/select-supplier.html",
+					"pages/chat/chatSingle.html",
+					"pages/supplier/pick-supplier.html",
+					"pages/supplier/select-supplier.html"
+				],
+				"priority": 0
+			},
+			"pages/equ-manage/inspection-list.html": {
+				"resources": [
+					"js/mui.pullToRefresh.js",
+					"css/mui.min.css",
+					"pages/equ-manage/inspection-list.css",
+					"pages/equ-manage/inspection-list.js",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/iconfont.ttf",
+					"js/rpc-server.js"
+				],
+				"refer": [
+					"pages/equ-manage/inspection-view.html"
+				],
+				"priority": 0
+			},
+			"pages/equ-manage/alteration-list.html": {
+				"resources": [
+					"pages/equ-manage/alteration-list.js",
+					"pages/equ-manage/alteration-list.css",
+					"js/mui.pullToRefresh.js",
+					"css/mui.min.css",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/iconfont.ttf",
+					"js/rpc-server.js",
+					"fonts/mui.ttf"
+				],
+				"refer": [
+					"pages/equ-manage/alteration-view.html"
+				],
+				"priority": 0
+			},
+			"pages/equ-manage/select-catalog.html": {
+				"resources": [
+					"pages/equ-manage/select-catalog.js",
+					"css/common.css",
+					"pages/equ-manage/catalog-manage.css",
+					"css/mui.min.css",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"fonts/mui.ttf",
+					"fonts/iconfont.ttf",
+					"pages/equ-manage/select-catalog.css"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/equ-manage/select-class.html": {
+				"resources": [
+					"css/common.css",
+					"pages/equ-manage/catalog-manage.css",
+					"css/mui.min.css",
+					"pages/equ-manage/select-class.js",
+					"pages/equ-manage/select-class.css",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"fonts/mui.ttf",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/equ-manage/equ-param.html": {
+				"resources": [
+					"css/common.css",
+					"css/mui.min.css",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"fonts/mui.ttf"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/common/pickusers-mycomp.html": {
+				"resources": [
+					"pages/common/pickusers.css",
+					"css/common.css",
+					"css/mui.css",
+					"pages/common/pickusers-mycomp.js",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"fonts/mui.ttf",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/equ-manage/select-supplier.html": {
+				"resources": [
+					"js/mui.pullToRefresh.js",
+					"pages/equ-manage/select-supplier.css",
+					"css/common.css",
+					"css/mui.min.css",
+					"pages/equ-manage/select-supplier.js"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/tab/industry-center.html": {
+				"resources": [
+					"pages/tab/industry-center.css",
+					"css/mui.min.css",
+					"pages/tab/industry-center.js",
+					"js/mui.js",
+					"js/common.js",
+					"js/avalon.js"
+				],
+				"refer": [
+					"pages/equ-manage/equ-list.html",
+					"pages/in-stock/in-stock-order.html"
+				],
+				"priority": 0
+			},
+			"pages/equ-manage/equ-popover.html": {
+				"resources": [
+					"pages/equ-manage/equ-popover.js",
+					"css/mui.min.css",
+					"js/mui.min.js",
+					"css/common.css",
+					"js/common.js",
+					"js/avalon.js",
+					"js/rpc-server.js",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [
+					"pages/equ-manage/equ-save.html",
+					"pages/equ-manage/equ-status.html",
+					"pages/equ-manage/inspection-edit.html",
+					"pages/equ-manage/alteration-edit.html"
+				],
+				"priority": 0
+			},
+			"pages/equ-manage/equ-status.html": {
+				"resources": [
+					"pages/equ-manage/equ-status.css",
+					"css/mui.min.css",
+					"pages/equ-manage/equ-status.js",
+					"js/common.js",
+					"js/avalon.js",
+					"css/common.css",
+					"js/mui.js",
+					"js/rpc-client.js",
+					"fonts/mui.ttf",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/equ-manage/inspection-edit.html": {
+				"resources": [
+					"js/mui.picker.min.js",
+					"pages/equ-manage/inspection-edit.js",
+					"pages/equ-manage/inspection-edit.css",
+					"css/mui.picker.min.css",
+					"js/div.editable.js",
+					"images/icon-collapse.png",
+					"js/avalon.js",
+					"fonts/mui.ttf",
+					"js/common.js",
+					"css/common.css",
+					"js/mui.min.js",
+					"css/mui.min.css",
+					"fonts/iconfont.ttf",
+					"js/rpc-client.js"
+				],
+				"refer": [
+					"pages/common/pickuser-single.html",
+					"pages/common/pickusers-mycomp.html"
+				],
+				"priority": 0
+			},
+			"pages/equ-manage/alteration-edit.html": {
+				"resources": [
+					"css/mui.min.css",
+					"pages/equ-manage/alteration-edit.js",
+					"css/mui.picker.min.css",
+					"js/mui.picker.min.js",
+					"js/div.editable.js"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/equ-manage/catalog-manage.html": {
+				"resources": [
+					"pages/equ-manage/catalog-manage.css",
+					"css/mui.min.css",
+					"css/animate.min.css",
+					"pages/equ-manage/catalog-manage.js",
+					"js/mui.min.js",
+					"js/common.js",
+					"js/avalon.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/in-stock/in-stock-order.html": {
+				"resources": [
+					"css/mui.min.css",
+					"pages/in-stock/in-stock-order.js",
+					"pages/in-stock/in-stock-order.css",
+					"images/defImg70.png",
+					"images/in-stock/in-stock.png",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"js/data.js",
+					"js/rpc-client.js"
+				],
+				"refer": [
+					"pages/scan/scan.html",
+					"pages/in-stock/in-stock-details.html",
+					"pages/product/prod-info-new.html"
+				],
+				"priority": 0
+			},
+			"pages/tab/work-center.html": {
+				"resources": [
+					"pages/tab/work-center.js",
+					"js/mui.js",
+					"pages/tab/work-center.css",
+					"js/common.js",
+					"js/avalon.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"css/mui.min.css",
+					"fonts/iconfont.ttf",
+					"images/work-center/icon/icon_lock-assemble.png",
+					"images/work-center/icon/icon_repair.png",
+					"images/work-center/icon/icon_query-stat.png",
+					"images/work-center/icon/icon_service-map.png",
+					"images/work-center/icon/icon_fault-stat.png",
+					"images/work-center/icon/icon_pc-set.png",
+					"images/work-center/icon/icon_in-stock.png",
+					"images/work-center/icon/icon_tel-repair.png",
+					"images/work-center/icon/icon_out-stock.png",
+					"images/work-center/icon/icon_fault-repair.png",
+					"images/work-center/icon/icon_install.png",
+					"images/work-center/gray/icon_in-stock.png",
+					"images/work-center/gray/icon_pc-set.png",
+					"images/ninebox/14.png",
+					"images/ninebox/15.png"
+				],
+				"refer": [
+					"pages/equ-manage/equ-list.html",
+					"pages/scan/scan.html",
+					"pages/equ-manage/equ-save.html",
+					"pages/prod-parts/part-list.html",
+					"pages/in-stock/in-stock-order.html",
+					"pages/out-stock/order-main.html",
+					"pages/aftersale/fault-submit.html",
+					"pages/aftersale/fault-submit-r.html",
+					"pages/aftersale/work-record.html",
+					"pages/statistics/aftersale-main.html",
+					"pages/equ-manage/equ-view.html",
+					"pages/prod-parts/record-part.html",
+					"pages/aftersale/fault-list.html"
+				],
+				"priority": 0
+			},
+			"pages/common/select-supplier.html": {
+				"resources": [
+					"js/mui.pullToRefresh.js",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"css/mui.min.css",
+					"fonts/iconfont.ttf",
+					"pages/common/select-supplier.css",
+					"pages/common/select-supplier.js",
+					"js/rpc-server.js"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/in-stock/in-stock-details.html": {
+				"resources": [
+					"pages/in-stock/in-stock-details.js",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"pages/in-stock/in-stock-details.css",
+					"css/mui.min.css",
+					"js/div.editable.js"
+				],
+				"refer": [
+					"pages/common/select-supplier.html",
+					"pages/in-stock/select-proddir.html",
+					"pages/supplier/select-supplier.html"
+				],
+				"priority": 0
+			},
+			"pages/in-stock/select-proddir.html": {
+				"resources": [
+					"pages/in-stock/select-proddir.js",
+					"pages/in-stock/select-proddir.css",
+					"css/mui.min.css"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/common/pickuser-single.html": {
+				"resources": [
+					"pages/common/pickusers.css",
+					"pages/common/pickuser-single.js",
+					"css/mui.css",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/equ-manage/alteration-view.html": {
+				"resources": [
+					"pages/equ-manage/alteration-view.js",
+					"js/rpc-client.js"
+				],
+				"refer": [
+					"pages/equ-manage/alteration-edit.html"
+				],
+				"priority": 0
+			},
+			"pages/equ-manage/inspection-view.html": {
+				"resources": [
+					"pages/equ-manage/inspection-view.js"
+				],
+				"refer": [
+					"pages/equ-manage/inspection-edit.html"
+				],
+				"priority": 0
+			},
+			"pages/my/manage-address.html": {
+				"resources": [
+					"pages/my/manage-address.css",
+					"pages/my/manage-address.js",
+					"css/mui.previewimage.css",
+					"css/mui.min.css",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css"
+				],
+				"refer": [
+					"pages/my/save-address.html"
+				],
+				"priority": 0
+			},
+			"pages/my/about.html": {
+				"resources": [
+					"js/mui.js",
+					"images/mdicon180.png",
+					"css/mdui.css",
+					"css/mui.css"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/my/set-group.html": {
+				"resources": [
+					"pages/my/set-group.js"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/prod-parts/record-part.html": {
+				"resources": [
+					"pages/prod-parts/record-part.js",
+					"pages/prod-parts/record-part.css"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/equ-manage/catalog-manager.html": {
+				"resources": [
+					"pages/equ-manage/catalog-manager.css",
+					"pages/equ-manage/catalog-manager.js",
+					"js/div.editable.js"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/common/dict-manage.html": {
+				"resources": [
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"css/mui.min.css",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/supplier/supplier-charge.html": {
+				"resources": [
+					"js/mui.pullToRefresh.js",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"css/mui.min.css",
+					"fonts/iconfont.ttf",
+					"pages/supplier/supplier-charge.js",
+					"js/rpc-client.js",
+					"js/rpc-server.js",
+					"pages/supplier/pick-supplier.css"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/supplier/pick-supplier.html": {
+				"resources": [
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"css/mui.min.css",
+					"pages/supplier/supplier-charge.html",
+					"pages/supplier/pick-supplier.js",
+					"js/rpc-client.js",
+					"js/rpc-server.js",
+					"pages/supplier/pick-supplier.css",
+					"js/common.js"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/equ-manage/warranty-service.html": {
+				"resources": [
+					"css/mui.min.css",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"fonts/iconfont.ttf",
+					"pages/equ-manage/warranty-service.js"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/product/warranty-service.html": {
+				"resources": [
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"pages/product/warranty-service.js",
+					"css/mui.min.css",
+					"fonts/iconfont.ttf",
+					"pages/product/warranty-service.css",
+					"images/in-stock/in-stock.png",
+					"images/company/empty-user.png"
+				],
+				"refer": [
+					"pages/product/prod-customer.html"
+				],
+				"priority": 0
+			},
+			"pages/company/myInfo.html": {
+				"resources": [
+					"js/mui.zoom.js",
+					"css/mui.min.css",
+					"js/mui.previewimage.js"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/my/scan-list.html": {
+				"resources": [
+					"pages/my/scan-list.js",
+					"css/mui.min.css"
+				],
+				"refer": [
+					"pages/scan/scanDetails.html"
+				],
+				"priority": 0
+			},
+			"pages/my/my-collect-comp-sub.html": {
+				"resources": [
+					"images/equ/equ-empty.png",
+					"pages/my/my-collect-comp-sub.js"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/my/my-collect-comp.html": {
+				"resources": [
+					"pages/my/my-collect-comp-sub.html"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"VIDEO.html": {
+				"resources": [
+					"fonts/mui.ttf",
+					"css/mui.min.css",
+					"js/mui.min.js",
+					"css/common.css",
+					"images/company/01.png",
+					"images/video.png",
+					"js/common.js"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"NFC.html": {
+				"resources": [
+					"js/mui.min.js",
+					"css/common.css",
+					"css/mui.min.css"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/supplier/select-supplier.html": {
+				"resources": [
+					"pages/supplier/supplier-common.js",
+					"js/mui.pullToRefresh.js",
+					"pages/supplier/select-supplier.css",
+					"css/mui.min.css",
+					"images/supplier-empty.png",
+					"pages/supplier/select-supplier.js"
+				],
+				"refer": [
+					"pages/supplier/supplier-save.html"
+				],
+				"priority": 0
+			},
+			"pages/product/prod-customer.html": {
+				"resources": [
+					"pages/product/prod-customer.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/mui.min.css",
+					"js/common.js",
+					"css/common.css",
+					"fonts/mui.ttf"
+				],
+				"refer": [
+					"pages/customer/select-customer.html"
+				],
+				"priority": 0
+			},
+			"pages/product/chooseParam.html": {
+				"resources": [
+					"pages/product/chooseParam.js",
+					"pages/product/chooseParam.css",
+					"css/mui.min.css",
+					"js/avalon.js",
+					"images/defImg70.png",
+					"js/common.js",
+					"js/mui.min.js",
+					"fonts/iconfont.ttf",
+					"css/common.css"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/customer/select-customer.html": {
+				"resources": [
+					"js/mui.pullToRefresh.js",
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/mui.min.css",
+					"pages/customer/select-customer.js",
+					"images/supplier-empty.png",
+					"pages/customer/customer-manage.css",
+					"js/rpc-server.js",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [
+					"pages/customer/customer-save.html"
+				],
+				"priority": 0
+			},
+			"pages/aftersale/component.html": {
+				"resources": [
+					"js/common.js",
+					"images/video.png",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"css/common.css",
+					"images/addvideo.png",
+					"css/mui.min.css",
+					"fonts/iconfont.ttf",
+					"js/video.js"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/scan/barcode_scan.html": {
+				"resources": [
+					"js/common.js",
+					"css/common.css",
+					"js/mui.min.js",
+					"images/light.png",
+					"fonts/mui.ttf",
+					"css/mui.min.css",
+					"pages/scan/common-scan.js"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/scan/index.html": {
+				"resources": [],
+				"refer": [
+					"pages/scan/barcode_scan.html",
+					"pages/scan/scan.html"
+				],
+				"priority": 0
+			},
+			"pages/binding-code/binding-prod.html": {
+				"resources": [
+					"pages/binding-code/binding-prod.js",
+					"css/mui.min.css",
+					"js/mui.js",
+					"css/common.css",
+					"js/avalon.js"
+				],
+				"refer": [
+					"pages/binding-code/select-prod.html"
+				],
+				"priority": 0
+			},
+			"pages/binding-code/select-prod.html": {
+				"resources": [
+					"images/equ/equ-empty.png",
+					"js/mui.pullToRefresh.js",
+					"images/defImg300.png",
+					"pages/equ-manage/equ-list.css",
+					"css/animate.min.css",
+					"pages/binding-code/select-prod.js",
+					"js/avalon.js",
+					"fonts/mui.ttf",
+					"js/rpc-server.js",
+					"js/common.js",
+					"css/common.css",
+					"js/mui.min.js",
+					"css/mui.min.css",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [
+					"pages/binding-code/affirm-binding.html"
+				],
+				"priority": 0
+			},
+			"pages/binding-code/affirm-binding.html": {
+				"resources": [
+					"css/mui.css",
+					"pages/binding-code/affirm-binding.js",
+					"css/common.css",
+					"js/mui.js",
+					"js/common.js",
+					"images/defImg300.png",
+					"js/avalon.js",
+					"fonts/mui.ttf"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/customer/customer-save.html": {
+				"resources": [
+					"pages/customer/customer-save.css",
+					"pages/customer/customer-save.js"
+				],
+				"refer": [
+					"pages/common/pickaddress.html"
+				],
+				"priority": 0
+			},
+			"pages/supplier/supplier-save.html": {
+				"resources": [
+					"pages/supplier/supplier-save.js",
+					"pages/supplier/supplier-save.css"
+				],
+				"refer": [
+					"pages/common/pickaddress.html"
+				],
+				"priority": 0
+			},
+			"autol/index.html": {
+				"resources": [
+					"css/mui.min.css"
+				],
+				"refer": [
+					"pages/scan/scan.html",
+					"autol/list.html"
+				],
+				"priority": 0
+			},
+			"autol/KFIB-001-19.html": {
+				"resources": [
+					"autol/css/KFIB.css"
+				],
+				"refer": [
+					"pages/common/pickusers-mycomp.html"
+				],
+				"priority": 0
+			},
+			"autol/list.html": {
+				"resources": [
+					"js/common.js",
+					"js/avalon.js",
+					"js/mui.min.js",
+					"autol/icon/technics-trace.png",
+					"autol/icon/technics-manage.png",
+					"css/common.css",
+					"fonts/mui.ttf",
+					"autol/icon/progress-rate.png",
+					"css/mui.min.css",
+					"autol/icon/produce-record.png",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [
+					"autol/KFIB-001-19.html"
+				],
+				"priority": 0
+			},
+			"pages/industry/comp-map-template.html": {
+				"resources": [
+					"css/common.css",
+					"fonts/mui.ttf",
+					"css/mui.min.css",
+					"js/swiper/swiper.min.css",
+					"pages/industry/comp-map.css"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/industry/comp-info.html": {
+				"resources": [
+					"js/common.js",
+					"js/mescroll/mescroll.js",
+					"pages/industry/comp-info.js",
+					"css/common.css",
+					"images/industry/co-info-bgx2.png",
+					"js/avalon.js",
+					"fonts/mui.ttf",
+					"pages/industry/comp-info.css",
+					"css/mui.min.css",
+					"images/industry/co-kefux2.png",
+					"js/mescroll/mescroll.min.css",
+					"js/mui.js",
+					"images/industry/co-mainproductx2.png"
+				],
+				"refer": [],
+				"priority": 0
+			},
+			"pages/industry/comp-map.html": {
+				"resources": [
+					"images/industry/m_demand.jpg",
+					"js/jquery.min.js",
+					"images/industry/point_orage.png",
+					"pages/industry/comp-map.js",
+					"js/swiper/swiper.min.js",
+					"images/industry/point-bluex2.png",
+					"images/industry/p_demand.jpg",
+					"images/industry/kefux2.png",
+					"js/avalon.js",
+					"fonts/mui.ttf",
+					"js/swiper/swiper.min.css",
+					"js/common.js",
+					"css/common.css",
+					"js/mui.min.js",
+					"css/mui.min.css",
+					"pages/industry/comp-map.css",
+					"fonts/iconfont.ttf"
+				],
+				"refer": [
+					"pages/industry/comp-info.html",
+					"pages/common/pickareas.html",
+					"pages/industry/search-condition.html"
+				],
+				"priority": 0
+			},
+			"pages/shipment-packing/scan-encasement.html": {
+				"resources": [],
+				"refer": [
+					"pages/scan/scan.html",
+					"pages/shipment-packing/shipping-list.html",
+					"pages/product/prod-info-new.html"
+				],
+				"priority": 0
+			},
+			"src/launch.html": {
+				"resources": [],
+				"refer": [
+					"src/tab.html",
+					"src/webView.html",
+					"src/pages/login/login.html",
+					"src/pages/menus/menu-index.html",
+					"src/guide.html"
+				],
+				"priority": 0
+			},
+			"src/tab.html": {
+				"resources": [
+					"src/pages/message/message.html"
+				],
+				"refer": [
+					"src/pages/work.html"
+				],
+				"priority": 0
+			}
+		},
+		"idle": {
+			"resources": [
+				"Memo.txt",
+				"pages/resource/add-friend.css",
+				"pages/resource/add-friend.js",
+				"pages/resource/add-friend.html",
+				"wav/msg.wav",
+				"index.html"
+			]
+		}
+	}
+}

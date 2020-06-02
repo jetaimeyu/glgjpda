@@ -1,0 +1,518 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>保养计划详情</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+		<style type="text/css">
+			.equInventoryInfo .grey-btn {
+				color: #c7c7cc!important;
+			}
+			
+			.equInventoryInfo .body-inventory {
+				width: calc(100%-104px);
+				width: -moz-calc(100% - 104px);
+				width: -webkit-calc(100% - 104px);
+			}
+			
+			.equInventoryInfo .mui-media {
+				display: flex;
+				align-items: center;
+			}
+			
+			.data-group-tip {
+				margin-top: 10px;
+			}
+			
+			.prodLibUl.mui-table-view:after {
+				height: 0px!important;
+			}
+			
+			.prodLibUl . {
+				padding: 8px 16px!important;
+			}
+			
+			.prodLibUl .mui-media-body {
+				position: relative;
+				left: 70px;
+				width: 80%;
+			}
+			
+			.prodLibUl .productName {
+				font-size: 1.5rem;
+				color: #000;
+				margin-top: 2px;
+				margin-bottom: 10px;
+				line-height: initial;
+				max-width: 90%;
+			}
+			
+			.prodLibUl .productType {
+				font-size: 1.2rem;
+				color: #AAA;
+				max-width: 90%;
+			}
+			
+			.prodLibUl .opt {
+				color: #AEAEAE;
+				position: absolute;
+				top: 50%;
+				right: 10px;
+				-webkit-transform: translateY(-50%);
+				transform: translateY(-50%);
+				overflow: hidden;
+				margin: 0px;
+			}
+			
+			.:after {
+				left: 0px;
+			}
+			
+			.photo.file .icon-add {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+			}
+			
+			.photo.file .img-body {
+				position: relative;
+				overflow: hidden;
+				height: 35px;
+				background-color: #eaf6fe;
+				
+			}
+			
+			.photo {
+				width: 35px;
+				height: 35px;
+				margin-right: 5px;
+				/*display: block;
+				float:left;*/
+			}
+			
+			.photo.content-box {
+				width: 120px;
+				text-align: center;
+				line-height: 35px;
+				color: #3296FA;
+			}
+			
+			.photo.content-box .img-body span.content-box-span {
+				width: 100%;
+				position: absolute;
+				top: 50%;
+				left: 0;
+				-webkit-transform: translateY(-50%);
+				transform: translateY(-50%);
+			}
+			
+			.photo.content-box .icon-topright-corner-delete {
+				margin-right: 0;
+				margin-top: -8px;
+				font-size: 2rem;
+			}
+			
+			.photo.file .img {
+				height: 100%;
+				background-size: cover;
+			}
+			
+			.imgslist {
+				float: left;
+				width: 56px;
+				height: 56px;
+				background-size: cover!important;
+				position: absolute;
+				top: 50%;
+				-webkit-transform: translateY(-50%);
+				transform: translateY(-50%);
+				overflow: hidden;
+				margin: 0;
+			}
+			
+		</style>
+	</head>
+
+	<body ng-controller="equInventoryEditController" class="equInventoryInfo">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon icon-back mui-pull-left">保养计划详情</a>
+			<a class="menu-more icon-more right-menu-icon-detail" href="#popover" id="openPopover" style="display: none;" ng-class="{'mui-block':isLoad}" ng-if="datefrom!='unchecklist'"></a>
+		</header>
+		<div class="mui-scroll-wrapper  " ng-class="{'mui-block':isLoad}" style="display: none;">
+			<p class="data-group-tip">基本信息</p>
+			<ul class="data-group">
+				<li class="data-row ">
+					<label>计划名称</label>
+					<div class="body">
+						<span ng-bind="inventoryName" style="word-break: break-word;"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="intoplan">
+					<label>设备归类</label>
+					<div class="body">
+						<span ng-repeat="cata in equCatalogDataList" ng-bind="$index==0?cata.DirName:','+cata.DirName"></span>
+					</div>
+				</li>
+				
+				<li class=" data-row ">
+					<label>保养人</label>
+					<div class="body">
+						<span ng-repeat="user in inventoryUserList" ng-bind="($index==0?user.Name:','+user.Name)"></span>
+						<!--<span ng-repeat="user in inventoryUserList" ng-if="inventoryUserList.length>0" ng-bind="$index==0?user.RealName:'，'+user.RealName"></span>
+						<span ng-repeat="user in deleteUserList" ng-if="inventoryUserList.length==0" ng-bind="$index==0?user.RealName:'，'+user.RealName"></span>-->
+					</div>
+				</li>
+				<li class="data-row">
+					<label>保养级别</label>
+					<div class="body">
+						<span ng-bind="memLevel" class="menlevel"></span>
+					</div>
+				</li>
+				<li class=" data-row" ng-if="!intoplan">
+					<label>保养时间</label>
+					<div class="body">
+						<span ng-bind="MaintainDate?MaintainDate.slice(0,10):NextMaintainDate.slice(0,10)"></span>
+					</div>
+				</li>
+				<li class=" data-row " ng-if="intoplan">
+					<label>开始执行时间</label>
+					<div class="body">
+						<span ng-bind="StartDate.slice(0,10)"></span>
+					</div>
+				</li>
+				<li class=" data-row " ng-if="intoplan">
+					<label>截止时间</label>
+					<div class="body">
+						<span ng-bind="EndDate.slice(0,10)"></span>
+					</div>
+				</li>
+				<li class="data-row" ng-if="intoplan">
+					<label>循环周期</label>
+					<div class="body">
+						<span ng-bind="CyclePeriod!='null'?CyclePeriod:''"></span>
+					</div>
+				</li>
+				<li class=" data-row " ng-if="intoplan">
+					<label>已执行次数</label>
+					<div class="body">
+						<span ng-bind="Numbers"></span>
+					</div>
+				</li>
+				<li class=" data-row " ng-if="intoplan">
+					<label>下次保养时间</label>
+					<div class="body">
+						<span ng-bind="NextMaintainDate?NextMaintainDate.slice(0,10):'-'"></span>
+					</div>
+				</li>
+				<li class=" data-row " ng-if="intoplan">
+					<label>状态</label>
+					<div class="body">
+						<span ng-bind="panstate"></span>
+					</div>
+				</li>
+				<li class=" data-row ">
+					<label>设备数</label>
+					<div class="body">
+						<span ng-bind="EqCount"></span>
+					</div>
+				</li>
+				<!--<li class=" data-row ">
+					<label>保养部位</label>
+					<div class="body ">
+						<div class="img-body">
+						<span class="content-box-span" ng-bind="item.EqPart " ng-repeat="item in inventoryContentList"></span>
+						</div>
+					</div>
+				</li>-->
+			</ul>
+			<ul class="data-group">
+				<li class="data-row">
+					<label>保养部位</label>
+					<div class="body attach" style="padding-bottom: 5px;">
+						<div class="photo file content-box" ng-repeat="item in inventoryContentList" ng-show="inventoryContentList.length>0&&item.IsDel!=1">
+							<div class="img-body">
+								<span class="content-box-span" ng-bind="item.EqPart.length>6?item.EqPart.substr(0,5)+'...':item.EqPart"></span>
+							</div>
+						</div>
+					</div>
+				</li>
+
+			</ul>
+			<p class="data-group-tip">
+				设备信息
+				<!--<a class="mui-pull-right" id="add" ng-click="tap('chooseEqu')">
+					<span class="icon-add"></span>
+				</a>-->
+			</p>
+			<ul class="data-group prodLibUl" ng-repeat="equ in equInfoList" ng-if="equ.IsDel!=1">
+
+				<!--<label style="width: 100px;display: inline-block;">设备名称</label>
+					<div class="body body-inventory"  style="display: inline-block;">
+						<div ng-bind="equ.EqName"></div>
+					</div>-->
+				<li class="data-row">
+					<label>设备名称</label>
+					<div class="body">
+						<div ng-bind="equ.EqName"></div>
+					</div>
+					
+				</li>
+				<li class="data-row">
+					<label>设备型号</label>
+					<div class="body">
+						<div ng-bind="equ.SkuName"></div>
+					</div>
+				</li>
+				<li class="data-row">
+					<label>设备编号</label>
+					<div class="body">
+						<div ng-bind="equ.EqIdentifier"></div>
+					</div>
+				</li>
+
+			</ul>
+		</div>
+		<div id="popover" class="mui-popover menuDivModel">
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell" ng-click="edit()">
+					<a class="mui-icon icon-edit" ng-class="!editAuth?'grey-btn':''">
+						<font>修改</font>
+					</a>
+				</li>
+				<li class="mui-table-view-cell" ng-click="del()">
+					<a class="mui-icon icon-dustbin" ng-class="!delAuth?'grey-btn':''">
+						<font>删除</font>
+					</a>
+				</li>
+				<li class="mui-table-view-cell" ng-click="UpPatrolPlanState()">
+					<a class="mui-icon icon-dustbin icon-eq-stop" ng-class="{'icon-state-normal':state==2,'grey-btn':state==3}">
+						<font ng-bind="state==2?'启用':'停用'"></font>
+					</a>
+				</li>
+			</ul>
+			</ul>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<!--<script type="text/javascript" src="../message/transMessage.js"></script>-->
+		<script>
+			app.controller("equInventoryEditController", ["$scope", "ApiService", "DataService", "UtilsService", "Loading", "RPCObserver", "CacheService", function($scope, ApiService, DataService, UtilsService, Loading, RPCObserver, CacheService) {
+				$scope.ID = query("planId"); 
+				var curUser = CacheService.get('user');
+				$scope.CreateUserID = query("cId") || 0;
+				$scope.datefrom=query("from") 
+				$scope.intoplan = query("intoplan")||false
+				//					console.log($scope.CreateUserID)
+				$scope.userId = curUser.UserID;
+				//获取admin或者管理员权限
+				$scope.hasAuth = false;
+				getAdminAuth();
+
+				function getAdminAuth() {
+					var userUrl = ApiService.Api50 + "/api/v1/Common/MdtGetIsAdmin/" + $scope.userId;
+
+					DataService.get(userUrl).then(function(res) {
+						if(res) {
+							//							console.log(JSON.stringify(res))
+							if(res.IsAdmin || res.IsCreater) {
+								$scope.hasAuth = true;
+							}
+						};
+					}, function(error) {
+
+					})
+				}
+
+				if($scope.ID > 0) {
+					$scope.isLoad = false;
+					getInventoryInfo();
+					//					getEqInventoryInfo();
+				}
+				//循环周期的单位
+				$scope.PeriodUnitList = {
+					1: '年',
+					2: '月',
+					3: '日',
+					4: '时'
+				}
+				$scope.standstate = {
+					0: "启用",
+					1: "启用",
+					2: "停用",
+					3: "已结束"
+				}
+				$scope.state = -1; //0，1启用，2停用， 3已结束
+				var equList = [];
+				$scope.equNums = 0; //设备数量
+				$scope.inventoryName = "";
+				//保养人信息
+				$scope.inventoryUserList = [];
+				$scope.userNums = 0;
+				$scope.deleteUserList = [];
+				//保养级别
+				$scope.Mlevel = "";
+				//开始执行时间
+				$scope.StartDate = ""
+				//截止时间
+				$scope.EndDate = ""
+				//设备信息列表
+				$scope.equInfoList = [];
+				//设备归类
+				$scope.equCatalogDataList = [];
+				//可修改权限
+				$scope.editAuth = false;
+				//可删除权限
+				$scope.delAuth = false;
+				//保养内容
+				$scope.inventoryContentList = [];
+				//获取保养计划信息
+				function getInventoryInfo() {
+					var url = ApiService.Api52 + "/api/v1/EqMaintain/GetEqMaintainPlanInfo?planId=" + $scope.ID;
+					DataService.get(url).then(function(res) {
+						Loading.hide();
+						$scope.isLoad = true;
+						if(res) {
+							$scope.state = res.State;
+							$scope.panstate = $scope.standstate[res.State]
+							$scope.memLevel = res.EqLevel
+							$scope.StartDate = res.StartDate.substr(0, 16)
+							$scope.EndDate = res.EndDate.substr(0, 16)
+							$scope.EqCount = res.EqCount
+							$scope.Numbers = res.Numbers
+							$scope.NextMaintainDate = res.NextMaintainDate
+							$scope.HaveCheck = res.HaveCheck
+                            $scope.inventoryContentList = res.ContentList
+                            if(res.CyclePeriod!=null){
+                            	$scope.CyclePeriod = res.CyclePeriod + $scope.PeriodUnitList[res.PeriodUnit]
+                            }
+                            query("from") == "unchecklist" && ($scope.state = -1);
+							$scope.inventoryName = res.PlanName;
+							$scope.equInfoList = res.EqpList.map(function(item) {
+								return {
+									"ID": item.ID,
+									"EqIdentifier": item.EqIdentifier,
+									"LastPlanDate": item.LastPlanDate,
+									"EqName": item.EqName,
+									"SkuName": item.SkuName,
+									"EQID": item.EQID,
+									"IsDel": 0,
+									"PlanID": item.PlanID
+								}
+							});
+
+							$scope.equCatalogDataList = res.CatalogList;
+//						
+							 $scope.inventoryUserList= res.Users.filter(function(item){
+										if(item.State !== '9') {
+											return true
+										}
+										})
+							 if($scope.inventoryUserList.length==0){
+							 	$scope.inventoryUserList = res.Users
+							 }
+							 console.log(JSON.stringify($scope.inventoryUserList))
+							//判断修改权限
+							getEditAuth();
+							//删除权限 无保养记录的 启用 停用 已结束 计划均可删除；有保养记录的均不可删除；
+							$scope.delAuth = !$scope.HaveCheck ? true : false;
+						
+						};
+
+					}, function(error) {
+						$scope.isLoad = true;
+
+					})
+				};
+				//修改
+				$scope.edit = function() {
+					if(!$scope.editAuth) return;
+					mui('#popover').popover('hide');
+				   UtilsService.openWindow({
+					needLogin: true,
+					id: 'equ-add-maintain-plan.html',
+					url: "equ-add-maintain-plan.html?planId=" + $scope.ID,
+
+				});
+				};
+				
+				//删除
+				$scope.del = function() {
+					if(!$scope.delAuth) return;
+					mui.confirm("确认删除吗？", function(e) {
+						if(e.index == 0) {
+							var url = ApiService.Api52 + "/api/v1/EqMaintain/DeleteEqMaintainPlanInfo/" + $scope.ID;
+							DataService.post(url).then(function(res) {
+								RPCObserver.broadcast('refresh_equ_inventory_list'); //刷新列表
+								mui.toast("删除成功");
+								mui('#popover').popover('hide');
+								setTimeout(function() {
+									mui.back();
+								}, 300);
+
+							}, function(error) {
+								mui('#popover').popover('hide');
+							});
+						} else {
+							mui('#popover').popover('hide');
+						}
+					});
+				}
+				
+			
+                //修改计划状态
+				$scope.UpPatrolPlanState = function() {
+					if($scope.state == 3) return;
+					var newState = $scope.state == 2 ? 1 : 2;
+					var url = ApiService.Api52 + "/api/v1/EqMaintain/UpMaintainPlanState/" + $scope.ID + "?state=" + newState;
+					DataService.get(url).then(function(res) {
+						if(res) {
+							mui.toast(newState == 1 ? "已启用该保养计划" : "已停用该保养计划");
+							getInventoryInfo();
+							RPCObserver.broadcast('refresh_equ_inventory_list'); //刷新列表
+							mui('#popover').popover('hide');
+						}
+					})
+				}
+                
+				//判断保养计划修改权限
+				function getEditAuth() {
+					var curDate = new Date();
+					//已超截止时间的，各状态计划均不可修改
+					if(new Date($scope.EndDate.replace(/\-/g, "\/")) < curDate) {
+						$scope.overDate = true;
+						$scope.editAuth = false;
+					}
+					//未到截止时间
+					else if(!$scope.HaveCheck) {
+						$scope.overDate = false;
+						//无保养记录的 启用 停用 已结束 计划均可修改
+						$scope.editAuth = true;
+					} else {
+						$scope.overDate = false;
+						//产生记录的 启用、已结束计划不可修改，停用计划可修改+
+						
+						$scope.editAuth = $scope.state == 2 ? true : false;
+						
+					}
+				}
+			RPCObserver.on('refresh_inventory_info', 'refresh_inventory_info');
+			window.refresh_inventory_info = function() {
+				getInventoryInfo()
+				}
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

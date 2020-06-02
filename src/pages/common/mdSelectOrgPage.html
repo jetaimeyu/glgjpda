@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+	</head>
+
+	<body ng-controller="selectSku">
+		<header class="mui-bar mui-bar-nav">
+			<!--<a class="mui-action-back mui-icon icon-back mui-pull-left">选择部门</a>-->
+			<a class="mui-icon icon-back mui-pull-left font-18 mui-ellipsis" style="line-height: 45px;width:100%;font-size: 1.7rem!important;padding: 0 16px!important;" ng-click="cancel()" ng-bind="title"></a>
+		</header>
+		<div style="margin-bottom:40px">
+			<md-select-org orgid='selectedOrgID' type='type' compid='compId' callback='selectOrg'></md-select-org>
+		</div>
+		<footer class="f_btns">
+			<a ng-click="cancel()">取消</a>
+			<a ng-click="save()" ng-bind="type=='register'?'加入':'确定'"></a>
+		</footer>
+		<script src="../../js/angular.min.js"></script>
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/common.js"></script>
+		<script src="../../js/utils.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			app.controller("selectSku", ["$scope", "UtilsService",function($scope, UtilsService) {
+					var ws = plus.webview.currentWebview();
+					$scope.type=query("type")||"";
+					if($scope.type=="register"){
+						$scope.title=ws.compName;
+						$scope.compId=ws.compId||0
+						document.activeElement.blur();
+					}else{
+						$scope.title="选择部门"
+					}
+					$scope.selectedOrgID = ws.selectedOrgID;
+					$scope.result = "";
+					$scope.selectOrg = function(org) {
+						$scope.result = org;
+					};
+
+					$scope.save = function() {
+				
+						if(!$scope.result) {
+							//如果已经存在已选中的，点击确定，直接返回
+							if($scope.selectedOrgID) {
+								$scope.cancel();
+								return;
+							}
+							if($scope.type=="register"){
+								ws.opener().evalJS(ws.callback + "(" + JSON.stringify($scope.result) + ")")
+								$scope.$broadcast("mui_back");
+								return;
+							}
+							mui.toast("请选择部门！");
+							return false;
+						}
+						ws.opener().evalJS(ws.callback + "(" + JSON.stringify($scope.result) + ")")
+						$scope.$broadcast("mui_back");
+					};
+
+					$scope.cancel = function() {
+						$scope.$broadcast("mui_back");
+					}
+				}
+			]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+				plus.webview.currentWebview().setStyle({
+					scrollIndicator: 'none'
+				});
+			});
+		</script>
+	</body>
+
+</html>

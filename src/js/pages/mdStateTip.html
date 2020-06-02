@@ -1,0 +1,45 @@
+<div class="empty" ng-switch="options.state">
+	<i class="mui-icon icon-warning"></i>
+	<div onClick="mui.back()" ng-switch-when="2">
+		<span ng-bind="options.msg +' 已被删除'"></span><br/>点击返回...
+	</div>
+	<div ng-click="options.retry()" ng-switch-when="-1">
+		<span>网络连接异常，请检查网络后</span><br/>点击重新加载......
+	</div>
+	<div ng-click="options.retry()" ng-switch-default>
+		<span ng-bind="'加载 ' + options.msg +' 信息失败'"></span><br/>点击重新加载...
+	</div>
+</div>
+<style>
+	.empty {
+		margin-top: 30vh;
+		width: 100%;
+		text-align: center;
+		word-break: break-all;
+		color: #999999;
+		font-size: 1.5rem;
+		padding: 0 15px;
+	}
+	
+	.empty i {
+		font-size: 1.7rem;
+		padding-right: 5px;
+	}
+	/*.empty:before {
+		font-family: "iconfont" !important;
+		content: "\e613";
+		margin-right: 5px;
+	}*/
+	
+	.empty-img {
+		margin-top: 15vh;
+		text-align: center;
+		display: block;
+		width: 100%;
+	}
+	
+	.empty-img img {
+		width: 40vw;
+		margin-left: 15px;
+	}
+</style>

@@ -1,0 +1,506 @@
+<!doctype html>
+<html id="MdTong">
+
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+	<link href="../../css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="../../css/common.css" />
+	<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	<style type="text/css">
+		.detail-title {
+			padding: 8px 16px 8px 16px;
+			background-color: #fff;
+		}
+
+		.detail-title::after {
+			content: "";
+			clear: both;
+			height: 0;
+			display: block;
+		}
+
+		.detail-content {
+			margin-top: 8px;
+			word-break: break-all;
+		}
+
+		.bid-list p,
+		.detail-content p {
+			margin-bottom: 0;
+			color: #323232;
+		}
+
+		.detail-content [width],
+		.detail-content [style*="width"] {
+			max-width: 100%;
+		}
+
+		.headline {
+			font-family: MicrosoftYaHei;
+			margin: 0;
+			font-size: 1.6rem;
+			font-weight: normal;
+			max-width: 100%;
+			color: #323232;
+			line-height: 1.5;
+			margin-bottom: 6px;
+			word-wrap: break-word;
+		}
+
+		.actionline {
+			font-size: 1.2rem;
+			color: #3296FA;
+			line-height: 12px;
+			margin-bottom: 10px;
+		}
+
+		.actionline span {
+			margin-left: 4px;
+		}
+
+		.scan-user-logo {
+			float: left;
+		}
+
+		.info-wrap {
+			line-height: 30px;
+		}
+
+		.info-item.name {
+			margin-left: 38px;
+			color: #323232;
+			font-size: 1.4rem;
+			max-width: 60vw;
+		}
+
+		.info-item.time {
+			color: #999999;
+			font-size: 1.2rem;
+			width: 20vw;
+			text-align: right;
+			float: right;
+			margin-top: -30px;
+		}
+
+		.content-wrap {
+			padding: 0 16px;
+		}
+
+		.tptal {
+			padding: 8px 16px;
+			font-size: 1.4rem;
+			color: #323232;
+			padding-bottom: 0;
+		}
+
+		.tptal i {
+			font-size: 1.4rem;
+			margin-right: 7px;
+		}
+
+		.tptal li {
+			min-height: 20px !important;
+			line-height: 20px;
+		}
+
+		.tptal .icon-right {
+			line-height: 2.1;
+			color: #555555;
+			margin-left: 6px;
+		}
+
+		.bid-list .data-group {
+			margin-top: 0;
+		}
+
+		md-compile img {
+			max-width: 100%;
+			width: auto !important;
+			height: auto !important;
+		}
+
+		md-compile ul {
+			padding-left: 40px;
+			list-style: disc;
+		}
+
+		footer.ing-info {
+			width: 100%;
+			position: fixed;
+			height: 44px;
+			line-height: 44px;
+			color: #fff;
+			z-index: 9;
+			bottom: 0;
+			background: #fff;
+			padding: 5px 0px 5px 0px;
+			border-top: 1px solid #ccc;
+		}
+
+		footer.ing-info span.inp {
+			font-size: 1.4rem;
+			margin: 0 16px;
+			height: 32px;
+			display: block;
+			background: #e9e9e9;
+			border-radius: 35px;
+			padding-left: 38px;
+			line-height: 32px;
+			color: #323232;
+		}
+
+		footer.ing-info .icon-pen {
+			position: absolute;
+			font-size: 1.4rem;
+			left: 34px;
+			top: -2px;
+			color: #000;
+		}
+
+		.detail-title .md-userCustomLogo {
+			font-size: 1.4rem;
+		}
+	</style>
+</head>
+
+<body ng-controller="AssistDetail">
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon icon-back mui-pull-left" ng-bind="title"></a>
+		<i class="mui-pull-right menu-more-share-mat icon-share" ng-click="shareIngInfo()" style="display: none;" ng-class="{'mui-block':isLoad}"></i>
+	</header>
+	<div class="mui-content" style="display: none;" ng-class="{'mui-block':isLoad}">
+		<!-- 头部信息 -->
+		<div class="detail-title">
+			<h1 class="headline" ng-bind="data.QTitle"></h1>
+			<div class="actionline">
+				<span ng-if="isFoucsing" style="margin-left: 0;" class="font-12">
+					<span class="mui-spinner" style="width: 12px;height: 12px;vertical-align: bottom;"></span>
+					<span class="color-gray-deep" style="margin-left: 0;">正在提交</span>
+				</span>
+				<i ng-if="!isFoucsing" ng-class="{'icon-concerned':!data.IsMyFollow,'icon-unconcerned':data.IsMyFollow}" ng-click="focusQ()">
+					<span ng-bind="data.IsMyFollow?'取消关注':'添加关注'"></span>
+				</i>
+				<i class="icon-pen" ng-click="answer()" style="margin-left: 30px;">
+					<span>回复</span>
+				</i>
+			</div>
+			<md-user-logo class="scan-user-logo" ng-model="avatar" data-width="30" data-height="30" ng-click="toperson(avatar)"></md-user-logo>
+			<div class="info-wrap">
+				<div class="info-item name mui-ellipsis" ng-bind="data.QUserInfo.UserName" ng-click="toperson(avatar)"></div>
+				<span class="info-item time" ng-bind="data.QTime&&(data.QTime|formatAgo)"></span>
+			</div>
+			<!-- 接单要求 -->
+			<div class="detail-content">
+				<md-compile data-template="data.QContent"></md-compile>
+			</div>
+		</div>
+		<!-- 投标企业列表 -->
+		<ul class="tptal data-group" ng-if="answers.length>0">
+			<li class="data-row">
+				<i class="icon-answer"></i>
+				<span ng-bind="answers.length+'个回复'"></span>
+				<!-- <span class="icon-right"></span> -->
+			</li>
+		</ul>
+
+		<div class="bid-list" style="padding-bottom:45px">
+			<md-ing-reply-list ng-model="answers" type="'ingList'"></md-ing-reply-list>
+		</div>
+		<!--无网络或请求失败重试-->
+		<md-state-tip options="retryModal" ng-show="retryModal.state"></md-state-tip>
+		<footer class="ing-info">
+			<span ng-click="answer()" class="inp">回复...</span>
+			<i class="icon-pen"></i>
+		</footer>
+	</div>
+	<script type="text/javascript" src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/angular.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/utils.js"></script>
+	<script type="text/javascript" src="../../js/rpc.js"></script>
+	<script type="text/javascript" src="../message/transMessage.js"></script>
+	<script type="text/javascript" src="../../js/xss.min.js"></script>
+	<script type="text/javascript">
+		app.controller("AssistDetail", ["$scope", "AuthService", "ApiService", "DataService",
+			"UtilsService", "ChatUserService", "Loading", "RPCObserver", "$filter", "CacheService", "$timeout",
+			function ($scope, AuthService, ApiService, DataService, UtilsService, ChatUserService, Loading, RPCObserver,
+				$filter, CacheService, $timeout) {
+				var curUser = CacheService.get("user");
+				$scope.isLoad = false;
+				$scope.answers = [];
+				$scope.avatar = {}
+				$scope.title = "";
+
+				$scope.type = query('type');
+				switch ($scope.type) {
+					case 1:
+						break;
+					default:
+						$scope.title = "详情"
+						break;
+				}
+
+				//无网络或请求失败重试
+				$scope.retryModal = {
+					msg: "",
+					retry: getAssistDetail,
+					state: ''
+				}
+
+				//获取问题详情
+				getAssistDetail();
+				//获取问题下回答列表
+				answerListQus();
+
+				//获取问题详情
+				function getAssistDetail() {
+					Loading.show();
+					var url = ApiService.Api50 + "/api/v1/QA/QusInfo?qId=" + query("id");
+					DataService.get(url).then(function (res) {
+						Loading.hide();
+						$scope.isLoad = true;
+						$scope.retryModal.state = '';
+						if (res) {
+							$scope.data = res;
+							$scope.data.QContent = res.QContent.replace(/(http?:)?(https?:)?\/\/www.maidiyun.com\/50/g, ApiService.Api50)
+								.replace(
+									/(http?:)?(https?:)?\/\/mdbox.maidiyun.com\/50/g, ApiService.Api50).replace(
+										/(http?:)?(https?:)?\/\/mdbox.maidiyun.com\/51/g, ApiService.Api50).replace(
+											/(http?:)?(https?:)?\/\/www.maidiyun.com\/51/g, ApiService.Api50).replace("757px", "100%").replace(
+												/="\/static\/img\//g, '="' + ApiService.MdBox + '/static/img/');
+							$scope.avatar = {
+								UserID: res.QUserInfo.UserID,
+								ViewName: res.QUserInfo.UserName,
+								ULogoIsExist: res.QUserInfo.ULogoIsExist
+							}
+
+							setTimeout(function () {
+								preViewImage();
+							}, 500);
+						}
+					}, function (error) {
+						$scope.retryModal.state = error.State;
+					});
+				};
+				$scope.toperson = function (item) {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: "personal-info.html",
+						url: "../../pages/contact/personal-info.html?userid=" + item.UserID,
+					});
+				}
+				var imagesArray = [];
+
+				function preViewImage() {
+					var images = document.querySelectorAll(".detail-content img");
+
+					angular.forEach(images, function (item) {
+						var _src = item.getAttribute("src");
+						if (_src.indexOf(ApiService.MdBox + "/static/img/") < 0) {
+							imagesArray.push(_src)
+						}
+					})
+
+					if (imagesArray.length > 0) {
+						mui(".detail-content").on("tap", "img", function () {
+							var _src = this.getAttribute("src");
+							var index = imagesArray.indexOf(_src);
+							if (index >= 0) {
+								plus.nativeUI.previewImage(imagesArray, {
+									current: index,
+									loop: true,
+									indicator: 'number'
+								});
+							}
+						})
+					}
+				};
+
+				$scope.isFoucsing = false;
+				//关注问题
+				$scope.focusQ = function () {
+					$scope.isFoucsing = true;
+					if ($scope.data.IsMyFollow) {
+						//已关注->取消关注
+						var url = ApiService.Api50 + "/api/v1/QA/QusFollowCancel?qId=" + query("id");
+						DataService.post(url).then(function (res) {
+							$scope.data.IsMyFollow = false;
+							$scope.isFoucsing = false;
+							RPCObserver.broadcast('refresh_my_follow_ing');
+							$timeout(function () {
+								$scope.isFoucsing = false;
+							}, 200);
+						})
+					} else {
+						//未关注->关注问题
+						var url = ApiService.Api50 + "/api/v1/QA/QusFollow?qId=" + query("id");
+						DataService.post(url).then(function (res) {
+							$scope.data.IsMyFollow = true;
+							RPCObserver.broadcast('refresh_my_follow_ing');
+							$timeout(function () {
+								$scope.isFoucsing = false;
+							}, 200);
+						})
+					}
+				};
+
+				//回答保存
+				var a = 1;
+				$scope.answer = function () {
+					if (a == 1) {
+						a = 0;
+						UtilsService.replyModal(150, "", "请输入回复内容").then(function (res) {
+							var url = ApiService.Api50 + '/api/v1/QA/AnswerSave?qId=' + query("id");
+							var postData = {
+								"ID": 0,
+								"AContent": res,
+								"IsPay": 0,
+								"TunePrice": 0
+							}
+							DataService.post(url, postData).then(function (res) {
+								if (res) {
+									mui.toast("回复成功");
+
+									ChatUserService.sendQANotice({
+										chatId: $scope.data.QUserInfo.UserID,
+										chatName:$scope.data.QUserInfo.UserName,
+										Content:($scope.data.Type	 == 2 ? "回答了您的问题" : "回复了您的帖子")+ $scope.data.QTitle
+									});
+									RPCObserver.broadcast('refresh_my_reply_ing');
+									answerListQus();
+								}
+							});
+
+						});
+						setTimeout(function () {
+							a = 1
+						}, 500);
+					}
+				}
+
+				//获取问题下回答列表
+				function answerListQus() {
+					// Loading.show();
+					var url = ApiService.Api50 + "/api/v1/QA/AnswerListQus?orderType=2&qId=" + query("id") +
+						"&pageIndex=1&pageSize=9999";
+					DataService.get(url).then(function (res) {
+						$scope.retryModal.state = '';
+						if (res) {
+							// 组件头像
+							for (var i = 0; i < res.DataRow.length; i++) {
+								var item = res.DataRow[i];
+								item.AContent = item.AContent.replace(/(http?:)?(https?:)?\/\/www.maidiyun.com\/50/g, ApiService.Api50).replace(
+									/(http?:)?(https?:)?\/\/mdbox.maidiyun.com\/50/g, ApiService.Api50).replace(
+										/(http?:)?(https?:)?\/\/mdbox.maidiyun.com\/51/g, ApiService.Api50).replace(
+											/(http?:)?(https?:)?\/\/www.maidiyun.com\/51/g, ApiService.Api50).replace(
+												"757px", "100%").replace(/="\/static\/img\//g, '="' + ApiService.MdBox + '/static/img/');
+								item.avatar = {
+									UserID: item.AUserInfo.UserID,
+									ViewName: item.AUserInfo.UserName,
+									ULogoIsExist: item.AUserInfo.ULogoIsExist
+								}
+							}
+							$scope.answers = res.DataRow;
+						}
+					}, function (error) {
+						$scope.retryModal.state = error.State;
+					});
+				};
+
+				//刷新页面数据
+				RPCObserver.on('refresh_inglist_detail', 'refresh_inglist_detail');
+				RPCObserver.on('refresh_Assist_detail', 'refresh_Assist_detail');
+				window.refresh_Assist_detail = function () {
+					getAssistDetail();
+					answerListQus();
+				};
+				window.refresh_inglist_detail = function (item) {
+					$scope.newcount = item.map(function (res) {
+						return $scope.res = {
+							ID: res.ID,
+							PosCount: res.PosCount,
+							NegCount: res.NegCount,
+							IsMyJudgeNeg: res.IsMyJudgeNeg,
+							IsMyJudgePos: res.IsMyJudgePos
+						}
+					})
+
+					var index = $scope.answers.findIndex(function (item) {
+						return item.ID == $scope.res.ID;
+					})
+					$scope.answers[index].ID = $scope.res.ID;
+					$scope.answers[index].PosCount = $scope.res.PosCount;
+					$scope.answers[index].NegCount = $scope.res.NegCount;
+					$scope.answers[index].IsMyJudgeNeg = $scope.res.IsMyJudgeNeg;
+					$scope.answers[index].IsMyJudgePos = $scope.res.IsMyJudgePos;
+
+					$scope.$apply()
+				};
+
+				//详情分享
+				$scope.shareIngInfo = function () {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: "contact-select.html",
+						url: "../common/contact-select.html?action=select&must=true&multiselect=true&hideself=true",
+						extras: {
+							selectObj: [],
+							callback: 'shareIngInfo'
+						}
+					});
+				};
+
+				$scope.doPickShare = function (sltUsers) {
+					var obj = {
+						id: query("id"),
+						img: ApiService.Down + "/chat/question.png",
+						title: "设计圈",
+						desc: $scope.data.QTitle
+					}
+					UtilsService.shareMsg(obj, sltUsers).then(function () {
+						var userNames = [];
+						sltUsers.forEach(function (user) {
+							userNames.push(user.ViewName);
+							ChatUserService.send({
+								chatId: user.UserID,
+								chatName: user.ViewName,
+								chatCompId: user.EquipmentID,
+								hasLogo: curUser.ULogoIsExist,
+								chatLogo: user.ULogoIsExist,
+								type: 7,
+								content: {
+									eventName: "question",
+									logo: ApiService.Down + "/chat/question.png",
+									title: "设计圈",
+									desc: $scope.data.QTitle,
+									params: [query("id")]
+								}
+							});
+						})
+
+						mui.toast("成功分享给：" + userNames.join("，"));
+					});
+
+				}
+
+			}
+		]);
+
+		function shareIngInfo(sltObjs) {
+			var appElement = document.querySelector('[ng-controller=AssistDetail]');
+			var $scope = angular.element(appElement).scope();
+			$scope.doPickShare(angular.copy(sltObjs));
+		}
+
+		mui.plusReady(function () {
+			angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			plus.webview.currentWebview().setStyle({
+				scrollIndicator: 'none'
+			});
+		});
+	</script>
+</body>
+
+</html>

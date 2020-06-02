@@ -1,0 +1,120 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/common.css" />
+		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
+	</head>
+	<style type="text/css">
+		.mgt0 {
+			margin-top: 0px;
+		}
+		
+		.data-group .data-row .opt:not(.md-icon):after {
+			width: 0;
+		}
+		
+		.pull-info {
+			text-align: center;
+			font-size: 15px;
+			margin-top: 5px;
+			color: #999999;
+		}
+		
+		.comp-logo {
+			width: 50px;
+			height: 50px;
+			border-radius: 50px;
+			float: left;
+			border: 1px solid #F2F2F2;
+			margin-right: 10px;
+		}
+		
+		.mdMyOutStockList .body-right {
+			width: -moz-calc(100% - 60px);
+			width: -webkit-calc(100% - 60px);
+			width: calc(100% - 60px);
+			padding-right: 5px;
+			float: left;
+		}
+	</style>
+
+	<body ng-controller="WorkAllController">
+		<div id="pullrefresh" ng-controller="pullrefreshController" class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<div class="mui-content">
+				<ul class="data-group" ng-show="data.length>0&&Viewpermission">
+					<li style="padding-left: 10px;" class="data-row mui-table-view-cell" ng-repeat="row in data" ng-click="tap(row)">
+						<div class="body" style="padding-right: 15px;">
+							<img class="comp-logo" ng-src="{{ImgSrc+'_' + row.CustCompID + '_100x100.jpg'}}">
+							<!--ng-bind="row.CustomerType==3?row.LinkName:row.CustomerName"-->
+							<div class="body-right">
+								<span ng-bind="row.CustomerType==3?row.LinkName:row.CustomerName"></span>
+								<p style="margin-top: 5px;">
+									<span class="mui-pull-left" style="width: 110px;">共 <span class="color-red-md" ng-bind="row.OutCount"></span> 个产品</span><span ng-bind="row.OutDate"></span>
+								</p>
+							</div>
+
+						</div>
+						<p class="opt md-icon">
+							<span class="icon-right"></span>
+						</p>
+					</li>
+				</ul>
+				<md-no-data ng-show="data && data.length==0">暂无数据</md-no-data>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script>
+			app.controller("WorkAllController", ["$scope", "ApiService", "RPCObserver", "UtilsService", function($scope, ApiService, RPCObserver, UtilsService) {
+				$scope.ImgSrc = ApiService.Pic + "/" + imgPath.cmpLogo; //Y29tcC9sb2dv
+				$scope.Viewpermission = true; //是否有查看权限
+				$scope.pageIndex = 0;
+				$scope.pageSize = 10;
+				var type = query("type");
+
+				function init() {
+					var url = ApiService.Api50 + "/api/v1/Stock/";
+					switch(type) {
+						case 'my':
+							url += "GetMdtOutStockList?page=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize+ '&isAll=0';
+							break;
+						case 'dept':
+						case 'depts':
+						case 'all':
+							var authType = {
+								dept: 2,
+								depts: 3,
+								all: 4
+							};
+							url += "GetMdtOutStockList?page=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize + "&authType=" + authType[type] + '&isAll=1';
+							break;
+					}
+					$scope.url = url;
+				};
+
+				$scope.$on('refresh_pageindex', init);
+				$scope.tap = function(item) {
+					UtilsService.openWindow({
+						needLogin: true,
+						id: 'order-save.html',
+						url: 'order-save.html?id=' + item.ID + '&isview=1' + '&isedit=' + (item.OutType == 1 ? 1 : 0),
+					});
+				}
+
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

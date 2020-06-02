@@ -1,0 +1,105 @@
+<div class="body drop-down-body" style="padding-right:26px">
+	<!--ng-blur="closeDrop()"-->
+	<input type="text" maxlength="100" ng-blur="closeDrop()" lenlimit="100" placeholder="{{options.labname}}" style="margin-bottom: 0;" ng-model="model.Name" ng-change="getData(options.url,options.labname)" ng-style="{'width':model.Name&&rows.length>0&&'calc(100% - 10px)'}" />
+	<i class="opt md-icon icon-roundclose" ng-click="clearName()" ng-if="model.Name&&rows.length>0"></i>
+</div>
+<ul class="drop-down  drop-down-content data-group" ng-if="rows.length>0" id="{{'drop_ul'+options.labname}}">
+	<li class="data-row" ng-repeat="m in rows" ng-click="select(m,options.isFault)">
+		<span>{{m.Name}}</span>
+		<i class="opt md-icon icon-arrow-left-top"></i>
+	</li>
+</ul>
+<div class="drop-down data-group drop-footer" ng-if="rows.length>0" id="{{'drop_btn'+options.labname}}">
+
+	<li class="data-row drop-down-close" ng-click="select()">
+		<span class="opt">关闭</span>
+	</li>
+
+</div>
+<style>
+	.drop-down.drop-down-content {
+		max-height: 230px;
+		height: auto;
+	}
+	
+	.body.drop-down-body input {
+		width: -moz-calc(100% - 20px);
+		width: -webkit-calc(100% - 20px);
+		width: 100%;
+		padding-right:8px!important;
+	}
+	
+	.drop-down.drop-down-content span {
+		width: -moz-calc(100% - 20px);
+		width: -webkit-calc(100% - 20px);
+		width: calc(100% - 20px);
+		overflow: hidden;
+		word-break: break-all;
+	}
+	
+	.body.drop-down-body .icon-roundclose {
+		right: 55px;
+		padding: 9px 5px 10px 5px
+	}
+	
+	.drop-down {
+		right: 10px;
+		position: absolute;
+		z-index: 5;
+		/*	left: 0;*/
+		left: 112px;
+		margin-top: 12px;
+		background: #fff;
+		/*box-shadow: 3px 3px 2px #ddd;*/
+		overflow: auto;
+	}
+	
+	.data-group.drop-footer {
+		/*margin-top: 230px;*/
+	}
+	
+	.drop-down li {
+		padding: 0 9px;
+		font-size: 1.3rem;
+	}
+	
+	.drop-down li:hover {
+		background-color: #85C2FF;
+	}
+	
+	.drop-down.data-group:before,
+	.drop-down.data-group:after,
+	.drop-down.data-group .data-row:after {
+		height: 0;
+	}
+	
+	.drop-down-close {
+		background: #eee;
+	}
+	
+	.drop-down.data-group .data-row:first-child:before {
+		height: 0px;
+	}
+	
+	.drop-down .data-row.drop-down-close .opt {
+		color: #3296FA;
+		min-width: 50px!important;
+	}
+	/*.drop-down-content.data-group .data-row .opt{
+		top:calc(100%-6.5px);
+		 top: -moz-calc(100% - 6.5px);
+           top: -webkit-calc(100% - 6.5px);
+	}*/
+	
+	.drop-down.data-group .data-row:before {
+		position: absolute;
+		left: 10px;
+		right: 10px;
+		top: 0;
+		height: 1px;
+		content: '';
+		-webkit-transform: scaleY(0.5);
+		transform: scaleY(0.5);
+		background-color: #EAEAEA;
+	}
+</style>

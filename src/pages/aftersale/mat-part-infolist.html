@@ -1,0 +1,184 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>配件更换记录</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/common.css">
+		<link rel="stylesheet" href="../../icon-font/iconfont.css">
+	</head>
+
+	<body ng-controller="Matpullrefreshroller">
+		<div id="pullrefresh" class="mui-scroll-wrapper" style="display: none;" ng-class="{'mui-block':isLoad}">
+			<div class="mui-content">
+				<md-mat-part-infolist ng-model="partList"></md-mat-part-infolist>
+				<md-no-data ng-show="partList==''">暂无数据</md-no-data>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript">
+			app.controller("Matpullrefreshroller", ["$scope", "$filter", "ApiService", "DataService", "UtilsService", "Loading", "RPCObserver", function($scope, $filter, ApiService, DataService, UtilsService, Loading, RPCObserver) {
+				$scope.pageIndex = 0; //页数
+				$scope.pageSize = 10; //每页数量
+				var networkCanUse = true;
+				$scope.partList = null;
+				$scope.isLoad = false;
+				//迈迪码
+				$scope.MDCode = query("mdcode") || "";
+				$scope.innercode = query("innercode") || "";
+				$scope.prodCompId = query("prodCompId") || "";
+				$scope.perUserId = query("perUserId") || "";
+				$scope.type = query("type");
+				var typeLog = {
+					"dept": 2,
+					"depts": 3,
+					"all": 4
+				}
+				$scope.customerId = query("customerid") || 0;
+				//统计
+				$scope.statistics = {
+					year: query("year") || "",
+					quarter: query("quarter") || "",
+					month: query("month") || "",
+					prodid: query("prodid") || "",
+					skuid: query("skuid") || ""
+				}
+				//入参需要的 日期格式
+				$scope.customerDate = $filter("getCustomDate")($scope.statistics.year, $scope.statistics.quarter, $scope.statistics.month);
+				Loading.show();
+
+				function getPartInfo(type) {
+					var url = ApiService.Api50 + "/api/v1/MatWorkOrder/";
+					switch($scope.type) {
+						case 'dept':
+						case 'depts':
+						case 'all':
+							url += "GetPartsRecord?page=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize + "&starTime=" + $scope.customerDate.start + "&endTime=" + $scope.customerDate.end + "&prodId=" + $scope.statistics.prodid + "&skuId=" + $scope.statistics.skuid + "&mdCode=" + $scope.MDCode + "&innerCode=" + encodeURIComponent($scope.innercode);
+							$scope.prodCompId &&(url += "&prodCompId=" + $scope.prodCompId);
+							$scope.perUserId &&(url += "&perUserId=" + $scope.perUserId);
+							break;
+						case 'my':
+							url += "GetMyPartsRecord?page=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize;
+							break;
+						default:
+							break;
+					}
+					$scope.customerId && (url += "&customerId=" + $scope.customerId);
+					DataService.get(url).then(function(res) {
+						if(type == "down" || $scope.pageIndex == 1) {
+							$scope.partList = [];
+						}
+
+						Loading.hide();
+						$scope.isLoad = true;
+						networkCanUse = true;
+
+						if($scope.pageIndex != 1 && res.Data != '') {
+							if($scope.partList[$scope.partList.length - 1].Date == res.Data[0].Date) {
+								$scope.partList[$scope.partList.length - 1].DataRows = $scope.partList[$scope.partList.length - 1].DataRows.concat(res.Data[0].DataRows);
+								res.Data.shift();
+								$scope.partList = $scope.partList.concat(res.Data);
+							} else {
+								$scope.partList = $scope.partList.concat(res.Data);
+							}
+						} else {
+							$scope.partList = $scope.partList.concat(res.Data);
+						}
+
+						var resDataRows = [];
+						for(var i = 0; i < $scope.partList.length; i++) {
+							resDataRows = resDataRows.concat($scope.partList[i].DataRows);
+						}
+
+						var isEnd = resDataRows.length >= res.TotalCount;
+						if(mui("#pullrefresh").pullRefresh()) {
+							if(type == "down") {
+								mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
+								mui('#pullrefresh').pullRefresh().refresh(true);
+								mui("#pullrefresh").pullRefresh().endPullupToRefresh(isEnd);
+							} else {
+								mui("#pullrefresh").pullRefresh().endPullupToRefresh(isEnd);
+							}
+						}
+						var tip = document.querySelector('.mui-pull-bottom-pocket');
+						if(tip) {
+							if(resDataRows.length == 0) {
+								tip.classList.contains('mui-visibility') && tip.classList.remove('mui-visibility');
+								tip.classList.contains('mui-block') && tip.classList.remove('mui-block');
+							} else {
+								!tip.classList.contains('mui-visibility') && tip.classList.add('mui-visibility');
+								!tip.classList.contains('mui-block') && tip.classList.add('mui-block');
+							}
+						}
+					}, function() {
+						$scope.isLoad = true;
+						networkCanUse = false;
+						if(mui("#pullrefresh").pullRefresh()) {
+							setTimeout(function() {
+								if(type == "down") {
+									mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
+								} else {
+									mui("#pullrefresh").pullRefresh().endPullupToRefresh(false);
+								}
+							}, 800)
+						}
+					})
+				}
+				RpcServer.expose("RPC_MatMaintenancePactInfo", function(params) {
+					$scope.statistics.skuid = params.SkuID;
+					$scope.statistics.prodid = params.ProdID;
+					reload()
+				});
+
+				RPCObserver.on('refresh_mat_part_list', 'refresh_mat_part_list');
+				window.refresh_mat_part_list = downpullRefresh;
+
+				function reload() {
+					mui("#pullrefresh").pullRefresh() && mui('#pullrefresh').pullRefresh().refresh(true);
+					$scope.partList = null;
+					downpullRefresh();
+				}
+
+				//下拉刷新
+				function downpullRefresh() {
+					$scope.pageIndex = 1; //页数
+					getPartInfo("down");
+				};
+				//上拉加载
+				function uppullRefresh() {
+					if(networkCanUse) {
+						$scope.pageIndex++; //页数
+					}
+					getPartInfo();
+				};
+
+				//下拉刷新,上拉加载
+				setTimeout(function() {
+					mui.init({
+						pullRefresh: {
+							container: '#pullrefresh',
+							up: {
+								auto: true,
+								callback: uppullRefresh
+							},
+							down: {
+								callback: downpullRefresh
+							}
+						}
+					});
+				});
+			}]);
+
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

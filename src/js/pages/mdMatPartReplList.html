@@ -1,0 +1,57 @@
+<!--mat配件更换list-->
+<ul class="partDomUl data-group" ng-show="model.length!=0">
+	<li class="data-row partDomHead">
+		<p class="opt md-icon font-15 close">
+		</p>
+		<div class="body mui-grid-view mui-row">
+			<div class="mui-table-view-cell mui-media mui-col-xs-5 mui-col-sm-5 width30">新件编号</div>
+			<div class="mui-table-view-cell mui-media mui-col-xs-2 mui-col-sm-2 width30">旧件编号</div>
+			<div class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 width40">旧件规格</div>
+		</div>
+	</li>
+	<li class="data-row partDomList" ng-repeat="(index,item) in model" ng-show="item.IsDelete!=1">
+		<p class="opt md-icon font-15 close">
+			<span class="icon-delete partDomIcon" ng-if="showDelBtn()" ng-click="delPartItem(index)"></span>
+		</p>
+		<div class="body mui-grid-view  mui-row">
+			<div class="mui-table-view-cell mui-media mui-col-xs-5 mui-col-sm-5 width30 mui-ellipsis-2 remarkscontent">
+				<input type="text" class="partDomInp" id="newNum" placeholder="新件编号" value="" ng-value="item.NewPartsNum" name="partnewnum" maxlength="50" />
+			</div>
+			<div class="mui-table-view-cell mui-media mui-col-xs-2 mui-col-sm-2 width30 mui-ellipsis-2 remarkscontent">
+				<input type="text" class="partDomInp" id="oldNum" placeholder="旧件编号" value="" ng-value="item.OldPartsNum" name="partoldbum" maxlength="50" />
+			</div>
+			<div class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3 width40 mui-ellipsis-2 remarkscontent">
+				<input type="text" class="partDomInp" id="oldSpec" placeholder="旧件规格" value="" ng-value="item.OldPartsSpec" name="partoldspec" maxlength="50" />
+			</div>
+		</div>
+	</li>
+</ul>
+<style type="text/css">
+	.partDomUl.data-group .data-row .body {
+		padding: 10px 0 9px 16px;
+		/*CSS3弹性盒子*/
+		display: -ms-flex;
+		display: -webkit-flex;
+		display: flex;
+		-webkit-flex-direction: row;
+		-ms-flex-direction: row;
+		flex-direction: row;
+		-ms-flex-align: center;
+		-webkit-align-items: center;
+		-webkit-box-align: center;
+		align-items: center;
+	}
+	
+	.partDomHead>div {
+		font-weight: bold;
+	}
+	
+	.partDomUl.data-group {
+		margin-top: 8px;
+	}
+	
+	.partDomUl input {
+		width: 90%;
+		border: 1px solid #EAEAEA!important;
+	}
+</style>

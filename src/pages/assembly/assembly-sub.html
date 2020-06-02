@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<link rel="stylesheet" href="../../css/common.css">
+		<style>
+			.mui-card {
+				box-shadow: none;
+			}
+			
+			.mui-card-header {
+				background-color: #F6FBFF;
+			}
+			
+			.mui-card-header:after {
+				height: 0;
+			}
+			
+			.mui-table-view .mui-media-object {
+				border: 0;
+				background: none;
+			}
+			
+			.mui-table-view .mui-media-object {
+				width: 80px;
+				text-align: right;
+				max-width: 80px;
+			}
+			
+			.right-boder {
+				border-right: 1px solid #63B1FF;
+			}
+			
+			.mui-card-header .pro-title {
+				font-size: 16px;
+				color: #333333;
+				margin-left: 5px;
+				font-weight: bold;
+			}
+			
+			.mui-card-header .pro-state {
+				font-size: 13px;
+				flex: none;
+			}
+			
+			.mui-card-header .state-ing {
+				color: #04CDDB;
+			}
+			
+			.mui-card-header .state-wait {
+				color: #FFB76F;
+			}
+			
+			.mui-card-header .state-done {
+				color: #999999;
+			}
+			
+			.mui-card-content .mui-media-body {
+				font-size: 14px;
+				color: #323232;
+			}
+			
+			.mui-card-content .mui-media-body .codenumber {
+				font-size: 13px;
+				color: #333333;
+			}
+			
+			.mui-card-content .mui-media-body .sku {
+				font-size: 13px;
+				color: #999999;
+			}
+			
+			.mui-card-footer .mui-row {
+				text-align: center;
+				font-size: 13px;
+				color: #3296FA;
+			}
+			
+			.mui-card-content .mui-empty {
+				text-align: center;
+				color: #3296FA;
+				font-size: 13px;
+			}
+			
+			.show-more {
+				display: flex;
+				color: #ffffff;
+				text-align: center;
+				height: 40px;
+				line-height: 40px;
+				font-size: 16px;
+				box-shadow: 0 -1px 5px #eee;
+				position: fixed;
+				bottom: 0;
+				left: 0;
+				width: 100%;
+				box-sizing: border-box;
+				background-color: #007aff;
+			}
+			
+			.scanline {
+				display: inline-block;
+				height: 20px;
+				width: 1px;
+				line-height: 40px;
+				background: #FFFFFF;
+				float: right;
+				margin-top: 8px;
+				opacity: 0.3116;
+				box-shadow: 1px 0 0 #124477;
+			}
+			
+			.mui-popover {
+				/*min-width: 260px;*/
+				/*height: 370px;*/
+				position: fixed;
+				top: 50%;
+				/*bottom: 50%;*/
+				/*position: absolute;
+				top: 65%;
+				margin-top: -150px;*/
+				left: 50% !important;
+				margin-left: -141px;
+				border-radius: 3px;
+				background-color: #fff;
+				margin-top: -100px;
+			}
+			
+			.mui-popover .mui-popover-arrow {
+				display: none !important;
+			}
+			
+			.mui-popover .data-group:before {
+				height: 0;
+			}
+			
+			.mui-popover .data-group .data-row:after {
+				left: 10px;
+				background-color: #E5E5E5;
+			}
+			
+			.mui-popover .data-group .data-row.first:after {
+				left: 5px;
+				right: 5px;
+				background-color: #E5E5E5;
+				height: 0!important;
+			}
+			
+			.mui-popover .data-group .data-row:last-child:after {
+				height: 1px;
+				left: 5px;
+				right: 5px;
+			}
+			
+			.mui-popover .data-group .data-row.first {
+				min-height: 38px
+			}
+			
+			.addelment a {
+				background-color: #3296FA;
+				color: #fff;
+				padding: 10px 0;
+				border: 1px solid #3296FA;
+				border-top-left-radius: 0;
+				border-top-right-radius: 0;
+			}
+			
+			.data-group .data-row .label-gray {
+				color: #333333;
+			}
+			
+			.info-title {
+				margin-left: 10px;
+				line-height: 1;
+				color: #1f1f1f;
+			}
+			
+			.title {
+				color: #1f1f1f;
+			}
+			
+			.data-group .data-row label~.body {
+				margin-left: 60px;
+				margin-right: 25px;
+			}
+			
+			.mui-popover {
+				padding: 0;
+				background: #F6FBFF;
+			}
+			
+			.mui-popover .mui-icon-closeempty {
+				float: right;
+				margin-top: 5px;
+				margin-right: 5px;
+				height: 29px;
+				width: 25px;
+			}
+			
+			.mui-popover .data-group .data-row .body {
+				padding: 8px 0px 5px 10px;
+			}
+			
+			.data-group .data-row .body input,
+			.data-group .data-row .body>span,
+			.data-group .data-row .body select {
+				padding: 0 5px 5px 5px;
+			}
+			
+			.mui-popover .needsclick {
+				width: 100%;
+			}
+			
+			.mui-popover .edit {
+				margin: 0px 0px 0px 10px !important;
+			}
+			
+			.mui-content>.mui-card:first-child {
+				margin-top: 0px;
+			}
+			
+			.mui-card {
+				margin: 0 10px 10px;
+			}
+			
+			.mui-card-header .mui-icon img {
+				width: 18px;
+				width: 15px;
+			}
+			
+			.selProducticon {
+				width: 25px;
+				float: right;
+				padding-top: 7px;
+				height: 40px;
+			}
+			
+			.del-button {
+				background-color: #E64340 !important;
+				border: 1px solid #E64340 !important;
+				/*background-color: #F5F5F5 !important;
+                border: 1px solid #F5F5F5 !important;
+                 color: #333333 !important;*/
+			}
+			
+			.mui-show {
+				display: block;
+			}
+			
+			.noParts {
+				text-align: center;
+				color: #999999;
+			}
+			
+			.start-ass {
+				font-size: 13px;
+				color: #3296FA;
+				text-align: center;
+			}
+			
+			.adjust-ass {
+				font-size: 13px;
+				color: #93ABC3;
+				text-align: center;
+			}
+			
+			.data-group .data-row label,
+			.data-group .data-row .opt,
+			.data-group .data-row .body.arrow:after {
+				position: absolute;
+				top: 50%;
+				-webkit-transform: translateY(-50%);
+				transform: translateY(-50%);
+				overflow: hidden;
+				margin: 0;
+			}
+			
+			.data-group .data-row {
+				display: block;
+			}
+			
+			.data-group .data-row label {
+				width: 70px;
+				left: 10px;
+				color: #666;
+			}
+			
+			.part-right-btn {
+				width: 50%;
+				display: inline-block;
+				margin-bottom: 0px !important;
+				border-bottom-right-radius: 0;
+			}
+			
+			.part-left-btn {
+				width: 50%;
+				display: inline-block;
+				border-bottom-left-radius: 0;
+			}
+			
+			.dis-none {
+				display: none;
+			}
+			
+			.dis-block {
+				display: block;
+			}
+			
+			.mui-table-view-cell:after {
+				left: 0;
+			}
+			
+			.top-line:before {
+				height: 1px !important;
+			}
+			
+			.edit {
+				margin-top: 10px;
+				height: auto;
+			}
+			
+			.startDataNone {
+				height: 190px;
+				background: #fff;
+				text-align: center;
+				position: relative;
+				padding-top: 60px;
+			}
+			
+			.startDataNone .noneConcent {
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				right: 0;
+				left: 0;
+				margin: auto;
+				height: 70px;
+			}
+			
+			.startDataNone p {
+				color: #999999;
+				font-size: 15px;
+			}
+			
+			.mui-popover .edit input {
+				margin-right: 0px !important;
+			}
+			
+			.empty {
+				margin-top: 30vh;
+				width: 100%;
+				text-align: center;
+				word-break: break-all;
+				color: #666666;
+				font-size: 1.5rem;
+				padding: 0 15px;
+			}
+		</style>
+	</head>
+
+	<body ms-controller="productCtrl" class="ms-controller">
+		<!--头部-->
+		<div id="pullrefresh" class="mui-scroll-wrapper" style="margin-top: 10px;">
+			<div class="mui-scroll">
+				<div class="mui-content main-content">
+					<!--<div class="mui-input-row mui-search">
+						<input type="search" class="mui-input-clear" placeholder="">
+					</div>-->
+					<div class="mui-card" ms-for="(index,item) in palletList">
+						<div class="mui-card-header"><span class="mui-ellipsis"><i class="mui-icon "><img src="../../images/Bitmap.png"></i><span class="pro-title openDia" ms-attr="{'data-index':index}">{{item.HostProdInnerCode}}</span></span>
+							<span ms-class="['mui-pull-right pro-state',(item.PartList==null||item.PartList.length==0)?'':'conparts']" ms-html="item.State|getAssState(item.PartList)"></span>
+						</div>
+						<!--内容区-->
+						<div ms-class="['mui-card-content',item.State==1?'dis-block':'dis-none']">
+							<ul class="mui-table-view">
+								<li class="mui-table-view-cell mui-media" ms-for="(indexchi,parts) in item.PartList" ms-attr="{'data-partindex':indexchi,'data-index':index}">
+									<a href="javascript:;">
+										<div class="mui-media-object mui-pull-right codenumber mui-ellipsis">{{parts.PartProdInnerCode}}</div>
+										<div class="mui-media-body ">
+											<span class="mui-ellipsis">{{parts.PartProdName}}</span>
+											<p class='mui-ellipsis sku'>{{parts.PartSkuName}}</p>
+										</div>
+									</a>
+								</li>
+							</ul>
+
+						</div>
+						<ul class="mui-table-view top-line" ms-if="item.State==2">
+							<li class="mui-table-view-cell StartHostAss start-ass" ms-attr="{'data-index':index,'data-id':item.GroupHostAssID}">
+								开始装配
+							</li>
+						</ul>
+						<ul class="mui-table-view top-line" ms-if="item.State==3">
+							<li class="mui-table-view-cell StartHostAss adjust-ass" ms-attr="{'data-index':index,'data-id':item.GroupHostAssID}">
+								调整装配
+							</li>
+						</ul>
+						<ul class="mui-table-view top-line" ms-if="item.State==1">
+							<li class="mui-table-view-cell adjust-ass StartHostAss" ms-attr="{'data-index':index,'data-id':item.GroupHostAssID}">
+								已装{{item.PartList==null?0:item.PartList.length}}个配件
+							</li>
+						</ul>
+						<!--页脚，放置补充信息或支持的操作-->
+						<!--<div class="mui-card-footer" ms-if="item.State==1" style="display: block">
+							<div class="mui-row" style="line-height: 24px">
+								<div class="mui-col-sm-4 mui-col-xs-4 right-boder openParts" ms-attr="{'data-index':index}">
+									手工添加零件
+								</div>
+								<div class="mui-col-sm-4 mui-col-xs-4 right-boder scanParts" ms-attr="{'data-index':index}">
+									扫码添加零件
+								</div>
+								<div class="mui-col-sm-4 mui-col-xs-4 endAssembly" ms-attr="{'data-index':index,'GroupHostAssID':item.GroupHostAssID}">
+									结束我的装配
+								</div>
+							</div>
+						</div>-->
+
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+		<!--整机信息弹框  start-->
+		<div id="adpopover" class="mui-popover bottomPopover">
+			<ul class="data-group" style="margin-top: 3px;">
+				<li class="data-row first" style="background: #F6FBFF;">
+					<a class="mui-icon mui-icon-closeempty" href="#adpopover"></a>
+					<div class="body">
+						<div class="mui-ellipsis">
+							<span class="label-gray font-14">整机确认</span>
+						</div>
+
+					</div>
+				</li>
+				<li ms-class="['data-row must',deleteHostID==0?'selProduct':'']" type="1">
+					<label class="label-gray">产品名称</label>
+					<span ms-if="deleteHostID==0" class="mui-icon mui-icon mui-icon-arrowright selProducticon" style=""></span>
+					<div class="body">
+						<div class="edit">
+							<input class="needsclick" ms-duplex="hostData.HostProdName" readonly="readonly" contenteditable="false" placeholder="请选择产品名称">
+
+						</div>
+					</div>
+
+				</li>
+				<li class="data-row">
+					<label class="label-gray">规格型号</label>
+					<div class="body">
+						<div class="edit">
+							<input type='text' class="needsclick" ms-duplex="hostData.HostSkuName" readonly="readonly" contenteditable="false" placeholder="请选择规格型号" />
+						</div>
+					</div>
+				</li>
+				<li class="data-row must">
+					<label class="label-gray mui-ellipsis">{{factCodeName}}</label>
+					<div class="body">
+						<div class="edit">
+							<input class="needsclick" id='hostfactoryCode' type="text" autofocus="autofocus" maxlength="30" ms-attr="{readonly:deleteHostID>0 && readonly,'placeholder':'请输入'+factCodeName}" ms-duplex="hostData.HostProdInnerCode" contenteditable="true" />
+						</div>
+					</div>
+				</li>
+			</ul>
+			<div class="addelment">
+				<a type="button" ms-if="deleteHostID>0" class="font-15 mui-btn mui-btn-block del-button deleteHost">取消装配</a>
+			</div>
+		</div>
+		<!--整机信息弹框  end-->
+
+		<!--零件信息弹框  start-->
+		<div id="partspopover" class="mui-popover partsPopover">
+			<ul class="data-group" style="margin-top: 3px;">
+				<li class="data-row first" style="background: #F6FBFF;">
+					<a class="mui-icon mui-icon-closeempty" href="#partspopover"></a>
+					<div class="body">
+						<div class="mui-ellipsis">
+							<span class="label-gray font-14">配件确认</span>
+						</div>
+
+					</div>
+				</li>
+				<li ms-class="['data-row must',(deletePartID>0 && partData.PartMDCode!='')?'':'selProduct']" type="2">
+					<label class="label-gray">配件名称</label>
+					<span ms-if="(deletePartID==0 || partData.PartMDCode=='')" class="mui-icon mui-icon mui-icon-arrowright selProducticon"></span>
+					<div class="body">
+						<div class="edit">
+							<input class="needsclick" readonly="readonly" ms-duplex="partData.PartProdName" contenteditable="false" placeholder="请选择配件">
+
+						</div>
+					</div>
+
+				</li>
+				<li class="data-row">
+					<label class="label-gray">规格型号</label>
+					<div class="body">
+						<div class="edit">
+							<input class="needsclick" type='text' readonly="readonly" ms-duplex="partData.PartSkuName" contenteditable="false" placeholder="请选择规格型号" />
+						</div>
+					</div>
+				</li>
+				<li class="data-row must">
+					<label class="label-gray mui-ellipsis">{{factCodeName}}</label>
+					<div class="body">
+						<div class="edit">
+							<input class="needsclick" id="factoryCode" type="text" autofocus="autofocus" maxlength="30" ms-duplex="partData.PartProdInnerCode" contenteditable="true" ms-attr="{'placeholder':'请输入'+factCodeName}" />
+						</div>
+					</div>
+				</li>
+				<li class="data-row" ms-if="deletePartID>0 && partData.PartMDCode!=''">
+					<label class="label-gray mui-ellipsis"></label>
+					<div class="body">
+						<div class="edit">
+							<span>温馨提示：</span>该配件已锁定只能查看
+						</div>
+					</div>
+				</li>
+			</ul>
+			<div class="addelment">
+				<a type="button" ms-if="deletePartID==0" class="font-15 mui-btn mui-btn-block savePart">确认</a>
+				<a type="button" ms-if="deletePartID>0 && partData.PartMDCode==''" class="font-15 mui-btn mui-btn-block del-button part-right-btn deletePart">删除配件</a>
+				<a type="button" ms-if="deletePartID>0 && partData.PartMDCode==''" class="font-15 mui-btn mui-btn-block part-left-btn savePart">修改</a>
+				<a type="button" ms-if="deletePartID>0 && partData.PartMDCode!=''" class="font-15 mui-btn mui-btn-block del-button deletePart">删除配件</a>
+			</div>
+		</div>
+		<div class="empty" ms-visible="palletList&&palletList.length==0" style="margin-top: 35vh;display: none;"><span class="mui-icon mui-icon-info" style="font-size: 20px;margin-right: 5px;"></span>暂无装配信息</div>
+		<!--零件信息弹框  end-->
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/avalon.js"></script>
+		<script src="../../js/utils.js"></script>
+		<script src="../../js/rpc.js"></script>
+		<script>
+			//调整开始装配
+			mui(".mui-content").on('tap', '.StartHostAss', function() {
+				var index = this.getAttribute("data-index");
+				var groupHostAssId = this.getAttribute("data-id");
+				app.startAssembly(groupHostAssId, index);
+			})
+			mui(".mui-content").on('tap', '.conparts', function() {
+				//状态切换 显隐零件功能  ---是否去除该功能 todo
+				var obj = this.parentNode.nextElementSibling
+				var icon = this.children[0].children[0].classList; //this.firstElementChild.firstElementChild.classList
+				if(obj.classList.contains('dis-none')) {
+					obj.classList.remove('dis-none');
+					obj.classList.add('dis-block');
+
+					//图标
+					icon.remove('mui-icon-arrowdown');
+					icon.add('mui-icon-arrowup');
+				} else {
+
+					obj.classList.remove('dis-block');
+					obj.classList.add('dis-none');
+
+					//图标
+					icon.remove('mui-icon-arrowup');
+					icon.add('mui-icon-arrowdown');
+
+				}
+				obj.classList.add('mui-card-content');
+				icon.add('mui-icon');
+
+			})
+			mui(".mui-content").on('tap', '.mui-media', function() {
+				//点击零配件行  实现可以删除
+				var index = this.getAttribute("data-index");
+				var partindex = this.getAttribute("data-partindex");
+				app.openParts(index, partindex);
+			})
+
+			mui(".mui-content").on('tap', '.openDia', function() {
+				//点击主机名称 修改删除弹框  -2装配中的  -1 新增  其它 列表
+				var index = this.getAttribute("data-index");
+				app.openDia(index);
+			})
+
+			mui(".mui-content").on('tap', '.scanParts', function() {
+				//扫描添加零配件scanParts 装配独有
+				var index = this.getAttribute("data-index");
+				app.assemblyIndex = index;
+				app.deletePartID = 0;
+				app.scan(2, index);
+			})
+			mui(".mui-content").on('tap', '.endAssembly', function() {
+				//结束配件  -1
+				var index = this.getAttribute("data-index");
+				var GroupHostAssID = this.getAttribute("GroupHostAssID");
+				app.endAssembly(GroupHostAssID, index);
+			})
+			mui(".mui-popover").on('tap', '.deleteHost', function() {
+				//删除主机
+				app.deleteHost();
+			}).on('tap', '.savePart', function() {
+				//保存配件
+				app.savePart();
+			}).on('tap', '.deletePart', function() {
+				//删除配件
+				app.deletePart();
+			})
+
+			mui(".mui-popover").on('tap', '.selProduct', function() {
+				//结束配件
+				document.activeElement.blur();
+				var type = parseInt(this.getAttribute("type"));
+				//type：1主机  2零件  isall：false(不显示全部)   默认true
+				app.seltype = type;
+				openWindow("../problib/index.html?state=selsku&isall=false&type=" + type + "", {
+					callback: 'selProduct'
+				}, 'problib-index.html');
+			})
+			var app = avalon.define({
+				$id: "productCtrl",
+				GroupID: query('id'), //小组ID
+				GroupName: query('w'), //车间
+				assemblyIndex: -1, //正在装配的主机索引  -1没有
+				isdown: 0,
+				factCodeName: '出厂编号',
+				opertionIng: false,
+				/*保存上一次选择*/
+				lastPart: {
+					"PartProdID": "", //配件产品id
+					"PartProdName": "", //配件名称
+					"PartSkuID": "", //配件型号id
+					"PartSkuName": "", //配件型号名称
+				}, //上一次提交的零件
+				lastHost: {
+					"HostProdID": "", //产品id
+					"HostProdName": "", //产品名称
+					"HostSkuID": "", //主机型号id
+					"HostSkuName": "", //主机型号名称
+				}, //上一次提交的整机
+				PageIndex: 1,
+				palletList: null, //装配列表
+				scanType: 1, //扫描的主机还是配件 1 主机，2 配件
+				deletePartID: 0, //要删除的零件id
+				deleteHostID: 0, //要删除的主机id
+				endCode: 'endAssembly', //结束装配标示码
+				//弹框界面主机信息
+				hostData: {
+					"ID": 0,
+					"GroupID": 0, //小组ID
+					"HostMDCode": "", //主机迈迪码
+					"HostProdID": "", //产品id
+					"HostProdName": "", //产品名称
+					"HostSkuID": "", //主机型号id
+					"HostSkuName": "", //主机型号名称
+					"HostProdInnerCode": "" //主机出厂编号
+				}, //正在装配的主机信息
+				//弹框配件保存信息
+				partData: {
+					"ID": 0,
+					"HostMDCode": "", //主机迈迪码
+					"HostProdID": "", //主机产品id
+					"HostProdName": "", //主机名称
+					"HostSkuID": "", //主机型号id
+					"HostSkuName": "", //主机型号名称
+					"HostProdInnerCode": "", //主机出场编号
+
+					"PartMDCode": "", //配件迈迪码
+					"PartProdID": "", //配件产品id
+					"PartProdName": "", //配件名称
+					"PartSkuID": "", //配件型号id
+					"PartSkuName": "", //配件型号名称
+					"PartProdInnerCode": "", //配件出厂编号
+					"GroupHostAssID": 0 //装配id
+				},
+				openDia: function(index) {
+					if(index == -1) { //新增主机
+						app.deleteHostID = 0;
+						app.hostData.ID = 0;
+						app.hostData.GroupID = app.GroupID;
+						app.hostData.HostMDCode = '';
+						app.hostData.HostProdID = app.lastHost.HostProdID || '';
+						app.hostData.HostProdName = app.lastHost.HostProdName || '';
+						app.hostData.HostSkuID = app.lastHost.HostSkuID || '';
+						app.hostData.HostSkuName = app.lastHost.HostSkuName || '';
+						app.hostData.HostProdInnerCode = '';
+					} else {
+
+						//var obj = app.palletList.$model[index];
+						var obj = null;
+						obj = app.palletList.$model[index];
+						app.hostData.ID = obj.GroupHostAssID;
+						app.hostData.GroupID = app.GroupID;
+						app.hostData.HostMDCode = obj.HostMDCode;
+						app.hostData.HostProdID = obj.HostProdID;
+						app.hostData.HostProdName = obj.HostProdName;
+						app.hostData.HostSkuID = obj.HostSkuID;
+						app.hostData.HostSkuName = obj.HostSkuName;
+						app.hostData.HostProdInnerCode = obj.HostProdInnerCode;
+
+						//启用删除功能
+						app.deleteHostID = obj.GroupHostAssID;
+					}
+					mui('.bottomPopover').popover('show');
+				},
+				//零件信息弹框
+				openParts: function(index, partIndex) {
+					app.deletePartID = 0;
+					var obj = null;
+
+					obj = app.palletList.$model[index];
+
+					app.partData.HostMDCode = obj.HostMDCode;
+					app.partData.HostProdID = obj.HostProdID;
+					app.partData.HostProdName = obj.HostProdName;
+					app.partData.HostSkuID = obj.HostSkuID;
+					app.partData.HostSkuName = obj.HostSkuName;
+					app.partData.HostProdInnerCode = obj.HostProdInnerCode;
+					app.partData.GroupHostAssID = obj.GroupHostAssID;
+					if(partIndex == -1) {
+						app.partData.ID = 0;
+						app.partData.PartMDCode = '';
+						app.partData.PartProdID = app.lastPart.PartProdID || '';
+						app.partData.PartProdName = app.lastPart.PartProdName || '';
+						app.partData.PartSkuID = app.lastPart.PartSkuID || '';
+						app.partData.PartSkuName = app.lastPart.PartSkuName || '';
+						app.partData.PartProdInnerCode = '';
+					} else {
+						app.partData.ID = obj.PartList[partIndex].AssembleID;
+						app.partData.PartMDCode = obj.PartList[partIndex].PartMDCode;
+						app.partData.PartProdID = obj.PartList[partIndex].PartProdID;
+						app.partData.PartProdName = obj.PartList[partIndex].PartProdName;
+						app.partData.PartSkuID = obj.PartList[partIndex].PartSkuID;
+						app.partData.PartSkuName = obj.PartList[partIndex].PartSkuName;
+						app.partData.PartProdInnerCode = obj.PartList[partIndex].PartProdInnerCode;
+
+						app.deletePartID = obj.PartList[partIndex].AssembleID;
+						//删除功能显示
+					}
+
+					mui('.partsPopover').popover('show');
+				},
+				//获取装配列表
+				getAssembly: function(type, callback) {
+					if(type == undefined) {
+						app.PageIndex = 1;
+					}
+					var url = MdAppUrl.Api50 + "/api/v1/Assemble/GetGroupHost_PartList?page=" + app.PageIndex + "&pageSize=5&groupId=" + app.GroupID;
+					getAjaxData(url, function(data) {
+						hideWaiting();
+						if(data.State == 1) {
+
+							//取正在装配的标识
+							if(type == "up") {
+								if(app.palletList == null) {
+									app.palletList = [];
+								}
+
+								app.palletList.pushArray(data.Data.DataRows); //上拉加载拼接数据
+							} else {
+								app.palletList = data.Data.DataRows; //下拉刷新重新赋值
+							}
+						} else {
+							if(!app.palletList) {
+								app.palletList = [];
+							}
+							mui.toast(data.ErrorMessage);
+						}
+						if(app.PageIndex == 1) {
+							app.isdown = 0;
+							//							var all = document.getElementsByClassName("mui-card-content");
+							//							for(var i = 0; i < all.length; i++) {
+							//								all[i].style.display = 'block';
+							//							}
+						}
+						if(type == "down") {
+							mui("#pullrefresh").pullRefresh().endPulldownToRefresh();
+						}
+						if(data.State == 1 && app.palletList.length >= data.Data.TotalCount) {
+							mui("#pullrefresh").pullRefresh().endPullupToRefresh(true);
+						} else {
+							mui("#pullrefresh").pullRefresh().endPullupToRefresh(false);
+
+							if(type == "down") {
+								mui("#pullrefresh").pullRefresh().refresh(true);
+							}
+						}
+						if(data.Data.TotalCount <= 5) {
+							mui('#pullrefresh').pullRefresh().disablePullupToRefresh();
+						}
+						if(typeof callback == "function") {
+							callback();
+						}
+
+					}, true)
+				},
+				//保存配件信息
+				savePart: function() {
+					//判断是否为空
+					if(!app.partData.PartProdID > 0) {
+						mui.toast('请选择配件！');
+						return false;
+					}
+					app.partData.PartProdInnerCode = document.getElementById('factoryCode').value.trim();
+					if(app.partData.PartProdInnerCode == '') {
+						mui.toast('请填写' + app.factCodeName + '！');
+						return false;
+					}
+					//配件迈迪码 不能等于主机迈迪码
+					if(app.partData.PartMDCode != '' && (app.partData.HostMDCode == app.partData.PartMDCode)) {
+						mui.toast('配件不能与主机相同！');
+						return false;
+					}
+					//迈迪码为空的时候 产品不能相同
+					if(app.partData.PartMDCode == '' && app.partData.HostProdID == app.partData.PartProdID) {
+						mui.toast('配件不能与主机相同！');
+						return false;
+					}
+					//					if(app.isExistPart()) {
+					//						mui.toast('配件已存在！');
+					//						return false;
+					//					}
+					if(!app.opertionIng) {
+						app.opertionIng = true;
+						var saveurl = MdAppUrl.Api50 + "/api/v1/Assemble/SavePartAssemble";
+						//console.log(JSON.stringify(app.partData.$model))
+						postAjaxData(saveurl, app.partData.$model, function(res) {
+							app.opertionIng = false;
+							if(res.State == 1) {
+								//获取本人 装配列表
+								document.activeElement.blur();
+								mui('.partsPopover').popover('hide');
+								app.getAssembly();
+								app.lastPart.PartProdID = app.partData.PartProdID; //配件产品id
+								app.lastPart.PartProdName = app.partData.PartProdName; //配件名称
+								app.lastPart.PartSkuID = app.partData.PartSkuID; //配件型号id
+								app.lastPart.PartSkuName = app.partData.PartSkuName; //配件型号名称
+							} else {
+								mui.toast(res.ErrorMessage);
+							}
+						}, true)
+					}
+				},
+				saveHost: function() {
+					//判断是否为空
+					if(!app.hostData.HostProdID > 0) {
+						mui.toast('请选择主机！');
+						return false;
+					}
+					app.hostData.HostProdInnerCode = document.getElementById('hostfactoryCode').value.trim();
+					if(app.hostData.HostProdInnerCode.trim() == '') {
+						mui.toast('请填写' + app.factCodeName + '！');
+						return false;
+					}
+					//alert(user.UserName + ':' + user.Mdt)
+					var saveurl = MdAppUrl.Api50 + "/api/v1/Assemble/SaveGroupHostAss";
+					if(!app.opertionIng) {
+						app.opertionIng = true;
+						postAjaxData(saveurl, app.hostData.$model, function(res) {
+							app.opertionIng = false;
+							if(res.State == 1) {
+								//获取本人 装配列表
+								document.activeElement.blur();
+								mui('.bottomPopover').popover('hide');
+								//todo 获取正在装配的数据
+								app.getAssemblyIng();
+								app.getAssembly();
+
+								app.lastHost.HostProdID = app.hostData.HostProdID; //产品id
+								app.lastHost.HostProdName = app.hostData.HostProdName; //产品名称
+								app.lastHost.HostSkuID = app.hostData.HostSkuID; //主机型号id
+								app.lastHost.HostSkuName = app.hostData.HostSkuName; //主机型号名称
+							} else {
+								mui.toast(res.ErrorMessage);
+							}
+						}, true)
+					}
+				},
+				deletePart: function() {
+					if(!app.opertionIng) {
+						app.opertionIng = true;
+						mui.confirm("确认删除该配件吗？", function(e) {
+							if(e.index == 0) {
+								var url = MdAppUrl.Api50 + "/api/v1/Assemble/DelPartAssemble?assembleId=" + app.deletePartID;
+								getAjaxData(url, function(data) {
+									app.opertionIng = false;
+									if(data.State == 1) {
+										mui('.partsPopover').popover('hide');
+										mui.toast('删除成功！');
+										app.deletePartID = 0;
+										app.getAssembly();
+									} else {
+										mui.toast('删除失败！');
+									}
+								}, true)
+							} else {
+								app.opertionIng = false;
+							}
+						});
+					}
+				},
+				deleteHost: function() {
+					//删除主机  
+					if(!app.opertionIng) {
+						app.opertionIng = true;
+						mui.confirm("确认取消装配吗？", function(e) {
+							if(e.index == 0) {
+								var url = MdAppUrl.Api50 + "/api/v1/Assemble/DelGroupHostAss?groupHostAssId=" + app.deleteHostID;
+								getAjaxData(url, function(data) {
+									app.opertionIng = false;
+									if(data.State == 1) {
+										mui('.bottomPopover').popover('hide');
+										mui.toast('取消成功！');
+										app.deleteHostID = 0;
+										app.getAssembly();
+									} else {
+										mui.toast(data.ErrorMessage);
+									}
+								}, true)
+							} else {
+								app.opertionIng = false;
+							}
+						});
+					}
+				},
+				startAssembly: function(groupHostAssId, index) {
+					//开始装配
+					var url = MdAppUrl.Api50 + "/api/v1/Assemble/StartHostAss?groupId=" + app.GroupID + "&groupHostAssId=" + groupHostAssId;
+					getAjaxData(url, function(data) {
+						if(data.State == 1) {
+
+							//跳转到 装配页面  执行
+
+							//							app.delState();
+							//							app.palletList[index].State = 1;
+							mui.back();
+						} else {
+							mui.toast(data.ErrorMessage);
+						}
+					}, true)
+				},
+				delState: function() {
+					//处理界面上状态显示
+					var len = app.palletList.length;
+					for(var i = 0; i < len; i++) {
+						if(app.palletList[i].State == 1) {
+							app.palletList[i].State = 2;
+							break;
+						}
+					}
+				}
+			})
+
+			mui.init({
+				pullRefresh: {
+					container: '#pullrefresh',
+					down: {
+						callback: pulldownRefresh
+					},
+					up: {
+						callback: pullupRefresh,
+						contentrefresh: '正在加载...',
+						contentnomore: '没有更多数据了'
+					}
+				}
+			});
+
+			mui.plusReady(function() {
+				user.ready(function() {
+					showWaiting();
+					app.factCodeName = user.InnerCodeName;
+					setTimeout(function() {
+						app.getAssembly("down");
+					}, 300);
+				});
+				var mui_back = mui.back;
+				var opener = null;
+				mui.back = function() {
+					if(!opener) {
+						opener = plus.webview.getWebviewById('assembly.html');
+					}
+					mui.fire(opener, "refreshData")
+					mui_back();
+					//openWindow('assembly.html?id=' + query('id') + '&w=' + query('w') + '&g=' + query('g'), {}, 'assembly.html','',1)
+				}
+			})
+			/**
+			 * 下拉刷新具体业务实现
+			 */
+			function pulldownRefresh() {
+				setTimeout(function() {
+					app.PageIndex = 1;
+					app.palletList = "";
+					app.getAssembly("down");
+
+				}, 500);
+			}
+			/**
+			 * 上拉加载具体业务实现
+			 */
+			function pullupRefresh() {
+				setTimeout(function() {
+					//加载更多页数+1
+					app.PageIndex += 1;
+					app.getAssembly("up")
+				}, 500);
+			}
+
+			avalon.filters.getAssState = function(a, partlist) {
+				var state = '';
+				var ico = '<i class="mui-icon mui-icon-arrowdown" style="font-size: 20px;"></i>';
+				var icoing = '<i class="mui-icon mui-icon-arrowup" style="font-size: 20px;"></i>';
+				if(partlist == null || partlist.length == 0) {
+					ico = '';
+					icoing = '';
+				}
+				switch(a) {
+					case 1:
+						state = '<span class="state-ing">正在装配' + icoing + '</span>';
+						break;
+					case 2:
+						state = '<span class="state-wait">等待装配' + ico + '</span>';
+						break;
+					case 3:
+						state = '<span class="state-done">已装完' + ico + '</span>';
+						break;
+
+				}
+				return state;
+			}
+			mui('body').on('hidden', '.mui-popover', function(e) {
+				document.activeElement.blur();
+			});
+
+			function selProduct(res) {
+				res.MatCode = res.MatCode == undefined ? '' : res.MatCode;
+				if(app.seltype == 1) { //产品
+					app.hostData.ID = app.deleteHostID;
+					app.hostData.HostMDCode = '';
+					app.hostData.HostProdID = res.ProdID;
+					app.hostData.HostProdName = res.ProdName;
+					app.hostData.HostSkuID = res.SkuID;
+					app.hostData.HostSkuName = res.SkuName;
+					//app.hostData.HostProdInnerCode = res.ProdID;
+				} else {
+					app.partData.ID = app.deletePartID;
+					app.partData.PartMDCode = '';
+					app.partData.PartProdID = res.ProdID;
+					app.partData.PartProdName = res.ProdName;
+					app.partData.PartSkuID = res.SkuID;
+					app.partData.PartSkuName = res.SkuName;
+				}
+			}
+		</script>
+	</body>
+
+</html>

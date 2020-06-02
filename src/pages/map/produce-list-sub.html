@@ -1,0 +1,55 @@
+<!doctype html>
+<html id="MdTong">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" href="../../css/mui.min.css" />
+		<link rel="stylesheet" href="../../css/common.css" />
+	</head>
+
+	<body ng-controller="ParentPageController">
+		<div id="pullrefresh" ng-controller="pullrefreshController" class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad}" style="display: none;">
+			<div class="mui-content">
+
+				<md-device-list ng-model="data"></md-device-list>
+				<md-no-data class="no-data" ng-show="data && data.length==0">暂无设备数据</md-no-data>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/angular.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script type="text/javascript" src="../../js/utils.js"></script>
+		<script type="text/javascript" src="../../js/rpc.js"></script>
+		<script>
+			app.controller("ParentPageController", ["$scope", "ApiService", "DataService", "Loading", "RPCObserver", function($scope, ApiService, DataService, Loading, RPCObserver) {
+				$scope.pageIndex = 0;
+				$scope.pageSize = 20;
+				var _province = query('province');
+				var _city = query('city');
+				var _state = query('state');
+				var _starttime = query('starttime');
+				var _endtime = query('endtime');
+				$scope.action = "view";
+				var url = ApiService.Api50 + "/api/v1/Equipment/GetPageMapEqInfoAllState?province=" + _province + "&city=" + _city + "&starttime=" + _starttime + "&endtime=" + _endtime;
+				$scope.url = url
+
+				$scope.$on("refresh_pageindex", function() {
+					$scope.url = url + "&pageIndex=" + $scope.pageIndex + "&pageSize=" + $scope.pageSize;
+				});
+				
+				RpcServer.expose("RPC_refresh", function() {
+					$scope.$broadcast("md_pullrefresh");
+				});
+
+			}]);
+ 
+			mui.plusReady(function() {
+				angular.bootstrap(document.getElementById("MdTong"), ["MdTong"]);
+			});
+		</script>
+	</body>
+
+</html>

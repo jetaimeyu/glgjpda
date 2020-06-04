@@ -111,9 +111,9 @@
 				<li class="data-row " ng-class="{'must':param.IsRequired==1,'orderParam':param.ParamType==1}" ng-repeat="param in Data.OrderParams">
 					<label>{{param.ParamName}}</label>
 					<div class="body">
-						<!--<div class="edit" ng-show="param.ParamType=='0'&&!IsView" >
+						<div class="edit" ng-show="param.ParamType=='0'&&!IsView" >
 							<div  class="needsclick" ng-attr-placeholder="{{'请输入'+param.ParamName}}" ng-attr-id="{{param.ParamType=='0'?('txtOrderParam_'+param.ParamID):''}}" lenlimit="50"></div>
-						</div>-->
+						</div>
 						<input type="text" ng-show="param.ParamType=='0'&&!IsView" ng-attr-placeholder="{{'请输入'+param.ParamName}}" ng-attr-id="{{param.ParamType=='0'?('txtOrderParam_'+param.ParamID):''}}" maxlength="50" />
 						<span type="text" style="padding-right: 25px;" ng-show="param.ParamType=='1'&&!IsView" ng-attr-id="{{param.ParamType=='1'?('txtOrderParam_'+param.ParamID):''}}" ng-attr-idx="{{$index}}" class="bg-f2 orderParam"></span>
 						<span ng-if="IsView" ng-attr-id="{{'spOrderParam_'+param.ParamID}}"></span>
@@ -173,7 +173,7 @@
 						<div style="padding-left: 100px;">
 							<span class="font-16" ng-bind="prod.ProdName"></span>
 							<p class="font-14 color-red-md" style="margin-bottom: 0px;" ng-show="prod.SkuName">型号：<span ng-bind="prod.SkuName"></span></p>
-							<p class="font-14 color-gray-dark" ng-show="LoginCompID==prod.CompID&&prod.ProdInnerCode" style="margin-bottom: 0px;">{{Data.InnerCodeName}}：{{prod.ProdInnerCode}}</p>
+							<!-- <p class="font-14 color-gray-dark" ng-show="LoginCompID==prod.CompID&&prod.ProdInnerCode" style="margin-bottom: 0px;">{{Data.InnerCodeName}}：{{prod.ProdInnerCode}}</p> -->
 						</div>
 					</a>
 					<p ng-show="!IsView&&!IsEdit" class="opt md-icon icon-close color-red-md font-16" ng-attr-idx="{{$index}}" ng-attr-outProdId="{{prod.ID}}"></p>
@@ -208,13 +208,13 @@
 					</a>
 				</li>
 
-				<li class="data-row must" ng-show="LoginCompID==Data.ProdInfo.CompID">
+			<!-- 	<li class="data-row must" ng-show="LoginCompID==Data.ProdInfo.CompID">
 					<label>{{Data.InnerCodeName}}</label>
 					<div class="body">
 						<input ng-show="!IsView" type="text" id="txtInCode" ng-attr-placeholder="{{'请输入'+Data.InnerCodeName}}" maxlength="30" ng-bind="Data.ProdInfo.ProdInnerCode"/>
 						<span ng-if="IsView" id='spInCode'></span>
 					</div>
-				</li>
+				</li> -->
 				<li class="data-row" ng-class="{'must':param.IsRequired==1}" ng-repeat="param in Data.ProdInfo.ProdParams">
 					<label style="padding-right: 8px;text-align: justify;">{{param.ParamName}}</label>
 					<div class="body">

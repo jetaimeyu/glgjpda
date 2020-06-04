@@ -250,10 +250,10 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 				};
 
 				//自己厂家的产品需要获取其内部码并展示
-				if($scope.LoginCompID == $scope.Data.ProdInfo.CompID) {
-					//获取产品内部码
-					getInnerCodeByMdCode(mdCode);
-				}
+				// if($scope.LoginCompID == $scope.Data.ProdInfo.CompID) {
+				// 	//获取产品内部码
+				// 	getInnerCodeByMdCode(mdCode);
+				// }
 				//获取产品参数	
 				setTimeout(function() {
 					getProdParams(mdCode);
@@ -382,7 +382,7 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 			var url = ApiService.Api45 + "/api/v1.1/MdCode/ValidInnerCodeByMdCode?mdCode=" + mdCode + "&InnerCode=" + inCode;
 			DataService.get(url).then(function(reData) {
 				//								console.log(JSON.stringify(reData))
-				if(reData == 1) {
+				if(2 == 1) {
 					mui.toast("此" + $scope.Data.InnerCodeName + "已存在，请修改！");
 					Loading.hide();
 					isSave = false;
@@ -686,7 +686,6 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 
 		//下一步
 		document.getElementById("nextStep").addEventListener("tap", function() {
-
 			if(!validateBaseInfo())
 				return;
 			//修改标题
@@ -920,36 +919,36 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 				isSave = true;
 				//验证数据
 				//如果当前产品的生产企业ID与当前用户的企业ID相同时，判断内部码是否已填
-				if($scope.LoginCompID == $scope.Data.ProdInfo.CompID) {
-					var innerCode = trim(document.getElementById("txtInCode").value);
-					if(!innerCode) {
-						mui.toast("请输入" + $scope.Data.InnerCodeName + "！");
-						Loading.hide();
-						isSave = false;
-						return;
-					}
-					$scope.Data.ProdInfo.ProdInnerCode = innerCode;
-				}
+				// if($scope.LoginCompID == $scope.Data.ProdInfo.CompID) {
+				// 	var innerCode = trim(document.getElementById("txtInCode").value);
+				// 	if(!innerCode) {
+				// 		mui.toast("请输入" + $scope.Data.InnerCodeName + "！");
+				// 		Loading.hide();
+				// 		isSave = false;
+				// 		return;
+				// 	}
+				// 	$scope.Data.ProdInfo.ProdInnerCode = innerCode;
+				// }
 				//根据出厂编号和企业ID判断是否已经占用
 				getMdCodeByMdInnerCode($scope.Data.ProdInfo.CompID, $scope.Data.ProdInfo.ProdInnerCode, $scope.Data.ProdInfo.MDCode, function() {
 					//产品参数
 					var canNext = true;
-					//判断是否有重复的内部码
-					$scope.Data.OutProds.every(function(prodTemp, prodIndexTemp, array) {
-						if($scope.Data.ProdInfo.CompID == $scope.LoginCompID && prodTemp.MDCode != $scope.Data.ProdInfo.MDCode && prodTemp.ProdInnerCode == $scope.Data.ProdInfo.ProdInnerCode && $scope.Data.ProdInfo.ProdID == prodTemp.ProdID && $scope.Data.ProdInfo.SkuID == prodTemp.SkuID) {
-							canNext = false;
-							mui.alert("当前扫码产品与出库单中第 " + (prodIndexTemp + 1) + " 个产品的" + $scope.Data.InnerCodeName + "相同，无法再次添加！");
-							return false;
-						}
+					// //判断是否有重复的内部码
+					// $scope.Data.OutProds.every(function(prodTemp, prodIndexTemp, array) {
+					// 	if($scope.Data.ProdInfo.CompID == $scope.LoginCompID && prodTemp.MDCode != $scope.Data.ProdInfo.MDCode && prodTemp.ProdInnerCode == $scope.Data.ProdInfo.ProdInnerCode && $scope.Data.ProdInfo.ProdID == prodTemp.ProdID && $scope.Data.ProdInfo.SkuID == prodTemp.SkuID) {
+					// 		canNext = false;
+					// 		mui.alert("当前扫码产品与出库单中第 " + (prodIndexTemp + 1) + " 个产品的" + $scope.Data.InnerCodeName + "相同，无法再次添加！");
+					// 		return false;
+					// 	}
 
-						return true;
-					});
-					//判断是否与本企业其他出厂编号重复
-					if(!canNext) {
-						isSave = false;
-						Loading.hide();
-						return;
-					}
+					// 	return true;
+					// });
+					// //判断是否与本企业其他出厂编号重复
+					// if(!canNext) {
+					// 	isSave = false;
+					// 	Loading.hide();
+					// 	return;
+					// }
 					//遍历出库产品参数，校验并赋值
 					$scope.Data.ProdInfo.ProdParams && $scope.Data.ProdInfo.ProdParams.every(function(param, index) {
 						var value = param.ParamType == 0 ? document.getElementById("txtProdParam_" + param.ParamID).value : document.getElementById("txtProdParam_" + param.ParamID).innerText;

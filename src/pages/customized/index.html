@@ -45,7 +45,7 @@
 					RPCObserver, ShareLogService, CacheService) {
 					$scope.CustomizePro = [];
 					$scope.ids = [];
-					$scope.isLoad =false;
+					$scope.isLoad = false;
 					var curUser = CacheService.get("user");
 					user.ready();
 					getTestId();
@@ -54,7 +54,7 @@
 					function getBoilerList() {
 						var url = ApiService.Boiler + "/boiler/queryBoilerList?pageIndex=1&pageSize=10";
 						getAjaxData(url, function(res) {
-							if(res.data && res.data.length > 0) {
+							if (res.data && res.data.length > 0) {
 								isBoiler = true;
 							}
 						}, true, false)
@@ -65,19 +65,19 @@
 						console.log(11);
 						var url = ApiService.Api50 + '/api/v1/Dealer/GetDealerIdList';
 						getAjaxData(url, function(res) {
-						
 
-							if(res) {
+
+							if (res) {
 								$scope.ids = res.Data;
 								getData();
-								$scope.isLoad =true; 
+								$scope.isLoad = true;
 								$scope.$apply();
 							}
 						}, true)
 					}
 
 					function getData() {
-						if(["23984", "24621", "31889"].indexOf(curUser.CompID.toString()) >= 0) {
+						if (["23984", "24621", "31889"].indexOf(curUser.CompID.toString()) >= 0) {
 							$scope.CustomizePro.push({
 								"Title": "佳润", //23984、24621、31889佳润
 								"Describe": "设备维护保养",
@@ -92,7 +92,7 @@
 						<!--"Icon": "../../images/Detailedparameters@3x.png"-->
 						<!--})-->
 						//alert($filter("hasMenuAuth")("syyy", "qydz","htda","htdaxx"))
-						if($filter("hasMenuAuth")("syyy", "qydz", "htda")) {
+						if ($filter("hasMenuAuth")("syyy", "qydz", "htda")) {
 							$scope.CustomizePro.push({
 								"Title": "合同档案",
 								"Describe": "备份您已签订的合同",
@@ -100,7 +100,7 @@
 								"Icon": "../../images/Detailedparameters@3x.png"
 							})
 						}
-						if($scope.ids.indexOf(curUser.CompID.toString()) >= 0) {
+						if ($scope.ids.indexOf(curUser.CompID.toString()) >= 0) {
 							$scope.CustomizePro.push({
 								"Title": "物联码报废",
 								"Describe": "物联码报废",
@@ -126,7 +126,7 @@
 								"Icon": "../../images/Detailedparameters@3x.png"
 							})
 						}
-						if($scope.ids.indexOf(curUser.CompID.toString()) >= 0) {
+						if ($scope.ids.indexOf(curUser.CompID.toString()) >= 0) {
 							$scope.CustomizePro.push({
 								"Title": "仓库管理",
 								"Describe": "仓库管理",
@@ -146,7 +146,7 @@
 
 					$scope.CustomizedList = [];
 					$scope.tap = function(key) {
-						switch(key) {
+						switch (key) {
 							case "maintenanceList":
 								UtilsService.openWindow({
 									needLogin: true,
@@ -200,9 +200,9 @@
 								var viewName = $filter("getViewName")(curUser.UserName, curUser.RealName, curUser.Mdt);
 								var key = "international-cable";
 								var title = "仓库管理";
-								<!--openUrl("http://192.168.1.149:8849/Md.ToolMarket/tools/international-cable/index.html?compid=" + curUser.CompID + "&userid=" + curUser.UserID + "&userauth=" + curUser.UserAuth + "&token="-->
-								<!--+ curUser.Token + "&orgdeptid=" + curUser.OrgID + "&username=" + viewName + "&v=" + Math.random(), title, "oem");-->
-								<!--console.log(MdAppUrl.Tools + "/tools/" + key + "/index.html?compid=" + user.CompID + "&userid=" + user.UserID + "&userauth=" + user.UserAuth + "&orgdeptid=" + user.OrgID);-->
+								// openUrl("http://192.168.1.149:8848/Md.ToolMarket/tools/international-cable/index.html?compid=" + curUser.CompID +
+								// 	"&userid=" + curUser.UserID + "&userauth=" + curUser.UserAuth + "&token=" + curUser.Token + "&orgdeptid=" +
+								// 	curUser.OrgID + "&username=" + viewName + "&v=" + Math.random(), title, "oem");
 								openUrl(MdAppUrl.Tools + "/tools/" + key + "/index.html?compid=" + curUser.CompID + "&userid=" + curUser.UserID + "&userauth=" + curUser.UserAuth + "&token=" + curUser.Token + "&orgdeptid=" + curUser.OrgID + "&username=" + viewName + "&v=" + Math.random(), title, "oem");
 								break;
 							case "pallet-reorganization":
@@ -221,7 +221,9 @@
 								UtilsService.openWindow({
 									needLogin: true,
 									id: 'codeClearn.html',
-									url: MdAppUrl.Tools + "/tools/" + key + "/codeClearn.html?compid=" + curUser.CompID + "&userid=" + curUser.UserID + "&userauth=" + curUser.UserAuth + "&token=" + curUser.Token + "&orgdeptid=" + curUser.OrgID + "&username=" + viewName + "&duty=" + curUser.Duty + "&v=" + Math.random(),
+									url: MdAppUrl.Tools + "/tools/" + key + "/codeClearn.html?compid=" + curUser.CompID + "&userid=" +
+										curUser.UserID + "&userauth=" + curUser.UserAuth + "&token=" + curUser.Token + "&orgdeptid=" + curUser.OrgID +
+										"&username=" + viewName + "&duty=" + curUser.Duty + "&v=" + Math.random(),
 								})
 								break;
 							case "print-code":
@@ -236,7 +238,9 @@
 								UtilsService.openWindow({
 									needLogin: true,
 									id: 'boxCode.html',
-									url: MdAppUrl.Tools + "/tools/" + key + "/boxCode.html?compid=" + curUser.CompID + "&userid=" + curUser.UserID + "&userauth=" + curUser.UserAuth + "&token=" + curUser.Token + "&orgdeptid=" + curUser.OrgID + "&username=" + viewName + "&duty=" + curUser.Duty + "&v=" + Math.random(),
+									url: MdAppUrl.Tools + "/tools/" + key + "/boxCode.html?compid=" + curUser.CompID + "&userid=" + curUser.UserID +
+										"&userauth=" + curUser.UserAuth + "&token=" + curUser.Token + "&orgdeptid=" + curUser.OrgID +
+										"&username=" + viewName + "&duty=" + curUser.Duty + "&v=" + Math.random(),
 								})
 								break;
 							case "prod-pakage":
@@ -250,7 +254,9 @@
 								UtilsService.openWindow({
 									needLogin: true,
 									id: 'production.html',
-									url: MdAppUrl.Tools + "/tools/" + key + "/production.html?compid=" + curUser.CompID + "&userid=" + curUser.UserID + "&userauth=" + curUser.UserAuth + "&token=" + curUser.Token + "&orgdeptid=" + curUser.OrgID + "&username=" + viewName + "&duty=" + curUser.Duty + "&v=" + Math.random(),
+									url: MdAppUrl.Tools + "/tools/" + key + "/production.html?compid=" + curUser.CompID + "&userid=" +
+										curUser.UserID + "&userauth=" + curUser.UserAuth + "&token=" + curUser.Token + "&orgdeptid=" + curUser.OrgID +
+										"&username=" + viewName + "&duty=" + curUser.Duty + "&v=" + Math.random(),
 								})
 								break;
 							default:

@@ -1,4 +1,5 @@
-app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiService", "DataService", "UtilsService", "Loading", "RPCObserver", "CacheService",
+app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiService", "DataService", "UtilsService",
+	"Loading", "RPCObserver", "CacheService",
 	function($scope, $filter, AuthService, ApiService, DataService, UtilsService, Loading, RPCObserver, CacheService) {
 		var openedDiv = 0; //1向上弹出的基本信息div，2向上弹出的产品信息div3出库单详情div
 		//临时出库信息，弹出出库单确定和取消时使用
@@ -82,7 +83,7 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 		//		} else {
 		//			$scope.hasAuth = false;
 		//		}
-		if($scope.IsAdd == 1) {
+		if ($scope.IsAdd == 1) {
 			$scope.Data.OutProds = [];
 			//新建出库单
 			//获取出库单参数
@@ -105,10 +106,10 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 		//隐藏向上弹出的产品信息
 		document.getElementById("prodInfoTop").style.display = "none";
 
-		if($scope.IsView == 1) {
+		if ($scope.IsView == 1) {
 			document.getElementById("baseInfo").style.display = "none";
 		}
-		if($scope.IsAdd == 1) {
+		if ($scope.IsAdd == 1) {
 			//如果是新增时，隐藏完成出库单，隐藏扫码
 			document.getElementById("confirmOrder").style.display = "none";
 			document.getElementById("ftScan").style.display = "none";
@@ -133,22 +134,22 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 		}
 		mui.back = function() {
 			//			console.log(openedDiv)
-			if($scope.IsSaved) {
+			if ($scope.IsSaved) {
 				//当前保存成功时
 				mui.currentWebview.close();
-			} else if(openedDiv == 1) {
+			} else if (openedDiv == 1) {
 				//当前基本信息向上弹出时，隐藏
 				hideBaseInfo();
-			} else if(openedDiv == 2) {
+			} else if (openedDiv == 2) {
 				//当前产品信息向上弹出时，隐藏
 				hideProdInfo();
-			} else if($scope.IsView) {
+			} else if ($scope.IsView) {
 				//当前浏览时
 				mui.currentWebview.close();
 			} else {
 				//当前编辑状态时
 				mui.confirm("您已编辑过，退出将丢失掉这些内容？", "确定", ['确定取消', '我再想想'], function(e) {
-					if(e.index == 0) {
+					if (e.index == 0) {
 						mui.currentWebview.close();
 					}
 				});
@@ -157,7 +158,7 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 
 		//点击修改按钮
 		document.querySelector("#edit").addEventListener('tap', function() {
-			if(openedDiv == 0) {
+			if (openedDiv == 0) {
 				$scope.IsView = false;
 				$scope.IsEdit = true;
 				$scope.$apply();
@@ -179,7 +180,7 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 				//文本框赋值
 				setTimeout(function() {
 					$scope.Data.OrderParams && $scope.Data.OrderParams.forEach(function(param, index) {
-						if(param.ParamType == 0) {
+						if (param.ParamType == 0) {
 							document.getElementById("txtOrderParam_" + param.ParamID).value = param.ParamDefValue;
 						} else {
 							selectOption("txtOrderParam_" + param.ParamID, param.ParamDefValue, param.ParamName);
@@ -231,7 +232,7 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 			});
 		};
 		//根据迈迪国标通用物联码获取产品信息
-		function getProdInfoByMdCode(mdCode) {
+		function getProdInfoByMdCode(mdCode, callback) {
 			var url = ApiService.Api50 + "/api/v1.0/MdCode/GetProdInfoByMdCode?code=" + mdCode;
 			DataService.get(url).then(function(res) {
 				//			console.log(JSON.stringify(res))
@@ -258,6 +259,9 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 				setTimeout(function() {
 					getProdParams(mdCode);
 				}, 100);
+				callback(1);
+			}).catch(function(err){
+				callback(2)
 			});
 		};
 		/*
@@ -271,26 +275,26 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 		window.scanCallBack = function(prodinfo) {
 			var type = JSON.parse(prodinfo).codeType;
 			var mdCode = JSON.parse(prodinfo).codeValue;
-			if(type == "QR") {
+			if (type == "QR") {
 
 				//判断出库单中是否已存在此迈迪国标通用物联码的产品
 				var isHasMdCode = false;
 				var idx = 0;
 				$scope.Data.OutProds.every(function(prod, index) {
-					if(prod.MDCode == mdCode) {
+					if (prod.MDCode == mdCode) {
 						idx = index;
 						isHasMdCode = true;
 						return false;
 					}
 					return true;
 				});
-				if(isHasMdCode == true) {
+				if (isHasMdCode == true) {
 					mui.alert("当前扫码产品与出库单中第 " + (idx + 1) + " 个产品的迈迪国标通用物联码相同，无法再次添加！");
 					return;
 				}
 				//判断是否在已删除的产品中（修改出库单时使用）
 				$scope.Data.OutProdsDel.every(function(prod, index) {
-					if(prod.MDCode == mdCode) {
+					if (prod.MDCode == mdCode) {
 						//设置未删除，并移植到产品列表中
 						$scope.Data.OutProdsDel[index].IsDelete = 0;
 						$scope.Data.OutProds.push($scope.Data.OutProdsDel[index]);
@@ -302,7 +306,7 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 					}
 					return true;
 				});
-				if(isHasMdCode == true) {
+				if (isHasMdCode == true) {
 					return;
 				}
 
@@ -316,15 +320,18 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 					//如果是出库环节中的企业，已经出库时，返回2
 					//如果非出库环节中的企业，返回3
 					//如果已经被装配到主机，返回4
-					if(reData == 1) {
-						getProdInfoByMdCode(mdCode);
-						//显示向上弹出产品信息
-						document.getElementById("prodInfoTop").style.display = "block";
-						setTimeout(function() {
+					if (reData == 1) {
+						getProdInfoByMdCode(mdCode, function(InfoResult) {
+							if(InfoResult==2){
+								mui.alert("请求产品信息失败");
+								return false;
+							}
+							//显示向上弹出产品信息
+							document.getElementById("prodInfoTop").style.display = "block";
 							document.getElementById("prodInfoTop").classList.add("showEditInfo");
 							document.getElementById("prodInfoTopTool").classList.add("showTool");
 							//半隐藏操作按钮
-							if($scope.IsView) {
+							if ($scope.IsView) {
 								//浏览时
 								document.getElementById("edit").style.opacity = 0.5;
 							} else {
@@ -333,12 +340,15 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 							}
 							//记录当前弹出的div
 							openedDiv = 2;
-						}, 300);
-					} else if(reData == 2) {
+							//手动触发确定点击事件
+							mui.trigger(document.getElementById("confirmProdInfo"), 'tap')
+						});
+
+					} else if (reData == 2) {
 						mui.alert("该产品已经出库，请扫描其他产品！");
-					} else if(reData == 3) {
+					} else if (reData == 3) {
 						mui.alert("请扫描本公司产品码！");
-					} else if(reData == 4) {
+					} else if (reData == 4) {
 						mui.alert("该产品已装配到主机，无法出库！");
 					}
 
@@ -360,7 +370,7 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 			var url = ApiService.Api50 + "/api/v1.0/MdCode/GetInnerRelationByMdCode?MdCode=" + mdCode;
 			DataService.get(url).then(function(reData) {
 				//console.log(JSON.stringify(reData))
-				if(reData && reData.InnerCode) {
+				if (reData && reData.InnerCode) {
 					$scope.Data.ProdInfo.ProdInnerCode = reData.InnerCode;
 					document.getElementById("txtInCode").value = reData.InnerCode;
 					document.getElementById("txtInCode").setAttribute("readOnly", 'true');
@@ -374,7 +384,7 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 		//根据内部码获取迈迪国标通用物联码
 		function getMdCodeByMdInnerCode(compId, inCode, mdCode, callback) {
 			//如果不是当前用户企业的产品，则不需要判断
-			if($scope.LoginCompID != compId) {
+			if ($scope.LoginCompID != compId) {
 				callback();
 				return;
 			}
@@ -382,17 +392,17 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 			var url = ApiService.Api45 + "/api/v1.1/MdCode/ValidInnerCodeByMdCode?mdCode=" + mdCode + "&InnerCode=" + inCode;
 			DataService.get(url).then(function(reData) {
 				//								console.log(JSON.stringify(reData))
-				if(2 == 1) {
+				if (false) {
 					mui.toast("此" + $scope.Data.InnerCodeName + "已存在，请修改！");
 					Loading.hide();
 					isSave = false;
 				} else {
-					if(temp == false)
+					if (temp == false)
 						callback();
 				}
 				temp = true;
 			}, function() {
-				if(temp == false) {
+				if (temp == false) {
 					callback();
 					temp = true;
 				}
@@ -400,7 +410,7 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 
 			//如果超过3秒钟，接口无反应时，直接执行回调
 			setTimeout(function() {
-				if(temp == false) {
+				if (temp == false) {
 					callback();
 					temp = true;
 				}
@@ -418,15 +428,13 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 				//	console.log(JSON.stringify(reData))
 				$scope.Data.ProdInfo.ProdParams = reData;
 				//文本框赋值
-				setTimeout(function() {
-					$scope.Data.ProdInfo.ProdParams && $scope.Data.ProdInfo.ProdParams.forEach(function(param, index) {
-						if(param.ParamType == 0) {
-							document.getElementById("txtProdParam_" + param.ParamID).value = param.ParamDefValue;
-						} else {
-							selectOption("txtProdParam_" + param.ParamID, param.ParamDefValue, param.ParamName);
-						}
-					});
-				}, 300)
+				$scope.Data.ProdInfo.ProdParams && $scope.Data.ProdInfo.ProdParams.forEach(function(param, index) {
+					if (param.ParamType == 0) {
+						document.getElementById("txtProdParam_" + param.ParamID).value = param.ParamDefValue;
+					} else {
+						selectOption("txtProdParam_" + param.ParamID, param.ParamDefValue, param.ParamName);
+					}
+				});
 
 			});
 		}
@@ -434,22 +442,22 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 		//完成出库单
 		document.getElementById("confirmOrder").addEventListener("tap", function() {
 			//有弹出的信息时，无法操作
-			if(openedDiv != 0) {
+			if (openedDiv != 0) {
 				return;
 			}
 
-			if($scope.Data.OutProds.length == 0) {
+			if ($scope.Data.OutProds.length == 0) {
 				mui.toast("请扫码添加出库产品！");
 				return;
 			}
-			if(saving) {
+			if (saving) {
 				return;
 			}
 
 			//只保存自己厂家产品的内部码和迈迪国标通用物联码的关系
 			var mdInerCodeList = [];
 			$scope.Data.OutProds && $scope.Data.OutProds.forEach(function(prod) {
-				if($scope.LoginCompID == prod.CompID) {
+				if ($scope.LoginCompID == prod.CompID) {
 					mdInerCodeList.push({
 						MDCode: prod.MDCode,
 						CompID: $scope.curUser.CompID,
@@ -489,14 +497,14 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 			//保存
 			var url = ApiService.Api50 + "/api/v1.0/MdCode/AddInnerCodeRelationList";
 			DataService.post(url, mdInerCodeList).then(function(res) {
-				if(res) {
+				if (res) {
 					console.log("保存内部码成功");
 				}
 			}, function(error) {
 				console.log("保存内部码失败：" + error.message);
 			});
 			//合并已删除的产品
-			if($scope.Data.OutProdsDel.length > 0) {
+			if ($scope.Data.OutProdsDel.length > 0) {
 				outProds = outProds.concat($scope.Data.OutProdsDel);
 			}
 			var orderParams = []; //出库保存时的出库单参数
@@ -536,13 +544,13 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 			//			console.log(JSON.stringify(paramData))
 			var url = ApiService.Api50 + "/api/v1.0/Stock/SaveOutStock";
 			DataService.post(url, paramData).then(function(res) {
-				if(res) {
+				if (res) {
 					mui.toast("出库成功！");
 					saving = false;
 					$scope.IsSaved = true;
 					Loading.hide();
 					//编辑后刷新上页面
-					if($scope.IsAdd == 0)
+					if ($scope.IsAdd == 0)
 						RPCObserver.broadcast('refresh_order_list');
 					setTimeout(function() {
 						mui.back();
@@ -556,10 +564,10 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 			});
 		});
 		var receiveNotification = function(event) {
-			if(plus.os.name == 'Android') {
+			if (plus.os.name == 'Android') {
 				var code = event.arguments;
 
-				if(code.indexOf('?') >= 0) {
+				if (code.indexOf('?') >= 0) {
 					code = code.split('?')[1];
 				}
 				var obj = {
@@ -574,7 +582,7 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 
 		//设置span的值
 		function selectOption(eleID, value, name) {
-			if(value) {
+			if (value) {
 				document.getElementById(eleID).innerText = value;
 				document.getElementById(eleID).classList.remove("defValue");
 			} else {
@@ -585,7 +593,7 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 
 		//选择客户
 		document.querySelector(".choose_user").addEventListener("tap", function() {
-			if($scope.Data.CustomerType == 1) {
+			if ($scope.Data.CustomerType == 1) {
 				UtilsService.openWindow({
 					needLogin: true,
 					id: "select-customer.html",
@@ -637,7 +645,7 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 		}
 		//选择收货地址
 		mui("body").on("tap", "#selAddress", function() {
-			if($scope.IsView)
+			if ($scope.IsView)
 				return;
 			UtilsService.openWindow({
 				id: "mdAddress.html",
@@ -677,7 +685,7 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 				buttons: btnArray
 			}, function(e) {
 				var index = e.index;
-				if(index > 0) {
+				if (index > 0) {
 					ele.innerText = param.Values[index - 1].Name;
 					ele.classList.remove("defValue");
 				}
@@ -686,7 +694,7 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 
 		//下一步
 		document.getElementById("nextStep").addEventListener("tap", function() {
-			if(!validateBaseInfo())
+			if (!validateBaseInfo())
 				return;
 			//修改标题
 			document.getElementById("spTitle").innerText = "添加出库产品";
@@ -713,7 +721,7 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 				}, 100);
 				//如果有传入的迈迪国标通用物联码，则添加到出库单中
 				var mdcode = query("mdcode");
-				if(mdcode) {
+				if (mdcode) {
 					scanCallBack("QR", mdcode);
 				}
 			}, 100);
@@ -743,11 +751,11 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 			//出库单参数重新赋值
 			$scope.Data.OrderParams && $scope.Data.OrderParams.forEach(function(param, index) {
 				//浏览时
-				if($scope.IsView) {
+				if ($scope.IsView) {
 					document.getElementById("spOrderParam_" + param.ParamID).innerText = param.ParamValue;
 				} else {
 					//修改时
-					if(param.ParamType == 0) {
+					if (param.ParamType == 0) {
 						document.getElementById("txtOrderParam_" + param.ParamID).value = param.ParamValue;
 					} else {
 						selectOption("txtOrderParam_" + param.ParamID, param.ParamValue, param.ParamName);
@@ -763,7 +771,7 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 				document.getElementById("ftConfBaseInfo").classList.add("showTool");
 				//记录当前弹出的div
 				openedDiv = 1;
-				if($scope.IsView) {
+				if ($scope.IsView) {
 					//浏览时
 					document.getElementById("edit").style.opacity = 0.5;
 				} else {
@@ -774,7 +782,7 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 		});
 		//确定基本信息
 		document.getElementById("confirmBaseInfo").addEventListener("tap", function() {
-			if(validateBaseInfo()) {
+			if (validateBaseInfo()) {
 				hideBaseInfo();
 			}
 		});
@@ -782,14 +790,14 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 		function validateBaseInfo() {
 			//			console.log("4:" + JSON.stringify($scope.Data.CustInfo))
 			//验证基本信息
-			if($scope.Data.CustomerType == 1 || $scope.Data.CustomerType == 2) {
+			if ($scope.Data.CustomerType == 1 || $scope.Data.CustomerType == 2) {
 				$scope.Data.CustInfo.CustomerName = trim(document.getElementById("txtCustomerName").value);
-				if(!$scope.Data.CustInfo.CustomerName) {
+				if (!$scope.Data.CustInfo.CustomerName) {
 					mui.toast("请选择或输入" + ($scope.Data.CustomerType == 1 ? "企业客户" : "经销商") + "名称！");
 					return false;
 				}
 				//如果当前客户名称与副本不同时，则说明是手工修改的，要清空ID
-				if($scope.Data.CustInfo.CustomerName != $scope.Data.CustInfo.CustomerNameCopy) {
+				if ($scope.Data.CustInfo.CustomerName != $scope.Data.CustInfo.CustomerNameCopy) {
 					$scope.Data.CustInfo.CustCompID = 0;
 					$scope.Data.CustInfo.CustomerID = 0;
 				}
@@ -798,14 +806,14 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 			$scope.Data.CustInfo.LinkName = trim(document.getElementById("txtLinkName").value);
 			$scope.Data.CustInfo.LinkPhone = trim(document.getElementById("txtLinkPhone").value);
 			//如果是个人时，验证联系人和联系人电话
-			if($scope.Data.CustomerType == 3) {
+			if ($scope.Data.CustomerType == 3) {
 				//判断联系人
-				if(!$scope.Data.CustInfo.LinkName) {
+				if (!$scope.Data.CustInfo.LinkName) {
 					mui.toast("请输入联系人！");
 					return;
 				}
 				//判断联系电话
-				if(!$scope.Data.CustInfo.LinkPhone) {
+				if (!$scope.Data.CustInfo.LinkPhone) {
 					mui.toast("请输入联系电话！");
 					return;
 				}
@@ -822,15 +830,16 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 			//判断出库单参数或者产品参数的必填项，并且赋值
 			var canNext = true;
 			$scope.Data.OrderParams && $scope.Data.OrderParams.every(function(param, index) {
-				var value = param.ParamType == 0 ? document.getElementById("txtOrderParam_" + param.ParamID).value : document.getElementById("txtOrderParam_" + param.ParamID).innerText;
+				var value = param.ParamType == 0 ? document.getElementById("txtOrderParam_" + param.ParamID).value : document.getElementById(
+					"txtOrderParam_" + param.ParamID).innerText;
 				var paramValue = trim(value);
-				if(param.IsRequired == 1 && (!paramValue || (paramValue == "请选择" + param.ParamName))) {
+				if (param.IsRequired == 1 && (!paramValue || (paramValue == "请选择" + param.ParamName))) {
 					canNext = false;
 					mui.toast("请" + (param.ParamType == 0 ? "输入" : "选择") + param.ParamName + "！");
 					return false;
 				}
 
-				if(param.ParamType == 1 && paramValue == "请选择" + param.ParamName)
+				if (param.ParamType == 1 && paramValue == "请选择" + param.ParamName)
 					paramValue = "";
 
 				//出库单参数赋值
@@ -868,7 +877,7 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 				document.getElementById("baseInfo").style.display = "none";
 			}, 300);
 			//显示操作按钮
-			if($scope.IsView) {
+			if ($scope.IsView) {
 				//浏览时
 				document.getElementById("edit").style.opacity = 1;
 			} else {
@@ -881,10 +890,10 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 		//扫码添加产品
 		document.getElementById("btnScan").addEventListener("tap", function() {
 			mui.prompt(" ", "请输入产品码", "添加出库产品", ["取消", "确认"], function(e) {
-				if(e.index == 1) {
+				if (e.index == 1) {
 					var _val = e.value || "";
 					_val = _val.replace(/(^\s+)|(\s+$)/ig, "");
-					if(_val == "") {
+					if (_val == "") {
 						mui.alert("请输入迈迪国标通用物联码!");
 					} else {
 						var info = {
@@ -914,7 +923,7 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 		//确定产品信息
 		var isSave = false; //防止重复点击
 		document.getElementById("confirmProdInfo").addEventListener("tap", function() {
-			if(isSave == false) {
+			if (isSave == false) {
 				Loading.show();
 				isSave = true;
 				//验证数据
@@ -930,83 +939,85 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 				// 	$scope.Data.ProdInfo.ProdInnerCode = innerCode;
 				// }
 				//根据出厂编号和企业ID判断是否已经占用
-				getMdCodeByMdInnerCode($scope.Data.ProdInfo.CompID, $scope.Data.ProdInfo.ProdInnerCode, $scope.Data.ProdInfo.MDCode, function() {
-					//产品参数
-					var canNext = true;
-					// //判断是否有重复的内部码
-					// $scope.Data.OutProds.every(function(prodTemp, prodIndexTemp, array) {
-					// 	if($scope.Data.ProdInfo.CompID == $scope.LoginCompID && prodTemp.MDCode != $scope.Data.ProdInfo.MDCode && prodTemp.ProdInnerCode == $scope.Data.ProdInfo.ProdInnerCode && $scope.Data.ProdInfo.ProdID == prodTemp.ProdID && $scope.Data.ProdInfo.SkuID == prodTemp.SkuID) {
-					// 		canNext = false;
-					// 		mui.alert("当前扫码产品与出库单中第 " + (prodIndexTemp + 1) + " 个产品的" + $scope.Data.InnerCodeName + "相同，无法再次添加！");
-					// 		return false;
-					// 	}
+				getMdCodeByMdInnerCode($scope.Data.ProdInfo.CompID, $scope.Data.ProdInfo.ProdInnerCode, $scope.Data.ProdInfo.MDCode,
+					function() {
+						//产品参数
+						var canNext = true;
+						// //判断是否有重复的内部码
+						// $scope.Data.OutProds.every(function(prodTemp, prodIndexTemp, array) {
+						// 	if($scope.Data.ProdInfo.CompID == $scope.LoginCompID && prodTemp.MDCode != $scope.Data.ProdInfo.MDCode && prodTemp.ProdInnerCode == $scope.Data.ProdInfo.ProdInnerCode && $scope.Data.ProdInfo.ProdID == prodTemp.ProdID && $scope.Data.ProdInfo.SkuID == prodTemp.SkuID) {
+						// 		canNext = false;
+						// 		mui.alert("当前扫码产品与出库单中第 " + (prodIndexTemp + 1) + " 个产品的" + $scope.Data.InnerCodeName + "相同，无法再次添加！");
+						// 		return false;
+						// 	}
 
-					// 	return true;
-					// });
-					// //判断是否与本企业其他出厂编号重复
-					// if(!canNext) {
-					// 	isSave = false;
-					// 	Loading.hide();
-					// 	return;
-					// }
-					//遍历出库产品参数，校验并赋值
-					$scope.Data.ProdInfo.ProdParams && $scope.Data.ProdInfo.ProdParams.every(function(param, index) {
-						var value = param.ParamType == 0 ? document.getElementById("txtProdParam_" + param.ParamID).value : document.getElementById("txtProdParam_" + param.ParamID).innerText;
-						var paramValue = trim(value);
-						//如果必填项没有填写，则提示
-						if(param.IsRequired == 1 && (!paramValue || (paramValue == "请选择" + param.ParamName))) {
-							canNext = false;
-							mui.toast("请" + (param.ParamType == 0 ? "输入" : "选择") + param.ParamName + "！");
-							return false;
+						// 	return true;
+						// });
+						// //判断是否与本企业其他出厂编号重复
+						// if(!canNext) {
+						// 	isSave = false;
+						// 	Loading.hide();
+						// 	return;
+						// }
+						//遍历出库产品参数，校验并赋值
+						$scope.Data.ProdInfo.ProdParams && $scope.Data.ProdInfo.ProdParams.every(function(param, index) {
+							var value = param.ParamType == 0 ? document.getElementById("txtProdParam_" + param.ParamID).value :
+								document.getElementById("txtProdParam_" + param.ParamID).innerText;
+							var paramValue = trim(value);
+							//如果必填项没有填写，则提示
+							if (param.IsRequired == 1 && (!paramValue || (paramValue == "请选择" + param.ParamName))) {
+								canNext = false;
+								mui.toast("请" + (param.ParamType == 0 ? "输入" : "选择") + param.ParamName + "！");
+								return false;
+							}
+							if (param.ParamType == 1 && paramValue == "请选择" + param.ParamName)
+								paramValue = "";
+
+							//参数值赋值
+							param.ParamValue = paramValue;
+							return true;
+						});
+						if (!canNext) {
+							isSave = false;
+							Loading.hide();
+							return;
 						}
-						if(param.ParamType == 1 && paramValue == "请选择" + param.ParamName)
-							paramValue = "";
 
-						//参数值赋值
-						param.ParamValue = paramValue;
-						return true;
-					});
-					if(!canNext) {
-						isSave = false;
+						//判断是否覆盖旧的，否则添加到出库产品数组中
+						var idx = -1;
+						$scope.Data.OutProds.every(function(prodTemp, prodIndexTemp, array) {
+							if (prodTemp.MDCode == $scope.Data.ProdInfo.MDCode) {
+								idx = prodIndexTemp;
+								return false;
+							}
+							return true;
+						});
+						if (idx == -1)
+							$scope.Data.OutProds.push($scope.Data.ProdInfo);
+						else
+							$scope.Data.OutProds[idx] = $scope.Data.ProdInfo;
+						//					$scope.$apply()
+						//清除弹出的产品信息
+						setTimeout(function() {
+							isSave = false;
+							$scope.Data.ProdInfo = {
+								ID: 0, //新增时是0
+								ProdID: 0,
+								ProdName: "",
+								SkuID: 0,
+								SkuName: "",
+								MDCode: "",
+								ProdInnerCode: "",
+								IsDelete: 0,
+								//产品参数
+								ProdParams: [],
+								CompID: 0,
+							};
+						}, 300);
+						//收回产品信息
+						hideProdInfo();
 						Loading.hide();
-						return;
-					}
-
-					//判断是否覆盖旧的，否则添加到出库产品数组中
-					var idx = -1;
-					$scope.Data.OutProds.every(function(prodTemp, prodIndexTemp, array) {
-						if(prodTemp.MDCode == $scope.Data.ProdInfo.MDCode) {
-							idx = prodIndexTemp;
-							return false;
-						}
-						return true;
 					});
-					if(idx == -1)
-						$scope.Data.OutProds.push($scope.Data.ProdInfo);
-					else
-						$scope.Data.OutProds[idx] = $scope.Data.ProdInfo;
-					//					$scope.$apply()
-					//清除弹出的产品信息
-					setTimeout(function() {
-						isSave = false;
-						$scope.Data.ProdInfo = {
-							ID: 0, //新增时是0
-							ProdID: 0,
-							ProdName: "",
-							SkuID: 0,
-							SkuName: "",
-							MDCode: "",
-							ProdInnerCode: "",
-							IsDelete: 0,
-							//产品参数
-							ProdParams: [],
-							CompID: 0,
-						};
-					}, 300);
-					//收回产品信息
-					hideProdInfo();
-					Loading.hide();
-				});
 			}
 
 		});
@@ -1027,7 +1038,7 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 				//显示向上弹出的基本信息
 				document.getElementById("prodInfoTop").style.display = "none";
 				//显示操作按钮
-				if($scope.IsView) {
+				if ($scope.IsView) {
 					//浏览时
 					document.getElementById("edit").style.opacity = 1;
 				} else {
@@ -1041,19 +1052,19 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 		}
 		//弹出产品信息
 		mui(".data-group").on("tap", ".prodInfo", function() {
-			if($scope.IsEdit) return;
+			if ($scope.IsEdit) return;
 			var idx = this.getAttribute("idx");
 			//console.log(JSON.stringify($scope.Data.OutProds))
 			$scope.Data.ProdInfo = $scope.Data.OutProds[idx];
 			$scope.$apply();
 			//浏览时
-			if($scope.LoginCompID == $scope.Data.ProdInfo.CompID) {
-				if($scope.IsView) {
+			if ($scope.LoginCompID == $scope.Data.ProdInfo.CompID) {
+				if ($scope.IsView) {
 					document.getElementById("spInCode").innerText = $scope.Data.ProdInfo.ProdInnerCode;
 				} else {
 					//修改时
 					document.getElementById("txtInCode").value = $scope.Data.ProdInfo.ProdInnerCode;
-					if(document.getElementById("txtInCode").value) {
+					if (document.getElementById("txtInCode").value) {
 						document.getElementById("txtInCode").setAttribute("readOnly", 'true');
 					}
 				}
@@ -1063,11 +1074,11 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 			//			console.log(JSON.stringify($scope.Data.ProdInfo.ProdParams))
 			$scope.Data.ProdInfo.ProdParams && $scope.Data.ProdInfo.ProdParams.forEach(function(param, index) {
 				//浏览时
-				if($scope.IsView) {
+				if ($scope.IsView) {
 					document.getElementById("spProdParam_" + param.ParamID).innerText = param.ParamValue;
 				} else {
 					//新增或编辑时
-					if(param.ParamType == 0) {
+					if (param.ParamType == 0) {
 						document.getElementById("txtProdParam_" + param.ParamID).value = param.ParamValue;
 					} else {
 						selectOption("txtProdParam_" + param.ParamID, param.ParamValue, param.ParamName);
@@ -1082,7 +1093,7 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 				document.getElementById("prodInfoTopTool").classList.add("showTool");
 
 				//半隐藏操作按钮
-				if($scope.IsView) {
+				if ($scope.IsView) {
 					//浏览时
 					document.getElementById("edit").style.opacity = 0.5;
 				} else {
@@ -1114,7 +1125,7 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 				buttons: btnArray
 			}, function(e) {
 				var index = e.index;
-				if(index > 0) {
+				if (index > 0) {
 					ele.innerText = param.Values[index - 1].Name;
 					ele.classList.remove("defValue");
 				}
@@ -1128,9 +1139,9 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 			var outProdId = this.getAttribute("outProdId"); //出库产品ID，修改时有值，新增时无值
 			//console.log("outProdId:" + outProdId);
 			mui.confirm('确定要取消此产品出库吗？', '提示', ["取消", "确定"], function(e) {
-				if(e.index == 1) {
+				if (e.index == 1) {
 					//如果是修改时删除，则标明删除，并移植到已删除的数组中			
-					if(outProdId && outProdId != 0) {
+					if (outProdId && outProdId != 0) {
 						$scope.Data.OutProds[idx].IsDelete = 1;
 						$scope.Data.OutProdsDel.push($scope.Data.OutProds[idx]);
 					}
@@ -1144,7 +1155,7 @@ app.controller("OutStockController", ["$scope", "$filter", "AuthService", "ApiSe
 //格式化迈迪国标通用物联码
 app.filter('getMdCode', function() {
 	return function(mdcode) {
-		if(!mdcode || mdcode.length <= 14) {
+		if (!mdcode || mdcode.length <= 14) {
 			return mdcode;
 		}
 		return "物联码：***" + mdcode.substr(-14);
@@ -1172,7 +1183,7 @@ function selectCustomer(comp) {
 	$scope.Data.CustInfo.LinkPhone = comp.MainLinkPhone; //主联系人电话
 	//document.getElementById("txtLinkPhone").value = comp.MainLinkPhone;
 	//桂林国际定制
-	if($scope.LoginCompID == $scope.glgjCompID) {
+	if ($scope.LoginCompID == $scope.glgjCompID) {
 		$scope.isTakeLinkName = comp.MainLinkName.trim() ? true : false;
 		$scope.isTakeLinkPhone = comp.MainLinkPhone.trim() ? true : false;
 	}

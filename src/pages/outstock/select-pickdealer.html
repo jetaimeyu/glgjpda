@@ -10,6 +10,52 @@
 		<link rel="stylesheet" href="../../icon-font/iconfont.css" />
 		<link rel="stylesheet" href="select-customer.css" />
 		<style type="text/css">
+			/*导航目录*/
+			
+			#res-slide {
+				padding: 0 10px;
+				padding-right: 15px;
+				background: #fff;
+				/*overflow: hidden;*/
+				height: 35px;
+				/*margin-bottom: 8px;*/
+			}
+			
+			.top-thin-line:before {
+				background-color: #ECECEC;
+			}
+			
+			.mui-segmented-control.mui-segmented-control-inverted .mui-control-item {
+				color: #169BD5;
+			}
+			
+			.mui-segmented-control.mui-segmented-control-inverted .mui-control-item.mui-active {
+				color: #9A9A9C;
+				background: none;
+				border: none;
+			}
+			
+			.mui-segmented-control.mui-scroll-wrapper {
+				height: 43px;
+			}
+			
+			.mui-segmented-control .mui-control-item {
+				line-height: 35px;
+				padding: 0 !important;
+				margin-left: 6px;
+			}
+			
+			.mui-slider .mui-segmented-control.mui-segmented-control-inverted~.mui-slider-group .mui-slider-item {
+				border-top: none;
+			}
+			
+			.mui-slider-indicator {
+				border-bottom: 1px solid #ECECEC!important;
+			}
+			
+			.mui-segmented-control .mui-control-item>span {
+				font-size: 14px;
+			}
 			footer {
 				width: 100%;
 				height: 44px;
@@ -29,10 +75,6 @@
 			
 			footer .footer-btn-sure .btn-sure {
 				color: #fff;
-			}
-			
-			.top82 {
-				margin-top: 82px!important;
 			}
 			
 			.top42 {
@@ -64,13 +106,29 @@
                     </span>
 				</div>
 			</div>
-			<div id="pullrefresh" class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad,'top42':isIos&&!isSearch,'top82':isSearch&&isIos}" style="display: none;">
+			<!--导航目录部分-->
+			<div id="res-slide" class="top-thin-line mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted nav-bar" ng-show="navDirData.length>1&&data.Key==''"  ng-class="{'mui-block':isLoad2}" style="display: none;z-index: 9;margin-top:0px;">
+				<div class="mui-scroll" style="height: 35px;position: absolute;">
+					<a class="mui-control-item" ng-repeat="dir in navDirData" ng-class="{'mui-active':dir.ID==catalogID}" ng-attr-catalogid="{{dir.ID}}" ng-attr-index="{{$index}}" ng-attr-catalogname="{{dir.catalogname}}" ng-attr-pardirid="{{dir.ParDirID}}">
+						<span class="icon iconfont icon-right color-gray-deep" style="margin-left: 2px;" ng-show="$index>0"></span>
+						<span class="group-name" ng-bind="dir.catalogname"></span>
+					</a>
+				</div>
+			</div>
+			<div id="pullrefresh" class="mui-scroll-wrapper" ng-class="{'mui-block':isLoad,'top42':isIos}" style="display: none;">
 				<div class="mui-content">
-					<ul class="data-group biglabel" id="customerCatalog">
+					<!--目录-->
+					<ul class="data-group" ng-show="dirData&&dirData[catalogID].length>0&&data.Key==''" ng-style="{'margin-top':navDirData.length>1&&isIos?'38px':'1px'}">
+						<li class="mui-table-view-cell data-row dir-row" ng-repeat="catalog in dirData[catalogID]" ng-attr-catalogid="{{catalog.id}}" ng-attr-catalogname="{{catalog.name}}" ng-attr-pardirid="{{catalog.pid}}">
+							<label style="width:85vw" class="mui-ellipsis">
+							<i class="icon-list"></i><span style="width:85vw;margin-left: 4px;" class="mui-ellipsis" ng-bind="' '+catalog.name"></span>
+						</label>
+							<p class="opt md-icon icon-right"></p>
+						</li>
+					</ul>
+					<ul class="data-group biglabel" id="customerCatalog" ng-style="{'margin-top': data.Key==''||!isIos?'':'48px'}">
 						<li class="data-row" ng-repeat="row in data.customerList" ng-click="selectRow(row.ID)">
 							<p class="selectCustomer float-left" ng-class="{'icon-roundcheckfill color-blue':data.checkedID==row.ID,'icon-round color-gray':data.checkedID!=row.ID}"></p>
-							<!--<input class="choice" name="checkbox" value="" type="checkbox">-->
-
 							<div class="body customer-manage">
 								<p class="font-15 color-gray-dark mui-ellipsis customerInfo" ng-bind="row.Name"></p>
 								<p class="font-12 color-gray-deep mui-ellipsis customerInfo" ng-bind="row.Province | locationfilter:row.City:row.District:row.Address:row.Street"></p>
@@ -102,12 +160,24 @@
 					selectedList: {},
 
 				}
+				//目录数据
+				$scope.dirData = {};
+				//导航目录
+				$scope.navDirData = [{
+					ID: 0,
+					catalogname: "所有目录"
+				}];
+				//目录ID
+				$scope.catalogID = 0;
+				var selectedCatalog;
+				
 				$scope.isIos = !mui.os.android;
 				$scope.isLoad = false;
+				$scope.isLoad2 = false;
 				$scope.isSearch = false;
 				var self = plus.webview.currentWebview();
 				if(self.selectObj.chooseID) {
-					$scope.data.checkedID = self.selectObj.chooseID;
+					$scope.data.checkedID = self.selectObj.chooseID || -1;
 				}
 				setTimeout(function() {
 					mui.init({
@@ -125,13 +195,28 @@
 					$scope.pageIndex++;
 					loadDealer()
 				}
+				getOrgList();
+				//获取目录
+				function getOrgList() {
+					var url = ApiService.Api52 + "/api/v1/Suppliers/GetDealerCatalogList?pId=" + $scope.catalogID;
+					DataService.get(url).then(function(res) {
+						setTimeout(function(){
+							$scope.isLoad2 = true;
+						},100)
+						if(res) {
+							$scope.dirData[$scope.catalogID] = res;
+						}
+					})
+				}
 				//客户数据
 				var isEnd = false;
 
 				function loadDealer() {
 					Loading.show();
-					var url = ApiService.Api45 + "/api/v1/Stock/FindSuppliers?key=" + encodeURIComponent($scope.data.Key) + "&pageSize=" + $scope.pageSize + "&pageIndex=" + $scope.pageIndex;
+					var url = ApiService.Api45 + "/api/v1/Stock/FindSuppliers?key=" + encodeURIComponent($scope.data.Key) + "&pageSize=" + $scope.pageSize + "&pageIndex=" + $scope.pageIndex + "&catalogId=" + $scope.catalogID;
+					
 					DataService.get(url).then(function(res) {
+						Loading.hide();
 						if(res) {
 							$scope.data.totalCount = res.TotalCount;
 							if(typeof $scope.data.customerList == "string") {
@@ -189,7 +274,7 @@
 				$scope.search = function() {
 					//$scope.data.customerName = document.querySelector("input").value.trim();
 					if(!$scope.data.Key) {
-						mui.toast("请输入搜索内容!");
+						plus.Push.showToast("请输入搜索内容!",'info');
 						return;
 					}
 					$scope.isSearch = true;
@@ -217,7 +302,7 @@
 				//选择
 				$scope.selectCustomer = function() {
 					if($scope.data.checkedID == -1) {
-						mui.toast("请选择经销商");
+						plus.Push.showToast("请选择经销商",'info');
 						return;
 					}
 					for(var i = 0; i < $scope.data.customerList.length; i++) {
@@ -248,6 +333,68 @@
 					}
 					mui.back();
 				};
+				
+				//点击导航目录
+				mui("#res-slide").on("tap", ".mui-control-item", function() {
+					var catalogid = this.getAttribute("catalogid");
+					var index = this.getAttribute("index");
+					if(catalogid == $scope.catalogID) return;
+					$scope.catalogID = catalogid;
+					$scope.navDirData = $scope.navDirData.filter(function(_item, _index) {
+						return _index <= parseInt(index);
+					});
+				
+					$scope.pageIndex = 1;
+					$scope.data.customerList = [];
+					Loading.show();
+				
+					resScroll();
+					selectedCatalog = {
+						"ID": $scope.catalogID,
+						"catalogname": this.getAttribute("catalogname"),
+						"ParDirID": this.getAttribute("pardirid")
+					};
+					$scope.$apply();
+					getOrgList();
+					loadDealer();
+				})
+				
+				//点击目录
+				mui(".data-group").on("tap", ".dir-row", function(e) {
+					e.stopPropagation();
+					var catalogid = this.getAttribute("catalogid");
+					
+					$scope.catalogID = catalogid;
+					selectedCatalog = {
+						"ID": catalogid,
+						"catalogname": this.getAttribute("catalogname"),
+						"ParDirID": this.getAttribute("pardirid")
+					}
+					Loading.show();
+					$scope.data.customerList = [];
+					$scope.pageIndex = 1;
+				
+					$scope.navDirData.push(selectedCatalog);
+					resScroll();
+					$scope.$apply();
+					getOrgList();
+					loadDealer();
+				})
+				
+				//导航栏滚动事件
+				function resScroll() {
+					setTimeout(function() {
+						var width = mui("#res-slide")[0].clientWidth;
+						var scrollWidth = mui("#res-slide .mui-scroll")[0].clientWidth;
+						scrollto = 0;
+						if((scrollWidth + 35) < width || width == 0) {
+							scrollto = 0;
+						} else {
+							scrollto = width - scrollWidth - 24;
+						}
+						mui('#res-slide').scroll().scrollTo(scrollto, 0, 0);
+					}, 100);
+				}
 
 			}]);
 

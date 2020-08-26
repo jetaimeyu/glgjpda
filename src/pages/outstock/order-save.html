@@ -111,9 +111,9 @@
 				<li class="data-row " ng-class="{'must':param.IsRequired==1,'orderParam':param.ParamType==1}" ng-repeat="param in Data.OrderParams">
 					<label>{{param.ParamName}}</label>
 					<div class="body">
-						<div class="edit" ng-show="param.ParamType=='0'&&!IsView" >
-							<div  class="needsclick" ng-attr-placeholder="{{'请输入'+param.ParamName}}" ng-attr-id="{{param.ParamType=='0'?('txtOrderParam_'+param.ParamID):''}}" lenlimit="50"></div>
-						</div>
+						<!--<div class="edit" ng-show="param.ParamType=='0'&&!IsView" >-->
+							<!--<div  class="needsclick" ng-attr-placeholder="{{'请输入'+param.ParamName}}" ng-attr-id="{{param.ParamType=='0'?('txtOrderParam_'+param.ParamID):''}}" lenlimit="50"></div>-->
+						<!--</div>-->
 						<input type="text" ng-show="param.ParamType=='0'&&!IsView" ng-attr-placeholder="{{'请输入'+param.ParamName}}" ng-attr-id="{{param.ParamType=='0'?('txtOrderParam_'+param.ParamID):''}}" maxlength="50" />
 						<span type="text" style="padding-right: 25px;" ng-show="param.ParamType=='1'&&!IsView" ng-attr-id="{{param.ParamType=='1'?('txtOrderParam_'+param.ParamID):''}}" ng-attr-idx="{{$index}}" class="bg-f2 orderParam"></span>
 						<span ng-if="IsView" ng-attr-id="{{'spOrderParam_'+param.ParamID}}"></span>
